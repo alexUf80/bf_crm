@@ -22,6 +22,35 @@
             $('.add-promocode-modal').on('click', function () {
                 $('#add_promocode_form')[0].reset();
                 $('#add-promocode-modal').modal();
+
+                $('.add_promocode').on('click', function () {
+                    let form = $('#add_promocode_form').serialize();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: form,
+                        success: function () {
+                            location.reload();
+                        }
+                    })
+                });
+            });
+
+            $('.delete').on('click', function () {
+
+                let that = $(this);
+                let code_id = that.attr('data-code');
+
+                $.ajax({
+                    method: 'POST',
+                    data:{
+                        action: 'delete',
+                        code_id: code_id
+                    },
+                    success: function () {
+                        that.closest('tr').remove();
+                    }
+                })
             });
         });
     </script>
@@ -99,6 +128,7 @@
                                                     Комментарий</a>
                                             {else}<a href="{url page=null sort='comment asc'}">Комментарий</a>{/if}
                                         </th>
+                                        <th></th>
                                     </tr>
                                     <tr>
                                         <th style="width: 90px" class="jsgrid-header-cell">
@@ -118,7 +148,7 @@
                                         <th style="width: 150px" class="jsgrid-header-cell">
                                             <input type="text" class="form-control searchable">
                                         </th>
-                                        <th class="jsgrid-header-cell"></th>
+                                        <th class="jsgrid-header-cell" colspan="2"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -132,6 +162,11 @@
                                                     style="width: 150px">{if $code->is_active == 1}Да{else}Нет{/if}</td>
                                                 <td class="jsgrid-header-cell" style="width: 150px">{$code->discount}</td>
                                                 <td class="jsgrid-header-cell">{$code->comment}</td>
+                                                <td class="jsgrid-header-cell">
+                                                    <div data-code="{$code->id}" class="btn btn-outline-danger delete">
+                                                        Удалить
+                                                    </div>
+                                                </td>
                                             </tr>
                                         {/foreach}
                                     {/if}
@@ -163,7 +198,7 @@
             <div class="modal-body">
                 <div class="alert" style="display:none"></div>
                 <form method="POST" id="add_promocode_form">
-                    <input type="hidden" name="action" value="add_promocode">
+                    <input type="hidden" name="action" value="add">
                     <div class="form-group">
                         <label for="code" class="control-label">Код</label>
                         <input type="text" class="form-control" name="code" id="code" value=""/>
@@ -178,6 +213,10 @@
                             <option value="1">Да</option>
                             <option value="0">Нет</option>
                         </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="discount" class="control-label">Скидка:</label>
+                        <input type="text" class="form-control" name="discount" id="discount" value=""/>
                     </div>
                     <div class="form-group">
                         <label for="comment" class="control-label">Комментарий:</label>
