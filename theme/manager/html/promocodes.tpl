@@ -1,4 +1,4 @@
-{$meta_title = 'Компании' scope=parent}
+{$meta_title = 'Промокоды' scope=parent}
 
 {capture name='page_styles'}
     <link href="theme/manager/assets/plugins/Magnific-Popup-master/dist/magnific-popup.css" rel="stylesheet"/>
@@ -78,12 +78,21 @@
                                         </th>
                                         <th style="width: 200px"
                                             class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'term asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'term desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'term asc'}<a href="{url page=null sort='term desc'}">Срок действия</a>
+                                            {if $sort == 'term asc'}<a href="{url page=null sort='term desc'}">Срок
+                                                действия</a>
                                             {else}<a href="{url page=null sort='term asc'}">Срок действия</a>{/if}
                                         </th>
-                                        <th style="width: 150px" class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'is_active asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'is_active desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
-                                            {if $sort == 'is_active asc'}<a href="{url page=null sort='is_active desc'}">Активность</a>
+                                        <th style="width: 150px"
+                                            class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'is_active asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'is_active desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'is_active asc'}<a
+                                                href="{url page=null sort='is_active desc'}">Активность</a>
                                             {else}<a href="{url page=null sort='is_active asc'}">Активность</a>{/if}
+                                        </th>
+                                        <th style="width: 150px"
+                                            class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'discount asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'discount desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {if $sort == 'discount asc'}<a
+                                                href="{url page=null sort='discount desc'}">Скидка</a>
+                                            {else}<a href="{url page=null sort='discount asc'}">Скидка</a>{/if}
                                         </th>
                                         <th class="jsgrid-header-cell jsgrid-header-sortable{if $sort == 'comment asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'comment desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {if $sort == 'comment asc'}<a href="{url page=null sort='comment desc'}">
@@ -92,17 +101,23 @@
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th style="width: 90px" class="jsgrid-header-cell"><input type="text"
-                                                                                class="form-control searchable"></th>
+                                        <th style="width: 90px" class="jsgrid-header-cell">
+                                            <input type="text" class="form-control searchable"></th>
                                         <th style="width: 250px" class="jsgrid-header-cell"><input type="text"
-                                                                                 class="form-control searchable"></th>
+                                                                                                   class="form-control searchable">
+                                        </th>
                                         <th style="width: 200px" class="jsgrid-header-cell"><input type="text"
-                                                                                 class="form-control searchable"></th>
-                                        <th style="width: 150px" class="jsgrid-header-cell"><select class="form-control">
+                                                                                                   class="form-control searchable">
+                                        </th>
+                                        <th style="width: 150px" class="jsgrid-header-cell"><select
+                                                    class="form-control">
                                                 <option value="all">Все</option>
                                                 <option value="all">Да</option>
                                                 <option value="all">Нет</option>
                                             </select></th>
+                                        <th style="width: 150px" class="jsgrid-header-cell">
+                                            <input type="text" class="form-control searchable">
+                                        </th>
                                         <th class="jsgrid-header-cell"></th>
                                     </tr>
                                     </thead>
@@ -113,8 +128,10 @@
                                                 <td class="jsgrid-header-cell" style="width: 90px">{$code->id}</td>
                                                 <td class="jsgrid-header-cell" style="width: 250px">{$code->code}</td>
                                                 <td class="jsgrid-header-cell" style="width: 200px">{$code->term}</td>
-                                                <td class="jsgrid-header-cell" style="width: 150px">{if $code->is_active == 1}Да{else}Нет{/if}</td>
-                                                <td class="jsgrid-header-cell" >{$code->comment}</td>
+                                                <td class="jsgrid-header-cell"
+                                                    style="width: 150px">{if $code->is_active == 1}Да{else}Нет{/if}</td>
+                                                <td class="jsgrid-header-cell" style="width: 150px">{$code->discount}</td>
+                                                <td class="jsgrid-header-cell">{$code->comment}</td>
                                             </tr>
                                         {/foreach}
                                     {/if}
@@ -164,7 +181,8 @@
                     </div>
                     <div class="form-group">
                         <label for="comment" class="control-label">Комментарий:</label>
-                        <textarea style="height: 200px" type="text" class="form-control" name="comment" id="comment"></textarea>
+                        <textarea style="height: 200px" type="text" class="form-control" name="comment"
+                                  id="comment"></textarea>
                     </div>
                     <div>
                         <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
