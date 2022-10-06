@@ -37,7 +37,7 @@
         <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
-                <h3 class="text-themecolor mb-0 mt-0">Компании</h3>
+                <h3 class="text-themecolor mb-0 mt-0">Промокоды</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="/">Справочники</a></li>
