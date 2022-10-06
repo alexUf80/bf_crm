@@ -95,8 +95,8 @@ class Sms extends Core
 
     public function send_smsc($phone, $message)
     {
-        $login = 'em@eco-zaim.ru';
-        $password = 'Pass1029';
+        $login = 'BF02092021';
+        $password = 'Ьлл02092021';
 
 
         $url = 'http://smsc.ru/sys/send.php?login=' . $login . '&psw=' . $password . '&phones=' . $phone . '&mes=' . $message . '';
