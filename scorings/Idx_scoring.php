@@ -46,7 +46,7 @@ class Idx_scoring extends Core
             if (!empty($order->phone_mobile))
                 $person['personMidName'] = preg_replace('/[^0-9]/', '', $order->phone_mobile);
 
-            $score = $this->idxapi->search($person);
+            $score = $this->IdxApi->search($person);
 
 
             $update =
