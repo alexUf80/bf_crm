@@ -59,6 +59,7 @@ class Whitelist_scoring extends Core
                         'body' => '',
                         'success' => empty($score) ? 0 : 1
                     );
+
                     if ($score)
                     {
                         $person = $this->whitelist->get_person((int)$score);

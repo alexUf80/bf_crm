@@ -1,29 +1,57 @@
 <?php
 
+/*
+   Возвращает:
+
+   Параметр	            Тип	    Обязательный	Описание
+   resultCode	        Int	    Да	            Результат выполнения функции (0 – успешное завершение функции, отличное от 0 значение – ошибка выполнения)
+   operationToken	    String	Нет	            Уникальный идентификатор операции
+   operationResult	    String	Нет	            Результат операции
+   validationScorePhone	Int	    Нет	            Оценка актуальности телефонного номера, возможные значения см. ниже
+
+   5	Высокий уровень соответствия, подтверждение в период 180+ дней
+   4	Средний уровень соответствия, подтверждение в период 90-180 дней, отсутствие несоответствий за последние 60 дней
+   3	Низкий уровень соответствия, подтверждение в период 0-90 дней, наличие несоответствий за последние 60 дней
+   2	Средний риск несоответствия, подтверждение в период 0-90 дней, наличие несоответствий за последние 60 дней
+   1	Высокий риск несоответствия, отсутствие подтверждения в период 0+ дней и наличие несоответствий за последние 60 дней
+   0	Нет данных
+
+ */
+
 class IdxApi extends Core
 {
     protected $accessKey = 'barents-finans-4754e180843f443f3ea7c22329edf986c382cac8';
     protected $secretKey = 'a42855fd62f5b3c0778b5809149a1ee07c9d2838';
 
+    public $result =
+        [
+            5 => 'Высокий уровень соответствия, подтверждение в период 180+ дней',
+            4 => 'Средний уровень соответствия, подтверждение в период 90-180 дней, отсутствие несоответствий за последние 60 дней',
+            3 => 'Низкий уровень соответствия, подтверждение в период 0-90 дней, наличие несоответствий за последние 60 дней',
+            2 => 'Средний риск несоответствия, подтверждение в период 0-90 дней, наличие несоответствий за последние 60 дней',
+            1 => 'Высокий риск несоответствия, отсутствие подтверждения в период 0+ дней и наличие несоответствий за последние 60 дней',
+            0 => 'Нет данных'
+        ];
+
     public function search($person)
     {
-        $lastname   = $person['lastname'];
-        $firstname  = $person['firstname'];
+        $lastname = $person['lastname'];
+        $firstname = $person['firstname'];
         $patronymic = $person['patronymic'];
-        $birth      = $person['birth'];
-        $phone      = $person['phone'];
+        $birth = $person['birth'];
+        $phone = $person['phone'];
 
         $person =
             [
-                'personLastName'  => $lastname,
+                'personLastName' => $lastname,
                 'personFirstName' => $firstname,
-                'phone'           => $phone
+                'phone' => $phone
             ];
 
-        if(!empty($birth))
+        if (!empty($birth))
             $person['personBirthDate'] = date('d.m.Y', strtotime($birth));
 
-        if(!empty($patronymic))
+        if (!empty($patronymic))
             $person['personMidName'] = $patronymic;
 
         return $this->send_request($person);

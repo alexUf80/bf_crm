@@ -79,6 +79,7 @@ class RunScoringsApp extends Core
                         case 'nbkiscore':
                         case 'age':
                         case 'svo':
+                        case 'idx':
                             
                             $add_scoring = array(
                                 'user_id' => $order->user_id,
