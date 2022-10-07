@@ -170,19 +170,7 @@ class Managers extends Core
             'developer' => 'Разработчик',
             'admin' => 'Администратор',
             'user' => 'Менеджер',
-            'verificator' => 'Верификатор',
-            'analitic' => 'Аналитик',
-            'collector' => 'Коллектор',
-            'chief_collector' => 'Шеф-коллектор',
-            'team_collector' => 'Командный-коллектор',
-            'technic' => 'Технический аккаунт',
-            'exactor' => 'Взыскатель',
-//            'chief_exactor' => 'Руководитель взыскания',
-            'sudblock' => 'Сотрудник судблока',
-            'chief_sudblock' => 'Руководитель Судблока',
-            'quality_control' => 'Контроль качества',
-            'cs_pc' => 'КС ПЦ',
-            'city_manager' => 'Сити-менеджер',
+            'analitic' => 'Аналитик'
         );
         
         return $roles;

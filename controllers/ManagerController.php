@@ -11,20 +11,10 @@ class ManagerController extends Controller
             
             $user->role = $this->request->post('role');
             $user->name = $this->request->post('name');
-            $user->name_1c = $this->request->post('name_1c');
             $user->email = $this->request->post('email');
             $user->phone = $this->request->post('phone');
             $user->login = $this->request->post('login');
             $user->mango_number = $this->request->post('mango_number');
-
-            $user->collection_status_id = $this->request->post('collection_status_id', 'integer');
-            
-            $team_id = (array)$this->request->post('team_id');
-
-            if (!empty($team_id))
-            {
-                $user->team_id = implode(',', $team_id);
-            }
             
             if ($this->request->post('password'))
                 $user->password = $this->request->post('password');
@@ -75,9 +65,7 @@ class ManagerController extends Controller
                 if ($contracts = $this->contracts->get_contracts(array('collection_manager_id'=>$manager_id)))
                 {
                     foreach ($contracts as $c)
-                        $this->contracts->update_contract($c->id, array('collection_manager_id'=>0));
-                
-                    $this->contracts->distribute_contracts();
+                        $this->contracts->update_contract($c->id, array('collection_manager_id'=> 0));
                 }
                 
                 exit;
@@ -103,20 +91,6 @@ class ManagerController extends Controller
         
         $roles = $this->managers->get_roles();
         $this->design->assign('roles', $roles);
-        
-        $collection_statuses = $this->contracts->get_collection_statuses();
-        $this->design->assign('collection_statuses', $collection_statuses);
-        
-        $collection_manager_statuses = array();
-        $managers = array();
-        foreach ($this->managers->get_managers() as $m)
-        {
-            $managers[$m->id] = $m;
-            $collection_manager_statuses[] = $m->collection_status_id;
-        }
-        $this->design->assign('managers', $managers);
-        $collection_manager_statuses = array_filter(array_unique($collection_manager_statuses));
-        $this->design->assign('collection_manager_statuses', $collection_manager_statuses);
         
         $this->design->assign('meta_title', $meta_title);
         
