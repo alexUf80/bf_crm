@@ -35,11 +35,11 @@ class IdxApi extends Core
 
     public function search($person)
     {
-        $lastname = $person['lastname'];
-        $firstname = $person['firstname'];
-        $patronymic = $person['patronymic'];
-        $birth = $person['birth'];
-        $phone = $person['phone'];
+        $lastname   = $person['personLastName'];
+        $firstname  = $person['personFirstName'];
+        $patronymic = $person['personMidName'];
+        $birth      = $person['personBirthDate'];
+        $phone      = $person['phone'];
 
         $person =
             [
