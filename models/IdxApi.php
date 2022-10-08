@@ -43,6 +43,8 @@ class IdxApi extends Core
 
         $person =
             [
+                'accessKey' => $this->accessKey,
+                'secretKey' => $this->secretKey,
                 'personLastName' => $lastname,
                 'personFirstName' => $firstname,
                 'phone' => $phone
