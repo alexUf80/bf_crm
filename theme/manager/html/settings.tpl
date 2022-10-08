@@ -220,29 +220,6 @@
                             
                         </div>
                     </div>
-                    
-                    <hr class="mb-3 mt-3" />
-                    
-                    <div class="row">
-                        <div class="col-12">
-                            <h3 class="box-title">
-                                Настройки CRM
-                            </h3>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group mb-3">       
-                                <div class="custom-control custom-checkbox mr-sm-2 mb-3">
-                                    <input type="checkbox" class="custom-control-input" id="display_only_official_comments" name="display_only_official_comments" value="1" {if $settings->display_only_official_comments}checked{/if} placeholder="">
-                                    <label for="display_only_official_comments" class="custom-control-label">Показывать только офф. комментарии</label>
-                                </div>
-                            </div>
-                        </div>
- 
-                        <div class="col-md-4">
-                            
-                        </div>
-                    </div>
-                    
                 </div>
             </div>
         
