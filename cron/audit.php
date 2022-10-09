@@ -141,25 +141,6 @@ class AuditCron extends Core
                         // списываем за причину
                         $this->best2pay->reject_reason($order);
                     }
-
-                    if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->click_hash)) {
-                        try {
-                            $this->leadgens->send_cancelled_postback_click2money($order->order_id, $order);
-                        } catch (\Throwable $th) {
-                            //throw $th;
-                        }
-                    }
-
-                    if (!empty($order->utm_source) && $order->utm_source == 'unicom24' && !empty($order->click_hash)) {
-                        try {
-                            $this->UnicomLeadgen->send_cancell_postback($order->order_id, $order);
-                        } catch (\Throwable $th) {
-                            //throw $th;
-                        }
-                    }
-
-                    $message = "$order->firstname, предварительно одобрен займ у наших партнеров: clck.ru/ZADLe";
-                    $this->sms->send($order->phone_mobile, $message);
                 }
             }
         }
