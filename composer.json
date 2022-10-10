@@ -1,0 +1,19 @@
+{
+    "name": "mfoproekty/public_html",
+    "autoload": {
+        "psr-4": {
+        }
+    },
+    "authors": [
+        {
+            "name": "Андрей Попов",
+            "email": "duircianos@yandex.ru"
+        }
+    ],
+    "require": {
+"guzzle/guzzle": "^3.9",
+        "php-webdriver/webdriver": "^1.13",
+        "phpoffice/phpspreadsheet": "^1.25",
+        "doctrine/doctrine1": "^1.2"
+   }
+}
