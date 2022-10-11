@@ -57,16 +57,6 @@ class OrdersController extends Controller
         }
         $this->design->assign('period', $period);
 
-        /*
-                // показывать менеджеру только его заявки
-                if ($this->manager->role == 'user')
-                {
-                    $filter['current'] = $this->manager->id;
-                }
-        */
-        $filter['offline'] = $this->request->get('offline', 'integer');
-        $this->design->assign('offline', $filter['offline']);
-
         if ($this->manager->role == 'collector' || $this->manager->role == 'chief_collector') {
             // показываем только выданные заявки
             $filter['status'] = array(5);

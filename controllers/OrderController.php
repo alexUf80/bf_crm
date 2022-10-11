@@ -8,7 +8,6 @@ class OrderController extends Controller
     public function fetch()
     {
         if ($this->request->method('post')) {
-            $order_id = $this->request->post('order_id', 'integer');
             $action = $this->request->post('action', 'string');
 
             switch ($action):
