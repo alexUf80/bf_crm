@@ -44,7 +44,17 @@ $(function () {
             dataType: 'JSON',
             data: form,
             success: function (resp) {
-
+                if(resp['success'])
+                {
+                    location.replace('order/'+resp['success']);
+                }
+                if(resp['error'])
+                {
+                    Swal.fire({
+                        title: resp['error'],
+                        confirmButtonText: 'ОК'
+                    });
+                }
             }
         })
     });

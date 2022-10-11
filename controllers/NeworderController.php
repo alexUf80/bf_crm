@@ -160,7 +160,7 @@ class NeworderController extends Controller
         );
 
         if ($order_id = $this->orders->add_order($order)) {
-            echo json_encode($order_id);
+            echo json_encode(['success' => $order_id]);
             exit;
         } else {
             echo json_encode(['error' => 'Не удалось создать заявку']);
