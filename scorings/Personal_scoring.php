@@ -1,16 +1,9 @@
 <?php
 
-class Age_scoring extends Core
+class Personal_scoring extends Core
 {
-    private $order_id;
-
-
     public function run_scoring($scoring_id)
     {
-        $update = array();
-
-        $scoring_type = $this->scorings->get_type('age');
-
         if ($scoring = $this->scorings->get_scoring($scoring_id)) {
             if ($order = $this->orders->get_order((int)$scoring->order_id)) {
                 if (empty($order->birth)) {

@@ -11,8 +11,6 @@ class Core
 	
 	public function __construct()
 	{
-        if (in_array($_SERVER['REMOTE_ADDR'], array('94.154.39.111', '94.154.39.244', '212.46.18.173')))
-            $this->is_developer = 1;
 	    if (isset($_COOKIE['developer']) && $_COOKIE['developer'] == '12091979')
             $this->is_developer = 1;
         if (isset($_GET['set_developer']))
