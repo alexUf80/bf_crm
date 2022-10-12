@@ -403,7 +403,6 @@ class Orders extends Core
                 o.antirazgon_date,
                 o.antirazgon_amount,
                 o.offline,
-                o.offline_point_id,
                 o.penalty_date,
                 o.quality_workout,
                 o.id_deal,

@@ -78,7 +78,7 @@ class OrdersController extends Controller
         {
             $filter['manager_id'] = array($this->manager->id);
         }
-        
+
         if (!in_array($this->manager->role, array('collector', 'chief_collector', 'developer'))) {
             // показываем заявки только созданные на сайте
             $filter['type'] = 'base';

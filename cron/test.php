@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_clients();
+        $this->import_contracts();
     }
 
     private function import_clients()
@@ -38,6 +38,10 @@ class test extends Core
             $passport_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('AH' . $row)->getValue());
 
             $outer_id = $active_sheet->getCell('M' . $row)->getValue();
+
+            if (empty($outer_id))
+                continue;
+
             $in_blacklist = ($active_sheet->getCell('N' . $row)->getValue() == 'Нет') ? 0 : 1;
 
             $Regindex = $active_sheet->getCell('F' . $row)->getValue();
@@ -89,7 +93,6 @@ class test extends Core
                 'workphone' => $active_sheet->getCell('L' . $row)->getValue(),
                 'income' => $active_sheet->getCell('AL' . $row)->getValue(),
                 'expenses' => $active_sheet->getCell('AM' . $row)->getValue(),
-                'employer' => '',
                 'chief_name' => '',
                 'chief_phone' => '',
                 'Regindex' => $Regindex,
@@ -125,7 +128,7 @@ class test extends Core
 
     private function import_orders()
     {
-        $tmp_name = $this->config->root_dir . '/files/import.xlsx';
+        $tmp_name = $this->config->root_dir . '/files/orders.xlsx';
         $format = IOFactory::identify($tmp_name);
         $reader = IOFactory::createReader($format);
         $spreadsheet = $reader->load($tmp_name);
@@ -138,130 +141,67 @@ class test extends Core
         for ($row = $first_row; $row <= $last_row; $row++) {
 
             $id = $active_sheet->getCell('M' . $row)->getValue();
+
+            if(empty($id))
+                continue;
+
             $created = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('A' . $row)->getValue());
             $confirm_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('A' . $row)->getValue());
 
-            $this->db->query("
-            SELECT *
-            FROM s_orders
-            where outer_id = ?
-            ", $id);
+            $reject_reason = $active_sheet->getCell('J' . $row)->getValue();
 
-            $order = $this->db->result();
+            if ($active_sheet->getCell('P' . $row)->getValue() === 'Отказ')
+                $status = 3;
 
-            $reject_reason = '';
-            $loantype_id = 10;
+            if ($active_sheet->getCell('P' . $row)->getValue() === 'Выдан')
+                $status = 5;
 
-            switch ($active_sheet->getCell('P' . $row)->getValue()):
-                case 101542:
-                    $status = 3;
-                    $reject_reason = $active_sheet->getCell('J' . $row)->getValue();
-                    break;
+            if ($active_sheet->getCell('P' . $row)->getValue() === 'На рассмотрении')
+                $status = 1;
 
-                case 101543 :
-                    $status = 5;
-                    break;
+            if ($active_sheet->getCell('P' . $row)->getValue() === 'Оплачен')
+                $status = 7;
 
-                case 101544:
-                    $status = 4;
-                    break;
+            $loantype_id = 2;
 
-                case 101546:
-                    $status = 1;
-                    break;
-
-                case 101548:
-                    $status = 8;
-                    break;
-
-            endswitch;
-
-            if (in_array($active_sheet->getCell('N' . $row)->getValue(), [101343, 101350, 101351]))
+            if ($active_sheet->getCell('N' . $row)->getValue() === 'ONLINE')
                 $loantype_id = 1;
 
-            if (in_array($active_sheet->getCell('N' . $row)->getValue(), [101357, 101367, 101385]))
-                $loantype_id = 2;
+            $loantype = $this->Loantypes->get_loantype($loantype_id);
 
-            if (in_array($active_sheet->getCell('N' . $row)->getValue(), [101398]))
-                $loantype_id = 3;
-
-            if (in_array($active_sheet->getCell('N' . $row)->getValue(), [101363, 101387, 101387]))
-                $loantype_id = 4;
-
-            if (in_array($active_sheet->getCell('N' . $row)->getValue(), [101354, 101352, 101353, 101365, 101389]))
-                $loantype_id = 5;
-
-            if (in_array($active_sheet->getCell('N' . $row)->getValue(), [101364, 101388]))
-                $loantype_id = 6;
-
-            if (in_array($active_sheet->getCell('N' . $row)->getValue(), [101360, 101345, 101366, 101390]))
-                $loantype_id = 7;
-
-            if (in_array($active_sheet->getCell('N' . $row)->getValue(), [101401]))
-                $loantype_id = 8;
-
-            if (in_array($active_sheet->getCell('N' . $row)->getValue(),
-                [
-                    101403, 101404, 101369, 101370, 101371, 101372, 101373, 101374,
-                    101375, 101376, 101377, 101378, 101379, 101380, 101381, 101382, 101383
-                ])) {
-                $loantype_id = 9;
-            }
-
-
-            if ($loantype_id != 10) {
-                $loantype = $this->Loantypes->get_loantype($loantype_id);
-                $period = $loantype->payment_count;
-                $percent = $loantype->percent;
-                $charge = $loantype->charge;
-            } else {
-                $period = 0;
-                $percent = 0;
-                $charge = 0;
-                $peni = 0;
-            }
-
-            if ($active_sheet->getCell('Q' . $row)->getValue() == 1)
-                $status = 7;
 
             $new_order = [
                 'outer_id' => $id,
                 'date' => date('Y-m-d H:i:s', $created),
                 'loantype_id' => $loantype_id,
-                'period' => $period,
+                'period' => 30,
                 'amount' => $active_sheet->getCell('D' . $row)->getValue(),
                 'accept_date' => date('Y-m-d H:i:s', $confirm_date),
                 'confirm_date' => date('Y-m-d H:i:s', $confirm_date),
                 'status' => $status,
-                'offline_point_id' => 0,
-                'percent' => $percent,
-                'charge' => $charge,
+                'percent' => $loantype->percent,
                 'reject_reason' => $reject_reason
             ];
 
-            if (!empty($order)) {
-                $this->orders->update_order($order->id, $new_order);
-            } else {
-                $order_id = $this->orders->add_order($new_order);
+            $order_id = $this->orders->add_order($new_order);
 
-                $this->db->query("
+            $this->db->query("
                 SELECT *
                 FROM s_users
                 where outer_id = ?
                 ", $active_sheet->getCell('L' . $row)->getValue());
 
-                $user = $this->db->result();
+            $user = $this->db->result();
 
-                if (!empty($user))
-                    $this->orders->update_order($order_id, ['user_id' => $user->id]);
-            }
+            if (!empty($user))
+                $this->orders->update_order($order_id, ['user_id' => $user->id]);
 
         }
     }
 
     private function import_contracts()
     {
-        $tmp_name = $this->config->root_dir . '/files/import.xlsx';
+        $tmp_name = $this->config->root_dir . '/files/contracts.xlsx';
         $format = IOFactory::identify($tmp_name);
         $reader = IOFactory::createReader($format);
         $spreadsheet = $reader->load($tmp_name);
@@ -273,53 +213,30 @@ class test extends Core
 
         for ($row = $first_row; $row <= $last_row; $row++) {
 
-            $id = $active_sheet->getCell('L' . $row)->getValue();
             $created = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('B' . $row)->getValue());
             $issuance_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('C' . $row)->getValue());
             $return_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('E' . $row)->getValue());
 
-            $status = $active_sheet->getCell('P' . $row)->getValue();
+            if ($active_sheet->getCell('O' . $row)->getValue() === 'Отказ')
+                $status = 3;
 
-            switch ($status):
-                case 101281:
-                    $status = 2;
-                    break;
+            if ($active_sheet->getCell('O' . $row)->getValue() === 'Выдан')
+                $status = 5;
 
-                case 101481:
-                    $status = 3;
-                    break;
+            if ($active_sheet->getCell('O' . $row)->getValue() === 'На рассмотрении')
+                $status = 1;
 
-                case 101485:
-                    $status = 13;
-                    break;
-
-                case 101486:
-                    $status = 8;
-                    break;
-
-                case 101483:
-                    $status = 12;
-                    break;
-
-                default:
-                    if (!empty($active_sheet->getCell('R' . $row)->getValue()))
-                        $status = 4;
-                    else
-                        $status = 2;
-                    break;
-
-            endswitch;
+            if ($active_sheet->getCell('O' . $row)->getValue() === 'Оплачен')
+                $status = 7;
 
             $issuance_date = new DateTime(date('Y-m-d', $issuance_date));
             $return_date = new DateTime(date('Y-m-d', $return_date));
-            $period = date_diff($issuance_date, $return_date)->days;
 
             $new_contract =
                 [
-                    'outer_id' => $id,
                     'number' => $active_sheet->getCell('A' . $row)->getValue(),
                     'type' => 'base',
-                    'period' => $period,
+                    'period' => 30,
                     'uid' => $active_sheet->getCell('K' . $row)->getValue(),
                     'amount' => $active_sheet->getCell('F' . $row)->getValue(),
                     'status' => $status,
@@ -351,13 +268,11 @@ class test extends Core
 
             $loantype = $this->Loantypes->get_loantype($order->loantype_id);
             $percent = $loantype->percent;
-            $charge = $loantype->charge;
 
             $new_contract =
                 [
                     'order_id' => $order->id,
                     'base_percent' => $percent,
-                    'charge_percent' => $charge,
                 ];
 
             $this->contracts->update_contract($contract_id, $new_contract);
