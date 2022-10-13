@@ -48,7 +48,7 @@
                         <h4 class="mb-0 text-white float-left">Заявка</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST" id="">
+                        <form method="POST" id="create_order_form">
                             <input type="hidden" name="action" value="create_order">
                             <div class="form-body">
                                 <div class="row">
@@ -389,7 +389,7 @@
                                     </div>
                                     <div class="col-md-12">
                                         <div class="text-right">
-                                            <div class="btn btn-success create_order">
+                                            <div class="btn btn-success send_sms">
                                                 Сохранить
                                             </div>
                                         </div>
@@ -400,9 +400,45 @@
                 </div>
             </div>
         </div>
-
     </div>
-
     {include file='footer.tpl'}
+</div>
 
+<div id="sms_confirm_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Подтвердить смс</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <div style="display: flex;" class="col-md-12">
+                    <input type="text" class="form-control sms_code"
+                           placeholder="SMS код"/>
+                    <div class="sent_code badge badge-danger"
+                         style="position: absolute; margin-left: 350px; margin-top: 5px; right: 150px;display: none">
+                    </div>
+                    <button class="btn btn-info confirm_code" type="button"
+                            data-user="{$order->user_id}"
+                            data-order="{$order->order_id}"
+                            style="margin-left: 15px;"
+                            data-phone="{$order->phone_mobile}">Подтвердить
+                    </button>
+                </div>
+                <br>
+                <div class="col-md-12">
+                    <button data-user="{$order->user_id}"
+                            id="send_asp"
+                            data-phone="{$order->phone_mobile}"
+                            data-order="{$order->order_id}"
+                            class="btn btn-primary btn-block send_sms">
+                        Отправить смс повторно
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

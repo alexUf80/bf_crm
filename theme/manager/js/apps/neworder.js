@@ -35,29 +35,6 @@ $(function () {
 
         init();
     });
-    $('.create_order').on('click', function () {
-
-        let form = $(this).closest('form').serialize();
-
-        $.ajax({
-            method: 'POST',
-            dataType: 'JSON',
-            data: form,
-            success: function (resp) {
-                if(resp['success'])
-                {
-                    location.replace('order/'+resp['success']);
-                }
-                if(resp['error'])
-                {
-                    Swal.fire({
-                        title: resp['error'],
-                        confirmButtonText: 'ОК'
-                    });
-                }
-            }
-        })
-    });
     $('#equal_address').on('click', function () {
 
         let html = '<input type="text" class="form-control search_regaddress" name="faktaddress" placeholder=""/>';
@@ -122,6 +99,50 @@ $(function () {
             }
         })
     });
+    $('.send_sms').on('click', function () {
+
+        let phone = $('input[name="phone"]').val();
+
+        $.ajax({
+            method: 'POST',
+            dataType: 'JSON',
+            data:{
+                action: 'send_sms',
+                phone: phone,
+            },
+            success: function (resp) {
+                $('.sent_code').text(resp['code']);
+                $('.sent_code').fadeIn();
+            }
+        });
+
+        $('#sms_confirm_modal').modal();
+    });
+    $('.confirm_code').on('click', function () {
+        let code = $('.sms_code').val();
+        let phone = $('input[name="phone"]').val();
+
+        $.ajax({
+            method: 'POST',
+            dataType: 'JSON',
+            data:{
+                action: 'confirm_sms',
+                phone: phone,
+                code: code
+            },
+            success: function (resp) {
+                if(resp['error'])
+                {
+                    Swal.fire({
+                        title: resp['error'],
+                        confirmButtonText: 'ОК'
+                    });
+                }
+                if(resp['success'])
+                    create_order();
+            }
+        });
+    })
 });
 
 function init() {
@@ -173,4 +194,27 @@ function init() {
             $('textarea[name="passport_issued"]').val(suggestion.value);
         }
     });
+}
+function create_order() {
+
+    let form = $('#create_order_form').serialize();
+
+    $.ajax({
+        method: 'POST',
+        dataType: 'JSON',
+        data: form,
+        success: function (resp) {
+            if(resp['success'])
+            {
+                location.replace('order/'+resp['success']);
+            }
+            if(resp['error'])
+            {
+                Swal.fire({
+                    title: resp['error'],
+                    confirmButtonText: 'ОК'
+                });
+            }
+        }
+    })
 }

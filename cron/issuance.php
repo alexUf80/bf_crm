@@ -59,7 +59,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($res));echo '
                         'return_date' => $return_date,
                     ));
                     
-                    $this->orders->update_order($contract->order_id, array('status'=>5));
+                    $this->orders->update_order($contract->order_id, array('status'=> 5));
                     
                     $this->operations->add_operation(array(
                         'contract_id' => $contract->id,
@@ -74,7 +74,6 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($res));echo '
                     //TODO: Индивидуальные условия
                     $this->create_document('IND_USLOVIYA_NL', $contract);
                     $this->create_document('ANKETA_PEP', $contract);
-
                     $this->create_document('SOLGLASHENIE_PEP', $contract);
                     $this->create_document('SOGLASIE_VZAIMODEYSTVIE', $contract);
                     $this->create_document('SOGLASIE_MEGAFON', $contract);

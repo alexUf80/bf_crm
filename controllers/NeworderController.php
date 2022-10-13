@@ -162,10 +162,8 @@ class NeworderController extends Controller
         if ($order_id = $this->orders->add_order($order)) {
 
             $scoring_types = $this->scorings->get_types();
-            foreach ($scoring_types as $scoring_type)
-            {
-                if ($scoring_type->active && empty($scoring_type->is_paid))
-                {
+            foreach ($scoring_types as $scoring_type) {
+                if ($scoring_type->active && empty($scoring_type->is_paid)) {
                     $add_scoring = array(
                         'user_id' => $user_id,
                         'order_id' => $order_id,
@@ -176,6 +174,28 @@ class NeworderController extends Controller
                     $this->scorings->add_scoring($add_scoring);
                 }
             }
+
+            $contract = array(
+                'order_id' => $order_id,
+                'user_id' => $order['user_id'],
+                'card_id' => 0,
+                'type' => 'base',
+                'amount' => $order['amount'],
+                'period' => $this->request->post('period'),
+                'create_date' => date('Y-m-d H:i:s'),
+                'status' => 0,
+                'base_percent' => 1,
+                'charge_percent' => 0,
+                'peni_percent' => 0
+            );
+
+            $contract_id = $this->contracts->add_contract($contract);
+
+            $contract['id'] = $contract_id;
+
+            $this->orders->update_order($order_id, ['contract_id' => $contract_id]);
+
+            $this->create_reg_docs($contract);
 
             echo json_encode(['success' => $order_id]);
             exit;
@@ -212,5 +232,76 @@ class NeworderController extends Controller
 
         echo json_encode($user);
         exit;
+    }
+
+    private function action_send_sms()
+    {
+        $phone = $this->request->post('phone');
+        $phone = preg_replace("/[^,.0-9]/", '', $phone);
+        $code = random_int(0000, 9999);
+
+        $message = "Выш код: " . $code;
+
+        $resp = $this->sms->send_smsc($phone, $message);
+        $resp = $resp['resp'];
+
+        $message =
+            [
+                'code' => $code,
+                'phone' => $phone,
+                'response' => "$resp"
+            ];
+
+        $this->sms->add_message($message);
+
+        echo json_encode(['code' => $code]);
+        exit;
+    }
+
+    private function action_confirm_sms()
+    {
+        $phone = $this->request->post('phone');
+        $phone = preg_replace("/[^,.0-9]/", '', $phone);
+        $code = $this->request->post('code');
+
+        $true_code = $this->sms->get_code($phone);
+
+        if ($true_code != $code)
+            echo json_encode(['error' => 'Код не совпадает']);
+        else
+            echo json_encode(['success' => 1]);
+
+        exit;
+    }
+
+    private function create_reg_docs($contract)
+    {
+        $types =
+            [
+                'IND_USLOVIYA_NL',
+                'ANKETA_PEP',
+                'SOLGLASHENIE_PEP',
+                'SOGLASIE_VZAIMODEYSTVIE',
+                'SOGLASIE_MEGAFON',
+                'SOGLASIE_SCORING',
+                'SOGLASIE_SPISANIE',
+                'SOGLASIE_OPD'
+            ];
+
+        foreach ($types as $key => $type)
+        {
+            $params =
+                [
+                    'user_id'  => $contract['user_id'],
+                    'order_id' => $contract['order_id'],
+                    'contract_id' => $contract['id'],
+                    'type'     => $type,
+                    'params'   => serialize($contract),
+                    'created'  => date('Y-m-d H:i:s')
+                ];
+
+            $this->documents->create_document($params);
+        }
+
     }
 }

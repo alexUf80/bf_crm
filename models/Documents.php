@@ -69,14 +69,11 @@ class Documents extends Core
         'SOGLASIE_SPISANIE' => 0,
         'PRICHINA_OTKAZA' => 0,
         'POLIS_ZAKRITIE' => 1,
-        
         'IND_USLOVIYA_NL' => 1,
         'POLIS_STRAHOVANIYA' => 1,
         'DOP_USLUGI_VIDACHA' => 0,
-
         'DOP_SOGLASHENIE_PROLONGATSIYA' => 1,
         'DOP_USLUGI_PROLONGATSIYA' => 0,
-
         'SUD_PRIKAZ' => 0,
         'SUD_SPRAVKA' => 0,
         'SUD_VOZBUZHDENIE' => 0,
@@ -108,7 +105,7 @@ class Documents extends Core
             'created' => date('Y-m-d H:i:s'),
         );
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($created);echo '</pre><hr />';
-        $id =  $this->add_document($created);
+        $id = $this->add_document($created);
         
         return $id;
     }
