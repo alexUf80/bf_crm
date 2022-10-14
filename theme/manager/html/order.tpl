@@ -677,7 +677,7 @@
                                             </button>
                                         </div>
                                     {/if}
-                                    {if $order->status == 12 && in_array('approve_contract', $manager->permissions)}
+                                    {if $order->status == 1 && in_array('approve_contract', $manager->permissions)}
                                         <div class="js-approve-reject-block">
                                             <button class="btn btn-success btn-block js-approve-order js-event-add-click"
                                                     data-event="12" data-user="{$order->user_id}"
@@ -692,7 +692,7 @@
                                                 <span>Отказать</span>
                                             </button>
                                         </div>
-                                    {elseif $order->status == 12 && !in_array('approve_contract', $manager->permissions)}
+                                    {elseif $order->status == 1 && !in_array('approve_contract', $manager->permissions)}
                                         <div class="card card-info mb-1">
                                             <div class="box text-center">
                                                 <h3 class="text-white mb-0">На рассмотрении старшего менеджера</h3>
