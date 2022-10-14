@@ -73,13 +73,6 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($res));echo '
                     
                     //TODO: Индивидуальные условия
                     $this->create_document('IND_USLOVIYA_NL', $contract);
-                    $this->create_document('ANKETA_PEP', $contract);
-                    $this->create_document('SOLGLASHENIE_PEP', $contract);
-                    $this->create_document('SOGLASIE_VZAIMODEYSTVIE', $contract);
-                    $this->create_document('SOGLASIE_MEGAFON', $contract);
-                    $this->create_document('SOGLASIE_SCORING', $contract);
-                    $this->create_document('SOGLASIE_SPISANIE', $contract);
-                    $this->create_document('SOGLASIE_OPD', $contract);
 
                     if(!empty($contract->order_id)){
                         $order = $this->orders->get_order($contract->order_id);

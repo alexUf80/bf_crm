@@ -278,13 +278,7 @@ class NeworderController extends Controller
     {
         $types =
             [
-                'IND_USLOVIYA_NL',
                 'ANKETA_PEP',
-                'SOLGLASHENIE_PEP',
-                'SOGLASIE_VZAIMODEYSTVIE',
-                'SOGLASIE_MEGAFON',
-                'SOGLASIE_SCORING',
-                'SOGLASIE_SPISANIE',
                 'SOGLASIE_OPD'
             ];
 

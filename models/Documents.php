@@ -2,95 +2,35 @@
 
 class Documents extends Core
 {
-    private $sudblock_create_documents_sud = array(
-        'SUD_PRIKAZ',
-        'SUD_SPRAVKA',
-    );
-    
-    private $sudblock_create_documents_fssp = array(
-        'SUD_VOZBUZHDENIE',
-    );
-    
+
     private $templates = array(
-        'IND_USLOVIYA_NL' => 'individualnie-usloviya-nl.tpl',
-        'SOGLASIE_VZAIMODEYSTVIE' => 'soglasie-na-vzaimodeystvie.tpl',
-        'POLIS_STRAHOVANIYA' => 'polis-strahovaniya.08.02.2022.tpl',
-        'SOGLASIE_SCORING' => 'soglasie-dlya-skoringa.tpl',
-        'SOGLASIE_SPISANIE' => 'soglasie-na-spisanie.tpl',
-        'SOLGLASHENIE_PEP' => 'soglashenie-pep.tpl', 
-        'SOGLASIE_MEGAFON' => 'soglasie-dlya-megafona.tpl', // согласие на иную частоту взаимодействия
-        'ANKETA_PEP' => 'zayavlenie-o-vidache-zayma.08.02.2022.tpl',// заявление на выдачу займа
-        'POLIS_ZAKRITIE' => 'polis-zakritie.tpl',
-    
-            
-
-        'PRICHINA_OTKAZA' => 'zayavlenie-na-uslugu-uznay-prichinu-otkaza.tpl',
-        'DOP_SOGLASHENIE_PROLONGATSIYA' => 'dopolnitelnoe-soglashenie-o-prolongatsii.tpl',
-
-        'DOP_USLUGI_VIDACHA' => 'soglasie-na-okazanie-dopuslugi-pri-vidache.070922.tpl',
-
-        'DOP_USLUGI_PROLONGATSIYA' => 'soglasie-na-okazanie-dopuslugi-pri-prolongatsii.tpl',
-        
-        'SUD_PRIKAZ' => 'sudblock_prikaz.tpl',
-        'SUD_SPRAVKA' => 'sudblock_spravka.tpl',
-        'SUD_VOZBUZHDENIE' => 'sudblock_spravka.tpl',
-        'SOGLASIE_OPD' => 'obrabotka_personalnyh_dannyh.070922.tpl',
+        'IND_USLOVIYA_NL' => 'dogovor.tpl',
+        'ANKETA_PEP' => 'zayavlenie_na_poluchenie.tpl',
+        'SOGLASIE_OPD' => 'soglasie_opd.tpl'
     );
-    
-    
+
+
     private $names = array(
-        'ANKETA_PEP' => 'Заявление-анкета на получение займа',
-        'SOLGLASHENIE_PEP' => 'Соглашение об АСП',
-        'SOGLASIE_VZAIMODEYSTVIE' => 'Согласие на взаимодействие с 3 лицами',
-        'SOGLASIE_MEGAFON' => 'Согласие на иную частоту взаимодействия',
-        'SOGLASIE_SCORING' => 'Согласие на получение КИ',
-        'SOGLASIE_SPISANIE' => 'Соглашение о рекуррентных платежах',
-        'PRICHINA_OTKAZA' => 'Заявление на услугу Узнай причину отказа',
-        'DOP_SOGLASHENIE_PROLONGATSIYA' => 'Дополнительное соглашение',
-        'POLIS_ZAKRITIE' => 'Полис при закрытии',
-
         'IND_USLOVIYA_NL' => 'Индивидуальные условия',
-        'POLIS_STRAHOVANIYA' => 'Полис страхования',
-        'DOP_USLUGI_VIDACHA' => 'Заявление на страхование',
-
-        'DOP_USLUGI_PROLONGATSIYA' => 'Согласие на оказание доп услуги при пролонгации',
-        
-        'SUD_PRIKAZ' => 'Заявление о вынесении судебного приказа',
-        'SUD_SPRAVKA' => 'Справка',
-        'SUD_VOZBUZHDENIE' => 'Заявление о возбуждении испольнительного производства',
-        'SOGLASIE_OPD' => 'Согласие на обработку персональных данных заемщика'
+        'ANKETA_PEP' => 'Заявление-анкета на получение займа',
+        'SOGLASIE_OPD' => 'Согласие на обработку персональных данных заемщика',
     );
-    
+
     private $client_visible = array(
-        'ANKETA_PEP' => 1,
-        'SOGLASIE_VZAIMODEYSTVIE' => 0,
-        'SOGLASIE_MEGAFON' => 0,
-        'SOGLASIE_SCORING' => 0,
-        'SOGLASIE_SPISANIE' => 0,
-        'PRICHINA_OTKAZA' => 0,
-        'POLIS_ZAKRITIE' => 1,
         'IND_USLOVIYA_NL' => 1,
-        'POLIS_STRAHOVANIYA' => 1,
-        'DOP_USLUGI_VIDACHA' => 0,
-        'DOP_SOGLASHENIE_PROLONGATSIYA' => 1,
-        'DOP_USLUGI_PROLONGATSIYA' => 0,
-        'SUD_PRIKAZ' => 0,
-        'SUD_SPRAVKA' => 0,
-        'SUD_VOZBUZHDENIE' => 0,
-        'SOLGLASHENIE_PEP' => 1,
-        'SOGLASIE_OPD' => 0
-
+        'ANKETA_PEP' => 1,
+        'SOGLASIE_OPD' => 1
     );
-    
+
     public function get_sudblock_create_documents($block)
     {
         if ($block == 'sud')
-        	return $this->sudblock_create_documents_sud;
+            return $this->sudblock_create_documents_sud;
         if ($block == 'fssp')
-        	return $this->sudblock_create_documents_fssp;
+            return $this->sudblock_create_documents_fssp;
     }
-    
-    
+
+
     public function create_document($data)
     {
         $created = array(
@@ -106,23 +46,23 @@ class Documents extends Core
         );
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($created);echo '</pre><hr />';
         $id = $this->add_document($created);
-        
+
         return $id;
     }
-    
+
     public function get_templates()
     {
-    	return $this->templates;
-    }    
-    
+        return $this->templates;
+    }
+
     public function get_template($type)
     {
-    	return isset($this->templates[$type]) ? $this->templates[$type] : null;
-    }    
-    
+        return isset($this->templates[$type]) ? $this->templates[$type] : null;
+    }
+
     public function get_contract_document($contract_id, $type)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             SELECT * 
             FROM __documents
             WHERE contract_id = ?
@@ -134,11 +74,11 @@ class Documents extends Core
 
         return $result;
     }
-    
-    
-	public function get_document($id)
-	{
-		$query = $this->db->placehold("
+
+
+    public function get_document($id)
+    {
+        $query = $this->db->placehold("
             SELECT * 
             FROM __documents
             WHERE id = ?
@@ -149,51 +89,50 @@ class Documents extends Core
 
         return $result;
     }
-    
-	public function get_documents($filter = array())
-	{
-		$id_filter = '';
-		$user_id_filter = '';
-		$order_id_filter = '';
-		$contract_id_filter = '';
-		$client_visible_filter = '';
-		$type_filter = '';
+
+    public function get_documents($filter = array())
+    {
+        $id_filter = '';
+        $user_id_filter = '';
+        $order_id_filter = '';
+        $contract_id_filter = '';
+        $client_visible_filter = '';
+        $type_filter = '';
         $keyword_filter = '';
         $limit = 1000;
-		$page = 1;
-        
+        $page = 1;
+
         if (!empty($filter['id']))
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
-        
+
         if (!empty($filter['user_id']))
             $user_id_filter = $this->db->placehold("AND user_id IN (?@)", array_map('intval', (array)$filter['user_id']));
-        
+
         if (!empty($filter['order_id']))
             $order_id_filter = $this->db->placehold("AND order_id IN (?@)", array_map('intval', (array)$filter['order_id']));
-        
+
         if (!empty($filter['contract_id']))
             $contract_id_filter = $this->db->placehold("AND contract_id IN (?@)", array_map('intval', (array)$filter['contract_id']));
-        
+
         if (isset($filter['client_visible']))
             $client_visible_filter = $this->db->placehold("AND client_visible = ?", (int)$filter['client_visible']);
-        
+
         if (isset($filter['type']))
             $type_filter = $this->db->placehold("AND type = ?", (string)$filter['type']);
-        
-		if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
-        
-		if(isset($filter['limit']))
-			$limit = max(1, intval($filter['limit']));
 
-		if(isset($filter['page']))
-			$page = max(1, intval($filter['page']));
-            
-        $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page-1)*$limit, $limit);
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword)
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%' . $this->db->escape(trim($keyword)) . '%" )');
+        }
+
+        if (isset($filter['limit']))
+            $limit = max(1, intval($filter['limit']));
+
+        if (isset($filter['page']))
+            $page = max(1, intval($filter['page']));
+
+        $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
 
         $query = $this->db->placehold("
             SELECT * 
@@ -210,49 +149,46 @@ class Documents extends Core
             $sql_limit
         ");
         $this->db->query($query);
-        if ($results = $this->db->results())
-        {
-            foreach ($results as $result)
-            {
+        if ($results = $this->db->results()) {
+            foreach ($results as $result) {
                 $result->params = unserialize($result->params);
             }
         }
-        
+
         return $results;
-	}
-    
-	public function count_documents($filter = array())
-	{
+    }
+
+    public function count_documents($filter = array())
+    {
         $id_filter = '';
-		$user_id_filter = '';
-		$order_id_filter = '';
-		$contract_id_filter = '';
+        $user_id_filter = '';
+        $order_id_filter = '';
+        $contract_id_filter = '';
         $client_visible_filter = '';
         $keyword_filter = '';
-        
+
         if (!empty($filter['id']))
             $id_filter = $this->db->placehold("AND id IN (?@)", array_map('intval', (array)$filter['id']));
-		
+
         if (!empty($filter['user_id']))
             $user_id_filter = $this->db->placehold("AND user_id IN (?@)", array_map('intval', (array)$filter['user_id']));
-        
+
         if (!empty($filter['order_id']))
             $order_id_filter = $this->db->placehold("AND order_id IN (?@)", array_map('intval', (array)$filter['order_id']));
-        
+
         if (!empty($filter['contract_id']))
             $contract_id_filter = $this->db->placehold("AND contract_id IN (?@)", array_map('intval', (array)$filter['contract_id']));
-        
+
         if (isset($filter['client_visible']))
             $client_visible_filter = $this->db->placehold("AND client_visible = ?", (int)$filter['client_visible']);
-        
-        if(isset($filter['keyword']))
-		{
-			$keywords = explode(' ', $filter['keyword']);
-			foreach($keywords as $keyword)
-				$keyword_filter .= $this->db->placehold('AND (name LIKE "%'.$this->db->escape(trim($keyword)).'%" )');
-		}
-                
-		$query = $this->db->placehold("
+
+        if (isset($filter['keyword'])) {
+            $keywords = explode(' ', $filter['keyword']);
+            foreach ($keywords as $keyword)
+                $keyword_filter .= $this->db->placehold('AND (name LIKE "%' . $this->db->escape(trim($keyword)) . '%" )');
+        }
+
+        $query = $this->db->placehold("
             SELECT COUNT(id) AS count
             FROM __documents
             WHERE 1
@@ -265,18 +201,18 @@ class Documents extends Core
         ");
         $this->db->query($query);
         $count = $this->db->result('count');
-	
+
         return $count;
     }
-    
+
     public function add_document($document)
     {
         $document = (array)$document;
-        
+
         if (isset($document['params']))
             $document['params'] = serialize($document['params']);
-        
-		$query = $this->db->placehold("
+
+        $query = $this->db->placehold("
             INSERT INTO __documents SET ?%
         ", $document);
         $this->db->query($query);
@@ -285,35 +221,35 @@ class Documents extends Core
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';exit;
         return $id;
     }
-    
+
     public function update_document($id, $document)
     {
         $document = (array)$document;
-        
+
         if (isset($document['params']))
             $document['params'] = serialize($document['params']);
-        
-		$query = $this->db->placehold("
+
+        $query = $this->db->placehold("
             UPDATE __documents SET ?% WHERE id = ?
         ", $document, (int)$id);
         $this->db->query($query);
-        
+
         return $id;
     }
-    
+
     public function delete_document($id)
     {
-		$query = $this->db->placehold("
+        $query = $this->db->placehold("
             DELETE FROM __documents WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
     }
-    
-    
+
+
     public function create_contract_document($document_type, $contract)
     {
         $ob_date = new DateTime();
-        $ob_date->add(DateInterval::createFromDateString($contract->period.' days'));
+        $ob_date->add(DateInterval::createFromDateString($contract->period . ' days'));
         $return_date = $ob_date->format('Y-m-d H:i:s');
 
         $return_amount = round($contract->amount + $contract->amount * $contract->base_percent * $contract->period / 100, 2);
@@ -321,7 +257,7 @@ class Documents extends Core
         $return_amount_kop = ($return_amount - $return_amount_rouble) * 100;
 
         $contract_order = $this->orders->get_order((int)$contract->order_id);
-        
+
         $params = array(
             'lastname' => $contract_order->lastname,
             'firstname' => $contract_order->firstname,
@@ -350,31 +286,30 @@ class Documents extends Core
             'asp' => $contract->accept_code,
             'insurance_summ' => round($contract->amount * 0.15, 2),
         );
-        $regaddress_full = empty($contract_order->Regindex) ? '' : $contract_order->Regindex.', ';
-        $regaddress_full .= trim($contract_order->Regregion.' '.$contract_order->Regregion_shorttype);
-        $regaddress_full .= empty($contract_order->Regcity) ? '' : trim(', '.$contract_order->Regcity.' '.$contract_order->Regcity_shorttype);
-        $regaddress_full .= empty($contract_order->Regdistrict) ? '' : trim(', '.$contract_order->Regdistrict.' '.$contract_order->Regdistrict_shorttype);
-        $regaddress_full .= empty($contract_order->Reglocality) ? '' : trim(', '.$contract_order->Reglocality.' '.$contract_order->Reglocality_shorttype);
-        $regaddress_full .= empty($contract_order->Reghousing) ? '' : ', д.'.$contract_order->Reghousing;
-        $regaddress_full .= empty($contract_order->Regbuilding) ? '' : ', стр.'.$contract_order->Regbuilding;
-        $regaddress_full .= empty($contract_order->Regroom) ? '' : ', к.'.$contract_order->Regroom;
+        $regaddress_full = empty($contract_order->Regindex) ? '' : $contract_order->Regindex . ', ';
+        $regaddress_full .= trim($contract_order->Regregion . ' ' . $contract_order->Regregion_shorttype);
+        $regaddress_full .= empty($contract_order->Regcity) ? '' : trim(', ' . $contract_order->Regcity . ' ' . $contract_order->Regcity_shorttype);
+        $regaddress_full .= empty($contract_order->Regdistrict) ? '' : trim(', ' . $contract_order->Regdistrict . ' ' . $contract_order->Regdistrict_shorttype);
+        $regaddress_full .= empty($contract_order->Reglocality) ? '' : trim(', ' . $contract_order->Reglocality . ' ' . $contract_order->Reglocality_shorttype);
+        $regaddress_full .= empty($contract_order->Reghousing) ? '' : ', д.' . $contract_order->Reghousing;
+        $regaddress_full .= empty($contract_order->Regbuilding) ? '' : ', стр.' . $contract_order->Regbuilding;
+        $regaddress_full .= empty($contract_order->Regroom) ? '' : ', к.' . $contract_order->Regroom;
 
         $params['regaddress_full'] = $regaddress_full;
 
-        if (!empty($contract->insurance_id))
-        {
+        if (!empty($contract->insurance_id)) {
             $params['insurance'] = $this->insurances->get_insurance($contract->insurance_id);
         }
-        
+
 
         $this->documents->create_document(array(
             'user_id' => $contract->user_id,
             'order_id' => $contract->order_id,
             'contract_id' => $contract->id,
             'type' => $document_type,
-            'params' => $params,                
+            'params' => $params,
         ));
 
     }
-    
+
 }
