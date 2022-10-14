@@ -19,8 +19,6 @@ class Sms extends Core
 
         $this->login = 'em@eco-zaim.ru';
         $this->password = 'Pass1029';
-        $this->originator = $this->settings->apikeys['sms']['originator'];
-        $this->connect_id = $this->settings->apikeys['sms']['connect_id'];
 
         $this->yuk_login = 'mkk.po@yandex.ru';
         $this->yuk_password = 'Pass1029';

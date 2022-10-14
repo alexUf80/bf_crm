@@ -599,7 +599,7 @@
                                                 <span>Отказать</span>
                                             </button>
                                         </div>
-                                    {else}
+                                    {elseif $order->status == 12 && !in_array('approve_contract', $manager->permissions)}
                                         <div class="card card-info mb-1">
                                             <div class="box text-center">
                                                 <h3 class="text-white mb-0">На рассмотрении старшего менеджера</h3>

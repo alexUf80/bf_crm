@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(-1);
+ini_set('display_errors', 'On');
 class NeworderController extends Controller
 {
     public function fetch()
@@ -194,6 +196,7 @@ class NeworderController extends Controller
             $contract['id'] = $contract_id;
 
             $this->orders->update_order($order_id, ['contract_id' => $contract_id]);
+            $contract = (object)$contract;
 
             $this->create_reg_docs($contract);
 
@@ -282,19 +285,75 @@ class NeworderController extends Controller
                 'SOGLASIE_OPD'
             ];
 
+        $ob_date = new DateTime();
+        $ob_date->add(DateInterval::createFromDateString($contract->period.' days'));
+        $return_date = $ob_date->format('Y-m-d H:i:s');
+
+        $return_amount = round($contract->amount + $contract->amount * $contract->base_percent * $contract->period / 100, 2);
+        $return_amount_rouble = (int)$return_amount;
+        $return_amount_kop = ($return_amount - $return_amount_rouble) * 100;
+        $contract = $this->contracts->get_contract($contract->id);
+        $contract_order = $this->orders->get_order($contract->order_id);
+        $contract_user = $this->users->get_user($contract->user_id);
+        $regaddress = $this->Addresses->get_address($contract_user->regaddress_id);
+        $faktaddress = $this->Addresses->get_address($contract_user->faktaddress_id);
+
+        $params = array(
+            'lastname' => $contract_order->lastname,
+            'firstname' => $contract_order->firstname,
+            'patronymic' => $contract_order->patronymic,
+            'phone_mobile' => $contract_order->phone_mobile,
+            'birth' => $contract_order->birth,
+            'gender' => $contract_order->gender,
+            'number' => $contract->number,
+            'contract_date' => date('Y-m-d H:i:s'),
+            'created' => date('Y-m-d H:i:s'),
+            'return_date' => $return_date,
+            'return_date_day' => date('d', strtotime($return_date)),
+            'return_date_month' => date('m', strtotime($return_date)),
+            'return_date_year' => date('Y', strtotime($return_date)),
+            'return_amount' => $return_amount,
+            'return_amount_rouble' => $return_amount_rouble,
+            'return_amount_kop' => $return_amount_kop,
+            'base_percent' => $contract->base_percent,
+            'amount' => $contract->amount,
+            'period' => $contract->period,
+            'return_amount_percents' => round($contract->amount * $contract->base_percent * $contract->period / 100, 2),
+            'passport_serial' => $contract_order->passport_serial,
+            'passport_date' => $contract_order->passport_date,
+            'subdivision_code' => $contract_order->subdivision_code,
+            'passport_issued' => $contract_order->passport_issued,
+            'passport_series' => substr(str_replace(array(' ', '-'), '', $contract_order->passport_serial), 0, 4),
+            'passport_number' => substr(str_replace(array(' ', '-'), '', $contract_order->passport_serial), 4, 6),
+            'insurance_summ' => $this->insurances->get_insurance_cost($contract->amount),
+            'passport_code' => $contract_user->subdivision_code,
+            'profession' => $contract_user->profession,
+            'workplace' => $contract_user->workplace,
+            'workphone' => $contract_user->workphone,
+            'chief_name' => $contract_user->chief_name,
+            'chief_position' => $contract_user->chief_position,
+            'chief_phone' => $contract_user->chief_phone,
+            'income' => $contract_user->income,
+            'expenses' => $contract_user->expenses,
+            'create_date' => date('Y-m-d H:i:s'),
+        );
+
+        $params['regaddress_full'] = $regaddress->adressfull;
+        $params['faktaddress_full'] = $faktaddress->adressfull;
+
         foreach ($types as $key => $type)
         {
-            $params =
+            $doc =
                 [
-                    'user_id'  => $contract['user_id'],
-                    'order_id' => $contract['order_id'],
-                    'contract_id' => $contract['id'],
+                    'user_id'  => $contract->user_id,
+                    'order_id' => $contract->order_id,
+                    'contract_id' => $contract->id,
                     'type'     => $type,
-                    'params'   => serialize($contract),
+                    'params'   => $params,
                     'created'  => date('Y-m-d H:i:s')
                 ];
 
-            $this->documents->create_document($params);
+            $this->documents->create_document($doc);
         }
 
     }

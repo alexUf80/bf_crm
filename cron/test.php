@@ -71,12 +71,15 @@ class test extends Core
 
             $fio = explode(' ', $active_sheet->getCell('A' . $row)->getValue());
 
+            $phone = preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('H' . $row)->getValue());
+            $phone = str_replace('8', '7', $phone);
+
             $user = [
                 'firstname' => ucfirst($fio[1]),
                 'lastname' => ucfirst($fio[0]),
                 'patronymic' => ucfirst($fio[2]),
                 'outer_id' => $outer_id,
-                'phone_mobile' => preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('H' . $row)->getValue()),
+                'phone_mobile' => $phone,
                 'email' => $active_sheet->getCell('AD' . $row)->getValue(),
                 'gender' => $active_sheet->getCell('AK' . $row)->getValue() == 'Мужчина' ? 'male' : 'female',
                 'birth' => date('Y-m-d', $birth),
