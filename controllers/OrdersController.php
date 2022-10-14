@@ -57,31 +57,9 @@ class OrdersController extends Controller
         }
         $this->design->assign('period', $period);
 
-        if ($this->manager->role == 'collector' || $this->manager->role == 'chief_collector') {
-            // показываем только выданные заявки
-            $filter['status'] = array(5);
-        }
-
-        if ($this->manager->role == 'quality_control') {
-            $filter['workout_sort'] = 1;
-        }
-
-        if ($this->manager->role == 'cs_pc') {
-            $filter['offline'] = 1;
-        }
-
-        if ($this->manager->role == 'user') {
-            $filter['autoretry'] = 0;
-        }
-
         if ($this->request->get('my'))
         {
             $filter['manager_id'] = array($this->manager->id);
-        }
-
-        if (!in_array($this->manager->role, array('collector', 'chief_collector', 'developer'))) {
-            // показываем заявки только созданные на сайте
-            $filter['type'] = 'base';
         }
 
         if (!($sort = $this->request->get('sort', 'string'))) {
@@ -117,30 +95,6 @@ class OrdersController extends Controller
 
         $filter['page'] = $current_page;
         $filter['limit'] = $items_per_page;
-
-
-        /*
-                $orders = array();
-                foreach ($this->orders->get_orders($filter) as $order)
-                {
-                    $order->scorings = $this->scorings->get_scorings(array('user_id'=>$order->user_id));
-                    if (empty($order->scorings) || !count($order->scorings))
-                    {
-                        $order->scorings_result = 'Не проводился';
-                    }
-                    else
-                    {
-                        $order->scorings_result = 'Пройден';
-                        foreach ($order->scorings as $scoring)
-                        {
-                            if (!$scoring->success)
-                                $order->scorings_result = 'Не пройден: '.$scoring->type;
-                        }
-                    }
-
-                    $orders[$order->order_id] = $order;
-                }
-        */
 
         $orders = array();
         foreach ($this->orders->get_orders($filter) as $order) {
@@ -196,16 +150,6 @@ class OrdersController extends Controller
         $this->design->assign('reasons', $reasons);
         
         $this->design->assign('orders', $orders);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($orders);echo '</pre><hr />';
-
-        $risk_op = ['complaint' => 'Жалоба', 'bankrupt' => 'Банкрот', 'refusal' => 'Отказ от взаимодействия',
-            'refusal_thrd' => 'Отказ от взаимодействия с 3 лицами', 'death' => 'Смерть', 'anticollectors' => 'Антиколлекторы', 'mls' => 'Находится в МЛС',
-            'bankrupt_init' => 'Инициировано банкротство', 'fraud' => 'Мошенничество', 'canicule' => "Кредитные каникулы"];
-
-        $user_risk_op = $this->UsersRisksOperations->get_records();
-
-        $this->design->assign('user_risk_op', $user_risk_op);
-        $this->design->assign('risk_op', $risk_op);
 
         $sms_templates = $this->sms->get_templates();
         $this->design->assign('sms_templates', $sms_templates);

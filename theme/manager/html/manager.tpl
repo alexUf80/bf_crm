@@ -205,18 +205,8 @@
                                         <div class="col-sm-12">
                                             <select name="role" class="form-control form-control-line" required="true">
                                                 <option value=""></option>
-                                                {foreach $roles as $role => $role_name}
-                                                    {if $manager->role == 'chief_collector' || $manager->role == 'team_collector'}
-                                                        {if $role == 'collector' || $role == 'team_collector' || $role == 'user'}
-                                                        <option value="{$role}" {if $user->role == $role}selected="true"{/if}>{$role_name|escape}</option>
-                                                        {/if}
-                                                    {elseif $manager->role == 'city_manager'}
-                                                        {if $role == 'cs_pc'}
-                                                        <option value="{$role}" {if $user->role == $role}selected="true"{/if}>{$role_name|escape}</option>
-                                                        {/if}
-                                                    {else}
-                                                    <option value="{$role}" {if $user->role == $role}selected="true"{/if}>{$role_name|escape}</option>
-                                                    {/if}
+                                                {foreach $roles as $role}
+                                                    <option value="{$role->id}">{$role->translate}</option>
                                                 {/foreach}
                                             </select>
                                             {if in_array('empty_role', (array)$errors)}<small class="form-control-feedback">Выберите роль!</small>{/if}

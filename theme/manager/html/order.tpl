@@ -39,6 +39,24 @@
                 }
             });
 
+            $('.send_sms').on('click', function () {
+
+                let order = $(this).attr('data-order');
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'send_sms',
+                        order: order
+                    },
+                    success: function (resp) {
+                        $('.sent_code').text(resp['code']);
+                        $('.sent_code').fadeIn();
+                    }
+                });
+            });
+
             $(document).on('submit', '.js-sms-form', function (e) {
                 e.preventDefault();
 
@@ -51,7 +69,7 @@
                 if ($form.hasClass('loading'))
                     return false;
 
- 
+
                 $.ajax({
                     type: 'POST',
                     data: $form.serialize(),
@@ -127,6 +145,33 @@
                 })
 
             })
+
+            $('.accept_contract').on('click', function () {
+
+                let order = $(this).attr('data-order');
+                let code = $('.sms_code').val();
+
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        action: 'confirm_contract',
+                        order: order,
+                        code: code
+                    },
+                    success: function (resp) {
+                        if (resp['error']) {
+                            Swal.fire({
+                                title: resp['error'],
+                                confirmButtonText: 'ОК'
+                            });
+                        }
+                        if (resp['success']) {
+                            location.reload();
+                        }
+                    }
+                });
+            });
         })
     </script>
 {/capture}
@@ -364,11 +409,11 @@
                                                 {/foreach}
                                             {/if}
                                             {if in_array($manager->role, ['developer', 'admin', 'user'])}
-                                            <a href="javascript:void(0);"
-                                               class="text-info js-edit-form edit-amount js-event-add-click"
-                                               data-event="30" data-manager="{$manager->id}"
-                                               data-order="{$order->order_id}" data-user="{$order->user_id}"><i
-                                                        class=" fas fa-edit"></i></a>
+                                                <a href="javascript:void(0);"
+                                                   class="text-info js-edit-form edit-amount js-event-add-click"
+                                                   data-event="30" data-manager="{$manager->id}"
+                                                   data-order="{$order->order_id}" data-user="{$order->user_id}"><i
+                                                            class=" fas fa-edit"></i></a>
                                             {/if}
                                         </div>
 
@@ -577,28 +622,23 @@
                                                 <i class="fas fa-times-circle"></i>
                                                 <span>Отказать</span>
                                             </button>
-                                            <form class=" pt-1 js-confirm-contract">
+                                            <form class="pt-1">
                                                 <div class="input-group">
-                                                    <input type="hidden" name="contract_id" class="js-contract-id"
-                                                           value="{$order->contract_id}"/>
-                                                    <input type="hidden" name="phone" class="js-contract-phone"
-                                                           value="{$order->phone_mobile}"/>
-                                                    <input type="text" class="form-control js-contract-code"
-                                                           placeholder="SMS код"
-                                                           value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                                                    <input type="text" class="form-control sms_code"
+                                                           placeholder="SMS код"/>
+                                                    <div class="sent_code badge badge-danger"
+                                                         style="position: absolute; margin-left: 350px; margin-top: 5px; right: 120px;display: none">
+                                                    </div>
                                                     <div class="input-group-append">
-                                                        <button class="btn btn-info js-event-add-click" type="submit"
-                                                                data-event="14" data-user="{$order->user_id}"
-                                                                data-order="{$order->order_id}"
-                                                                data-manager="{$manager->id}">Подтвердить
-                                                        </button>
+                                                        <div class="btn btn-info accept_contract"
+                                                             data-order="{$order->order_id}">Подтвердить
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <a href="javascript:void(0);" class="js-sms-send"
-                                                   data-contract="{$order->contract_id}">
+                                                <small class="btn btn-outline-primary btn-xs send_sms"
+                                                       data-order="{$order->order_id}">
                                                     <span>Отправить смс код</span>
-                                                    <span class="js-sms-timer"></span>
-                                                </a>
+                                                </small>
                                             </form>
                                         {/if}
                                         {if $order->status == 3}

@@ -15,6 +15,9 @@ class ManagerController extends Controller
             $user->phone = $this->request->post('phone');
             $user->login = $this->request->post('login');
             $user->mango_number = $this->request->post('mango_number');
+
+            $user->role = $this->ManagersRoles->get($user->role);
+            $user->role = $user->role->name;
             
             if ($this->request->post('password'))
                 $user->password = $this->request->post('password');
@@ -30,14 +33,9 @@ class ManagerController extends Controller
             
             if (empty($user_id) && empty($user->password))
                 $errors[] = 'empty_password';
-            
-            /*
-            if (!($this->soap1c->check_manager_name($user->name_1c)))
-                $errors[] = 'name_1c_not_found';
-            */
+
             $this->design->assign('errors', $errors);
-            
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($_POST, $errors);echo '</pre><hr />';
+
             if (empty($errors))
             {
                 if (empty($user_id))
@@ -89,7 +87,7 @@ class ManagerController extends Controller
             $meta_title = 'Создать новый профиль';
         }
         
-        $roles = $this->managers->get_roles();
+        $roles = $this->ManagersRoles->gets();
         $this->design->assign('roles', $roles);
         
         $this->design->assign('meta_title', $meta_title);

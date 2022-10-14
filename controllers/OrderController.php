@@ -639,28 +639,24 @@ class OrderController extends Controller
 
     private function confirm_contract_action()
     {
-        $contract_id = $this->request->post('contract_id', 'integer');
-        $code = $this->request->post('code', 'integer');
-        $phone = $this->request->post('phone');
+        $order_id = $this->request->post('order');
+        $code = $this->request->post('code');
 
-        if (!($contract = $this->contracts->get_contract($contract_id)))
-            return array('error' => 'Договор не найден');
+        $order = $this->orders->get_order($order_id);
+        $order->phone_mobile = preg_replace("/[^,.0-9]/", '', $order->phone_mobile);
 
-        if ($contract->status != 0)
-            return array('error' => 'Договор не находится в статусе Новый!');
+        $db_code = $this->sms->get_code($order->phone_mobile);
 
-        $db_code = $this->sms->get_code($phone);
-        if ($contract->accept_code != $code) {
-            return array('error' => 'Код не совпадает');
+        if ($db_code != $code) {
+            echo json_encode(['error' => 'Код не совпадает']);
         } else {
-            $this->contracts->update_contract($contract_id, array(
+            $this->contracts->update_contract($order->contract_id, array(
                 'status' => 1,
                 'accept_code' => $code,
-                'accept_date' => date('Y-m-d H:i:s'),
-                'accept_ip' => $_SERVER['REMOTE_ADDR']
+                'accept_date' => date('Y-m-d H:i:s')
             ));
 
-            $this->orders->update_order($contract->order_id, array(
+            $this->orders->update_order($order->order_id, array(
                 'status' => 4,
                 'confirm_date' => date('Y-m-d H:i:s'),
             ));
@@ -671,13 +667,15 @@ class OrderController extends Controller
                 'type' => 'confirm_order',
                 'old_values' => serialize(array('status' => 3)),
                 'new_values' => serialize(array('status' => 4)),
-                'order_id' => $contract->order_id,
-                'user_id' => $contract->user_id,
+                'order_id' => $order->order_id,
+                'user_id' => $order->user_id,
             ));
 
-            return array('success' => 1, 'status' => 4, 'manager' => $this->manager->name);
+            echo json_encode(['success' => 1]);
 
         }
+
+        exit;
 
     }
 
@@ -2797,75 +2795,27 @@ class OrderController extends Controller
 
     private function send_sms_action()
     {
+        $order_id = $this->request->post('order');
+        $order = $this->orders->get_order($order_id);
+        $order->phone_mobile = preg_replace("/[^,.0-9]/", '', $order->phone_mobile);
+        $code = random_int(0000, 9999);
 
-        $user_id = $this->request->post('user_id', 'integer');
-        $order_id = $this->request->post('order_id', 'integer');
-        $template_id = $this->request->post('template_id', 'integer');
-        $manager_id = $this->request->post('manager_id', 'integer');
-        $text_sms = $this->request->post('text_sms', 'string');
+        $message = "Выш код: " . $code;
 
-        $user = $this->users->get_user((int)$user_id);
+        $resp = $this->sms->send_smsc($order->phone_mobile, $message);
+        $resp = $resp['resp'];
 
-        $template = null;
+        $message =
+            [
+                'code'     => $code,
+                'phone'    => $order->phone_mobile,
+                'response' => "$resp"
+            ];
 
-        if ($text_sms) {
+        $this->sms->add_message($message);
 
-            $template = $text_sms;
-        }
-
-        if ($template_id) {
-
-            $template = $this->sms->get_template($template_id);
-            $template = $template->template;
-        }
-
-        if (!empty($order_id)) {
-            $order = $this->orders->get_order($order_id);
-
-            if ($order->contract_id) {
-                $code = $this->helpers->c2o_encode($order->contract_id);
-                $payment_link = $this->config->front_url . '/p/' . $code;
-                $contract = $this->contracts->get_contract($order->contract_id);
-                $osd_sum = $contract->loan_body_summ + $contract->loan_percents_summ + $contract->loan_charge_summ + $contract->loan_peni_summ;
-            }
-
-            $str_params =
-                [
-                    '{$payment_link}' => $payment_link,
-                    '$firstname' => $user->firstname,
-                    '$fio' => "$user->lastname $user->firstname $user->patronymic",
-                    '$prolongation_sum' => $contract->loan_percents_summ,
-                    '$final_sum' => $osd_sum
-                ];
-
-            $template = strtr($template, $str_params);
-        }
-
-        $resp = $this->sms->send(
-        /*'79276928586'*/
-            $user->phone_mobile,
-            $template
-        );
-
-        $this->sms->add_message(array(
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-            'phone' => $user->phone_mobile,
-            'message' => $template,
-            'created' => date('Y-m-d H:i:s'),
-        ));
-
-        $this->changelogs->add_changelog(array(
-            'manager_id' => $manager_id,
-            'created' => date('Y-m-d H:i:s'),
-            'type' => 'send_sms',
-            'old_values' => '',
-            'new_values' => $template,
-            'user_id' => $user->id,
-            'order_id' => $order_id,
-        ));
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';
-        $this->json_output(array('success' => true));
+        echo json_encode(['code' => $code]);
+        exit;
     }
 
     private function num2word($num, $words)
