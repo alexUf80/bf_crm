@@ -24,6 +24,22 @@ class OrderController extends Controller
                     $this->contactdata_action();
                     break;
 
+                case 'add_contact':
+                    $this->action_add_contact();
+                    break;
+
+                case 'delete_contact':
+                    $this->action_delete_contact();
+                    break;
+
+                case 'edit_contact':
+                    $this->action_edit_contact();
+                    break;
+
+                case 'get_contact':
+                    $this->action_get_contact();
+                    break;
+
                 case 'contacts':
                     $this->contacts_action();
                     break;
@@ -204,6 +220,9 @@ class OrderController extends Controller
                 if ($order = $this->orders->get_order($order_id)) {
                     // сохраняем историю займов из 1с
                     $client = $this->users->get_user($order->user_id);
+
+                    $contacts = $this->Contactpersons->get_contactpersons(['user_id' => $order->user_id]);
+                    $this->design->assign('contacts', $contacts);
 
                     $documents = $this->Documents->get_documents(['order_id' => $order->order_id]);
                     $polises = [];
@@ -2919,6 +2938,67 @@ class OrderController extends Controller
             'loan_peni_summ' => 0,
             'type_payment' => 0
         ));
+        exit;
+    }
+
+    private function action_add_contact()
+    {
+        $user_id = $this->request->post('user_id');
+        $fio = strtoupper($this->request->post('fio'));
+        $phone = trim($this->request->post('phone'));
+        $relation = $this->request->post('relation');
+        $comment = $this->request->post('comment');
+
+        $contact =
+            [
+                'user_id' => $user_id,
+                'name' => $fio,
+                'phone' => $phone,
+                'relation' => $relation,
+                'comment' => $comment
+            ];
+
+        $this->Contactpersons->add_contactperson($contact);
+        exit;
+    }
+
+    private function action_delete_contact()
+    {
+        $id = $this->request->post('id');
+
+        $this->Contactpersons->delete_contactperson($id);
+
+        exit;
+    }
+
+    private function action_edit_contact()
+    {
+        $id = $this->request->post('id');
+
+        $fio = strtoupper($this->request->post('fio'));
+        $phone = trim($this->request->post('phone'));
+        $relation = $this->request->post('relation');
+        $comment = $this->request->post('comment');
+
+        $contact =
+            [
+                'name' => $fio,
+                'phone' => $phone,
+                'relation' => $relation,
+                'comment' => $comment
+            ];
+
+        $this->Contactpersons->update_contactperson($id, $contact);
+        exit;
+    }
+
+    private function action_get_contact()
+    {
+        $id = $this->request->post('id');
+
+        $contact = $this->Contactpersons->get_contactperson($id);
+
+        echo json_encode($contact);
         exit;
     }
 }
