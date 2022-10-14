@@ -30,29 +30,37 @@ class TaxingCron extends Core
     private function run()
     {
 
-        if ($contracts = $this->contracts->get_contracts(array('status' => [2, 4], 'type' => 'base'))) {
+        if ($contracts = $this->contracts->get_contracts(array('status' => [2, 4], 'type' => 'base', 'stop_profit' => 0))) {
 
             foreach ($contracts as $contract) {
+                $issuance_date = new DateTime(date('Y-m-d', strtotime($contract->inssuance_date)));
+                $now_date = new DateTime(date('Y-m-d'));
 
-                $percents_summ = round($contract->loan_body_summ / 100 * $contract->base_percent, 2);
+                if (date_diff($issuance_date, $now_date)->days > 150) {
+                    $this->contracts->update_contract($contract->id, array(
+                        'stop_profit' => 1
+                    ));
+                } else {
+                    $percents_summ = round($contract->loan_body_summ / 100 * $contract->base_percent, 2);
 
-                $this->contracts->update_contract($contract->id, array(
-                    'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ
-                ));
+                    $this->contracts->update_contract($contract->id, array(
+                        'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ
+                    ));
 
 
-                $this->operations->add_operation(array(
-                    'contract_id' => $contract->id,
-                    'user_id' => $contract->user_id,
-                    'order_id' => $contract->order_id,
-                    'type' => 'PERCENTS',
-                    'amount' => $percents_summ,
-                    'created' => date('Y-m-d H:i:s'),
-                    'loan_body_summ' => $contract->loan_body_summ,
-                    'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
-                    'loan_charge_summ' => $contract->loan_charge_summ,
-                    'loan_peni_summ' => $contract->loan_peni_summ,
-                ));
+                    $this->operations->add_operation(array(
+                        'contract_id' => $contract->id,
+                        'user_id' => $contract->user_id,
+                        'order_id' => $contract->order_id,
+                        'type' => 'PERCENTS',
+                        'amount' => $percents_summ,
+                        'created' => date('Y-m-d H:i:s'),
+                        'loan_body_summ' => $contract->loan_body_summ,
+                        'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
+                        'loan_charge_summ' => $contract->loan_charge_summ,
+                        'loan_peni_summ' => $contract->loan_peni_summ,
+                    ));
+                }
             }
         }
     }
@@ -60,4 +68,4 @@ class TaxingCron extends Core
 
 }
 
-$cron = new IssuanceCron();
+$cron = new TaxingCron();
