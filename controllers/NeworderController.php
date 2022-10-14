@@ -154,7 +154,7 @@ class NeworderController extends Controller
             'period' => $this->request->post('period'),
             'date' => date('Y-m-d H:i:s'),
             'manager_id' => $this->manager->id,
-            'status' => 1,
+            'status' => 0,
             'offline' => 1,
 
         );

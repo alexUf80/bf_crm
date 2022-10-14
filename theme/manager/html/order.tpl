@@ -338,10 +338,8 @@
                                     {/if}
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-3 ">
-                                    {if $looker_link && !$order->offline}
-                                        <a href="{$looker_link}" target="_blank" class="btn btn-info float-right"><i
-                                                    class=" fas fa-address-book"></i> Смотреть ЛК</a>
-                                    {/if}
+                                    <a href="{$looker_link}" target="_blank" class="btn btn-info float-right"><i
+                                                class=" fas fa-address-book"></i> Смотреть ЛК</a>
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-3 ">
                                     <h5 class="js-order-manager text-right">
@@ -570,35 +568,13 @@
                                     </form>
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-3">
-                                    {if !$order->manager_id && $order->status == 0}
+                                    {if $order->status == 0}
                                         <div class="pt-3 js-accept-order-block">
-                                            <button class="btn btn-info btn-lg btn-block js-accept-order js-event-add-click"
+                                            <button class="btn btn-info btn-block js-accept-order js-event-add-click"
                                                     data-event="10" data-manager="{$manager->id}"
                                                     data-order="{$order->order_id}" data-user="{$order->user_id}">
                                                 <i class="fas fa-hospital-symbol"></i>
                                                 <span>Принять</span>
-                                            </button>
-                                        </div>
-                                    {/if}
-
-                                    {if $order->status == 1 && $order->manager_id != $manager->id}
-                                        <div class="pt-1 pb-2 js-accept-order-block">
-                                            <button class="btn btn-info btn-block js-accept-order js-event-add-click"
-                                                    data-event="11" data-user="{$order->user_id}"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <i class="fas fa-hospital-symbol"></i>
-                                                <span>Перепринять</span>
-                                            </button>
-                                        </div>
-                                    {/if}
-
-                                    {if $order->status == 1}
-                                        <div class="js-approve-reject-block {if !$order->manager_id}hide{/if}">
-                                            <button class="btn btn-success btn-block js-approve-order js-event-add-click"
-                                                    data-event="12" data-user="{$order->user_id}"
-                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                                <i class="fas fa-check-circle"></i>
-                                                <span>Одобрить</span>
                                             </button>
                                             <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
                                                     data-event="13" data-user="{$order->user_id}"
@@ -608,7 +584,28 @@
                                             </button>
                                         </div>
                                     {/if}
-
+                                    {if $order->status == 12 && in_array('approve_contract', $manager->permissions)}
+                                        <div class="js-approve-reject-block">
+                                            <button class="btn btn-success btn-block js-approve-order js-event-add-click"
+                                                    data-event="12" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span>Подтвердить одобрение</span>
+                                            </button>
+                                            <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
+                                                    data-event="13" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                                <i class="fas fa-times-circle"></i>
+                                                <span>Отказать</span>
+                                            </button>
+                                        </div>
+                                    {else}
+                                        <div class="card card-info mb-1">
+                                            <div class="box text-center">
+                                                <h3 class="text-white mb-0">На рассмотрении старшего менеджера</h3>
+                                            </div>
+                                        </div>
+                                    {/if}
                                     <div class="js-order-status">
                                         {if $order->status == 2}
                                             <div class="card card-success mb-1">
@@ -616,30 +613,33 @@
                                                     <h3 class="text-white mb-0">Одобрена</h3>
                                                 </div>
                                             </div>
+                                            <br>
                                             <button class="btn btn-danger btn-block js-reject-order js-event-add-click"
                                                     data-event="13" data-user="{$order->user_id}"
                                                     data-order="{$order->order_id}" data-manager="{$manager->id}">
                                                 <i class="fas fa-times-circle"></i>
                                                 <span>Отказать</span>
                                             </button>
-                                            <form class="pt-1">
-                                                <div class="input-group">
-                                                    <input type="text" class="form-control sms_code"
-                                                           placeholder="SMS код"/>
-                                                    <div class="sent_code badge badge-danger"
-                                                         style="position: absolute; margin-left: 350px; margin-top: 5px; right: 120px;display: none">
-                                                    </div>
-                                                    <div class="input-group-append">
-                                                        <div class="btn btn-info accept_contract"
-                                                             data-order="{$order->order_id}">Подтвердить
+                                            {if in_array('approve_contract', $manager->permissions)}
+                                                <form class="pt-1">
+                                                    <div class="input-group">
+                                                        <input type="text" class="form-control sms_code"
+                                                               placeholder="SMS код"/>
+                                                        <div class="sent_code badge badge-danger"
+                                                             style="position: absolute; margin-left: 350px; margin-top: 5px; right: 120px;display: none">
+                                                        </div>
+                                                        <div class="input-group-append">
+                                                            <div class="btn btn-info accept_contract"
+                                                                 data-order="{$order->order_id}">Подтвердить
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <small class="btn btn-outline-primary btn-xs send_sms"
-                                                       data-order="{$order->order_id}">
-                                                    <span>Отправить смс код</span>
-                                                </small>
-                                            </form>
+                                                    <small class="btn btn-outline-primary btn-xs send_sms"
+                                                           data-order="{$order->order_id}">
+                                                        <span>Отправить смс код</span>
+                                                    </small>
+                                                </form>
+                                            {/if}
                                         {/if}
                                         {if $order->status == 3}
                                             <div class="card card-danger">
@@ -806,7 +806,9 @@
                                                 </div>
                                             </div>
                                         {/if}
-                                        <br><select class="js-risk-lvl form-control" data-user_id="{$order->user_id}"
+                                        {*
+                                        <br>
+                                        <select class="js-risk-lvl form-control" data-user_id="{$order->user_id}"
                                                     style="width: 100%">
                                             <option selected value="0">Уровень риска - обычный</option>
                                             <option value="1">Уровень риска - высокий</option>
@@ -890,6 +892,7 @@
                                                 </li>
                                             </ul>
                                         </div>
+                                        *}
                                     </div>
                                 </div>
                             </div>
@@ -2195,30 +2198,6 @@
                                             -->
                                         </div>
                                         <div class="col-md-4 ">
-
-                                            {if $order->autoretry_result}
-                                                <div class="card mb-1 {if $order->autoretry_summ}card-success{else}card-danger{/if}">
-                                                    <div class="box ">
-                                                        <h5 class="card-title mb-0 text-white text-center">
-                                                            Авторешение</h5>
-                                                        <div class="text-white text-center">
-                                                            <small class="text-white">
-                                                                {$order->autoretry_result}
-                                                            </small>
-                                                        </div>
-                                                        {if $order->autoretry_summ && $order->status == 1}
-                                                            <button data-order="{$order->order_id}"
-                                                                    class="mt-2 btn btn-block btn-info btn-sm js-autoretry-accept js-event-add-click"
-                                                                    data-event="17" data-manager="{$manager->id}"
-                                                                    data-order="{$order->order_id}"
-                                                                    data-user="{$order->user_id}">
-                                                                Выдать {$order->autoretry_summ} руб
-                                                            </button>
-                                                        {/if}
-                                                    </div>
-                                                </div>
-                                            {/if}
-
                                             <div class="mb-3 border  {if $penalties['scorings'] && $penalties['scorings']->status!=3}card-outline-danger{/if}">
                                                 <h5 class=" card-header">
                                                     <span class="text-white ">Скоринги</span>
@@ -2232,118 +2211,118 @@
                                                             </a>
                                                         {/if}
                                                         </span>
-                                                    </h2>
-                                                    <div class="message-box js-scorings-block {if $need_update_scorings}js-need-update{/if}"
-                                                         data-order="{$order->order_id}">
+                                                </h5>
+                                                <div class="message-box js-scorings-block {if $need_update_scorings}js-need-update{/if}"
+                                                     data-order="{$order->order_id}">
 
-                                                        {foreach $scoring_types as $scoring_type}
-                                                            <div class="pl-2 pr-2 {if $scorings[$scoring_type->name]->status == 'new'}bg-light-warning{elseif $scorings[$scoring_type->name]->success}bg-light-success{else}bg-light-danger{/if}">
-                                                                <div class="row {if !$scoring_type@last}border-bottom{/if}">
-                                                                    <div class="col-12 col-sm-12 pt-2">
-                                                                        <h5 class="float-left">
-                                                                            {$scoring_type->title}
-                                                                            {if $scoring_type->name == 'fssp'}
-                                                                                {if $scorings[$scoring_type->name]->found_46}
-                                                                                    <span class="label label-danger">46</span>
-                                                                                {/if}
-                                                                                {if $scorings[$scoring_type->name]->found_47}
-                                                                                    <span class="label label-danger">47</span>
-                                                                                {/if}
+                                                    {foreach $scoring_types as $scoring_type}
+                                                        <div class="pl-2 pr-2 {if $scorings[$scoring_type->name]->status == 'new'}bg-light-warning{elseif $scorings[$scoring_type->name]->success}bg-light-success{else}bg-light-danger{/if}">
+                                                            <div class="row {if !$scoring_type@last}border-bottom{/if}">
+                                                                <div class="col-12 col-sm-12 pt-2">
+                                                                    <h5 class="float-left">
+                                                                        {$scoring_type->title}
+                                                                        {if $scoring_type->name == 'fssp'}
+                                                                            {if $scorings[$scoring_type->name]->found_46}
+                                                                                <span class="label label-danger">46</span>
                                                                             {/if}
-                                                                        </h5>
-
-                                                                        {if $scorings[$scoring_type->name]->status == 'new'}
-                                                                            <span class="label label-warning float-right">Ожидание</span>
-                                                                        {elseif $scorings[$scoring_type->name]->status == 'process'}
-                                                                            <span class="label label-info label-sm float-right">Выполняется</span>
-                                                                        {elseif $scorings[$scoring_type->name]->status == 'stopped'}
-                                                                            <span class="label label-warning label-sm float-right">Остановлен</span>
-                                                                        {elseif $scorings[$scoring_type->name]->status == 'error'}
-                                                                            <span class="label label-danger label-sm float-right">Ошибка</span>
-                                                                        {elseif $scorings[$scoring_type->name]->status == 'completed'}
-                                                                            {if $scorings[$scoring_type->name]->success}
-                                                                                <span class="label label-success label-sm float-right">Пройден</span>
-                                                                            {else}
-                                                                                <span class="label label-danger float-right">Не пройден</span>
+                                                                            {if $scorings[$scoring_type->name]->found_47}
+                                                                                <span class="label label-danger">47</span>
                                                                             {/if}
                                                                         {/if}
-                                                                    </div>
-                                                                    <div class="col-8 col-sm-8 pb-2">
+                                                                    </h5>
+
+                                                                    {if $scorings[$scoring_type->name]->status == 'new'}
+                                                                        <span class="label label-warning float-right">Ожидание</span>
+                                                                    {elseif $scorings[$scoring_type->name]->status == 'process'}
+                                                                        <span class="label label-info label-sm float-right">Выполняется</span>
+                                                                    {elseif $scorings[$scoring_type->name]->status == 'stopped'}
+                                                                        <span class="label label-warning label-sm float-right">Остановлен</span>
+                                                                    {elseif $scorings[$scoring_type->name]->status == 'error'}
+                                                                        <span class="label label-danger label-sm float-right">Ошибка</span>
+                                                                    {elseif $scorings[$scoring_type->name]->status == 'completed'}
+                                                                        {if $scorings[$scoring_type->name]->success}
+                                                                            <span class="label label-success label-sm float-right">Пройден</span>
+                                                                        {else}
+                                                                            <span class="label label-danger float-right">Не пройден</span>
+                                                                        {/if}
+                                                                    {/if}
+                                                                </div>
+                                                                <div class="col-8 col-sm-8 pb-2">
                                                                         <span class="mail-desc"
                                                                               title="{$scorings[$scoring_type->name]->string_result}">
                                                                             {$scorings[$scoring_type->name]->string_result}
                                                                         </span>
-                                                                        {if $scoring_type->name == 'nbki'}
-                                                                            {if isset($number_of_active)}
-                                                                                <span class="mail-desc"
-                                                                                      title="{$number_of_active}">
+                                                                    {if $scoring_type->name == 'nbki'}
+                                                                        {if isset($number_of_active)}
+                                                                            <span class="mail-desc"
+                                                                                  title="{$number_of_active}">
                                                                                         Количество активных займов: <b>{$number_of_active}</b>
                                                                                 </span>
-                                                                            {/if}
-                                                                            {if isset($open_to_close_ratio)}
-                                                                                <span class="mail-desc"
-                                                                                      title="{$open_to_close_ratio}">
+                                                                        {/if}
+                                                                        {if isset($open_to_close_ratio)}
+                                                                            <span class="mail-desc"
+                                                                                  title="{$open_to_close_ratio}">
                                                                                        Cоотношение открытых к закрытым за 30 дней: <b>{$open_to_close_ratio}</b>
                                                                                 </span>
-                                                                            {/if}
                                                                         {/if}
-                                                                        <span class="time">
+                                                                    {/if}
+                                                                    <span class="time">
                                                                             {if $scorings[$scoring_type->name]->created}
                                                                                 {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
                                                                             {/if}
-                                                                            {if $scoring_type->name == 'fssp'}
-                                                                                <a href="javascript:void(0);"
-                                                                                   class="js-get-fssp-info float-right"
-                                                                                   data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
-                                                                            {/if}
-                                                                            {if $scoring_type->name == 'fssp2'}
-                                                                                <a href="/ajax/show_fssp2.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
-                                                                                   target="_blank">Подробнее</a>
-                                                                            {/if}
-                                                                            {if $scoring_type->name == 'efrsb' && $scorings[$scoring_type->name]->body}
-                                                                                {foreach $scorings[$scoring_type->name]->body as $efrsb_link}
-                                                                                    <a href="{$efrsb_link}"
-                                                                                       target="_blank"
-                                                                                       class="float-right">Подробнее</a>
-                                                                                {/foreach}
-                                                                            {/if}
-                                                                            {if $scoring_type->name == 'nbki'}
-                                                                                <a href="http://51.250.101.109/eco-nbki/{$scorings[$scoring_type->name]->id}?api=F1h1Hdf9g_h&site=eco"
-                                                                                   target="_blank">Подробнее</a>
-                                                                            {/if}
-                                                                        </span>
-                                                                    </div>
-                                                                    <div class="col-4 col-sm-4 pb-2">
-                                                                        {if $order->status < 2 || $is_developer}
-                                                                            {if $scorings[$scoring_type->name]->status == 'new' || $scorings[$scoring_type->name]->status == 'process' }
-                                                                                <a class="btn-load text-info run-scoring-btn float-right"
-                                                                                   data-type="{$scoring_type->name}"
-                                                                                   data-order="{$order->order_id}"
-                                                                                   href="javascript:void(0);">
-                                                                                    <div class="spinner-border text-info"
-                                                                                         role="status"></div>
-                                                                                </a>
-                                                                            {elseif $scorings[$scoring_type->name]}
-                                                                                <a class="btn-load text-info js-run-scorings run-scoring-btn float-right"
-                                                                                   data-type="{$scoring_type->name}"
-                                                                                   data-order="{$order->order_id}"
-                                                                                   href="javascript:void(0);">
-                                                                                    <i class="fas fa-undo"></i>
-                                                                                </a>
-                                                                            {else}
-                                                                                <a class="btn-load {if in_array($audit_types)}loading{/if} text-info js-run-scorings run-scoring-btn float-right"
-                                                                                   data-type="{$scoring_type->name}"
-                                                                                   data-order="{$order->order_id}"
-                                                                                   href="javascript:void(0);">
-                                                                                    <i class="far fa-play-circle"></i>
-                                                                                </a>
-                                                                            {/if}
+                                                                        {if $scoring_type->name == 'fssp'}
+                                                                            <a href="javascript:void(0);"
+                                                                               class="js-get-fssp-info float-right"
+                                                                               data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
                                                                         {/if}
-                                                                    </div>
+                                                                        {if $scoring_type->name == 'fssp2'}
+                                                                            <a href="/ajax/show_fssp2.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
+                                                                               target="_blank">Подробнее</a>
+                                                                        {/if}
+                                                                        {if $scoring_type->name == 'efrsb' && $scorings[$scoring_type->name]->body}
+                                                                            {foreach $scorings[$scoring_type->name]->body as $efrsb_link}
+                                                                                <a href="{$efrsb_link}"
+                                                                                   target="_blank"
+                                                                                   class="float-right">Подробнее</a>
+                                                                            {/foreach}
+                                                                        {/if}
+                                                                        {if $scoring_type->name == 'nbki'}
+                                                                            <a href="http://51.250.101.109/eco-nbki/{$scorings[$scoring_type->name]->id}?api=F1h1Hdf9g_h&site=eco"
+                                                                               target="_blank">Подробнее</a>
+                                                                        {/if}
+                                                                        </span>
+                                                                </div>
+                                                                <div class="col-4 col-sm-4 pb-2">
+                                                                    {if $order->status < 2 || $is_developer}
+                                                                        {if $scorings[$scoring_type->name]->status == 'new' || $scorings[$scoring_type->name]->status == 'process' }
+                                                                            <a class="btn-load text-info run-scoring-btn float-right"
+                                                                               data-type="{$scoring_type->name}"
+                                                                               data-order="{$order->order_id}"
+                                                                               href="javascript:void(0);">
+                                                                                <div class="spinner-border text-info"
+                                                                                     role="status"></div>
+                                                                            </a>
+                                                                        {elseif $scorings[$scoring_type->name]}
+                                                                            <a class="btn-load text-info js-run-scorings run-scoring-btn float-right"
+                                                                               data-type="{$scoring_type->name}"
+                                                                               data-order="{$order->order_id}"
+                                                                               href="javascript:void(0);">
+                                                                                <i class="fas fa-undo"></i>
+                                                                            </a>
+                                                                        {else}
+                                                                            <a class="btn-load {if in_array($audit_types)}loading{/if} text-info js-run-scorings run-scoring-btn float-right"
+                                                                               data-type="{$scoring_type->name}"
+                                                                               data-order="{$order->order_id}"
+                                                                               href="javascript:void(0);">
+                                                                                <i class="far fa-play-circle"></i>
+                                                                            </a>
+                                                                        {/if}
+                                                                    {/if}
                                                                 </div>
                                                             </div>
-                                                        {/foreach}
-                                                    </div>
+                                                        </div>
+                                                    {/foreach}
+                                                </div>
                                             </div>
 
                                             <div class="mb-3 border">

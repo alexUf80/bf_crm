@@ -197,6 +197,7 @@ class Managers extends Core
             'changelogs' => array('developer', 'admin'),
             'handbooks' => array('developer', 'admin'),
             'pages' => array('developer', 'admin'),
+            'approve_contract' => array('developer', 'admin', 'senior manager'),
             'analitics' => array('developer', 'admin', 'chief_collector'),
             'penalty_statistics' => array('developer', 'admin', 'manager'),
             'collector_mailing' => array('developer', 'admin', 'chief_collector', 'team_collector'),
@@ -215,7 +216,7 @@ class Managers extends Core
             'add_penalty' => array('developer', 'admin', 'quality_control'),
             'penalties' => array('developer', 'admin', 'quality_control', 'manager', 'cs_pc'),
             'collection_moving' => array('developer', 'admin', 'chief_collector', 'team_collector'),
-            'neworder' => array('developer', 'admin', 'cs_pc', 'city_manager'),
+            'neworder' => array('developer', 'admin', 'senior manager', 'manager'),
             'offline' => array('developer', 'admin', 'cs_pc', 'city_manager'),
             'offline_settings' => array('developer', 'admin', 'city_manager'),
         );

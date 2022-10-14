@@ -12,6 +12,7 @@ class Orders extends Core
         6 => 'Не удалось выдать',
         7 => 'Погашен',
         8 => 'Отказ клиента',
+        9 => 'Предодобрена'
     );
     
     public function get_statuses()
