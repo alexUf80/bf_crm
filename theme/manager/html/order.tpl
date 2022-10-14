@@ -1340,17 +1340,7 @@
                                                         {foreach $contacts as $contact}
                                                             <tr>
                                                                 <td>{$contact->name|upper}</td>
-                                                                <td>{$contact->phone}
-                                                                    <button class="js-pbxmaker-call mango-call js-event-add-click"
-                                                                            data-event="63"
-                                                                            data-manager="{$manager->id}"
-                                                                            data-order="{$order->order_id}"
-                                                                            data-user="{$order->user_id}"
-                                                                            data-phone="{$order->chief_phone|escape}"
-                                                                            title="Выполнить звонок">
-                                                                        <i class="fas fa-mobile-alt"></i>
-                                                                    </button>
-                                                                </td>
+                                                                <td>{$contact->phone}</td>
                                                                 <td>{$contact->comment}</td>
                                                                 <td>{$contact->relation}</td>
                                                                 <td>
@@ -1386,7 +1376,7 @@
                                                            data-event="34" data-manager="{$manager->id}"
                                                            data-order="{$order->order_id}"
                                                            data-user="{$order->user_id}"><i
-                                                                    class=" fas fa-edit"></i></a></h3>
+                                                                    class=" fas fa-edit"></i></a>
                                                         </span>
                                                 </h5>
 
