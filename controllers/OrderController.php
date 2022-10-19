@@ -221,6 +221,11 @@ class OrderController extends Controller
                     // сохраняем историю займов из 1с
                     $client = $this->users->get_user($order->user_id);
 
+                    $regaddress = $this->Addresses->get_address($client->regaddress_id);
+                    $faktaddress = $this->Addresses->get_address($client->faktaddress_id);
+                    $this->design->assign('regaddress', $regaddress->adressfull);
+                    $this->design->assign('faktaddress', $faktaddress->adressfull);
+
                     $contacts = $this->Contactpersons->get_contactpersons(['user_id' => $order->user_id]);
                     $this->design->assign('contacts', $contacts);
 

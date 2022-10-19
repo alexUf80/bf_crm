@@ -717,33 +717,11 @@
                                                         <table class="table table-hover mb-0">
                                                             <tr>
                                                                 <td>Адрес прописки</td>
-                                                                <td>
-                                                                    {if $client->Regindex}{$client->Regindex}, {/if}
-                                                                    {$client->Regregion} {$client->Regregion_shorttype},
-                                                                    {if $client->Regcity}{$client->Regcity} {$client->Regcity_shorttype},{/if}
-                                                                    {if $client->Regdistrict}{$client->Regdistrict} {$client->Regdistrict_shorttype},{/if}
-                                                                    {if $client->Reglocality}{$client->Reglocality} {$client->Reglocality_shorttype},{/if}
-                                                                    {if $client->Regstreet}{$client->Regstreet} {$client->Regstreet_shorttype},{/if}
-                                                                    д.{$client->Reghousing},
-                                                                    {if $client->Regbuilding}стр. {$client->Regbuilding},{/if}
-                                                                    {if $client->Regroom}кв.{$client->Regroom}{/if}
-                                                                </td>
+                                                                <td>{$faktaddress}</td>
                                                             </tr>
                                                             <tr>
                                                                 <td>Адрес проживания</td>
-                                                                <td>
-                                                                    {if $client->Faktindex}{$client->Faktindex}, {/if}
-                                                                    {$client->Faktregion} {$client->Faktregion_shorttype}
-                                                                    ,
-                                                                    {if $client->Faktcity}{$client->Faktcity} {$client->Faktcity_shorttype},{/if}
-                                                                    {if $client->Faktdistrict}{$client->Faktdistrict} {$client->Faktdistrict_shorttype},{/if}
-                                                                    {if $client->Faktlocality}{$client->Faktlocality} {$client->Faktlocality_shorttype},{/if}
-                                                                    {if $client->Faktstreet}{$client->Faktstreet} {$client->Faktstreet_shorttype},{/if}
-                                                                    д.{$client->Fakthousing},
-                                                                    {if $client->Faktbuilding}стр. {$client->Faktbuilding},{/if}
-                                                                    {if $client->Faktroom}кв.{$client->Faktroom}{/if}
-
-                                                                </td>
+                                                                <td>{$regaddress}</td>
                                                             </tr>
                                                         </table>
                                                     </div>
