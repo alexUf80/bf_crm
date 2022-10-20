@@ -21,7 +21,7 @@ Sector ID: 8080 ООО МКК "Финансовый аспект" (ecozaym24.ru)
 Sector ID: 8081 ООО МКК "Финансовый аспект" (ecozaym24.ru) (СНГБ) (C2A) (ФЛ) 3w69fF5
      */
     
-    private $url = 'https://test.best2pay.net/webapi/';
+    private $url = 'https://test.best2pay.net/';
     private $currency_code = 643;
     
     private $fee = 0.049;
@@ -919,6 +919,100 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($card);echo '</pre><hr />';
             DELETE FROM __p2pcredits WHERE id = ?
         ", (int)$id);
         $this->db->query($query);
+    }
+
+    public function pay_contract_with_register($contract_id)
+    {
+        echo 'START '.__METHOD__.'<br />';
+        $sector = $this->sectors['PAY_CREDIT'];
+        $password = $this->passwords[$sector];
+
+
+        if (!($contract = $this->contracts->get_contract($contract_id)))
+            return false;
+
+        if ($contract->status != 1)
+            return false;
+
+        $this->contracts->update_contract($contract->id, array('status' => 9));
+
+        if (!($user = $this->users->get_user((int)$contract->user_id)))
+            return false;
+
+
+        if (!($card = $this->cards->get_card((int)$contract->card_id)))
+            return false;
+
+
+        $fio = $user->lastname.' '.$user->firstname.' '.$user->patronymic;
+        $description = 'Выдача займа по договору '.$contract->number.' '.$fio;
+
+        $data = array(
+            'sector' => $sector,
+            'amount' => $contract->amount * 100,
+            'currency' => $this->currency_code,
+            'description' => $description,
+            'reference' => $contract->id,
+        );
+        $data['signature'] = $this->get_signature(array(
+            $data['sector'],
+            $data['amount'],
+            $data['currency'],
+            $password
+        ));
+
+        $b2p_order = $this->send('Register', $data);
+        $xml = simplexml_load_string($b2p_order);
+        $b2p_order_id = (string)$xml->id;
+        //echo __FILE__.' '.__LINE__.'<br /><pre>';echo htmlspecialchars($b2p_order);echo '</pre><hr />';
+        if (empty($b2p_order))
+            return 'ORDER UNREGISTERED';
+
+        $data = array(
+            'sector' => $sector,
+            'amount' => $contract->amount * 100,
+            'currency' => $this->currency_code,
+            'reference' => $contract->id,
+            'token' => $card->token,
+//            'pan' => $card->pan,
+            'id' => $b2p_order_id,
+        );
+        $data['signature'] = $this->get_signature(array(
+            $data['sector'],
+            $data['id'],
+            $data['amount'],
+            $data['currency'],
+//            $data['pan'],
+            $data['token'],
+            $password
+        ));
+
+        $p2pcredit = array(
+            'sector' => $sector,
+            'contract_id' => $contract->id,
+            'user_id' => $contract->user_id,
+            'date' => date('Y-m-d H:i:s'),
+            'body' => $data,
+            'register_id' => $b2p_order_id,
+        );
+
+        if ($p2pcredit_id = $this->add_p2pcredit($p2pcredit))
+        {
+            $response = $this->send('P2PCredit', $data, 'gateweb');
+            //echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($response));echo '</pre><hr />';
+            $xml = simplexml_load_string($response);
+            $status = (string)$xml->state;
+
+            $this->update_p2pcredit($p2pcredit_id, array(
+                'response' => $response,
+                'status' => $status,
+                'operation_id' => (string)$xml->id,
+                'complete_date' => date('Y-m-d H:i:s'),
+            ));
+
+            return $status;
+        }
+
     }
         
 }
