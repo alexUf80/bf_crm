@@ -67,6 +67,7 @@ class Orders extends Core
                 o.penalty_date,
                 o.quality_workout,
                 o.reject_reason_returned,
+                o.promocode_id,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,
