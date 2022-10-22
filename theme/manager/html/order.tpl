@@ -2848,7 +2848,7 @@
                                                         {/if}
                                                     {/if}
                                                     {if $operation->type == 'RECURRENT'}Оплата займа{/if}
-                                                    {if $operation->type == 'REJECT_REASON'}Возврат услуги "Причина отказа"{/if}
+                                                    {if $operation->type == 'RETURN_REJECT_REASON'}Возврат услуги "Причина отказа"{/if}
                                                     {if $operation->type == 'RETURN_INSURANCE'}Возврат страховки{/if}
                                                     {if $operation->type == 'PERCENTS'}Начисление процентов{/if}
                                                     {if $operation->type == 'INSURANCE'}Страховка{/if}
