@@ -1061,10 +1061,6 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($card);echo '</pre><hr />';
         ));
 
         $recurring = $this->send('PurchaseByToken', $data);
-
-        var_dump($recurring);
-        exit;
-
         $xml = simplexml_load_string($recurring);
         $status = (string)$xml->state;
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($recurring );echo '</pre><hr />';
