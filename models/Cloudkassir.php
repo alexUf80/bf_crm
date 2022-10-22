@@ -11,9 +11,9 @@ class Cloudkassir extends Core
     {
     	parent::__construct();
         
-        $this->ck_API = $this->settings->apikeys['cloudkassir']['ck_API'];
-        $this->ck_PublicId = $this->settings->apikeys['cloudkassir']['ck_PublicId'];
-        $this->ck_INN = $this->settings->apikeys['cloudkassir']['ck_INN'];
+        $this->ck_API = 'cb51bba846fd92dfd7e8da3d5ecf179b';
+        $this->ck_PublicId = 'pk_21b561c2059dff5a4e5be335a1e4d';
+        $this->ck_INN = '9723120835';
     }
     
     public function send_insurance($operation_id)
