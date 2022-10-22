@@ -950,6 +950,8 @@ class OrderController extends Controller
 
         $reason = $this->reasons->get_reason($reason_id);
 
+        $contract = $this->contracts->get_contract($order->contract_id);
+
         $update = array(
             'status' => $status,
             'manager_id' => $this->manager->id,
@@ -989,80 +991,42 @@ class OrderController extends Controller
         ));
 
         // Снимаем за причину отказа
-        if (empty($reject_operations)) {
-            if (!empty($order->service_reason) && $status == 3) {
-
-                $service_summ = $this->settings->reject_reason_cost * 100;
-
-                $description = 'Услуга "Узнай причину отказа"';
-
-                $response = $this->best2pay->recurrent($order->card_id, $service_summ, $description);
-                //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump(htmlspecialchars($response));echo '</pre><hr />';
-
-                $xml = simplexml_load_string($response);
-                $b2p_status = (string)$xml->state;
-
-                if ($b2p_status == 'APPROVED') {
-                    $transaction = $this->transactions->get_operation_transaction($xml->order_id, $xml->id);
-
-                    $operation_id = $this->operations->add_operation(array(
-                        'contract_id' => 0,
-                        'user_id' => $order->user_id,
-                        'order_id' => $order->order_id,
-                        'type' => 'REJECT_REASON',
-                        'amount' => $this->settings->reject_reason_cost,
-                        'created' => date('Y-m-d H:i:s'),
-                        'transaction_id' => $transaction->id,
-                    ));
-
-                    $operation = $this->operations->get_operation($operation_id);
-                    $operation->transaction = $this->transactions->get_transaction($transaction->id);
-
-                    // $resp = $this->soap1c->send_reject_reason($operation);
-
-                    $this->operations->update_operation($operation->id, array(
-                        'sent_status' => 2,
-                        'sent_date' => date('Y-m-d H:i:s')
-                    ));
-
-                    //Отправляем чек 
-                    $this->ekam->send_reject_reason($order_id);
-                    $this->operations->update_operation($operation->id, array('sent_receipt' => 1));
-
-                    return true;
-                    //echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($recurring));echo $contract_id.'</pre><hr />';exit;
-
-                } else {
-                    return false;
-                }
-            }
-        }
-        /*
-        if (!empty($order->id_1c))
+        // Снимаем "Узнай причину отказа"
+        if (!empty($reject_operations))
         {
-            $resp = $this->soap1c->block_order_1c($order->id_1c, 0);
-            $this->soap1c->send_order_status($order->id_1c, 'Отказано');
-        }
-        */
+            $service_summ = 39;
+            $service_amount = $service_summ * 100;
 
-        if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->click_hash)) {
-            try {
-                $this->leadgens->send_cancelled_postback_click2money($order->order_id, $order);
-            } catch (\Throwable $th) {
-                //throw $th;
+            $description = 'Услуга "Узнай причину отказа"';
+
+            $xml = $this->best2pay->purchase_by_token($contract->card_id, $service_amount, $description);
+
+            $status = (string)$xml->state;
+
+            if ($status == 'APPROVED')
+            {
+                $transaction = $this->transactions->get_operation_transaction($xml->order_id, $xml->id);
+
+                $contract = $this->contracts->get_contract($contract->id);
+
+                $payment_amount = $service_amount / 100;
+
+                $operation_id = $this->operations->add_operation(array(
+                    'contract_id' => $contract->id,
+                    'user_id' => $contract->user_id,
+                    'order_id' => $contract->order_id,
+                    'type' => 'REJECT_REASON',
+                    'amount' => $payment_amount,
+                    'created' => date('Y-m-d H:i:s'),
+                    'transaction_id' => $transaction->id,
+                ));
+
+                //Отправляем чек по страховке
+                $this->Cloudkassir->send_reject_reason($contract->order_id);
+                $this->operations->update_operation($operation_id, array('sent_receipt' => 1));
+
             }
         }
-
-        if (!empty($order->utm_source) && $order->utm_source == 'unicom24' && !empty($order->click_hash)) {
-            try {
-                $this->UnicomLeadgen->send_cancell_postback($order->order_id, $order);
-            } catch (\Throwable $th) {
-                //throw $th;
-            }
-        }
-
-        $message = "$order->firstname, предварительно одобрен займ у наших партнеров: clck.ru/ZADLe";
-        $this->sms->send($order->phone_mobile, $message);
 
         return array('success' => 1, 'status' => $status);
     }
