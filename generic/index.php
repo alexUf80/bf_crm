@@ -1,4 +1,4 @@
 <?
 $sResult = exec('./uidgen');
-var_dump($sResult);
+echo($sResult);
 ?>
