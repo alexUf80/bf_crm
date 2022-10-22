@@ -85,6 +85,7 @@ class TestController extends Controller
 
         //        $this->logging(__METHOD__, 'https://api.cloudpayments.ru/kkt/receipt', (array)$data, (array)$res, 'service.log');
 
-        return $res;
+        echo '<pre>';
+        var_dump($res);
     }
 }
