@@ -41,6 +41,7 @@ class IssuanceCron extends Core
                 var_dump($res);
 
                 if ($res == 'APPROVED') {
+
                     $ob_date = new DateTime();
                     $ob_date->add(DateInterval::createFromDateString($contract->period . ' days'));
                     $return_date = $ob_date->format('Y-m-d H:i:s');
@@ -64,10 +65,6 @@ class IssuanceCron extends Core
                         'created' => date('Y-m-d H:i:s'),
                     ));
 
-                    if ($order = $this->orders->get_order((int)$contract->order_id)) {
-                        $this->soap1c->send_order_status($order->id_1c, 'Выдан');
-                    }
-
 
                     //TODO: Создаем доки при выдаче
                     $this->create_document('IND_USLOVIYA_NL', $contract);
@@ -76,7 +73,8 @@ class IssuanceCron extends Core
                     // Снимаем страховку если есть
                     if (!empty($contract->service_insurance)) 
                     {
-                        $insurance_cost = $this->insurances->get_insurance_cost($order);
+                        $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
+
                         if ($insurance_cost > 0)
                         {
                             $insurance_amount = $insurance_cost * 100;
@@ -121,11 +119,9 @@ class IssuanceCron extends Core
                                 ));
     
                                 $this->contracts->update_contract($contract->id, array(
-                                    'insurance_id' => $insurance_id
+                                    'insurance_id' => $insurance_id,
+                                    'loan_body_summ' => $contract->amount + $insurance_cost
                                 ));
-    
-                                $order = $this->orders->get_order((int)$contract->order_id);
-    
     
                                 $contract->insurance_id = $insurance_id;
                                 //TODO: Страховой полиc

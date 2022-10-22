@@ -29,7 +29,7 @@ Sector ID: 8081 ООО МКК "Финансовый аспект" (ecozaym24.ru)
     
     private $sectors = array(
         'PAY_CREDIT' => '4038', //сектор для отправки кредита на карту клиента (P2PCredit)
-        'RECURRENT' => '4037', // сектор для совершения рекурентных платежей (token)
+        'RECURRENT' => '4036', // сектор для совершения рекурентных платежей (token)
         'ADD_CARD' => '4037', // сектор для привязки карты (token)
         'PAYMENT' => '4039', // сектор для оплаты любой картой (C2A)
     );
@@ -37,7 +37,8 @@ Sector ID: 8081 ООО МКК "Финансовый аспект" (ecozaym24.ru)
     private $passwords = array(
         '4038' => 'test',
         '4037' => 'test',
-        '4039' => 'test'
+        '4039' => 'test',
+        '4036' => 'test'
     );
     
 
@@ -1021,8 +1022,6 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($card);echo '</pre><hr />';
         $sector = $this->sectors['RECURRENT'];
         $password = $this->passwords[$sector];
 
-//        $fee = max($this->min_fee, floatval($amount * $this->fee));
-
         if (!($card = $this->cards->get_card($card_id)))
             return false;
         if (!($user = $this->users->get_user((int)$card->user_id)))
@@ -1045,7 +1044,6 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($card);echo '</pre><hr />';
         $data['signature'] = $this->get_signature(array($data['sector'], $data['amount'], $data['currency'], $password));
 
         $b2p_order = $this->send('Register', $data);
-
         $xml = simplexml_load_string($b2p_order);
         $b2p_order_id = (string)$xml->id;
         $data = array(
@@ -1063,6 +1061,10 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($card);echo '</pre><hr />';
         ));
 
         $recurring = $this->send('PurchaseByToken', $data);
+
+        var_dump($recurring);
+        exit;
+
         $xml = simplexml_load_string($recurring);
         $status = (string)$xml->state;
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($recurring );echo '</pre><hr />';
