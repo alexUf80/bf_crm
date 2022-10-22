@@ -4,7 +4,7 @@ class TestController extends Controller
 {
     public function fetch()
     {
-        $operation = $this->operations->get_operation(708086);
+        $operation = $this->operations->get_operation(708087);
         $insurance = $this->insurances->get_operation_insurance($operation->id);
         $user = $this->users->get_user($operation->user_id);
         $contract = $this->contracts->get_contract($operation->contract_id);
@@ -58,7 +58,7 @@ class TestController extends Controller
         }
 
         $data = array(
-            'Inn' => $this->ck_INN, //ИНН
+            'Inn' => '9723120835', //ИНН
             'InvoiceId' => $contract->number, //номер заказа, необязательный
             'AccountId' => $user->id, //идентификатор пользователя, необязательный
             'Type' => 'Income', //признак расчета
@@ -71,7 +71,7 @@ class TestController extends Controller
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->ck_PublicId . ':' . $this->ck_API);
+        curl_setopt($ch, CURLOPT_USERPWD, 'pk_21b561c2059dff5a4e5be335a1e4d:cb51bba846fd92dfd7e8da3d5ecf179b');
         curl_setopt($ch, CURLOPT_URL, 'https://api.cloudpayments.ru/kkt/receipt');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'content-type: application/json',
@@ -87,5 +87,6 @@ class TestController extends Controller
 
         echo '<pre>';
         var_dump($res);
+        exit;
     }
 }
