@@ -72,7 +72,7 @@ class IssuanceCron extends Core
                     //TODO: Создаем доки при выдаче
                     $this->create_document('IND_USLOVIYA_NL', $contract);
 
-                    /*
+
                     // Снимаем страховку если есть
                     if (!empty($contract->service_insurance)) 
                     {
@@ -103,14 +103,6 @@ class IssuanceCron extends Core
                                     'transaction_id' => $transaction->id,
                                 ));
     
-                                $close_contracts = $this->contracts->get_contracts(array('user_id' => $contract->user_id, 'status' => 3));
-    
-                                $protection = count($close_contracts) == 1;
-    
-                                $protection = 0; // убираем кредитную защиту
-    
-                                $strah_summ = $this->insurances->get_strah_summ($payment_amount);
-    
                                 $dt = new DateTime();
                                 $dt->add(new DateInterval('P6M'));
                                 $end_date = $dt->format('Y-m-d 23:59:59');
@@ -123,8 +115,8 @@ class IssuanceCron extends Core
                                     'start_date' => date('Y-m-d 00:00:00', time() + (1 * 86400)),
                                     'end_date' => $end_date,
                                     'operation_id' => $operation_id,
-                                    'protection' => $protection,
-                                    'summ' => $strah_summ,
+                                    'protection' => 0,
+                                    'summ' => $insurance_amount,
                                     'value' => '100',
                                 ));
     
@@ -137,14 +129,13 @@ class IssuanceCron extends Core
     
                                 $contract->insurance_id = $insurance_id;
                                 //TODO: Страховой полиc
-                                $this->create_document('POLIS_STRAHOVANIYA', $contract);
+                                $this->create_document('POLIS', $contract);
     
     
                                 //Отправляем чек по страховке
-                                $return = $this->checkonline->send_insurance($operation_id);
-    
-                                /*
-                                if (empty($protection) && !empty($return))
+                                $return = $this->Cloudkassir->send_insurance($operation_id);
+
+                                if (!empty($return))
                                 {
                                     $resp = json_decode($return);
     
@@ -158,62 +149,10 @@ class IssuanceCron extends Core
                                         'created' => date('Y-m-d H:i:s'),
                                     ));
                                 }
-
-
-                                $regregion = explode(' ', $order->Regregion);
-                                $regregion = $regregion[0];
-
-                                $check_region = 0;
-
-                                $revenue_regions = $this->RevenueRegions->gets();
-
-                                foreach ($revenue_regions as $revenue_region)
-                                {
-                                    $revenue_region = explode(' ', $revenue_region->name);
-                                    $revenue_region = $revenue_region[0];
-
-                                    if($revenue_region == $regregion)
-                                    {
-                                        $check_region = 1;
-                                        break;
-                                    }
-                                }
-    
-                                if ($check_region == 1) {
-    
-                                    $nbki_scoring = $this->scorings->get_type_scoring($contract->order_id, 'nbki');
-    
-                                    if($nbki_scoring->status == 'completed')
-                                    {
-                                        $od = 0;
-                                        $prc = 0;
-    
-                                        foreach ($graph->payments as $graph_item) {
-                                            $od += $graph_item->od;
-                                            $prc += $graph_item->percent;
-                                        }
-    
-                                        $periods      = ceil($contract->period / 30);
-    
-                                        $psk          = $od + $prc;
-    
-                                        $nbki_scoring = unserialize($nbki_scoring->body);
-                                        $month_pay    = $nbki_scoring['json']['totalScheduledPaymnts']['Value'];
-                                        $arrears      = $nbki_scoring['json']['totalPastDueBalance']['Value'];
-                                        $sdz          = $check_region->revenue;
-                                        $spz          = $month_pay + $arrears + ($psk/$periods);
-                                        $pdn          = ($spz * 100) / $sdz;
-                                        $pdn          = round($pdn, 3);
-    
-                                        $this->orders->update_order($contract->order_id, ['pdn' => $pdn]);
-                                    }
-    
-    
-                                }
                             }
                         }
                     }
-                    */
+
                 } elseif ($res == false) {
 
 
@@ -304,7 +243,7 @@ class IssuanceCron extends Core
             'order_id' => $contract->order_id,
             'contract_id' => $contract->id,
             'type' => $document_type,
-            'params' => $params,
+            'params' => json_encode($params),
         ));
 
     }
