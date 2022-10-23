@@ -124,8 +124,10 @@ class IssuanceCron extends Core
                                 ));
     
                                 $contract->insurance_id = $insurance_id;
-                                //TODO: Страховой полиc
+
+                                //создаем документы для страховки
                                 $this->create_document('POLIS', $contract);
+                                $this->create_document('KID', $contract);
     
     
                                 //Отправляем чек по страховке
