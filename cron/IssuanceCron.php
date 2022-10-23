@@ -89,14 +89,12 @@ class IssuanceCron extends Core
     
                                 $contract = $this->contracts->get_contract($contract->id);
     
-                                $payment_amount = $insurance_cost;
-    
                                 $operation_id = $this->operations->add_operation(array(
                                     'contract_id' => $contract->id,
                                     'user_id' => $contract->user_id,
                                     'order_id' => $contract->order_id,
                                     'type' => 'INSURANCE',
-                                    'amount' => $payment_amount,
+                                    'amount' => $insurance_cost,
                                     'created' => date('Y-m-d H:i:s'),
                                     'transaction_id' => $transaction->id,
                                 ));
@@ -105,8 +103,8 @@ class IssuanceCron extends Core
                                 $dt->add(new DateInterval('P6M'));
                                 $end_date = $dt->format('Y-m-d 23:59:59');
 
-                                $insurance_id = $this->insurances->add_insurance(array(
-                                    'amount' => $payment_amount,
+                                $contract->insurance_id = $this->insurances->add_insurance(array(
+                                    'amount' => $insurance_cost,
                                     'contract_id' => $contract->id,
                                     'user_id' => $contract->user_id,
                                     'create_date' => date('Y-m-d H:i:s'),
@@ -119,11 +117,9 @@ class IssuanceCron extends Core
                                 ));
     
                                 $this->contracts->update_contract($contract->id, array(
-                                    'insurance_id' => $insurance_id,
+                                    'insurance_id' => $contract->insurance_id,
                                     'loan_body_summ' => $contract->amount + $insurance_cost
                                 ));
-    
-                                $contract->insurance_id = $insurance_id;
 
                                 //создаем документы для страховки
                                 $this->create_document('POLIS', $contract);
@@ -141,7 +137,7 @@ class IssuanceCron extends Core
                                         'user_id' => $contract->user_id,
                                         'order_id' => $contract->order_id,
                                         'contract_id' => $contract->id,
-                                        'insurance_id' => $insurance_id,
+                                        'insurance_id' => $contract->insurance_id,
                                         'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
                                         'response' => serialize($return),
                                         'created' => date('Y-m-d H:i:s'),
