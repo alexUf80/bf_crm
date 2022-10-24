@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_orders();
+        $this->import_clients();
     }
 
     private function import_clients()
@@ -267,7 +267,7 @@ class test extends Core
 
     private function import_operations()
     {
-        $tmp_name = $this->config->root_dir . '/files/import.xlsx';
+        $tmp_name = $this->config->root_dir . '/files/operations.xlsx';
         $format = IOFactory::identify($tmp_name);
         $reader = IOFactory::createReader($format);
         $spreadsheet = $reader->load($tmp_name);
@@ -326,7 +326,7 @@ class test extends Core
 
     private function import_balance()
     {
-        $tmp_name = $this->config->root_dir . '/files/import.xlsx';
+        $tmp_name = $this->config->root_dir . '/files/balances.xlsx';
         $format = IOFactory::identify($tmp_name);
         $reader = IOFactory::createReader($format);
         $spreadsheet = $reader->load($tmp_name);
