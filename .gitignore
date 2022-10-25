@@ -16,7 +16,4 @@ Thumbs.db
 /simpla/.passwd
 /files
 !/files/.htaccess
-<<<<<<< HEAD
-=======
-asd
->>>>>>> 283cff6ffb4c06067c8dc0ff8d3490bbcb31b5e3
+/cron/log.txt
