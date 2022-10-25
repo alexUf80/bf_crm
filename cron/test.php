@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_clients();
+        $this->import_balance();
     }
 
     private function import_clients()
