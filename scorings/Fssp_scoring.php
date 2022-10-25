@@ -6,152 +6,122 @@ class Fssp_scoring extends Core
     private $order_id;
     private $audit_id;
     private $type;
-    
+
     private $api_url = 'https://api-ip.fssp.gov.ru/api/v1.0/';
     private $api_key = '';
-    
+
     private $error = null;
-    
-    
+
+
     public function __construct()
     {
-    	parent::__construct();
-        
+        parent::__construct();
+
         $this->api_key = $this->settings->apikeys['fssp']['api_key'];
     }
-    
+
     public function run_scoring($scoring_id)
     {
-        $update = array();
-        
-    	$scoring_type = $this->scorings->get_type('fssp');
-        
-        if ($scoring = $this->scorings->get_scoring($scoring_id))
-        {
-            if ($order = $this->orders->get_order((int)$scoring->order_id))
-            {
-                if (empty($order->lastname) || empty($order->firstname) || empty($order->patronymic) || empty($order->Regregion) || empty($order->birth))
-                {
-                    $update = array(
-                        'status' => 'error',
-                        'string_result' => 'в заявке не достаточно данных для проведения скоринга'
-                    );
-                }
-                else
-                {
+        $scoring_type = $this->scorings->get_type('fssp');
 
-                    $data = array(
-                        'region' => $this->get_code($order->Regregion),
-                        'lastname' => $order->lastname,
-                        'firstname' => $order->firstname,
-                        'secondname' => $order->patronymic,
-                        'birthdate' => date('d.m.Y', strtotime($order->birth)),
-                    );
+        if ($scoring = $this->scorings->get_scoring($scoring_id)) {
+            if ($order = $this->orders->get_order((int)$scoring->order_id)) {
+
+                $regaddress = $this->Addresses->get_address($order->regaddress_id);
+
+                $data = array(
+                    'region' => $this->get_code($regaddress->region),
+                    'lastname' => $order->lastname,
+                    'firstname' => $order->firstname,
+                    'secondname' => $order->patronymic,
+                    'birthdate' => date('d.m.Y', strtotime($order->birth)),
+                );
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($data);echo '</pre><hr />';                    
-                    $task = $this->create_task($data);
+                $task = $this->create_task($data);
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($task);echo '</pre><hr />';
-                    if (!empty($task->task))
-                    {
-                        do {
-                            usleep(2500);
-                            $stat = $this->check_task($task->task);
-                        } while (!empty($stat) && in_array($stat->status, array(1, 2)));
-                        
-                        $resp = $this->get_task($task->task);
+                if (!empty($task->task)) {
+                    do {
+                        usleep(2500);
+                        $stat = $this->check_task($task->task);
+                    } while (!empty($stat) && in_array($stat->status, array(1, 2)));
+
+                    $resp = $this->get_task($task->task);
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($resp);echo '</pre><hr />';            
-                        if (!empty($resp))
-                        {
-                            $debt = 0;
-                            $pattern = '~([0-9.]*)\sруб~';
-                            if (!empty($resp->result[0]->result))
-                            {
-                                foreach ($resp->result[0]->result as $item)
-                                {
-                                    preg_match_all($pattern, $item->subject, $founds);
-                                    foreach ($founds[1] as $f)
-                                        $debt += $f;
-                                }
+                    if (!empty($resp)) {
+                        $debt = 0;
+                        $pattern = '~([0-9.]*)\sруб~';
+                        if (!empty($resp->result[0]->result)) {
+                            foreach ($resp->result[0]->result as $item) {
+                                preg_match_all($pattern, $item->subject, $founds);
+                                foreach ($founds[1] as $f)
+                                    $debt += $f;
                             }
-                            
-                            $score = $debt < $scoring_type->params['amount'];
-                            
-                            $update = array(
-                                'status' => 'completed',
-                                'body' => serialize($resp),
-                                'success' => $score,
-                                'string_result' => 'Найденная сумма долга: '.$debt.' руб',
-                            );
-                            
-                            $this->scorings->update_scoring($scoring_id, $update);
-                            
-                            $this->soap1c->send_fssp(empty($order->id_1c) ? $order->order_id : $order->id_1c, $resp);
-                            
-                            return $update;
                         }
-                        else
-                        {
-                            if ($scoring->repeat_count < 2)
-                            {
-                                $update = array(
-                                    'status' => 'repeat',
-                                    'body' => 'Не удалось соединиться с сервером ФССП',
-                                    'string_result' => 'ПОВТОРНЫЙ ЗАПРОС',
-                                    'repeat_count' => $scoring->repeat_count + 1,
-                                );
-                                
-                            }
-                            else
-                            {
-                                $update = array(
-                                    'status' => 'error',
-                                    'body' => serialize($resp),
-                                    'string_result' => 'Не удалось соединиться с сервером ФССП'
-                                );
-                            }    
-                        }
-                    }
-                    else
-                    {
-                        if ($scoring->repeat_count < 2)
-                        {
+
+                        $score = $debt < $scoring_type->params['amount'];
+
+                        $update = array(
+                            'status' => 'completed',
+                            'body' => serialize($resp),
+                            'success' => $score,
+                            'string_result' => 'Найденная сумма долга: ' . $debt . ' руб',
+                        );
+
+                        $this->scorings->update_scoring($scoring_id, $update);
+
+                        $this->soap1c->send_fssp(empty($order->id_1c) ? $order->order_id : $order->id_1c, $resp);
+
+                        return $update;
+                    } else {
+                        if ($scoring->repeat_count < 2) {
                             $update = array(
                                 'status' => 'repeat',
-                                'body' => 'При запросе произошла ошибка',
+                                'body' => 'Не удалось соединиться с сервером ФССП',
                                 'string_result' => 'ПОВТОРНЫЙ ЗАПРОС',
                                 'repeat_count' => $scoring->repeat_count + 1,
                             );
-                            
-                        }
-                        else
-                        {                            
-                            $error = $this->get_error();
+
+                        } else {
                             $update = array(
                                 'status' => 'error',
-                                'body' => serialize($error),
-                                'string_result' => 'При запросе произошла ошибка'
+                                'body' => serialize($resp),
+                                'string_result' => 'Не удалось соединиться с сервером ФССП'
                             );
                         }
                     }
+                } else {
+                    if ($scoring->repeat_count < 2) {
+                        $update = array(
+                            'status' => 'repeat',
+                            'body' => 'При запросе произошла ошибка',
+                            'string_result' => 'ПОВТОРНЫЙ ЗАПРОС',
+                            'repeat_count' => $scoring->repeat_count + 1,
+                        );
 
+                    } else {
+                        $error = $this->get_error();
+                        $update = array(
+                            'status' => 'error',
+                            'body' => serialize($error),
+                            'string_result' => 'При запросе произошла ошибка'
+                        );
+                    }
                 }
-                
-            }
-            else
-            {
+
+            } else {
                 $update = array(
                     'status' => 'error',
                     'string_result' => 'не найдена заявка'
                 );
             }
-            
+
             if (!empty($update))
                 $this->scorings->update_scoring($scoring_id, $update);
-            
+
             return $update;
 
         }
     }
-    
 
 
     public function run($audit_id, $user_id, $order_id)
@@ -159,7 +129,7 @@ class Fssp_scoring extends Core
         $this->user_id = $user_id;
         $this->audit_id = $audit_id;
         $this->order_id = $order_id;
-        
+
         $this->type = $this->scorings->get_type('fssp');
 
         $user = $this->users->get_user((int)$user_id);
@@ -177,31 +147,28 @@ class Fssp_scoring extends Core
             'secondname' => $secondname,
             'birthdata' => $birthday,
         );
-        
+
         $task = $this->create_task($data);
-        if (!empty($task->task))
-        {
+        if (!empty($task->task)) {
             do {
                 usleep(2500);
                 $stat = $this->check_task($task->task);
             } while (!empty($stat) && in_array($stat->status, array(1, 2)));
-            
+
             $resp = $this->get_task($task->task);
 
             $debt = 0;
             $pattern = '~([0-9.]*)\sруб~';
-            if (!empty($resp->result[0]->result))
-            {
-                foreach ($resp->result[0]->result as $item)
-                {
+            if (!empty($resp->result[0]->result)) {
+                foreach ($resp->result[0]->result as $item) {
                     preg_match_all($pattern, $item->subject, $founds);
                     foreach ($founds[1] as $f)
                         $debt += $f;
                 }
             }
-            
+
             $score = $debt < $this->type->params['amount'];
-            
+
             $add_scoring = array(
                 'user_id' => $this->user_id,
                 'audit_id' => $this->audit_id,
@@ -209,81 +176,76 @@ class Fssp_scoring extends Core
                 'body' => serialize($resp),
                 'success' => (int)$score
             );
-            if ($score)
-            {
-                $add_scoring['string_result'] = 'Долг < '.$this->type->params['amount'].' р';
-            }
-            else
-            {
-                $add_scoring['string_result'] = 'Долг > '.$this->type->params['amount'].' р';
+            if ($score) {
+                $add_scoring['string_result'] = 'Долг < ' . $this->type->params['amount'] . ' р';
+            } else {
+                $add_scoring['string_result'] = 'Долг > ' . $this->type->params['amount'] . ' р';
             }
 
             $this->scorings->add_scoring($add_scoring);
-            
+
             return $score;
 
-        }
-        else
-        {
+        } else {
             $error = $this->get_error();
         }
     }
 
 
-    
     public function create_task($data)
     {
         $resp = $this->send('search/physical', $data);
-        
+
         return ($resp);
     }
-    
+
     public function check_task($task_id)
     {
         $resp = $this->send('status', array('task' => $task_id));
-        
+
         return $resp;
     }
-    
+
     public function get_task($task_id)
     {
         $resp = $this->send('result', array('task' => $task_id));
-        
-        return $resp;    	
+
+        return $resp;
     }
-    
+
     public function get_error()
     {
-    	return $this->error;
+        return $this->error;
     }
-    
-    
+
+
     public function send($method, $data)
     {
-    	$this->error = null;
-        
+        $this->error = null;
+
         $data['token'] = $this->api_key;
-        
-        $url = $this->api_url. $method . '?' . http_build_query($data);
-        
+
+        $url = $this->api_url . $method . '?' . http_build_query($data);
+
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        
+
         $json = curl_exec($ch);
         curl_close($ch);
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($json);echo '</pre><hr />';        
+        echo __FILE__ . ' ' . __LINE__ . '<br /><pre>';
+        var_dump($json);
+        echo '</pre><hr />';
         $result = json_decode($json);
-        if ($result->status != 'success')
-        {
+        if ($result->status != 'success') {
             $this->error = $result;
             return false;
         }
-        
+
         return $result->response;
     }
-    
+
     public function get_code($region_name)
     {
         $codes = array(
@@ -313,7 +275,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($json);echo '</pre><hr />';
             24 => "красноярский",
             25 => "приморский",
             26 => "ставропольский",
-            27 => "хабаровский", 
+            27 => "хабаровский",
             28 => "амурская",
             29 => "архангельская",
             30 => "астраханская",
@@ -371,17 +333,17 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($json);echo '</pre><hr />';
             89 => "ямало-ненецкий",
             92 => "севастополь",
         );
-        
+
         $index = array_search(mb_strtolower($region_name, 'utf8'), $codes);
-        
+
         if (mb_strtolower($region_name, 'utf8') == 'еврейская')
             $index = 27;
         if (mb_strtolower($region_name, 'utf8') == 'ненецкий')
             $index = 29;
         if (mb_strtolower($region_name, 'utf8') == 'кемеровская область - кузбасс')
             $index = 42;
-        
-        return $index;            
+
+        return $index;
     }
-    
+
 }
