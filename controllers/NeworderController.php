@@ -349,7 +349,7 @@ class NeworderController extends Controller
                     'order_id' => $contract->order_id,
                     'contract_id' => $contract->id,
                     'type'     => $type,
-                    'params'   => $params,
+                    'params'   => json_encode($params),
                     'created'  => date('Y-m-d H:i:s')
                 ];
 
