@@ -211,6 +211,7 @@ class NeworderController extends Controller
     private function action_search_user()
     {
         $fio = $this->request->post('fio');
+        $fio = explode(' ', $fio);
 
         $users = $this->users->search_user($fio);
 
@@ -219,7 +220,6 @@ class NeworderController extends Controller
 
             foreach ($users as $user)
                 $items[] = ['id' => $user->id, 'text' => "$user->lastname $user->firstname $user->patronymic"];
-
             echo json_encode(['items' => $items]);
         } else
             echo json_encode(['empty' => 1]);

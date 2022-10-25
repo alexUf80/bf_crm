@@ -396,14 +396,37 @@ class Users extends Core
 
     public function search_user($fio)
     {
+        $lastname = '';
+        $firstname = '';
+        $patronymic = '';
+
+        if(isset($fio[0]))
+        {
+            $lastname = $fio[0];
+            $lastname = $this->db->placehold("WHERE lastname LIKE '$lastname%'");
+        }
+
+        if(isset($fio[1]))
+        {
+            $firstname = $fio[1];
+            $firstname = $this->db->placehold("AND firstname LIKE '$firstname%'");
+        }
+
+        if(isset($fio[2]))
+        {
+            $patronymic = $fio[2];
+            $patronymic = $this->db->placehold("AND patronymic LIKE '$patronymic%'");
+        }
+
+
+
         $query = $this->db->placehold("
             SELECT id, firstname, lastname, patronymic
             FROM s_users
-            WHERE firstname LIKE '%$fio%' 
-            OR lastname     LIKE '%$fio%'  
-            OR patronymic   LIKE '%$fio%' 
+            $lastname
+            $firstname  
+            $patronymic 
         ");
-
         $this->db->query($query);
         $user = $this->db->results();
 
