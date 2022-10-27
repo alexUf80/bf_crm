@@ -16,12 +16,15 @@ class Nbki_scoring extends Core
             $this->scoring_id = $scoring_id;
 
             if ($user = $this->users->get_user((int)$scoring->user_id)) {
-                if ($user->Regcity) {
-                    $city = $user->Regcity;
-                } elseif ($user->Reglocality) {
-                    $city = $user->Reglocality;
+
+                $regaddress = $this->Addresses->get_address($user->regaddress_id);
+
+                if ($regaddress->district) {
+                    $city = $regaddress->district;
+                } elseif ($regaddress->locality) {
+                    $city = $regaddress->locality;
                 } else {
-                    $city = $user->Regcity;
+                    $city = $regaddress->city;
                 }
 
                 return $this->scoring(
@@ -29,7 +32,7 @@ class Nbki_scoring extends Core
                     $user->patronymic,
                     $user->lastname,
                     $city,
-                    $user->Regstreet,
+                    $regaddress->street,
                     $user->birth,
                     $user->birth_place,
                     $user->passport_serial,

@@ -229,52 +229,8 @@ class OrderController extends Controller
                     $contacts = $this->Contactpersons->get_contactpersons(['user_id' => $order->user_id]);
                     $this->design->assign('contacts', $contacts);
 
-                    $documents = $this->Documents->get_documents(['order_id' => $order->order_id]);
-                    $polises = [];
-
-                    foreach ($documents as $document) {
-                        if (in_array($document->type, ['POLIS_STRAHOVANIYA', 'POLIS_ZAKRITIE']))
-                            $polises[] = $document;
-
-                        if ($document->type == 'IND_USLOVIYA_NL')
-                            $issuance_date = date('Y-m-d', strtotime($document->created));
-                    }
-
-                    foreach ($polises as $polise) {
-                        $created = date('Y-m-d', strtotime($polise->created));
-
-                        if ($issuance_date == $created)
-                            $polise->issuance_flag = 1;
-                    }
-
-                    $this->design->assign('polises', $polises);
-
-                    /*
-                    $credits_history = $this->soap1c->get_client_credits($client->UID);
-                    $this->users->save_loan_history($client->id, $credits_history);
-                    */
-
                     $client = $this->users->get_user($order->user_id);
                     $this->design->assign('client', $client);
-
-                    //Локальное время клиента
-                    $shift = $order->time_zone;
-
-                    $pdn = $client->pdn;
-                    $this->design->assign('pdn', $pdn);
-
-                    if ($shift == null) {
-                        $time = 0;
-                        $need_to_select_local_zone = 1;
-                        $client_time = date('Y-m-d H:i:s', time() + $time * 3600);
-                        $client_time = DateTime::createFromFormat("Y-m-d H:i:s", $client_time);
-                        $this->design->assign('client_time', $client_time->format('H:i'));
-                        $this->design->assign('need_to_select_local_zone', $need_to_select_local_zone);
-                    } else {
-                        $client_time = date('Y-m-d H:i:s', time() + $shift * 3600);
-                        $client_time = DateTime::createFromFormat("Y-m-d H:i:s", $client_time);
-                        $this->design->assign('client_time', $client_time->format('H:i'));
-                    }
 
                     //подсчет возраста
                     try {
@@ -293,31 +249,6 @@ class OrderController extends Controller
 
                     $communications = $this->communications->get_communications(array('user_id' => $client->id));
                     $this->design->assign('communications', $communications);
-
-                    // причина "не удалось выдать"
-                    if ($order->status == 6) {
-                        if ($p2p = $this->best2pay->get_contract_p2pcredit($order->contract_id)) {
-                            $p2p->response = unserialize($p2p->response);
-                            if (!empty($p2p->response))
-                                $p2p->response_xml = simplexml_load_string($p2p->response);
-                            $this->design->assign('p2p', $p2p);
-                        }
-
-                        if ($client_orders = $this->orders->get_orders(array('user_id' => $order->user_id))) {
-                            $have_newest_order = 0;
-                            foreach ($client_orders as $co) {
-                                if ($co->order_id != $order->order_id && (strtotime($order->date) < strtotime($co->date)))
-                                    $have_newest_order = $co->order_id;
-                            }
-                            $this->design->assign('have_newest_order', $have_newest_order);
-                        }
-                    }
-
-                    $penalties = array();
-                    foreach ($this->penalties->get_penalties(array('order_id' => $order_id)) as $p)
-                        $penalties[$p->block] = $p;
-                    $this->design->assign('penalties', $penalties);
-
                     $this->design->assign('order', $order);
 
                     $comments = $this->comments->get_comments(array('user_id' => $order->user_id, 'official' => $this->settings->display_only_official_comments));
@@ -495,57 +426,6 @@ class OrderController extends Controller
 
 
                     // получаем комменты из 1С
-                    $client = $this->users->get_user((int)$order->user_id);
-                    /*
-                    if ($comments_1c_response = $this->soap1c->get_comments($client->UID))
-                    {
-                        $comments_1c = array();
-                        if (!empty($comments_1c_response->Комментарии))
-                        {
-                            foreach ($comments_1c_response->Комментарии as $comm)
-                            {
-                                $comment_1c_item = new StdClass();
-                                
-                                $comment_1c_item->created = date('Y-m-d H:i:s', strtotime($comm->Дата));
-                                $comment_1c_item->text = $comm->Комментарий;
-                                $comment_1c_item->block = $comm->Блок;
-                                
-                                $comments_1c[] = $comment_1c_item;
-                            }
-                        }
-                        
-                        usort($comments_1c, function($a, $b){
-                            return strtotime($b->created) - strtotime($a->created);
-                        });
-                        
-                        $this->design->assign('comments_1c', $comments_1c);
-                        
-                        $blacklist_comments = array();
-                        if (!empty($comments_1c_response->Комментарии))
-                        {
-                            foreach ($comments_1c_response->Комментарии as $comm)
-                            {
-                                $blacklist_comment = new StdClass();
-                                
-                                $blacklist_comment->created = date('Y-m-d H:i:s', strtotime($comm->Дата));
-                                $blacklist_comment->text = $comm->Комментарий;
-                                $blacklist_comment->block = $comm->Блок;
-                                
-                                $blacklist_comments[] = $blacklist_comment;
-                            }
-                        }
-                        
-                        usort($blacklist_comments, function($a, $b){
-                            return strtotime($b->created) - strtotime($a->created);
-                        });
-                        
-                        $this->design->assign('blacklist_comments', $blacklist_comments);
-    
-    
-            
-        //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments_1c_response);echo '</pre><hr />';
-                    }
-                    */
                     $orders = $this->orders->get_orders(array('user_id' => $order->user_id));
 
                     foreach ($orders as $order) {
@@ -580,7 +460,6 @@ class OrderController extends Controller
         $scoring_types = array();
         foreach ($this->scorings->get_types(array('active' => true)) as $type)
             $scoring_types[$type->name] = $type;
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring_types);echo '</pre><hr />';
         $this->design->assign('scoring_types', $scoring_types);
 
         $reject_reasons = array();

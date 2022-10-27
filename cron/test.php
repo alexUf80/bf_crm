@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_balance();
+        $this->edit_orders_amount();
     }
 
     private function import_clients()
@@ -33,30 +33,28 @@ class test extends Core
 
         for ($row = $first_row; $row <= $last_row; $row++) {
 
-            $created = $active_sheet->getCell('AN' . $row)->getFormattedValue();
-            $birth = $active_sheet->getCell('B' . $row)->getFormattedValue();
-            $passport_date = $active_sheet->getCell('AH' . $row)->getFormattedValue();
+            $created = $active_sheet->getCell('AQ' . $row)->getFormattedValue();
+            $birth = $active_sheet->getCell('D' . $row)->getFormattedValue();
+            $passport_date = $active_sheet->getCell('AK' . $row)->getFormattedValue();
 
-            $outer_id = $active_sheet->getCell('M' . $row)->getValue();
+            $outer_id = $active_sheet->getCell('P' . $row)->getValue();
 
             if (empty($outer_id))
                 continue;
 
-            $in_blacklist = ($active_sheet->getCell('N' . $row)->getValue() == 'Нет') ? 0 : 1;
+            $Regindex = $active_sheet->getCell('I' . $row)->getValue();
+            $Regregion = $active_sheet->getCell('R' . $row)->getValue();
+            $Regcity = $active_sheet->getCell('S' . $row)->getValue();
+            $Regstreet = $active_sheet->getCell('T' . $row)->getValue();
+            $Regbuilding = $active_sheet->getCell('U' . $row)->getValue();
+            $Regroom = $active_sheet->getCell('X' . $row)->getValue();
 
-            $Regindex = $active_sheet->getCell('F' . $row)->getValue();
-            $Regregion = $active_sheet->getCell('O' . $row)->getValue();
-            $Regcity = $active_sheet->getCell('P' . $row)->getValue();
-            $Regstreet = $active_sheet->getCell('Q' . $row)->getValue();
-            $Regbuilding = $active_sheet->getCell('R' . $row)->getValue();
-            $Regroom = $active_sheet->getCell('U' . $row)->getValue();
-
-            $Faktindex = $active_sheet->getCell('G' . $row)->getValue();
-            $Faktregion = $active_sheet->getCell('W' . $row)->getValue();
-            $Faktcity = $active_sheet->getCell('X' . $row)->getValue();
-            $Faktstreet = $active_sheet->getCell('Y' . $row)->getValue();
-            $Faktbuilding = $active_sheet->getCell('Z' . $row)->getValue();
-            $Faktroom = $active_sheet->getCell('AC' . $row)->getValue();
+            $Faktindex = $active_sheet->getCell('J' . $row)->getValue();
+            $Faktregion = $active_sheet->getCell('Z' . $row)->getValue();
+            $Faktcity = $active_sheet->getCell('AA' . $row)->getValue();
+            $Faktstreet = $active_sheet->getCell('AB' . $row)->getValue();
+            $Faktbuilding = $active_sheet->getCell('AC' . $row)->getValue();
+            $Faktroom = $active_sheet->getCell('AF' . $row)->getValue();
 
             $regaddress = "$Regindex $Regregion $Regcity $Regstreet $Regbuilding $Regroom";
             $faktaddress = "$Faktindex $Faktregion $Faktcity $Faktstreet $Faktbuilding $Faktroom";
@@ -66,7 +64,7 @@ class test extends Core
 
             $fio = explode(' ', $active_sheet->getCell('A' . $row)->getValue());
 
-            $phone = preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('H' . $row)->getValue());
+            $phone = preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('K' . $row)->getValue());
             $phone = str_replace('8', '7', $phone);
 
             $user = [
@@ -75,22 +73,22 @@ class test extends Core
                 'patronymic' => ucfirst($fio[2]),
                 'outer_id' => $outer_id,
                 'phone_mobile' => $phone,
-                'email' => $active_sheet->getCell('AD' . $row)->getValue(),
-                'gender' => $active_sheet->getCell('AK' . $row)->getValue() == 'Мужчина' ? 'male' : 'female',
+                'email' => $active_sheet->getCell('AG' . $row)->getValue(),
+                'gender' => $active_sheet->getCell('AN' . $row)->getValue() == 'Мужской' ? 'male' : 'female',
                 'birth' => date('d.m.Y', strtotime($birth)),
-                'birth_place' => $active_sheet->getCell('D' . $row)->getValue(),
-                'passport_serial' => $active_sheet->getCell('AE' . $row)->getValue() . '-' . $active_sheet->getCell('AF' . $row)->getValue(),
+                'birth_place' => $active_sheet->getCell('G' . $row)->getValue(),
+                'passport_serial' => $active_sheet->getCell('AH' . $row)->getValue() . '-' . $active_sheet->getCell('AI' . $row)->getValue(),
                 'passport_date' => date('d.m.Y', strtotime($passport_date)),
-                'passport_issued' => $active_sheet->getCell('AG' . $row)->getValue(),
-                'subdivision_code' => $active_sheet->getCell('E' . $row)->getValue(),
-                'snils' => $active_sheet->getCell('AJ' . $row)->getValue(),
-                'inn' => $active_sheet->getCell('AI' . $row)->getValue(),
-                'workplace' => $active_sheet->getCell('I' . $row)->getValue(),
-                'workaddress' => $active_sheet->getCell('J' . $row)->getValue(),
-                'profession' => $active_sheet->getCell('K' . $row)->getValue(),
-                'workphone' => $active_sheet->getCell('L' . $row)->getValue(),
-                'income' => $active_sheet->getCell('AL' . $row)->getValue(),
-                'expenses' => $active_sheet->getCell('AM' . $row)->getValue(),
+                'passport_issued' => $active_sheet->getCell('AJ' . $row)->getValue(),
+                'subdivision_code' => $active_sheet->getCell('H' . $row)->getValue(),
+                'snils' => $active_sheet->getCell('AM' . $row)->getValue(),
+                'inn' => $active_sheet->getCell('AL' . $row)->getValue(),
+                'workplace' => $active_sheet->getCell('L' . $row)->getValue(),
+                'workaddress' => $active_sheet->getCell('M' . $row)->getValue(),
+                'profession' => $active_sheet->getCell('N' . $row)->getValue(),
+                'workphone' => $active_sheet->getCell('O' . $row)->getValue(),
+                'income' => $active_sheet->getCell('AO' . $row)->getValue(),
+                'expenses' => $active_sheet->getCell('AP' . $row)->getValue(),
                 'chief_name' => '',
                 'chief_phone' => '',
                 'regaddress_id' => $reg_id,
@@ -99,12 +97,6 @@ class test extends Core
             ];
 
             $this->users->add_user($user);
-
-            if ($in_blacklist == 1) {
-                $this->blacklist->add_person([
-                    'fio' => ucfirst($active_sheet->getCell('A' . $row)->getValue()),
-                    'phone' => preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('L' . $row)->getValue())]);
-            }
         }
     }
 
@@ -130,28 +122,40 @@ class test extends Core
             $created = $active_sheet->getCell('A' . $row)->getFormattedValue();
             $created = date('Y-m-d H:i:s', strtotime($created));
 
-            $reject_reason = $active_sheet->getCell('N' . $row)->getValue();
+            $reject_reason = '';
 
             if ($active_sheet->getCell('I' . $row)->getValue() === 'Отказ')
+            {
+                $reject_reason = $active_sheet->getCell('N' . $row)->getValue();
                 $status = 3;
+            }
 
-            if ($active_sheet->getCell('I' . $row)->getValue() === 'Выдан')
+            if (in_array($active_sheet->getCell('I' . $row)->getFormattedValue(), ['Выдан', 'В суде', 'Отправлена претензия', 'Передан на судебную стадию', "Подписан (дистанционно)", "Получен исполнительный лист", "У коллектора"]))
                 $status = 5;
 
             if ($active_sheet->getCell('I' . $row)->getValue() === 'На рассмотрении')
                 $status = 1;
 
-            if ($active_sheet->getCell('I' . $row)->getValue() === 'Оплачен')
+            if ($active_sheet->getCell('I' . $row)->getValue() === 'Оплачен' || $active_sheet->getCell('I' . $row)->getValue() === 'Списан')
                 $status = 7;
 
+            if ($active_sheet->getCell('I' . $row)->getValue() === 'Отменен')
+                $status = 8;
+
+            if ($active_sheet->getCell('I' . $row)->getValue() === 'Одобрен' || $active_sheet->getCell('I' . $row)->getValue() === 'Одобрен предварительно')
+                $status = 2;
 
 
-            if ($active_sheet->getCell('Q' . $row)->getValue() === 'ONLINE')
-                $loantype_id = 1;
-            else
+
+            if ($active_sheet->getCell('Q' . $row)->getValue() === 'ONLINE-0,5!')
                 $loantype_id = 2;
+            elseif($active_sheet->getCell('Q' . $row)->getValue() === 'ВСЕМ-0,9!')
+                $loantype_id = 3;
+            else
+                $loantype_id = 1;
 
             $loantype = $this->Loantypes->get_loantype($loantype_id);
+
 
 
             $new_order = [
@@ -198,24 +202,14 @@ class test extends Core
 
         for ($row = $first_row; $row <= $last_row; $row++) {
 
-            $created = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('B' . $row)->getValue());
-            $issuance_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('C' . $row)->getValue());
-            $return_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('E' . $row)->getValue());
+            $created = $active_sheet->getCell('B' . $row)->getFormattedValue();
+            $created = date('Y-m-d H:i:s', strtotime($created));
 
-            if ($active_sheet->getCell('O' . $row)->getValue() === 'Отказ')
-                $status = 3;
+            $issuance_date = $active_sheet->getCell('C' . $row)->getFormattedValue();
+            $issuance_date = date('Y-m-d H:i:s', strtotime($issuance_date));
 
-            if ($active_sheet->getCell('O' . $row)->getValue() === 'Выдан')
-                $status = 5;
-
-            if ($active_sheet->getCell('O' . $row)->getValue() === 'На рассмотрении')
-                $status = 1;
-
-            if ($active_sheet->getCell('O' . $row)->getValue() === 'Оплачен')
-                $status = 7;
-
-            $issuance_date = new DateTime(date('Y-m-d', $issuance_date));
-            $return_date = new DateTime(date('Y-m-d', $return_date));
+            $return_date = $active_sheet->getCell('E' . $row)->getFormattedValue();
+            $return_date = date('Y-m-d', strtotime($return_date));
 
             $new_contract =
                 [
@@ -224,10 +218,10 @@ class test extends Core
                     'period' => 30,
                     'uid' => $active_sheet->getCell('K' . $row)->getValue(),
                     'amount' => $active_sheet->getCell('F' . $row)->getValue(),
-                    'status' => $status,
-                    'create_date' => date('Y-m-d H:i:s', $created),
-                    'inssuance_date' => $issuance_date->format('Y-m-d'),
-                    'return_date' => $return_date->format('Y-m-d')
+                    'status' => 0,
+                    'create_date' => $created,
+                    'inssuance_date' => $issuance_date,
+                    'return_date' => $return_date
                 ];
 
             $contract_id = $this->contracts->add_contract($new_contract);
@@ -254,10 +248,19 @@ class test extends Core
             $loantype = $this->Loantypes->get_loantype($order->loantype_id);
             $percent = $loantype->percent;
 
+            $statuses = array(
+                1 => 0,
+                3 => 8,
+                5 => 2,
+                7 => 3,
+                8 => 8
+            );
+
             $new_contract =
                 [
                     'order_id' => $order->id,
                     'base_percent' => $percent,
+                    'status' => $statuses[$order->status]
                 ];
 
             $this->contracts->update_contract($contract_id, $new_contract);
@@ -274,12 +277,12 @@ class test extends Core
 
         $active_sheet = $spreadsheet->getActiveSheet();
 
-        $first_row = 2;
+        $first_row = 5;
         $last_row = $active_sheet->getHighestRow();
 
         for ($row = $first_row; $row <= $last_row; $row++) {
 
-            $number = $active_sheet->getCell('E' . $row)->getValue();
+            $number = $active_sheet->getCell('B' . $row)->getValue();
 
             $this->db->query("
             SELECT *
@@ -294,20 +297,21 @@ class test extends Core
 
 
             $id = $active_sheet->getCell('B' . $row)->getValue();
-            $created = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToTimestamp($active_sheet->getCell('F' . $row)->getValue());
+            $created = $active_sheet->getCell('H' . $row)->getFormattedValue();
+            $created = date('Y-m-d H:i:s', strtotime($created));
             $type = 'P2P';
-            $amount = $active_sheet->getCell('I' . $row)->getValue();
+            $amount = $active_sheet->getCell('K' . $row)->getValue();
 
-            if ($active_sheet->getCell('H' . $row)->getValue() === 'Погашение') {
+            if ($active_sheet->getCell('J' . $row)->getValue() === 'Погашение') {
                 $type = 'PAY';
-                $amount = $active_sheet->getCell('J' . $row)->getValue();
+                $amount = $active_sheet->getCell('L' . $row)->getValue();
             }
 
             $this->db->query("
             SELECT *
             FROM s_contracts
-            where outer_id = ?
-            ", $active_sheet->getCell('K' . $row)->getValue());
+            where `number` = ?
+            ", $id);
 
             $contract = $this->db->result();
 
@@ -317,9 +321,7 @@ class test extends Core
                 'order_id' => $contract->order_id,
                 'type' => $type,
                 'amount' => $amount,
-                'created' => date('Y-m-d', $created),
-                'number' => $number,
-                'outer_id' => $id
+                'created' => $created
             ]);
         }
     }
@@ -337,10 +339,21 @@ class test extends Core
         $last_row = $active_sheet->getHighestRow();
 
         for ($row = $first_row; $row <= $last_row; $row++) {
-            $id = $active_sheet->getCell('O' . $row)->getValue();
-            $od = $active_sheet->getCell('H' . $row)->getValue();
-            $prc = $active_sheet->getCell('K' . $row)->getValue();
-            $peni = $active_sheet->getCell('L' . $row)->getValue();
+            $id = $active_sheet->getCell('B' . $row)->getValue();
+            $od = $active_sheet->getCell('G' . $row)->getValue();
+            $prc = $active_sheet->getCell('I' . $row)->getValue();
+            $peni = $active_sheet->getCell('K' . $row)->getFormattedValue();
+
+            if(!empty($peni) && $peni !== "#NULL!")
+            {
+                $this->db->query("
+                UPDATE s_contracts
+                SET `status` = 4
+                WHERE `number` = ?
+                ", $id);
+            }
+            else
+                $peni = 0.00;
 
             $contract =
                 [
@@ -352,8 +365,49 @@ class test extends Core
             $this->db->query("
             UPDATE s_contracts 
             SET ?% 
-            WHERE outer_id = ?
+            WHERE `number` = ?
             ", $contract, $id);
+        }
+    }
+
+    private function statuses()
+    {
+        $this->db->query("
+        SELECT *
+        from s_contracts
+        where `status` = 3
+        ");
+
+        $contracts = $this->db->results();
+
+        foreach ($contracts as $contract)
+        {
+            $this->db->query("
+            UPDATE s_orders
+            set `status` = 5
+            where contract_id = ?
+            ", $contract->id);
+        }
+    }
+
+    private function edit_orders_amount()
+    {
+        $tmp_name = $this->config->root_dir . '/files/contracts.xlsx';
+        $format = IOFactory::identify($tmp_name);
+        $reader = IOFactory::createReader($format);
+        $spreadsheet = $reader->load($tmp_name);
+
+        $active_sheet = $spreadsheet->getActiveSheet();
+
+        $first_row = 2;
+        $last_row = $active_sheet->getHighestRow();
+
+        for ($row = $first_row; $row <= $last_row; $row++) {
+            $this->db->query("
+                UPDATE s_orders
+                SET `amount` = ?
+                where outer_id = ?
+                ", $active_sheet->getCell('F' . $row)->getValue(), $active_sheet->getCell('M' . $row)->getValue());
         }
     }
 

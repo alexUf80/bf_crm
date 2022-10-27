@@ -59,9 +59,6 @@ class NeworderController extends Controller
         $user['workphone'] = (string)$this->request->post('workphone');
         $user['income'] = (string)$this->request->post('income');
         $user['expenses'] = (string)$this->request->post('expenses');
-        $user['chief_name'] = (string)$this->request->post('chief_name');
-        $user['chief_position'] = (string)$this->request->post('chief_position');
-        $user['chief_phone'] = (string)$this->request->post('chief_phone');
 
         $Regadress = json_decode($this->request->post('regaddressfull'));
 
@@ -330,9 +327,6 @@ class NeworderController extends Controller
             'profession' => $contract_user->profession,
             'workplace' => $contract_user->workplace,
             'workphone' => $contract_user->workphone,
-            'chief_name' => $contract_user->chief_name,
-            'chief_position' => $contract_user->chief_position,
-            'chief_phone' => $contract_user->chief_phone,
             'income' => $contract_user->income,
             'expenses' => $contract_user->expenses,
             'create_date' => date('Y-m-d H:i:s'),
