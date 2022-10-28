@@ -33,8 +33,6 @@ class TaxingCron extends Core
         if ($contracts = $this->contracts->get_contracts(array('status' => [2, 4], 'type' => 'base', 'stop_profit' => 0))) {
 
             foreach ($contracts as $contract) {
-                $issuance_date = new DateTime(date('Y-m-d', strtotime($contract->inssuance_date)));
-                $now_date = new DateTime(date('Y-m-d'));
 
                 $this->db->query("
                 select sum(amount) as sum_taxing
