@@ -55,11 +55,7 @@ class Contracts extends Core
     {
     	$query = $this->db->placehold("
             UPDATE __contracts
-            SET 
-                status = 4, 
-                collection_manager_id = 0,
-                collection_handchange = 0,
-                collection_workout = 0
+            SET status = 4
             WHERE status = 2
             AND return_date < ?
         ", date('Y-m-d H:i:s'));

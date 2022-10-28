@@ -29,7 +29,10 @@ class TaxingCron extends Core
 
     private function run()
     {
+        //Перевод в просрочку всех у кого подошел срок
+        $this->contracts->check_expiration_contracts();
 
+        //Начисления
         if ($contracts = $this->contracts->get_contracts(array('status' => [2, 4], 'type' => 'base', 'stop_profit' => 0))) {
 
             foreach ($contracts as $contract) {
