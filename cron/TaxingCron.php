@@ -41,6 +41,7 @@ class TaxingCron extends Core
                         'stop_profit' => 1
                     ));
                 } else {
+                    //Начисление процентов
                     $percents_summ = round($contract->loan_body_summ / 100 * $contract->base_percent, 2);
 
                     $this->contracts->update_contract($contract->id, array(
@@ -60,6 +61,30 @@ class TaxingCron extends Core
                         'loan_charge_summ' => $contract->loan_charge_summ,
                         'loan_peni_summ' => $contract->loan_peni_summ,
                     ));
+
+                    //Начисление пени, если просрочен займ
+                    if($contract->status == 4)
+                    {
+                        $peni_summ = round((0.05 / 100) * $contract->loan_body_summ, 2);
+
+                        $this->contracts->update_contract($contract->id, array(
+                            'loan_percents_summ' => $contract->loan_percents_summ + $peni_summ
+                        ));
+
+
+                        $this->operations->add_operation(array(
+                            'contract_id' => $contract->id,
+                            'user_id' => $contract->user_id,
+                            'order_id' => $contract->order_id,
+                            'type' => 'PENI',
+                            'amount' => $percents_summ,
+                            'created' => date('Y-m-d H:i:s'),
+                            'loan_body_summ' => $contract->loan_body_summ,
+                            'loan_percents_summ' => $contract->loan_percents_summ,
+                            'loan_charge_summ' => $contract->loan_charge_summ,
+                            'loan_peni_summ' => $contract->loan_peni_summ + $peni_summ,
+                        ));
+                    }
                 }
             }
         }
