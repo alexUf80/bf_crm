@@ -20,25 +20,25 @@ Sector ID: 8079 ООО МКК "Финансовый аспект" (ecozaym24.ru)
 Sector ID: 8080 ООО МКК "Финансовый аспект" (ecozaym24.ru) (СНГБ) (token) nc15jY3
 Sector ID: 8081 ООО МКК "Финансовый аспект" (ecozaym24.ru) (СНГБ) (C2A) (ФЛ) 3w69fF5
      */
-    
-    private $url = 'https://test.best2pay.net/';
+
+    private $url = 'https://pay.best2pay.net/';
     private $currency_code = 643;
     
     private $fee = 0.049;
     private $min_fee = 3000;
-    
+
     private $sectors = array(
-        'PAY_CREDIT' => '4038', //сектор для отправки кредита на карту клиента (P2PCredit)
-        'RECURRENT' => '4036', // сектор для совершения рекурентных платежей (token)
-        'ADD_CARD' => '4037', // сектор для привязки карты (token)
-        'PAYMENT' => '4039', // сектор для оплаты любой картой (C2A)
+        'PAY_CREDIT' => '9733', //сектор для отправки кредита на карту клиента (P2PCredit)
+        'RECURRENT' => '9749', // сектор для совершения рекурентных платежей (token) ECOM
+        'ADD_CARD' => '9748', // сектор для привязки карты (token)
+        'PAYMENT' => '9750', // сектор для оплаты любой картой (C2A)
     );
-    
+
     private $passwords = array(
-        '4038' => 'test',
-        '4037' => 'test',
-        '4039' => 'test',
-        '4036' => 'test'
+        '9733' => 'Hs3Me74',
+        '9749' => 'D41i7R39',
+        '9748' => 'U44eS3Is715',
+        '9750' => 'W38iUdA3'
     );
     
 
