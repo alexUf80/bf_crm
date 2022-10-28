@@ -2,12 +2,11 @@
 
 class Nbkiscore_scoring extends Core
 {
-    private $scoring_id;
-    private $error = null;
 
     public function __construct()
     {
         parent::__construct();
+        $this->run_scoring(42);
     }
 
     public function run_scoring($scoring_id)
@@ -47,8 +46,7 @@ class Nbkiscore_scoring extends Core
             return $update;
         }
 
-        if(isset($nbki['json']['AccountReply']['paymtPat']))
-        {
+        if (isset($nbki['json']['AccountReply']['paymtPat'])) {
             $rezerv = $nbki['json']['AccountReply'];
             unset($nbki['json']['AccountReply']);
             $nbki['json']['AccountReply'][0] = $rezerv;
@@ -72,7 +70,7 @@ class Nbkiscore_scoring extends Core
 
         $now = new DateTime(date('Y-m-d'));
 
-        foreach ($scoring['json']['AccountReply'] as $scor) {
+        foreach ($nbki['json']['AccountReply'] as $scor) {
 
             if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] <= 30000) {
 
@@ -109,7 +107,7 @@ class Nbkiscore_scoring extends Core
             }
         }
 
-        foreach ($scoring['json']['AccountReply'] as $scor) {
+        foreach ($nbki['json']['AccountReply'] as $scor) {
 
             if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] <= 30000) {
 
@@ -128,7 +126,7 @@ class Nbkiscore_scoring extends Core
             }
         }
 
-        foreach ($scoring['json']['AccountReply'] as $scor) {
+        foreach ($nbki['json']['AccountReply'] as $scor) {
 
             if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] <= 30000) {
 
@@ -150,7 +148,7 @@ class Nbkiscore_scoring extends Core
             }
         }
 
-        foreach ($scoring['json']['AccountReply'] as $scor) {
+        foreach ($nbki['json']['AccountReply'] as $scor) {
 
             if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] <= 30000) {
 
@@ -171,7 +169,7 @@ class Nbkiscore_scoring extends Core
             }
         }
 
-        foreach ($scoring['json']['AccountReply'] as $scor) {
+        foreach ($nbki['json']['AccountReply'] as $scor) {
 
             if (in_array($scor['acctType'], [16]) && $scor['creditLimit'] <= 30000 && $scor['fact_term_m'] >= 3) {
 
@@ -192,18 +190,18 @@ class Nbkiscore_scoring extends Core
             }
         }
 
-        foreach ($scoring['json']['AccountReply'] as $scor) {
+        foreach ($nbki['json']['AccountReply'] as $scor) {
 
             if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] > 30000) {
 
-                if ($scor['amtPastDue'] != 13  && $scor['amtPastDue'] == 0 && $scor['creditLimit'] > $consum_current_limit_max) {
+                if ($scor['amtPastDue'] != 13 && $scor['amtPastDue'] == 0 && $scor['creditLimit'] > $consum_current_limit_max) {
                     $consum_current_limit_max = $scor['creditLimit'];
                     break;
                 }
             }
         }
 
-        foreach ($scoring['json']['AccountReply'] as $scor) {
+        foreach ($nbki['json']['AccountReply'] as $scor) {
 
             if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] > 30000) {
 
@@ -339,12 +337,30 @@ class Nbkiscore_scoring extends Core
         elseif ($consum_good_limit >= 400000)
             $nbki_score += 88;
 
-        $update = [
-            'status' => 'completed',
-            'body' => 'Проверка пройдена',
-            'success' => 1,
-            'string_result' => 'Скорбалл: '. $nbki_score
-        ];
+
+        if ($nbki_score < 200)
+            $limit = 0;
+        elseif ($nbki_score >= 200 && $nbki_score < 799)
+            $limit = 3000;
+        elseif ($nbki_score >= 800 && $nbki_score < 899)
+            $limit = 5000;
+        elseif ($nbki_score >= 900)
+            $limit = 7000;
+
+        if ($nbki_score < 200)
+            $update = [
+                'status' => 'completed',
+                'body' => 'Проверка не пройдена',
+                'success' => 0,
+                'string_result' => 'Отказ'
+            ];
+        else
+            $update = [
+                'status' => 'completed',
+                'body' => 'Проверка пройдена',
+                'success' => 1,
+                'string_result' => 'Лимит: ' . $limit
+            ];
 
         $this->scorings->update_scoring($scoring_id, $update);
         return $update;

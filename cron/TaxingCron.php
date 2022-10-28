@@ -77,7 +77,7 @@ class TaxingCron extends Core
                             'user_id' => $contract->user_id,
                             'order_id' => $contract->order_id,
                             'type' => 'PENI',
-                            'amount' => $percents_summ,
+                            'amount' => $peni_summ,
                             'created' => date('Y-m-d H:i:s'),
                             'loan_body_summ' => $contract->loan_body_summ,
                             'loan_percents_summ' => $contract->loan_percents_summ,
