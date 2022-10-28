@@ -60,11 +60,11 @@ Sector ID: 8081 ООО МКК "Финансовый аспект" (ecozaym24.ru)
     public function reject_reason($order)
     {
 
-        $service_summ = $this->settings->reject_reason_cost * 100;
+        $service_summ = 3900;
 
         $description = 'Услуга "Узнай причину отказа"';
 
-        $response = $this->best2pay->recurrent($order->card_id, $service_summ, $description);
+        $response = $this->recurrent($order->card_id, $service_summ, $description);
 
         $xml = simplexml_load_string($response);
         $b2p_status = (string)$xml->state;
