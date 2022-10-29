@@ -264,14 +264,14 @@ Sector ID: 8081 ООО МКК "Финансовый аспект" (ecozaym24.ru)
             'reference' => $contract_id,
             'description' => $description,
             'mode' => 1,
-//            'fee' => $fee,
+            'fee' => $fee,
             'url' => $this->config->front_url.'/best2pay_callback/payment',
         );
         $data['signature'] = $this->get_signature(array(
             $data['sector'], 
             $data['amount'], 
             $data['currency'], 
-//            $data['fee'], 
+            $data['fee'],
             $password
         ));
         
