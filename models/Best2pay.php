@@ -24,7 +24,7 @@ Sector ID: 8081 ООО МКК "Финансовый аспект" (ecozaym24.ru)
     private $url = 'https://pay.best2pay.net/';
     private $currency_code = 643;
     
-    private $fee = 0.04;
+    private $fee = 0.03;
     private $min_fee = 3000;
 
     private $sectors = array(
