@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->edit_orders_amount();
+        $this->import_balance();
     }
 
     private function import_clients()
@@ -89,8 +89,6 @@ class test extends Core
                 'workphone' => $active_sheet->getCell('O' . $row)->getValue(),
                 'income' => $active_sheet->getCell('AO' . $row)->getValue(),
                 'expenses' => $active_sheet->getCell('AP' . $row)->getValue(),
-                'chief_name' => '',
-                'chief_phone' => '',
                 'regaddress_id' => $reg_id,
                 'faktaddress_id' => $fakt_id,
                 'created' => date('Y-m-d H:i:s', strtotime($created))
