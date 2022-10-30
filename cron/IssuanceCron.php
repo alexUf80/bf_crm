@@ -36,33 +36,9 @@ class IssuanceCron extends Core
         if ($contracts = $this->contracts->get_contracts(array('status' => 1, 'limit' => 1))) {
 
             foreach ($contracts as $contract) {
-                $res = $this->best2pay->pay_contract_with_register($contract->id);
+                $res = $this->best2pay->pay_contract_with_register($contract->id, $contract->service_insurance);
 
                 if ($res == 'APPROVED') {
-
-                    $ob_date = new DateTime();
-                    $ob_date->add(DateInterval::createFromDateString($contract->period . ' days'));
-                    $return_date = $ob_date->format('Y-m-d H:i:s');
-
-                    $this->contracts->update_contract($contract->id, array(
-                        'status' => 2,
-                        'inssuance_date' => date('Y-m-d H:i:s'),
-                        'loan_body_summ' => $contract->amount,
-                        'loan_percents_summ' => 0,
-                        'return_date' => $return_date,
-                    ));
-
-                    $this->orders->update_order($contract->order_id, array('status' => 5));
-
-                    $this->operations->add_operation(array(
-                        'contract_id' => $contract->id,
-                        'user_id' => $contract->user_id,
-                        'order_id' => $contract->order_id,
-                        'type' => 'P2P',
-                        'amount' => $contract->amount,
-                        'created' => date('Y-m-d H:i:s'),
-                    ));
-
 
                     //TODO: Создаем доки при выдаче
                     $this->create_document('IND_USLOVIYA_NL', $contract);
@@ -144,6 +120,34 @@ class IssuanceCron extends Core
                             }
                         }
                     }
+
+                    $ob_date = new DateTime();
+                    $ob_date->add(DateInterval::createFromDateString($contract->period . ' days'));
+                    $return_date = $ob_date->format('Y-m-d H:i:s');
+
+                    if (!empty($insurance)) {
+                        $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
+                        $contract->amount += $insurance_cost;
+                    }
+
+                    $this->contracts->update_contract($contract->id, array(
+                        'status' => 2,
+                        'inssuance_date' => date('Y-m-d H:i:s'),
+                        'loan_body_summ' => $contract->amount,
+                        'loan_percents_summ' => 0,
+                        'return_date' => $return_date,
+                    ));
+
+                    $this->orders->update_order($contract->order_id, array('status' => 5));
+
+                    $this->operations->add_operation(array(
+                        'contract_id' => $contract->id,
+                        'user_id' => $contract->user_id,
+                        'order_id' => $contract->order_id,
+                        'type' => 'P2P',
+                        'amount' => $contract->amount,
+                        'created' => date('Y-m-d H:i:s'),
+                    ));
 
                 }else {
                     $this->contracts->update_contract($contract->id, array('status' => 6));
