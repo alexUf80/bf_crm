@@ -38,8 +38,6 @@ class IssuanceCron extends Core
             foreach ($contracts as $contract) {
                 $res = $this->best2pay->pay_contract_with_register($contract->id);
 
-                var_dump($res);
-
                 if ($res == 'APPROVED') {
 
                     $ob_date = new DateTime();
