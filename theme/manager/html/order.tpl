@@ -2058,14 +2058,6 @@
                                                                 <div class="col-12 col-sm-12 pt-2">
                                                                     <h5 class="float-left">
                                                                         {$scoring_type->title}
-                                                                        {if $scoring_type->name == 'fssp'}
-                                                                            {if $scorings[$scoring_type->name]->found_46}
-                                                                                <span class="label label-danger">46</span>
-                                                                            {/if}
-                                                                            {if $scorings[$scoring_type->name]->found_47}
-                                                                                <span class="label label-danger">47</span>
-                                                                            {/if}
-                                                                        {/if}
                                                                     </h5>
 
                                                                     {if $scorings[$scoring_type->name]->status == 'new'}
@@ -2108,9 +2100,10 @@
                                                                                 {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
                                                                             {/if}
                                                                         {if $scoring_type->name == 'fssp'}
-                                                                            <a href="javascript:void(0);"
-                                                                               class="js-get-fssp-info float-right"
-                                                                               data-scoring="{$scorings[$scoring_type->name]->id}">Подробнее</a>
+                                                                            <span>Сумма долга: {$scorings[$scoring_type->name]->body['amount']}</span><br>
+                                                                                    {if isset($scorings[$scoring_type->name]->body['badArticles'])}
+                                                                            <span>{$scorings[$scoring_type->name]->body['badArticles']}</span><br>
+                                                                        {/if}
                                                                         {/if}
                                                                         {if $scoring_type->name == 'fssp2'}
                                                                             <a href="/ajax/show_fssp2.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
