@@ -81,13 +81,11 @@ class IssuanceCron extends Core
                                     'amount' => $insurance_cost,
                                     'contract_id' => $contract->id,
                                     'user_id' => $contract->user_id,
+                                    'order_id' => $contract->order_id,
                                     'create_date' => date('Y-m-d H:i:s'),
                                     'start_date' => date('Y-m-d 00:00:00', time() + (1 * 86400)),
                                     'end_date' => $end_date,
-                                    'operation_id' => $operation_id,
-                                    'protection' => 0,
-                                    'summ' => $insurance_amount,
-                                    'value' => '100',
+                                    'operation_id' => $operation_id
                                 ));
     
                                 $this->contracts->update_contract($contract->id, array(
