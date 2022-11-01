@@ -41,7 +41,6 @@ class IssuanceCron extends Core
                 if ($res == 'APPROVED') {
 
                     //TODO: Создаем доки при выдаче
-                    $this->create_document('IND_USLOVIYA_NL', $contract);
 
                     $ob_date = new DateTime();
                     $ob_date->add(DateInterval::createFromDateString($contract->period . ' days'));
@@ -127,6 +126,8 @@ class IssuanceCron extends Core
                         $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
                         $contract->amount += $insurance_cost;
                     }
+
+                    $this->create_document('IND_USLOVIYA_NL', $contract);
 
                     $this->contracts->update_contract($contract->id, array(
                         'status' => 2,
