@@ -215,9 +215,6 @@ class Documents extends Core
     {
         $document = (array)$document;
 
-        if (isset($document['params']))
-            $document['params'] = serialize($document['params']);
-
         $query = $this->db->placehold("
             INSERT INTO __documents SET ?%
         ", $document);
