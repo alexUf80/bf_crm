@@ -78,7 +78,7 @@ class TaxingCron extends Core
 
                     if($peni_summ > ($taxing_limit - $sum_taxing))
                     {
-                        $percents_summ = $taxing_limit - $sum_taxing;
+                        $peni_summ = $taxing_limit - $sum_taxing;
                         $stop_taxing = 1;
                     }
 
@@ -92,7 +92,7 @@ class TaxingCron extends Core
                         'user_id' => $contract->user_id,
                         'order_id' => $contract->order_id,
                         'type' => 'PENI',
-                        'amount' => $percents_summ,
+                        'amount' => $peni_summ,
                         'created' => date('Y-m-d H:i:s'),
                         'loan_body_summ' => $contract->loan_body_summ,
                         'loan_percents_summ' => $contract->loan_percents_summ,
