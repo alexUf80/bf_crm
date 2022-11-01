@@ -485,6 +485,7 @@ class Best2pay extends Core
             'amount' => $amount,
             'sector' => $sector,
             'register_id' => $card->register_id,
+            'body' => $data,
             'reference' => $user->id,
             'description' => $description,
             'created' => date('Y-m-d H:i:s'),
