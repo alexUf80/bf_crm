@@ -85,15 +85,13 @@ class Best2pay extends Core
             $operation = $this->operations->get_operation($operation_id);
             $operation->transaction = $this->transactions->get_transaction($transaction->id);
 
-            // $resp = $this->soap1c->send_reject_reason($operation);
-
             $this->operations->update_operation($operation->id, array(
                 'sent_status' => 2,
                 'sent_date' => date('Y-m-d H:i:s')
             ));
 
             //Отправляем чек 
-            $this->ekam->send_reject_reason($order->order_id);
+            $this->Cloudkassir->send_reject_reason($order->order_id);
             $this->operations->update_operation($operation->id, array('sent_receipt' => 1));
 
             return true;
@@ -548,14 +546,11 @@ class Best2pay extends Core
 
     public function recurrent($card_id, $amount, $description)
     {
-        $sector = $this->sectors['RECURRENT'];
-//        $password = $this->settings->apikeys['best2pay'][$sector];
-        $password = $this->passwords[$sector];
-
-//        $fee = max($this->min_fee, floatval($amount * $this->fee));
-
         if (!($card = $this->cards->get_card($card_id)))
             return false;
+
+        $sector = $card->sector;
+        $password = $this->passwords[$sector];
 
         if (!($user = $this->users->get_user((int)$card->user_id)))
             return false;
@@ -578,20 +573,17 @@ class Best2pay extends Core
             $password
         ));
         $change_rec = $this->send('ChangeRec', $data);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump('$change_rec', $change_rec);echo '</pre><br /><hr /><br />';
 
         $data = array(
             'sector' => $sector,
             'id' => $card->register_id,
             'amount' => $amount,
             'currency' => $this->currency_code,
-//            'fee' => $fee
         );
         $data['signature'] = $this->get_signature(array(
             $data['sector'],
             $data['id'],
             $data['amount'],
-//            $data['fee'], 
             $data['currency'],
             $password
         ));
@@ -599,9 +591,9 @@ class Best2pay extends Core
         $recurring = $this->send('Recurring', $data);
 
         $xml = simplexml_load_string($recurring);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump('$recurring', $recurring);echo '</pre><hr />';        
         $transaction_id = $this->transactions->add_transaction(array(
             'user_id' => $user->id,
+            'body' => $data,
             'amount' => $amount,
             'sector' => $sector,
             'register_id' => $card->register_id,
