@@ -43,6 +43,10 @@ class IssuanceCron extends Core
                     //TODO: Создаем доки при выдаче
                     $this->create_document('IND_USLOVIYA_NL', $contract);
 
+                    $ob_date = new DateTime();
+                    $ob_date->add(DateInterval::createFromDateString($contract->period . ' days'));
+                    $return_date = $ob_date->format('Y-m-d H:i:s');
+
 
                     // Снимаем страховку если есть
                     if (!empty($contract->service_insurance)) 
@@ -118,10 +122,6 @@ class IssuanceCron extends Core
                             }
                         }
                     }
-
-                    $ob_date = new DateTime();
-                    $ob_date->add(DateInterval::createFromDateString($contract->period . ' days'));
-                    $return_date = $ob_date->format('Y-m-d H:i:s');
 
                     if (!empty($contract->service_insurance)) {
                         $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
