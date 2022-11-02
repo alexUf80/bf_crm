@@ -16,7 +16,86 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_balance();
+        $this->import_phones();
+    }
+
+    private function import_addresses()
+    {
+        $tmp_name = $this->config->root_dir . '/files/clients.xlsx';
+        $format = IOFactory::identify($tmp_name);
+        $reader = IOFactory::createReader($format);
+        $spreadsheet = $reader->load($tmp_name);
+
+        $active_sheet = $spreadsheet->getActiveSheet();
+
+        $first_row = 5;
+        $last_row = $active_sheet->getHighestRow();
+
+        for ($row = $first_row; $row <= $last_row; $row++) {
+
+            $outer_id = $active_sheet->getCell('P' . $row)->getValue();
+
+            if (empty($outer_id))
+                continue;
+
+            $Regindex = $active_sheet->getCell('I' . $row)->getValue();
+            $Regregion = $active_sheet->getCell('R' . $row)->getValue();
+            $Regcity = $active_sheet->getCell('S' . $row)->getValue();
+            $Regstreet = $active_sheet->getCell('T' . $row)->getValue();
+            $Regbuilding = $active_sheet->getCell('U' . $row)->getValue();
+            $Regroom = $active_sheet->getCell('X' . $row)->getValue();
+
+            $Faktindex = $active_sheet->getCell('J' . $row)->getValue();
+            $Faktregion = $active_sheet->getCell('Z' . $row)->getValue();
+            $Faktcity = $active_sheet->getCell('AA' . $row)->getValue();
+            $Faktstreet = $active_sheet->getCell('AB' . $row)->getValue();
+            $Faktbuilding = $active_sheet->getCell('AC' . $row)->getValue();
+            $Faktroom = $active_sheet->getCell('AF' . $row)->getValue();
+
+            $regaddress = "$Regindex $Regregion $Regcity $Regstreet $Regbuilding $Regroom";
+            $faktaddress = "$Faktindex $Faktregion $Faktcity $Faktstreet $Faktbuilding $Faktroom";
+
+            $faktaddres = [];
+            $faktaddres['adressfull'] = $faktaddress;
+            $faktaddres['zip'] = $Faktindex;
+            $faktaddres['region'] = $Faktregion;
+            $faktaddres['city'] = $Faktcity;
+            $faktaddres['street'] = $Faktstreet;
+            $faktaddres['building'] = $Faktbuilding;
+            $faktaddres['room'] = $Faktroom;
+
+            $regaddres = [];
+            $regaddres['adressfull'] = $regaddress;
+            $regaddres['zip'] = $Regindex;
+            $regaddres['region'] = $Regregion;
+            $regaddres['city'] = $Regcity;
+            $regaddres['street'] = $Regstreet;
+            $regaddres['building'] = $Regbuilding;
+            $regaddres['room'] = $Regroom;
+
+            foreach ($regaddres as $key => $address) {
+                if ($address == '#NULL!')
+                    unset($regaddres[$key]);
+            }
+
+            foreach ($faktaddres as $key => $address) {
+                if ($address == '#NULL!')
+                    unset($faktaddres[$key]);
+            }
+
+            $this->db->query("
+            SELECT *
+            from s_users
+            where outer_id = ?
+            ", $outer_id);
+
+            $user = $this->db->result();
+
+
+            $this->Addresses->update_address($user->regaddress_id, $regaddres);
+            $this->Addresses->update_address($user->faktaddress_id, $faktaddres);
+
+        }
     }
 
     private function import_clients()
@@ -65,7 +144,9 @@ class test extends Core
             $fio = explode(' ', $active_sheet->getCell('A' . $row)->getValue());
 
             $phone = preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('K' . $row)->getValue());
-            $phone = str_replace('8', '7', $phone);
+            $phone = str_split($phone);
+            $phone[0] = '7';
+            $phone = implode('', $phone);
 
             $user = [
                 'firstname' => ucfirst($fio[1]),
@@ -114,7 +195,7 @@ class test extends Core
 
             $id = $active_sheet->getCell('D' . $row)->getValue();
 
-            if(empty($id))
+            if (empty($id))
                 continue;
 
             $created = $active_sheet->getCell('A' . $row)->getFormattedValue();
@@ -122,8 +203,7 @@ class test extends Core
 
             $reject_reason = '';
 
-            if ($active_sheet->getCell('I' . $row)->getValue() === 'Отказ')
-            {
+            if ($active_sheet->getCell('I' . $row)->getValue() === 'Отказ') {
                 $reject_reason = $active_sheet->getCell('N' . $row)->getValue();
                 $status = 3;
             }
@@ -144,16 +224,14 @@ class test extends Core
                 $status = 2;
 
 
-
             if ($active_sheet->getCell('Q' . $row)->getValue() === 'ONLINE-0,5!')
                 $loantype_id = 2;
-            elseif($active_sheet->getCell('Q' . $row)->getValue() === 'ВСЕМ-0,9!')
+            elseif ($active_sheet->getCell('Q' . $row)->getValue() === 'ВСЕМ-0,9!')
                 $loantype_id = 3;
             else
                 $loantype_id = 1;
 
             $loantype = $this->Loantypes->get_loantype($loantype_id);
-
 
 
             $new_order = [
@@ -339,18 +417,16 @@ class test extends Core
         for ($row = $first_row; $row <= $last_row; $row++) {
             $id = $active_sheet->getCell('B' . $row)->getValue();
             $od = $active_sheet->getCell('G' . $row)->getValue();
-            $prc = $active_sheet->getCell('I' . $row)->getValue();
+            $prc = $active_sheet->getCell('I' . $row)->getValue() + $active_sheet->getCell('H' . $row)->getValue();
             $peni = $active_sheet->getCell('K' . $row)->getFormattedValue();
 
-            if(!empty($peni) && $peni !== "#NULL!")
-            {
+            if (!empty($peni) && $peni !== "#NULL!") {
                 $this->db->query("
                 UPDATE s_contracts
                 SET `status` = 4
                 WHERE `number` = ?
                 ", $id);
-            }
-            else
+            } else
                 $peni = 0.00;
 
             $contract =
@@ -378,8 +454,7 @@ class test extends Core
 
         $contracts = $this->db->results();
 
-        foreach ($contracts as $contract)
-        {
+        foreach ($contracts as $contract) {
             $this->db->query("
             UPDATE s_orders
             set `status` = 5
@@ -406,6 +481,38 @@ class test extends Core
                 SET `amount` = ?
                 where outer_id = ?
                 ", $active_sheet->getCell('F' . $row)->getValue(), $active_sheet->getCell('M' . $row)->getValue());
+        }
+    }
+
+    private function import_phones()
+    {
+        $tmp_name = $this->config->root_dir . '/files/clients.xlsx';
+        $format = IOFactory::identify($tmp_name);
+        $reader = IOFactory::createReader($format);
+        $spreadsheet = $reader->load($tmp_name);
+
+        $active_sheet = $spreadsheet->getActiveSheet();
+
+        $first_row = 5;
+        $last_row = $active_sheet->getHighestRow();
+
+        for ($row = $first_row; $row <= $last_row; $row++) {
+
+            $outer_id = $active_sheet->getCell('P' . $row)->getValue();
+
+            if (empty($outer_id))
+                continue;
+
+            $phone = preg_replace("/[^,.0-9]/", '', $active_sheet->getCell('K' . $row)->getValue());
+            $phone = str_split($phone);
+            $phone[0] = '7';
+            $phone = implode('', $phone);
+
+            $this->db->query("
+            UPDATE s_users
+            SET phone_mobile = ?
+            where outer_id = ?
+            ", $phone, $outer_id);
         }
     }
 

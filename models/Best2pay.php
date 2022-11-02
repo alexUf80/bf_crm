@@ -25,7 +25,6 @@ class Best2pay extends Core
     private $currency_code = 643;
 
     private $fee = 0.03;
-    private $min_fee = 3000;
 
     private $sectors = array(
         'PAY_CREDIT' => '9733', //сектор для отправки кредита на карту клиента (P2PCredit)
@@ -64,9 +63,7 @@ class Best2pay extends Core
 
         $description = 'Услуга "Узнай причину отказа"';
 
-        $response = $this->recurrent($order->card_id, $service_summ, $description);
-
-        $xml = simplexml_load_string($response);
+        $xml = $this->purchase_by_token($order->card_id, $service_summ, $description);
         $b2p_status = (string)$xml->state;
 
         if ($b2p_status == 'APPROVED') {
@@ -549,7 +546,7 @@ class Best2pay extends Core
         if (!($card = $this->cards->get_card($card_id)))
             return false;
 
-        $sector = $card->sector;
+        $sector = $this->sectors['RECURRENT'];
         $password = $this->passwords[$sector];
 
         if (!($user = $this->users->get_user((int)$card->user_id)))
@@ -588,12 +585,12 @@ class Best2pay extends Core
             $password
         ));
 
-        $recurring = $this->send('Recurring', $data);
+        $recurring = $this->send('Reccuring by token', $data);
 
         $xml = simplexml_load_string($recurring);
         $transaction_id = $this->transactions->add_transaction(array(
             'user_id' => $user->id,
-            'body' => $data,
+            'body' => json_encode($data),
             'amount' => $amount,
             'sector' => $sector,
             'register_id' => $card->register_id,
@@ -1040,6 +1037,7 @@ class Best2pay extends Core
             'user_id' => $user->id,
             'amount' => $amount,
             'sector' => $sector,
+            'body' => json_encode($data),
             'register_id' => $b2p_order_id,
             'reference' => $user->id,
             'description' => $description,
