@@ -2096,15 +2096,15 @@
                                                                         {/if}
                                                                     {/if}
                                                                     <span class="time">
-                                                                            {if $scorings[$scoring_type->name]->created}
-                                                                                {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
-                                                                            {/if}
                                                                         {if $scoring_type->name == 'fssp'}
                                                                             <span>Сумма долга: {$scorings[$scoring_type->name]->body['amount']}</span><br>
                                                                                     {if isset($scorings[$scoring_type->name]->body['badArticles'])}
                                                                             <span>{$scorings[$scoring_type->name]->body['badArticles']}</span><br>
                                                                         {/if}
                                                                         {/if}
+                                                                            {if $scorings[$scoring_type->name]->created}
+                                                                                {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
+                                                                            {/if}
                                                                         {if $scoring_type->name == 'fssp2'}
                                                                             <a href="/ajax/show_fssp2.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
                                                                                target="_blank">Подробнее</a>
