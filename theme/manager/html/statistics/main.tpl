@@ -117,17 +117,6 @@
                     </div>
                 </div>
             {/if}
-            {if in_array('penalty_statistics', $manager->permissions)}
-                <div class="col-md-6 col-lg-3 col-xlg-3">
-                    <div class="card card-inverse card-danger">
-                        <a href="statistics/penalties" class="box text-center">
-                            <h1 class="font-light text-white">Штрафы</h1>
-                            <h6 class="text-white">Статистика штрафов</h6>
-                        </a>
-                    </div>
-                </div>
-            {/if}
-
             <!-- Column -->
             <div class="col-md-6 col-lg-3 col-xlg-3">
                 <div class="card card-info card-warning">
@@ -161,6 +150,15 @@
                     <a href="statistics/adservices" class="box text-center">
                         <h1 class="font-light text-white">Доп услуги</h1>
                         <h6 class="text-white">Отчеты по дополнительным услугам</h6>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3 col-xlg-3">
+                <div class="card card-warning card-warning">
+                    <a href="statistics/orders" class="box text-center">
+                        <h1 class="font-light text-white">Заявки</h1>
+                        <h6 class="text-white">Отчет по заявкам (Риски)</h6>
                     </a>
                 </div>
             </div>
