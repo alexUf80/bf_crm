@@ -8,7 +8,8 @@ class Documents extends Core
         'ANKETA_PEP' => 'zayavlenie_na_poluchenie.tpl',
         'SOGLASIE_OPD' => 'soglasie_opd.tpl',
         'POLIS' => 'polis.tpl',
-        'KID' => 'kid.tpl'
+        'KID' => 'kid.tpl',
+        'POLIS_PROLONGATION' => 'polis_prolongation.tpl'
     );
 
 
@@ -17,7 +18,8 @@ class Documents extends Core
         'ANKETA_PEP' => 'Заявление-анкета на получение займа',
         'SOGLASIE_OPD' => 'Согласие на обработку персональных данных заемщика',
         'POLIS' => 'Полис страхования',
-        'KID' => 'Ключевой информационный документ об условиях добровольного страхования'
+        'KID' => 'Ключевой информационный документ об условиях добровольного страхования',
+        'POLIS_PROLONGATION' => 'Полис страхования'
     );
 
     private $client_visible = array(
@@ -25,7 +27,8 @@ class Documents extends Core
         'ANKETA_PEP' => 1,
         'SOGLASIE_OPD' => 1,
         'POLIS' => 1,
-        'KID' => 1
+        'KID' => 1,
+        'POLIS_PROLONGATION' => 1
     );
 
     public function get_sudblock_create_documents($block)
