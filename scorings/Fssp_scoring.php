@@ -9,8 +9,8 @@ class Fssp_scoring extends Core
 
         $params =
             [
-                'UserID' => 'barvil',
-                'Password' => 'KsetM+H5',
+                'UserID' => 'barents',
+                'Password' => 'uW5q+jXE',
                 'sources' => 'fssp',
                 'PersonReq' => [
                     'first' => $order->firstname,
@@ -22,24 +22,23 @@ class Fssp_scoring extends Core
 
         $request = $this->send_request($params);
 
-        if (!empty($request))
-            $update = ['status' => 'completed'];
-        else {
+        if (empty($request) || isset($request['Source']['Error'])) {
             $update = [
                 'status' => 'error',
+                'success' => 0,
                 'body' => null,
-                'string_result' => 'Клиент не найден'
+                'string_result' => $request['Source']['Error']
             ];
-
             $this->scorings->update_scoring($scoring_id, $update);
             return $update;
-        }
+        } else
+            $update = ['status' => 'completed'];
 
         $expSum = 0;
         $badArticle = [];
 
-        if ($request['Source'][0]['ResultsCount'] > 0) {
-            foreach ($request['Source'][0]['Record'] as $source) {
+        if ($request['Source']['ResultsCount'] > 0) {
+            foreach ($request['Source']['Record'] as $source) {
                 foreach ($source['Field'] as $field) {
                     if ($field['FieldName'] == 'Total')
                         $expSum += $field['FieldValue'];
