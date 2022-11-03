@@ -70,6 +70,10 @@ class StatisticsController extends Controller
                 return $this->action_conversions();
                 break;
 
+            case 'orders':
+                return $this->action_orders();
+                break;
+
             default:
                 return false;
 
@@ -2015,7 +2019,7 @@ class StatisticsController extends Controller
                         12 => 'Декабрь'
                     ];
 
-                if($filter['date_group_by'] == 'issuance'){
+                if ($filter['date_group_by'] == 'issuance') {
 
                     $contracts = $this->orders->get_orders_contracts_issuance($filter);
 
@@ -2243,7 +2247,7 @@ class StatisticsController extends Controller
 
                 $items_per_page = $this->request->get('page_count');
 
-                if(empty($items_per_page))
+                if (empty($items_per_page))
                     $items_per_page = 25;
 
                 $this->design->assign('page_count', $items_per_page);
@@ -2292,9 +2296,8 @@ class StatisticsController extends Controller
                     $filtres['utm_content_filter'] = $filter['utm_content_filter'];
                 }
 
-                if(isset($filtres))
+                if (isset($filtres))
                     $this->design->assign('filtres', $filtres);
-
 
 
                 if ($this->request->get('date_filter') == 1)
@@ -2424,6 +2427,78 @@ class StatisticsController extends Controller
         }
 
         return $this->design->fetch('statistics/conversions.tpl');
+    }
+
+    private function action_orders()
+    {
+        if ($daterange = $this->request->get('daterange')) {
+            list($from, $to) = explode('-', $daterange);
+
+            $filter = array();
+            $filter['date_from'] = date('Y-m-d', strtotime($from));
+            $filter['date_to'] = date('Y-m-d', strtotime($to));
+
+            $orders = $this->orders->orders_for_risks($filter);
+
+            foreach ($orders as $order)
+            {
+                $order->scorings = $this->scorings->get_scorings(['order_id' => $order->order_id, 'type' => ['nbkiscore', 'idx']]);
+            }
+
+            echo '<pre>';
+            var_dump($orders);
+            exit;
+
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman')->setSize(14);
+
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->getDefaultRowDimension()->setRowHeight(20);
+            $sheet->getColumnDimension('A')->setWidth(20);
+            $sheet->getColumnDimension('B')->setWidth(40);
+            $sheet->getColumnDimension('C')->setWidth(18);
+            $sheet->getColumnDimension('D')->setWidth(35);
+            $sheet->getColumnDimension('E')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('G')->setWidth(15);
+            $sheet->getColumnDimension('H')->setWidth(15);
+            $sheet->getColumnDimension('I')->setWidth(20);
+
+            $sheet->setCellValue('A1', 'ID заявки');
+            $sheet->setCellValue('B1', 'ID клиента');
+            $sheet->setCellValue('C1', 'Признак new/old');
+            $sheet->setCellValue('D1', 'Дата заявки');
+            $sheet->setCellValue('E1', 'Решение');
+            $sheet->setCellValue('F1', 'Причина отказа');
+            $sheet->setCellValue('G1', 'Скоринговый бал');
+            $sheet->setCellValue('H1', 'Балл Idx');
+            $sheet->setCellValue('I1', 'Одобренный лимит');
+
+            $i = 2;
+
+            foreach ($orders as $order) {
+
+                $sheet->setCellValue('A' . $i, $order->number);
+                $sheet->setCellValue('B' . $i, "$order->lastname $order->firstname $order->patronymic");
+                $sheet->setCellValue('C' . $i, $order->phone_mobile);
+                $sheet->setCellValue('D' . $i, $order->loan_name);
+                $sheet->setCellValue('E' . $i, $order->percent . '%');
+                $sheet->setCellValue('F' . $i, $order->psk . '%');
+                $sheet->setCellValue('G' . $i, date('d.m.Y', strtotime($order->inssuance_date)));
+                $sheet->setCellValue('H' . $i, date('d.m.Y', strtotime($order->return_date)));
+                $sheet->setCellValue('I' . $i, $order->amount);
+
+                $i++;
+            }
+
+            $filename = 'Orders.xlsx';
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $writer->save($this->config->root_dir . $filename);
+            header('Location:' . $this->config->root_url . '/' . $filename);
+            exit;
+        }
+
+        return $this->design->fetch('statistics/orders.tpl');
     }
 
 }

@@ -19,6 +19,26 @@ class Orders extends Core
     {
         return $this->statuses;
     }
+
+    public function orders_for_risks($filter)
+    {
+        $this->db->query("
+        SELECT 
+        us.id as user_id,
+        os.id as order_id,
+        case when os.`client_status` IN ('pk', 'crm') then 'pk' ELSE 'nk' END as client_status,
+        os.`date`,
+        os.`status`,
+        os.reject_reason
+        FROM s_orders os
+        JOIN s_users us on us.id = os.user_id
+        WHERE os.date between ? and ?
+        ", date('Y-m-d 00:00:00', strtotime($filter['date_from'])), date('Y-m-d 23:59:59', strtotime($filter['date_to'])));
+
+        $orders = $this->db->results();
+
+        return $orders;
+    }
     
 	public function get_order($id)
 	{
