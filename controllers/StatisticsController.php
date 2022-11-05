@@ -2485,16 +2485,7 @@ class StatisticsController extends Controller
             $sheet->getColumnDimension('H')->setWidth(15);
             $sheet->getColumnDimension('I')->setWidth(20);
 
-            $sheet->getColumnDimension('J')->setWidth(20);
-            $sheet->getColumnDimension('K')->setWidth(20);
-            $sheet->getColumnDimension('L')->setWidth(20);
-            $sheet->getColumnDimension('M')->setWidth(20);
-            $sheet->getColumnDimension('N')->setWidth(20);
-            $sheet->getColumnDimension('O')->setWidth(20);
-            $sheet->getColumnDimension('P')->setWidth(20);
-            $sheet->getColumnDimension('Q')->setWidth(20);
-            $sheet->getColumnDimension('R')->setWidth(20);
-            $sheet->getColumnDimension('S')->setWidth(20);
+            $sheet->getColumnDimension('J:S')->setWidth(20);
 
             $styles_cells =
                 [
@@ -2505,25 +2496,7 @@ class StatisticsController extends Controller
                     ],
                 ];
 
-            $sheet->getStyle('A')->applyFromArray($styles_cells);
-            $sheet->getStyle('B')->applyFromArray($styles_cells);
-            $sheet->getStyle('C')->applyFromArray($styles_cells);
-            $sheet->getStyle('D')->applyFromArray($styles_cells);
-            $sheet->getStyle('E')->applyFromArray($styles_cells);
-            $sheet->getStyle('F')->applyFromArray($styles_cells);
-            $sheet->getStyle('G')->applyFromArray($styles_cells);
-            $sheet->getStyle('H')->applyFromArray($styles_cells);
-            $sheet->getStyle('I')->applyFromArray($styles_cells);
-            $sheet->getStyle('J')->applyFromArray($styles_cells);
-            $sheet->getStyle('K')->applyFromArray($styles_cells);
-            $sheet->getStyle('L')->applyFromArray($styles_cells);
-            $sheet->getStyle('M')->applyFromArray($styles_cells);
-            $sheet->getStyle('N')->applyFromArray($styles_cells);
-            $sheet->getStyle('O')->applyFromArray($styles_cells);
-            $sheet->getStyle('P')->applyFromArray($styles_cells);
-            $sheet->getStyle('Q')->applyFromArray($styles_cells);
-            $sheet->getStyle('R')->applyFromArray($styles_cells);
-            $sheet->getStyle('S')->applyFromArray($styles_cells);
+            $sheet->getStyle('A:S')->applyFromArray($styles_cells);
 
             $sheet->setCellValue('A1', 'ID заявки');
             $sheet->setCellValue('B1', 'ID клиента');
@@ -2534,7 +2507,6 @@ class StatisticsController extends Controller
             $sheet->setCellValue('G1', 'Скоринговый бал');
             $sheet->setCellValue('H1', 'Балл Idx');
             $sheet->setCellValue('I1', 'Одобренный лимит');
-
             $sheet->setCellValue('J1', 'pdl_overdue_count');
             $sheet->setCellValue('K1', 'pdl_npl_limit_share');
             $sheet->setCellValue('L1', 'pdl_npl_90_limit_share');
