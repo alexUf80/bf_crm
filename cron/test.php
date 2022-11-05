@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_phones();
+        $this->import_prolongations();
     }
 
     private function import_addresses()
@@ -420,19 +420,12 @@ class test extends Core
             $prc = $active_sheet->getCell('I' . $row)->getValue() + $active_sheet->getCell('H' . $row)->getValue();
             $peni = $active_sheet->getCell('K' . $row)->getFormattedValue();
 
-            if (!empty($peni) && $peni !== "#NULL!") {
-                $this->db->query("
-                UPDATE s_contracts
-                SET `status` = 4
-                WHERE `number` = ?
-                ", $id);
-            } else
-                $peni = 0.00;
+            if ($peni == "#NULL!") {
+                $peni = 0;
+            }
 
             $contract =
                 [
-                    'loan_body_summ' => (float)$od,
-                    'loan_percents_summ' => (float)$prc,
                     'loan_peni_summ' => (float)$peni
                 ];
 
@@ -513,6 +506,23 @@ class test extends Core
             SET phone_mobile = ?
             where outer_id = ?
             ", $phone, $outer_id);
+        }
+    }
+
+    private function import_prolongations()
+    {
+        $tmp_name = $this->config->root_dir . '/files/orders.xlsx';
+        $format = IOFactory::identify($tmp_name);
+        $reader = IOFactory::createReader($format);
+        $spreadsheet = $reader->load($tmp_name);
+
+        $active_sheet = $spreadsheet->getActiveSheet();
+
+        $first_row = 2;
+        $last_row = $active_sheet->getHighestRow();
+
+        for ($row = $first_row; $row <= $last_row; $row++) {
+            $fio = $active_sheet->getCell('B' . $row)->getValue();
         }
     }
 

@@ -50,6 +50,7 @@ class TaxingCron extends Core
                 $stop_taxing = 0;
 
 
+
                 //Начисление процентов
                 $percents_summ = round($contract->loan_body_summ / 100 * $contract->base_percent, 2);
 
@@ -83,7 +84,7 @@ class TaxingCron extends Core
                     }
 
                     $this->contracts->update_contract($contract->id, array(
-                        'loan_percents_summ' => $contract->loan_percents_summ + $peni_summ
+                        'loan_peni_summ' => $contract->loan_peni_summ + $peni_summ
                     ));
 
 

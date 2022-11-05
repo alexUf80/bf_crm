@@ -58,7 +58,7 @@ class Contracts extends Core
             SET status = 4
             WHERE status = 2
             AND return_date < ?
-        ", date('Y-m-d H:i:s'));
+        ", date('Y-m-d'));
         $this->db->query($query);
     }
     
