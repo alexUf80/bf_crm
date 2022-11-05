@@ -362,6 +362,31 @@ class Nbkiscore_scoring extends Core
                 'string_result' => 'Лимит: ' . $limit
             ];
 
+        $variables =
+            [
+                'pdl_overdue_count'        => $pdl_overdue_count,
+                'pdl_npl_limit_share'      => $pdl_npl_limit_share,
+                'pdl_npl_90_limit_share'   => $pdl_npl_90_limit_share,
+                'pdl_current_limit_max'    => $pdl_current_limit_max,
+                'pdl_last_3m_limit'        => $pdl_last_3m_limit,
+                'pdl_last_good_max_limit'  => $pdl_last_good_max_limit,
+                'pdl_good_limit'           => $pdl_good_limit,
+                'pdl_prolong_3m_limit'     => $pdl_prolong_3m_limit,
+                'consum_current_limit_max' => $consum_current_limit_max,
+                'consum_good_limit'        => $consum_good_limit,
+                'limit'                    => (isset($limit)) ? $limit : 0
+            ];
+
+        $nbkiScoreBalls =
+            [
+                'order_id'  => $scoring->order_id,
+                'score_id'  => $scoring_id,
+                'ball'      => $nbki_score,
+                'variables' => json_encode($variables)
+            ];
+
+        $this->NbkiScoreballs->add($nbkiScoreBalls);
+
         $this->scorings->update_scoring($scoring_id, $update);
         return $update;
     }
