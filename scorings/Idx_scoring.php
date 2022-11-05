@@ -59,6 +59,7 @@ class Idx_scoring extends Core
             if (!empty($score))
             {
                 $update['string_result'] = 'Пользователь найден: '. $this->IdxApi->result[$score['validationScorePhone']];
+                $update['body'] = $score['validationScorePhone'];
             }
             else
                 $update['string_result'] = 'Клиент не найден в списке';
