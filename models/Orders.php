@@ -26,7 +26,7 @@ class Orders extends Core
         SELECT 
         us.id as user_id,
         os.id as order_id,
-        case when os.`client_status` IN ('pk', 'crm') then 'pk' ELSE 'nk' END as client_status,
+        case when os.`client_status` IN ('pk', 'crm') then 'old' ELSE 'new' END as client_status,
         os.`date`,
         os.`status`,
         os.reject_reason

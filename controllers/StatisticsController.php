@@ -4,6 +4,8 @@ ini_set('max_execution_time', 40);
 
 error_reporting(0);
 
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+
 class StatisticsController extends Controller
 {
     public function fetch()
@@ -2439,30 +2441,89 @@ class StatisticsController extends Controller
             $filter['date_to'] = date('Y-m-d', strtotime($to));
 
             $orders = $this->orders->orders_for_risks($filter);
+            $orders_statuses = $this->orders->get_statuses();
 
-            foreach ($orders as $order)
+            foreach ($orders as $key => $order)
             {
-                $order->scorings = $this->scorings->get_scorings(['order_id' => $order->order_id, 'type' => ['nbkiscore', 'idx']]);
+                $order->scoreballs = $this->NbkiScoreballs->get($order->order_id);
+
+                if(empty($order->scoreballs))
+                {
+                    unset($orders[$key]);
+                    continue;
+                }else
+                {
+                    $order->scoreballs->variables = json_decode($order->scoreballs->variables, true);
+                    $order->scoreballs->variables['ball'] = $order->scoreballs->ball;
+                    $order->scoreballs = $order->scoreballs->variables;
+                }
+
+                $order->idx = $this->scorings->get_idx_scoring($order->order_id);
+
+                if(empty($order->idx))
+                {
+                    unset($orders[$key]);
+                    continue;
+                }else
+                    $order->idx = $order->idx->body;
+
+                $order->status =  $orders_statuses[$order->status];
             }
 
-            echo '<pre>';
-            var_dump($orders);
-            exit;
-
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-            $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman')->setSize(14);
+            $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman')->setSize(11);
 
             $sheet = $spreadsheet->getActiveSheet();
-            $sheet->getDefaultRowDimension()->setRowHeight(20);
-            $sheet->getColumnDimension('A')->setWidth(20);
-            $sheet->getColumnDimension('B')->setWidth(40);
+            $sheet->getDefaultRowDimension()->setRowHeight(55);
+            $sheet->getColumnDimension('A')->setWidth(15);
+            $sheet->getColumnDimension('B')->setWidth(15);
             $sheet->getColumnDimension('C')->setWidth(18);
-            $sheet->getColumnDimension('D')->setWidth(35);
+            $sheet->getColumnDimension('D')->setWidth(30);
             $sheet->getColumnDimension('E')->setWidth(15);
-            $sheet->getColumnDimension('F')->setWidth(15);
+            $sheet->getColumnDimension('F')->setWidth(30);
             $sheet->getColumnDimension('G')->setWidth(15);
             $sheet->getColumnDimension('H')->setWidth(15);
             $sheet->getColumnDimension('I')->setWidth(20);
+
+            $sheet->getColumnDimension('J')->setWidth(20);
+            $sheet->getColumnDimension('K')->setWidth(20);
+            $sheet->getColumnDimension('L')->setWidth(20);
+            $sheet->getColumnDimension('M')->setWidth(20);
+            $sheet->getColumnDimension('N')->setWidth(20);
+            $sheet->getColumnDimension('O')->setWidth(20);
+            $sheet->getColumnDimension('P')->setWidth(20);
+            $sheet->getColumnDimension('Q')->setWidth(20);
+            $sheet->getColumnDimension('R')->setWidth(20);
+            $sheet->getColumnDimension('S')->setWidth(20);
+
+            $styles_cells =
+                [
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ];
+
+            $sheet->getStyle('A')->applyFromArray($styles_cells);
+            $sheet->getStyle('B')->applyFromArray($styles_cells);
+            $sheet->getStyle('C')->applyFromArray($styles_cells);
+            $sheet->getStyle('D')->applyFromArray($styles_cells);
+            $sheet->getStyle('E')->applyFromArray($styles_cells);
+            $sheet->getStyle('F')->applyFromArray($styles_cells);
+            $sheet->getStyle('G')->applyFromArray($styles_cells);
+            $sheet->getStyle('H')->applyFromArray($styles_cells);
+            $sheet->getStyle('I')->applyFromArray($styles_cells);
+            $sheet->getStyle('J')->applyFromArray($styles_cells);
+            $sheet->getStyle('K')->applyFromArray($styles_cells);
+            $sheet->getStyle('L')->applyFromArray($styles_cells);
+            $sheet->getStyle('M')->applyFromArray($styles_cells);
+            $sheet->getStyle('N')->applyFromArray($styles_cells);
+            $sheet->getStyle('O')->applyFromArray($styles_cells);
+            $sheet->getStyle('P')->applyFromArray($styles_cells);
+            $sheet->getStyle('Q')->applyFromArray($styles_cells);
+            $sheet->getStyle('R')->applyFromArray($styles_cells);
+            $sheet->getStyle('S')->applyFromArray($styles_cells);
 
             $sheet->setCellValue('A1', 'ID заявки');
             $sheet->setCellValue('B1', 'ID клиента');
@@ -2474,19 +2535,40 @@ class StatisticsController extends Controller
             $sheet->setCellValue('H1', 'Балл Idx');
             $sheet->setCellValue('I1', 'Одобренный лимит');
 
+            $sheet->setCellValue('J1', 'pdl_overdue_count');
+            $sheet->setCellValue('K1', 'pdl_npl_limit_share');
+            $sheet->setCellValue('L1', 'pdl_npl_90_limit_share');
+            $sheet->setCellValue('M1', 'pdl_current_limit_max');
+            $sheet->setCellValue('N1', 'pdl_last_3m_limit');
+            $sheet->setCellValue('O1', 'pdl_last_good_max_limit');
+            $sheet->setCellValue('P1', 'pdl_good_limit');
+            $sheet->setCellValue('Q1', 'pdl_prolong_3m_limit');
+            $sheet->setCellValue('R1', 'consum_current_limit_max');
+            $sheet->setCellValue('S1', 'consum_good_limit');
+
             $i = 2;
 
             foreach ($orders as $order) {
 
-                $sheet->setCellValue('A' . $i, $order->number);
-                $sheet->setCellValue('B' . $i, "$order->lastname $order->firstname $order->patronymic");
-                $sheet->setCellValue('C' . $i, $order->phone_mobile);
-                $sheet->setCellValue('D' . $i, $order->loan_name);
-                $sheet->setCellValue('E' . $i, $order->percent . '%');
-                $sheet->setCellValue('F' . $i, $order->psk . '%');
-                $sheet->setCellValue('G' . $i, date('d.m.Y', strtotime($order->inssuance_date)));
-                $sheet->setCellValue('H' . $i, date('d.m.Y', strtotime($order->return_date)));
-                $sheet->setCellValue('I' . $i, $order->amount);
+                $sheet->setCellValue('A' . $i, $order->order_id);
+                $sheet->setCellValue('B' . $i, $order->user_id);
+                $sheet->setCellValue('C' . $i, $order->client_status);
+                $sheet->setCellValue('D' . $i, $order->date);
+                $sheet->setCellValue('E' . $i, $order->status);
+                $sheet->setCellValue('F' . $i, $order->reject_reason);
+                $sheet->setCellValue('G' . $i, $order->scoreballs['ball']);
+                $sheet->setCellValue('H' . $i, $order->idx);
+                $sheet->setCellValue('I' . $i, $order->scoreballs['limit']);
+                $sheet->setCellValue('J' . $i, $order->scoreballs['pdl_overdue_count']);
+                $sheet->setCellValue('K' . $i, $order->scoreballs['pdl_npl_limit_share']);
+                $sheet->setCellValue('L' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
+                $sheet->setCellValue('M' . $i, $order->scoreballs['pdl_current_limit_max']);
+                $sheet->setCellValue('N' . $i, $order->scoreballs['pdl_last_3m_limit']);
+                $sheet->setCellValue('O' . $i, $order->scoreballs['pdl_last_good_max_limit']);
+                $sheet->setCellValue('P' . $i, $order->scoreballs['pdl_good_limit']);
+                $sheet->setCellValue('Q' . $i, $order->scoreballs['pdl_prolong_3m_limit']);
+                $sheet->setCellValue('R' . $i, $order->scoreballs['consum_current_limit_max']);
+                $sheet->setCellValue('S' . $i, $order->scoreballs['consum_good_limit']);
 
                 $i++;
             }

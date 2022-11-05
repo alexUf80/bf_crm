@@ -113,6 +113,22 @@ class Scorings extends Core
 	
         return $result;
     }
+
+    public function get_idx_scoring($order_id)
+    {
+        $query = $this->db->placehold("
+            SELECT * 
+            FROM __scorings
+            WHERE order_id = ?
+            order by id desc
+            limit 1
+        ", $order_id);
+
+        $this->db->query($query);
+        $result = $this->db->result();
+
+        return $result;
+    }
     
 	public function get_scorings($filter = array())
 	{
