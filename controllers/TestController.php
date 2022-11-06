@@ -6,10 +6,10 @@ class TestController extends Controller
 {
     public function fetch()
     {
-        $user = TestModel::find(11965);
+        $order = OrdersORM::find(15222);
 
         echo '<pre>';
-        var_dump($user->lastname);
+        var_dump($order->user);
         exit;
     }
 }
