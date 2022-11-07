@@ -225,7 +225,7 @@ class Operations extends Core
         op.type_payment,
         op.contract_is_closed
         from s_operations as op
-        join s_transactions as tr on tr.id = op.transaction_id 
+        left join s_transactions as tr on tr.id = op.transaction_id 
         where 1
         $date_from_filter
         $date_to_filter
