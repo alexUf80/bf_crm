@@ -16,8 +16,8 @@ class CheckPaymentsCron extends Core
 
     private function run()
     {
-        $from_time = date('Y-m-d H:00:00', time() - 24 * 3600);
-        $to_time = date('Y-m-d H:00:00', time() - 0.5 * 3600);
+        $to_time = date('Y-m-d 00:00:00');
+        $from_time = date('Y-m-d 00:00:00', strtotime($to_time.'-3 days'));
 
         $query = $this->db->placehold("
             SELECT *
