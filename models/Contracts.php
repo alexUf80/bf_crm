@@ -480,11 +480,15 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
 		$page = 1;
         $sort = 'id DESC';
         $sort_workout = '';
+        $is_restructed = '';
         
         $users_join = '';
         
         if (!empty($filter['sort_workout']))
             $sort_workout = "c.collection_workout ASC, ";
+
+        if (isset($filter['is_restructed']))
+            $is_restructed = $this->db->placehold("AND c.is_restructed = ?", $filter['is_restructed']);
         
         if (!empty($filter['id']))
             $id_filter = $this->db->placehold("AND c.id IN (?@)", array_map('intval', (array)$filter['id']));
@@ -709,6 +713,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
                 $stop_profit_filter
                 $keyword_filter
                 $search_filter
+                $is_restructed
             GROUP BY c.id
             ORDER BY $sort_workout $sort 
             $sql_limit

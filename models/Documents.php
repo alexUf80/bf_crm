@@ -9,6 +9,7 @@ class Documents extends Core
         'SOGLASIE_OPD' => 'soglasie_opd.tpl',
         'POLIS' => 'polis.tpl',
         'KID' => 'kid.tpl',
+        'DOP_SOGLASHENIE' => 'prolongation.tpl',
         'POLIS_PROLONGATION' => 'polis_prolongation.tpl'
     );
 
@@ -19,6 +20,7 @@ class Documents extends Core
         'SOGLASIE_OPD' => 'Согласие на обработку персональных данных заемщика',
         'POLIS' => 'Полис страхования',
         'KID' => 'Ключевой информационный документ об условиях добровольного страхования',
+        'DOP_SOGLASHENIE' => 'Дополнительное соглашение о пролонгации',
         'POLIS_PROLONGATION' => 'Полис страхования'
     );
 
@@ -28,6 +30,7 @@ class Documents extends Core
         'SOGLASIE_OPD' => 1,
         'POLIS' => 1,
         'KID' => 1,
+        'DOP_SOGLASHENIE' => 1,
         'POLIS_PROLONGATION' => 1
     );
 

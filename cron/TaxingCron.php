@@ -33,7 +33,7 @@ class TaxingCron extends Core
         $this->contracts->check_expiration_contracts();
 
         //Начисления
-        if ($contracts = $this->contracts->get_contracts(array('status' => [2, 4], 'type' => 'base', 'stop_profit' => 0))) {
+        if ($contracts = $this->contracts->get_contracts(array('status' => [2, 4], 'type' => 'base', 'stop_profit' => 0, 'is_restructed' => 0))) {
 
             foreach ($contracts as $contract) {
 
