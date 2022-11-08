@@ -615,12 +615,6 @@
                                                 <h5>Срок</h5>
                                                 <h3 class="text-primary">{$order->period} {$order->period|plural:"день":"дней":"дня"}</h3>
                                             </div>
-                                            {if $order->antirazgon_amount}
-                                                <div class="col-12 text-center">
-                                                    <h4 class="text-danger">Максимальная
-                                                        сумма: {$order->antirazgon_amount} руб</h4>
-                                                </div>
-                                            {/if}
                                             {if $order->status <= 2 || in_array($manager->role, ['admin','developer'])}
                                                 <a href="javascript:void(0);"
                                                    class="text-info js-edit-form edit-amount js-event-add-click"
@@ -628,6 +622,17 @@
                                                    data-order="{$order->order_id}" data-user="{$order->user_id}"><i
                                                             class=" fas fa-edit"></i></a>
                                                 </h3>
+                                            {/if}
+                                            {if isset($promocode)}
+                                                <br>
+                                                <div class="col-6 text-center">
+                                                    <h5>Промокод</h5>
+                                                    <h3 class="text-primary">{$promocode->code}</h3>
+                                                </div>
+                                                <div class="col-6 text-center">
+                                                    <h5>Скидка</h5>
+                                                    <h3 class="text-primary">{$promocode->discount}%</h3>
+                                                </div>
                                             {/if}
                                         </div>
 

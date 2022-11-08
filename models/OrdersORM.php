@@ -15,4 +15,9 @@ class OrdersORM extends \Illuminate\Database\Eloquent\Model
     {
         return $this->hasOne(ManagerORM::class, 'id','manager_id');
     }
+
+    public function promocode()
+    {
+        return $this->hasOne(PromocodesORM::class, 'id','promocode_id');
+    }
 }

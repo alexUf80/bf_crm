@@ -218,13 +218,18 @@ class OrderController extends Controller
 
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
-                    // сохраняем историю займов из 1с
                     $client = $this->users->get_user($order->user_id);
 
                     $regaddress = $this->Addresses->get_address($client->regaddress_id);
                     $faktaddress = $this->Addresses->get_address($client->faktaddress_id);
                     $this->design->assign('regaddress', $regaddress->adressfull);
                     $this->design->assign('faktaddress', $faktaddress->adressfull);
+
+                    if(!empty($order->promocode_id))
+                    {
+                        $promocode = PromocodesORM::find($order->promocode_id);
+                        $this->design->assign('promocode', $promocode);
+                    }
 
                     $contacts = $this->Contactpersons->get_contactpersons(['user_id' => $order->user_id]);
                     $this->design->assign('contacts', $contacts);
@@ -283,10 +288,10 @@ class OrderController extends Controller
 
                         $date1 = new DateTime(date('Y-m-d', strtotime($contract->return_date)));
                         $date2 = new DateTime(date('Y-m-d'));
-    
+
                         $diff = $date2->diff($date1);
                         $contract->delay = $diff->days;
-    
+
                     }
 
                     if ($contract_operations = $this->operations->get_operations(array('order_id' => $order->order_id))) {
@@ -703,10 +708,9 @@ class OrderController extends Controller
 
         $base_percent = $this->settings->loan_default_percent;
 
-        if(!empty($order->promocode_id))
-        {
+        if (!empty($order->promocode_id)) {
             $promocode = $this->Promocodes->get($order->promocode_id);
-            $base_percent = $this->settings->loan_default_percent - ($promocode->discount/100);
+            $base_percent = $this->settings->loan_default_percent - ($promocode->discount / 100);
         }
 
         $new_contract = array(
@@ -764,7 +768,7 @@ class OrderController extends Controller
             'amount' => $order->amount,
             'manager_id' => $order->manager_id
         );
-        
+
         $this->orders->update_order($order_id, $update);
 
         $this->changelogs->add_changelog(array(
@@ -781,10 +785,9 @@ class OrderController extends Controller
 
         $base_percent = $this->settings->loan_default_percent;
 
-        if(!empty($order->promocode_id))
-        {
+        if (!empty($order->promocode_id)) {
             $promocode = $this->Promocodes->get($order->promocode_id);
-            $base_percent = $this->settings->loan_default_percent - ($promocode->discount/100);
+            $base_percent = $this->settings->loan_default_percent - ($promocode->discount / 100);
         }
 
         $new_contract = array(
@@ -813,7 +816,7 @@ class OrderController extends Controller
         // отправялем смс
         $msg = 'Активируй займ ' . ($order->amount * 1) . ' в личном кабинете, код' . $accept_code . ' ecozaym24.ru/lk';
         $this->sms->send($order->phone_mobile, $msg);
-        
+
         return array('success' => 1, 'status' => 2);
 
     }
@@ -871,8 +874,7 @@ class OrderController extends Controller
 
         // Снимаем за причину отказа
         // Снимаем "Узнай причину отказа"
-        if (!empty($reject_operations))
-        {
+        if (!empty($reject_operations)) {
             $service_summ = 39;
             $service_amount = $service_summ * 100;
 
@@ -882,8 +884,7 @@ class OrderController extends Controller
 
             $status = (string)$xml->state;
 
-            if ($status == 'APPROVED')
-            {
+            if ($status == 'APPROVED') {
                 $transaction = $this->transactions->get_operation_transaction($xml->order_id, $xml->id);
 
                 $contract = $this->contracts->get_contract($contract->id);
@@ -1000,12 +1001,11 @@ class OrderController extends Controller
             ));
 
             $this->orders->update_order($order_id, $update);
-            
-            if ($contract = $this->contracts->get_order_contract($order_id))
-            {
-                $this->contracts->update_contract($contract->id, ['card_id'=>$card_id]);
+
+            if ($contract = $this->contracts->get_order_contract($order_id)) {
+                $this->contracts->update_contract($contract->id, ['card_id' => $card_id]);
             }
-            
+
         }
         $this->design->assign('card_error', $card_error);
 
@@ -2357,11 +2357,11 @@ class OrderController extends Controller
                     $this->json_output(array('error' => 'Невозможно выполнить!'));
                 } else {
                     $this->contracts->update_contract($contract->id, array(
-                        'status' => 1, 
+                        'status' => 1,
                         'sent_status' => 0,
                         'uid' => exec($this->config->root_dir . 'generic/uidgen'),
                     ));
-                    $this->orders->update_order($contract->order_id, array('status' => 4, 'sent_1c'=>0));
+                    $this->orders->update_order($contract->order_id, array('status' => 4, 'sent_1c' => 0));
 
                     $this->changelogs->add_changelog(array(
                         'manager_id' => $this->manager->id,
@@ -2692,8 +2692,8 @@ class OrderController extends Controller
 
         $message =
             [
-                'code'     => $code,
-                'phone'    => $order->phone_mobile,
+                'code' => $code,
+                'phone' => $order->phone_mobile,
                 'response' => "$resp"
             ];
 
