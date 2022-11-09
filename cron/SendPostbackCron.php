@@ -39,7 +39,6 @@ class SendPostbackCron extends Core
             $postback->status = $cron->status;
             $postback->click_hash = $order->click_hash;
             $postback->goalId = $cron->goal_id;
-            $postback->amount = $order->amount;
 
             LeadFinancesPostbacks::sendRequest($postback);
 
