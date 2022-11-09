@@ -911,6 +911,9 @@ class OrderController extends Controller
         //отказной трафик
         LeadFinances::sendRequest($order->user_id);
 
+        if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
+            $this->PostBackCron->add(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
+
         return array('success' => 1, 'status' => $status);
     }
 
