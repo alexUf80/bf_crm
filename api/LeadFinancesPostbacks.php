@@ -2,7 +2,7 @@
 
 class LeadFinancesPostbacks implements ApiInterface
 {
-    protected static $link = 'https://offers.leads.tech/add-conversion/';
+    protected static $link = 'https://offers.leads.tech/add-conversion';
 
     public static function sendRequest($request)
     {
