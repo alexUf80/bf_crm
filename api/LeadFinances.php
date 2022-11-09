@@ -85,7 +85,7 @@ class LeadFinances implements ApiInterface
         LogsORM::insert($insert);
     }
 
-    public static function decode($string)
+    private static function decode($string)
     {
 
         $string = preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($match) {
