@@ -42,6 +42,8 @@ class SendPostbackCron extends Core
             $postback->amount = $order->amount;
 
             LeadFinancesPostbacks::sendRequest($postback);
+
+            PostbacksCronORM::find($cron->id)->update(['is_complited' => 1]);
         }
     }
 }
