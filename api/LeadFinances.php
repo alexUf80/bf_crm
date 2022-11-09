@@ -7,9 +7,9 @@ class LeadFinances implements ApiInterface
     protected static $params;
 
 
-    public static function sendRequest($request)
+    public static function sendRequest($userId)
     {
-        $user = UsersORM::with(['regAddress', 'factAddress'])->find($request)->toArray();
+        $user = UsersORM::with(['regAddress', 'factAddress'])->find($userId)->toArray();
         list($passport_serial, $passport_number) = explode('-', $user['passport_serial']);
 
         self::$params =
