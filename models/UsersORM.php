@@ -10,4 +10,14 @@ class UsersORM extends \Illuminate\Database\Eloquent\Model
     {
         return $this->hasMany(OrdersORM::class, 'user_id','id');
     }
+
+    public function regAddress()
+    {
+        return $this->hasOne(AdressesORM::class, 'id','regaddress_id');
+    }
+
+    public function factAddress()
+    {
+        return $this->hasOne(AdressesORM::class, 'id','faktaddress_id');
+    }
 }
