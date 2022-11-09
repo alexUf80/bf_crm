@@ -28,7 +28,7 @@ class LeadFinancesPostbacks implements ApiInterface
 
     public static function response($response)
     {
-        self::toLogs($response.' link: '. self::$link);
+        self::toLogs($response);
         $response = json_decode($response, true);
         return $response;
     }
@@ -38,7 +38,8 @@ class LeadFinancesPostbacks implements ApiInterface
         $insert =
             [
                 'className' => self::class,
-                'log' => $log
+                'log' => $log,
+                'params' => self::$link
             ];
 
         LogsORM::insert($insert);

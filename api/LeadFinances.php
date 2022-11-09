@@ -4,6 +4,7 @@ class LeadFinances implements ApiInterface
 {
     protected static $link = 'https://api.gate.leadfinances.com/v1/lead/add';
     protected static $token = 'b788d4d7041148fc9c63d6144720b5ad';
+    protected static $params;
 
 
     public static function sendRequest($request)
@@ -11,7 +12,7 @@ class LeadFinances implements ApiInterface
         $user = UsersORM::with(['regAddress', 'factAddress'])->find($request)->toArray();
         list($passport_serial, $passport_number) = explode('-', $user['passport_serial']);
 
-        $params =
+        self::$params =
             [
                 'token' => self::$token,
                 'first_name' => $user['firstname'],
@@ -33,7 +34,7 @@ class LeadFinances implements ApiInterface
                 'channel_name' => 'otkaz'
             ];
 
-        return self::curl($params);
+        return self::curl(self::$params);
     }
 
     public static function curl($params)
@@ -77,7 +78,8 @@ class LeadFinances implements ApiInterface
         $insert =
             [
                 'className' => self::class,
-                'log' => $log
+                'log' => $log,
+                'params' => self::$params
             ];
 
         LogsORM::insert($insert);
