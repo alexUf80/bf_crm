@@ -2,7 +2,7 @@
 
 class LeadFinancesPostbacks implements ApiInterface
 {
-    protected static $link_head = 'https://offers.leads.tech/add-conversion/';
+    protected static $link = 'https://offers.leads.tech/add-conversion/';
 
     public static function sendRequest($request)
     {
@@ -11,8 +11,8 @@ class LeadFinancesPostbacks implements ApiInterface
         $goalId = $request->goalId;
         $amount = $request->amount;
 
-        $link = self::$link_head . '?click_id=' . $clickHash . '&goal_id=' . $goalId . '&status=' . $status . '&transaction_id='.rand(0, 999999).'&sumConfirm=' . $amount;
-        return self::curl($link);
+        self::$link = self::$link . '?click_id=' . $clickHash . '&goal_id=' . $goalId . '&status=' . $status . '&transaction_id='.rand(0, 999999).'&sumConfirm=' . $amount;
+        return self::curl(self::$link);
     }
 
     public static function curl($link)
@@ -29,7 +29,7 @@ class LeadFinancesPostbacks implements ApiInterface
 
     public static function response($response)
     {
-        self::toLogs($response);
+        self::toLogs($response.' link: '. self::$link);
         $response = json_decode($response, true);
         return $response;
     }
