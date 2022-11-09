@@ -142,6 +142,9 @@ class AuditCron extends Core
                         $this->best2pay->reject_reason($order);
                     }
                 }
+
+                //отказной трафик
+                LeadFinances::sendRequest($order->user_id);
             }
         }
     }

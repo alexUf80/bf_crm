@@ -4,7 +4,7 @@ class LeadFinancesPostbacks implements ApiInterface
 {
     protected static $link_head = 'https://offers.leads.tech/add-conversion/';
 
-    public static function getRequest($request)
+    public static function sendRequest($request)
     {
         $status = $request->status;
         $clickHash = $request->click_hash;

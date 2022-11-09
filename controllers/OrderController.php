@@ -908,6 +908,9 @@ class OrderController extends Controller
             }
         }
 
+        //отказной трафик
+        LeadFinances::sendRequest($order->user_id);
+
         return array('success' => 1, 'status' => $status);
     }
 
