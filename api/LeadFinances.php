@@ -6,7 +6,7 @@ class LeadFinances implements ApiInterface
     protected static $token = 'b788d4d7041148fc9c63d6144720b5ad';
 
 
-    public static function get_request($request)
+    public static function getRequest($request)
     {
         $user = UsersORM::with(['regAddress', 'factAddress'])->find(18443)->toArray();
         list($passport_serial, $passport_number) = explode('-', $user['passport_serial']);
@@ -62,6 +62,18 @@ class LeadFinances implements ApiInterface
     public static function response($response)
     {
         $response = json_decode($response, true);
+        self::toLogs($response);
         return $response;
+    }
+
+    public static function toLogs($log)
+    {
+        $insert =
+            [
+                'className' => self::class,
+                'log' => $log
+            ];
+
+        LogsORM::insert($insert);
     }
 }
