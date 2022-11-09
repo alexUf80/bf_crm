@@ -61,8 +61,8 @@ class LeadFinances implements ApiInterface
 
     public static function response($response)
     {
-        $response = json_decode($response, true);
         self::toLogs($response);
+        $response = json_decode($response, true);
         return $response;
     }
 
