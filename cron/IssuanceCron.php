@@ -151,7 +151,7 @@ class IssuanceCron extends Core
                     $order = OrdersORM::find($contract->order_id);
 
                     if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
-                        PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 1, 'goal_id' => 3]);
+                        PostbacksCronORM::insert(['order_id' => $order->id, 'status' => 1, 'goal_id' => 3]);
 
                 }else {
                     $this->contracts->update_contract($contract->id, array('status' => 6));
