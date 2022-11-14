@@ -2208,6 +2208,7 @@ class OrderController extends Controller
     {
         $order_id = $this->request->post('order_id', 'integer');
         $user_id = $this->request->post('user_id', 'integer');
+        $contract_id = $this->request->post('contract_id');
 
         $order = new StdClass();
         $order->service_sms = (int)$this->request->post('service_sms');
@@ -2245,6 +2246,7 @@ class OrderController extends Controller
             ));
 
             $this->users->update_user($user_id, $update);
+            $this->contracts->update_contract($contract_id, $update);
         }
 
         $this->design->assign('services_error', $services_error);

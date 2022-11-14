@@ -2200,6 +2200,7 @@
                                                 <input type="hidden" name="action" value="services"/>
                                                 <input type="hidden" name="order_id" value="{$order->order_id}"/>
                                                 <input type="hidden" name="user_id" value="{$order->user_id}"/>
+                                                <input type="hidden" name="contract_id" value="{$contract->id}"/>
 
 
                                                 <h5 class="card-header text-white">
@@ -2329,7 +2330,8 @@
                                                                     class="btn btn-success js-event-add-click"
                                                                     data-event="46" data-manager="{$manager->id}"
                                                                     data-order="{$order->order_id}"
-                                                                    data-user="{$order->user_id}"><i
+                                                                    data-user="{$order->user_id}"
+                                                                    data-contract="{$contract->id}"><i
                                                                         class="fa fa-check"></i> Сохранить
                                                             </button>
                                                             <button type="button"
