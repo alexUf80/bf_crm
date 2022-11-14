@@ -77,21 +77,28 @@ class IssuanceCron extends Core
                                 ));
     
                                 $dt = new DateTime();
-                                $dt->add(new DateInterval('P6M'));
+                                $dt->add(new DateInterval('P1M'));
                                 $end_date = $dt->format('Y-m-d 23:59:59');
 
-                                $contract->insurance_id = $this->insurances->add_insurance(array(
-                                    'amount' => $insurance_cost,
-                                    'contract_id' => $contract->id,
-                                    'user_id' => $contract->user_id,
-                                    'order_id' => $contract->order_id,
-                                    'create_date' => date('Y-m-d H:i:s'),
-                                    'start_date' => date('Y-m-d 00:00:00', time() + (1 * 86400)),
-                                    'end_date' => $end_date,
-                                    'operation_id' => $operation_id
-                                ));
-    
-                                $this->contracts->update_contract($contract->id, array(
+                                try{
+                                    $contract->insurance = new InsurancesORM();
+                                    $contract->insurance->amount = $insurance_cost;
+                                    $contract->insurance->user_id = $contract->user_id;
+                                    $contract->insurance->order_id = $contract->order_id;
+                                    $contract->insurance->start_date = date('Y-m-d 00:00:00', time() + (1 * 86400));
+                                    $contract->insurance->end_date = $end_date;
+                                    $contract->insurance->operation_id = $operation_id;
+                                    $contract->insurance->save();
+
+                                    $contract->insurance->number = InsurancesORM::create_number($contract->insurance->id);
+
+                                    InsurancesORM::where('id', $contract->insurance->id)->update(['number' => $contract->insurance->number]);
+                                }catch (Exception $e)
+                                {
+
+                                }
+
+                                    $this->contracts->update_contract($contract->id, array(
                                     'insurance_id' => $contract->insurance_id,
                                     'loan_body_summ' => $contract->amount + $insurance_cost
                                 ));
@@ -209,21 +216,6 @@ class IssuanceCron extends Core
             'asp' => $contract->accept_code,
             'insurance_summ' => $insurance_cost,
         );
-        $regaddress_full = empty($contract_order->Regindex) ? '' : $contract_order->Regindex . ', ';
-        $regaddress_full .= trim($contract_order->Regregion . ' ' . $contract_order->Regregion_shorttype);
-        $regaddress_full .= empty($contract_order->Regcity) ? '' : trim(', ' . $contract_order->Regcity . ' ' . $contract_order->Regcity_shorttype);
-        $regaddress_full .= empty($contract_order->Regdistrict) ? '' : trim(', ' . $contract_order->Regdistrict . ' ' . $contract_order->Regdistrict_shorttype);
-        $regaddress_full .= empty($contract_order->Reglocality) ? '' : trim(', ' . $contract_order->Reglocality . ' ' . $contract_order->Reglocality_shorttype);
-        $regaddress_full .= empty($contract_order->Regstreet) ? '' : trim(', ' . $contract_order->Regstreet . ' ' . $contract_order->Regstreet_shorttype);
-        $regaddress_full .= empty($contract_order->Reghousing) ? '' : ', д.' . $contract_order->Reghousing;
-        $regaddress_full .= empty($contract_order->Regbuilding) ? '' : ', стр.' . $contract_order->Regbuilding;
-        $regaddress_full .= empty($contract_order->Regroom) ? '' : ', к.' . $contract_order->Regroom;
-
-        $params['regaddress_full'] = $regaddress_full;
-
-        if (!empty($contract->insurance_id)) {
-            $params['insurance'] = $this->insurances->get_insurance($contract->insurance_id);
-        }
 
         $params['user'] = $this->users->get_user($contract->user_id);
         $params['order'] = $this->orders->get_order($contract->order_id);

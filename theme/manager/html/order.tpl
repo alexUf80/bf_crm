@@ -430,7 +430,17 @@
                                         </h5>
                                     {/if}
                                 </div>
-                                <div class="col-12 col-md-6 col-lg-3 ">
+                                <div class="col-12 col-md-6 col-lg-1">
+                                    <h5 class="form-control-static">
+                                        Источник:
+                                        {if $order->utm_source}
+                                            {$order->utm_source|escape}
+                                        {else}
+                                            не определен
+                                        {/if}
+                                    </h5>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-2">
                                     <a href="{$looker_link}" target="_blank" class="btn btn-info float-right"><i
                                                 class=" fas fa-address-book"></i> Смотреть ЛК</a>
                                 </div>

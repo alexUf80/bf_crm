@@ -534,7 +534,11 @@
                                                 {/if}
                                             </td>
                                             <td style="width: 60px;">
-                                                {$order->utm_source}
+                                                {if !empty($order->utm_source)}
+                                                    <span class="badge badge-info">{$order->utm_source}</span>
+                                                    {else}
+                                                    <span class="badge badge-info">Не опр</span>
+                                                {/if}
                                             </td>
                                             {if $manager->role == 'quality_control'}
                                                 <td style="width: 80px;" class="jsgrid-cell">

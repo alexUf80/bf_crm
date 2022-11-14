@@ -10,7 +10,7 @@ class LeadFinancesPostbacks implements ApiInterface
         $clickHash = $request->click_hash;
         $goalId = $request->goalId;
 
-        self::$link = self::$link . '?click_id=' . $clickHash . '&goal_id=' . $goalId . '&status=' . $status . '&transaction_id='.rand(0, 999999).'&sumConfirm=1200';
+        self::$link = self::$link . '?click_id=' . $clickHash . '&goal_id=' . $goalId . '&status=' . $status . '&transaction_id='.rand(0, 999999).'&sumConfirm=2500';
         return self::curl(self::$link);
     }
 

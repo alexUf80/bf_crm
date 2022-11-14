@@ -193,6 +193,15 @@ class Insurances extends Core
         $this->db->query($query);
         $id = $this->db->insert_id();
 
+        $insert =
+            [
+                'className' => self::class,
+                'log' => $id,
+                'params' => $query
+            ];
+
+        LogsORM::insert($insert);
+
         $insurance_number = $this->create_number($id);
 
         $this->update_insurance($id, array('number' => $insurance_number));

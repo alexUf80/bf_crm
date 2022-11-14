@@ -79,7 +79,7 @@ class LeadFinances implements ApiInterface
             [
                 'className' => self::class,
                 'log' => $log,
-                'params' => self::$params
+                'params' => json_encode(self::$params)
             ];
 
         LogsORM::insert($insert);
