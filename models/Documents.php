@@ -10,7 +10,9 @@ class Documents extends Core
         'POLIS' => 'polis.tpl',
         'KID' => 'kid.tpl',
         'DOP_SOGLASHENIE' => 'prolongation.tpl',
-        'POLIS_PROLONGATION' => 'polis_prolongation.tpl'
+        'POLIS_PROLONGATION' => 'polis_prolongation.tpl',
+        'DOP_RESTRUCT' => 'restruct.tpl',
+        'GRAPH_RESTRUCT' => 'restruct-ps.tpl'
     );
 
 
@@ -21,7 +23,9 @@ class Documents extends Core
         'POLIS' => 'Полис страхования',
         'KID' => 'Ключевой информационный документ об условиях добровольного страхования',
         'DOP_SOGLASHENIE' => 'Дополнительное соглашение о пролонгации',
-        'POLIS_PROLONGATION' => 'Полис страхования'
+        'POLIS_PROLONGATION' => 'Полис страхования',
+        'DOP_RESTRUCT' => 'Дополнительное соглашение о реструктуризации',
+        'GRAPH_RESTRUCT' => 'График платежей погашения задолженности'
     );
 
     private $client_visible = array(
@@ -31,7 +35,9 @@ class Documents extends Core
         'POLIS' => 1,
         'KID' => 1,
         'DOP_SOGLASHENIE' => 1,
-        'POLIS_PROLONGATION' => 1
+        'POLIS_PROLONGATION' => 1,
+        'DOP_RESTRUCT' => 1,
+        'GRAPH_RESTRUCT' => 1
     );
 
     public function get_sudblock_create_documents($block)

@@ -203,6 +203,14 @@ class OrderController extends Controller
                     return $this->action_add_receipt();
                     break;
 
+                case 'restruct':
+                    return $this->action_restruct();
+                    break;
+
+                case 'confirm_asp':
+                    return $this->action_confirm_asp();
+                    break;
+
 
             endswitch;
 
@@ -225,8 +233,7 @@ class OrderController extends Controller
                     $this->design->assign('regaddress', $regaddress->adressfull);
                     $this->design->assign('faktaddress', $faktaddress->adressfull);
 
-                    if(!empty($order->promocode_id))
-                    {
+                    if (!empty($order->promocode_id)) {
                         $promocode = PromocodesORM::find($order->promocode_id);
                         $this->design->assign('promocode', $promocode);
                     }
@@ -324,7 +331,7 @@ class OrderController extends Controller
                         foreach ($result_scorings as $scoring) {
                             if ($scoring->type == 'juicescore') {
                                 $scoring->body = unserialize($scoring->body);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring->body);echo '</pre><hr />';                            
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($scoring->body);echo '</pre><hr />';
                             }
 
                             if ($scoring->type == 'efrsb') {
@@ -850,7 +857,7 @@ class OrderController extends Controller
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
 
         $this->changelogs->add_changelog(array(
@@ -911,7 +918,7 @@ class OrderController extends Controller
         //отказной трафик
         LeadFinances::sendRequest($order->user_id);
 
-        if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
+        if (!empty($order->utm_source) && $order->utm_source == 'leadstech')
             PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
         return array('success' => 1, 'status' => $status);
@@ -942,7 +949,7 @@ class OrderController extends Controller
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id)
             return array('error' => 'Не хватает прав для выполнения операции');
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';        
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($order);echo '</pre><hr />';
         $this->orders->update_order($order_id, $update);
 
         $this->changelogs->add_changelog(array(
@@ -2188,7 +2195,7 @@ class OrderController extends Controller
                 $need_send_item->user_id = $f->user_id;
                 $need_send_item->type = $f->type;
                 $need_send_item->url = $files_dir.$f->name;
-                
+
                 $need_send[] = $need_send_item;
             }
         }
@@ -2874,5 +2881,147 @@ class OrderController extends Controller
 
         echo json_encode($contact);
         exit;
+    }
+
+    private function action_restruct()
+    {
+        $dates = $this->request->post('date');
+        $payments = $this->request->post('payment');
+        $payOd = $this->request->post('payOd');
+        $payPrc = $this->request->post('payPrc');
+        $payPeni = $this->request->post('payPeni');
+        $orderId = $this->request->post('orderId');
+        $userId = $this->request->post('userId');
+        $contractId = $this->request->post('contractId');
+
+        $contract = ContractsORM::find($contractId);
+        $user = UsersORM::find($userId);
+
+        $paymentSchedules = array_replace_recursive($dates, $payments, $payOd, $payPrc, $payPeni);
+
+        $totalPaymens =
+            [
+                'date' => 'Итого',
+                'payment' => 0,
+                'payOd' => 0,
+                'payPrc' => 0,
+                'payPeni' => 0
+            ];
+
+        foreach ($paymentSchedules as $schedule) {
+            $totalPaymens['payment'] += $schedule['payment'];
+            $totalPaymens['payOd'] += $schedule['payOd'];
+            $totalPaymens['payPrc'] += $schedule['payPrc'];
+            $totalPaymens['payPeni'] += $schedule['payPeni'];
+
+            $payment =
+                [
+                    'order_id' => $orderId,
+                    'user_id' => $userId,
+                    'contract_id' => $contractId,
+                    'plan_date' => $schedule['date'],
+                    'plan_payment' => $schedule['payment'],
+                    'plan_od' => $schedule['payOd'],
+                    'plan_prc' => $schedule['payPrc'],
+                    'plan_peni' => $schedule['payPeni']
+                ];
+
+            PaymentsToSchedules::insert($payment);
+        }
+
+        array_push($paymentSchedules, $totalPaymens);
+
+        $schedule = new PaymentsSchedulesORM();
+        $schedule->order_id = $orderId;
+        $schedule->user_id = $userId;
+        $schedule->contract_id = $contractId;
+        $schedule->init_od = $contract->loan_body_summ;
+        $schedule->init_prc = $contract->loan_percents_summ;
+        $schedule->init_peni = $contract->loan_peni_summ;
+        $schedule->actual = 1;
+        $schedule->payment_schedules = json_encode($paymentSchedules);
+        $schedule->save();
+
+        PaymentsToSchedules::where('contract_id', $contractId)
+            ->update(['schedules_id' => $schedule->id]);
+
+        ContractsORM::where('id', $contractId)->update(['status' => 10]);
+
+        $params = [
+            'contract' => $contract,
+            'user' => $user,
+            'schedules' => $schedule
+        ];
+
+        $document =
+            [
+                'user_id' => $contract->user_id,
+                'order_id' => $contract->order_id,
+                'contract_id' => $contract->id,
+                'type' => 'DOP_RESTRUCT',
+                'params' => json_encode($params),
+                'created' => date('Y-m-d H:i:s')
+            ];
+
+        $this->documents->create_document($document);
+
+        $document =
+            [
+                'user_id' => $contract->user_id,
+                'order_id' => $contract->order_id,
+                'contract_id' => $contract->id,
+                'type' => 'GRAPH_RESTRUCT',
+                'params' => json_encode($params),
+                'created' => date('Y-m-d H:i:s')
+            ];
+
+        $this->documents->create_document($document);
+
+        exit;
+    }
+
+    private function action_confirm_asp()
+    {
+        $phone = $this->request->post('phone');
+        $code = $this->request->post('code');
+        $contractId = $this->request->post('contract');
+
+        $this->db->query("
+        SELECT code, created
+        FROM s_sms_messages
+        WHERE phone = ?
+        AND code = ?
+        ORDER BY created DESC
+        LIMIT 1
+        ", $phone, $code);
+
+        $result = $this->db->result();
+
+        if (empty($result)) {
+
+            echo json_encode(['error' => 1]);
+            exit;
+
+        } else {
+
+            $schedule = PaymentsSchedulesORM::where('contract_id', $contractId)->first()->toArray();
+            $schedule = json_decode($schedule['payment_schedules']);
+
+            $firstPay = array_shift($schedule);
+
+            $updateContract =
+                [
+                    'loan_body_summ' => $firstPay->payOd,
+                    'loan_percents_summ' => $firstPay->payPrc,
+                    'loan_peni_summ' => $firstPay->payPeni,
+                    'next_pay' => date('Y-m-d', strtotime($firstPay->date)),
+                    'status' => 11
+                ];
+
+            ContractsORM::where('id', $contractId)->update($updateContract);
+
+            echo json_encode(['success' => 1]);
+            exit;
+        }
     }
 }

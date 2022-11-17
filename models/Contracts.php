@@ -13,6 +13,8 @@ class Contracts extends Core
         7 => 'Цессия',
         8 => 'Отменен',
         9 => 'Идет выплата',
+        10 => 'Подготовлена реструктуризация',
+        11 => 'Реструктуризирован'
     );
     
     private $collection_statuses = array(
