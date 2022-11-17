@@ -6,8 +6,12 @@
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.20"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/penalty.app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
+    <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script>
         $(function () {
+
+            init();
 
             $(document).on('click', '.js-open-sms-modal', function (e) {
                 e.preventDefault();
@@ -265,7 +269,127 @@
                     }
                 })
             });
+
+            $('.restruct').on('click', function () {
+                $('#restruct_modal').modal();
+
+                $('.addPeriod').on('click', function () {
+
+                    let form = $('<div class="form-group" style="display: flex">' +
+                        '<input class="form-control daterange" name="date[][date]">' +
+                        '<input placeholder="Платеж" style="margin-left: 5px" class="form-control" name="payment[][payment]">' +
+                        '<input placeholder="ОД" style="margin-left: 5px" class="form-control" name="payOd[][payOd]">' +
+                        '<input placeholder="Процент" style="margin-left: 5px" class="form-control" name="payPrc[][payPrc]">' +
+                        '<input placeholder="Пени" style="margin-left: 5px" class="form-control" name="payPeni[][payPeni]">' +
+                        '<div style="margin-left: 5px" class="btn btn-danger deletePeriod"> - </div></div>');
+
+                    $('#payments_schedules').append(form);
+
+                    form.find('.daterange').daterangepicker({
+                        singleDatePicker: true,
+                        showDropdowns: true,
+                        locale: {
+                            format: 'DD.MM.YYYY'
+                        },
+                    });
+
+                    //init();
+                });
+
+                $(document).on('click', '.deletePeriod', function () {
+                    $(this).closest('.form-group').remove();
+                });
+
+                $('.saveRestruct').on('click', function () {
+                    let form = $('#restruct_form').serialize();
+
+                    $.ajax({
+                        method: 'POST',
+                        data: form,
+                        success: function () {
+                            location.reload();
+                        }
+                    });
+                });
+            });
+
+            $('.confirm_restruct').on('click', function () {
+                let order = $(this).attr('data-order');
+
+                $('#sms_confirm_modal').modal();
+
+                send_sms(order);
+
+                $('.send_asp_code').on('click',function () {
+                    send_sms(order);
+                });
+
+                $('.confirm_asp').on('click', function () {
+                    let phone = $(this).attr('data-phone');
+                    let user = $(this).attr('data-user');
+                    let contract = $(this).attr('data-contract');
+                    let code = $('.code_asp').val();
+
+                    $.ajax({
+                        method: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            action: 'confirm_asp',
+                            user: user,
+                            phone: phone,
+                            code: code,
+                            contract: contract,
+                        },
+                        success: function (response) {
+                            if (response['error'] == 1) {
+                                Swal.fire({
+                                    title: 'Неверный код',
+                                    confirmButtonText: 'ОК'
+                                });
+                            } else {
+                                location.reload();
+                            }
+                        }
+                    });
+                });
+            });
         })
+    </script>
+    <script>
+        function init() {
+            moment.locale('ru');
+
+            $('.daterange').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                locale: {
+                    format: 'DD.MM.YYYY'
+                },
+            });
+        }
+
+        function send_sms(order) {
+
+            $.ajax({
+                method: 'POST',
+                dataType: 'JSON',
+                data: {
+                    action: 'send_sms',
+                    order: order
+                },
+                success: function (resp) {
+                    if (resp['error']) {
+                        Swal.fire({
+                            title: resp['error'],
+                            confirmButtonText: 'Да'
+                        })
+                    } else {
+                        $('.phone_send_code').text(resp['success']);
+                        $('.phone_send_code').fadeIn();
+                    }
+                }
+            });
+        }
     </script>
 {/capture}
 
@@ -273,6 +397,7 @@
     <link href="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/magnific-popup.css"
           rel="stylesheet"/>
     <link href="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.css" rel="stylesheet"/>
+    <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
     <style>
         .md-comment {
             max-width: 1000px;
@@ -826,26 +951,43 @@
                                             {else}
                                                 <div class="card card-primary mb-1">
                                                     <div class="box text-center">
-                                                        <h3 class="text-white">Выдан</h3>
                                                         <h6>Договор {$contract->number}</h6>
                                                         {if $contract->outer_id}<h6>{$contract->outer_id}</h6>{/if}
+                                                        {if $contract->status == 11}
+                                                            <h4 class="text-white">Реструктуризирован</h4>
+                                                            <h5 class="text-white">Дата следующей оплаты: {$contract->next_pay|date}</h5>
+                                                        {/if}
+                                                        {if !in_array($contract->status, [10,11])}
+                                                            <h3 class="text-white">Выдан</h3>
                                                         <h6 class="text-center text-white">
                                                             Погашение: {$contract->loan_body_summ+$contract->loan_percents_summ+$contract->loan_charge_summ+$contract->loan_peni_summ}
                                                             руб
                                                         </h6>
-                                                        <h6 class="text-center text-white">
-                                                            Продление:
-                                                            {if $contract->stop_profit}
-                                                                достигнут порог
-                                                            {else}
-                                                                {if $contract->prolongation > 0}
-                                                                    {$settings->prolongation_amount+$contract->loan_percents_summ} руб
+                                                            <h6 class="text-center text-white">
+                                                                Продление:
+                                                                {if $contract->stop_profit}
+                                                                    достигнут порог
                                                                 {else}
-                                                                    {$contract->loan_percents_summ} руб
+                                                                    {if $contract->prolongation > 0}
+                                                                        {$settings->prolongation_amount+$contract->loan_percents_summ} руб
+                                                                    {else}
+                                                                        {$contract->loan_percents_summ} руб
+                                                                    {/if}
                                                                 {/if}
-                                                            {/if}
-                                                        </h6>
+                                                            </h6>
+                                                        {/if}
                                                     </div>
+                                                </div>
+                                            {/if}
+                                            {if in_array($contract->status, [2,4])}
+                                                <div class="btn btn-block btn-info restruct">
+                                                    Реструктуризировать
+                                                </div>
+                                            {/if}
+                                            {if $contract->status == 10}
+                                                <div data-order="{$order->order_id}"
+                                                     class="btn btn-block btn-success confirm_restruct">
+                                                    Отправить смс и подтвердить реструктуризацию
                                                 </div>
                                             {/if}
                                             {if in_array('close_contract', $manager->permissions)}
@@ -2112,14 +2254,25 @@
                                                                     {/if}
                                                                     <span class="time">
                                                                         {if $scoring_type->name == 'fssp'}
-                                                                            <span>Сумма долга: {$scorings[$scoring_type->name]->body['amount']}</span><br>
-                                                                                    {if isset($scorings[$scoring_type->name]->body['badArticles'])}
-                                                                            <span>{$scorings[$scoring_type->name]->body['badArticles']}</span><br>
+                                                                            <span>Сумма долга: {$scorings[$scoring_type->name]->body['amount']}</span>
+                                                                            <br>
+
+
+
+
+
+
+
+
+
+{if isset($scorings[$scoring_type->name]->body['badArticles'])}
+                                                                            <span>{$scorings[$scoring_type->name]->body['badArticles']}</span>
+                                                                            <br>
                                                                         {/if}
                                                                         {/if}
-                                                                            {if $scorings[$scoring_type->name]->created}
-                                                                                {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
-                                                                            {/if}
+                                                                        {if $scorings[$scoring_type->name]->created}
+                                                                            {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
+                                                                        {/if}
                                                                         {if $scoring_type->name == 'fssp2'}
                                                                             <a href="/ajax/show_fssp2.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
                                                                                target="_blank">Подробнее</a>
@@ -3369,6 +3522,85 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="restruct_modal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Реструктуризация</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="restruct_form">
+                    <input type="hidden" name="action" value="restruct">
+                    <input type="hidden" name="userId" value="{$order->user_id}">
+                    <input type="hidden" name="orderId" value="{$order->order_id}">
+                    <input type="hidden" name="contractId" value="{$contract->id}">
+                    <div class="form-group">
+                        <label class="control-label">Новый график платежей:</label>
+                    </div>
+                    <div id="payments_schedules">
+                        <div class="form-group" style="display: flex">
+                            <input class="form-control daterange" name="date[][date]">
+                            <input placeholder="Платеж" style="margin-left: 5px" class="form-control"
+                                   name="payment[][payment]">
+                            <input placeholder="ОД" style="margin-left: 5px" class="form-control" name="payOd[][payOd]">
+                            <input placeholder="Процент" style="margin-left: 5px" class="form-control"
+                                   name="payPrc[][payPrc]">
+                            <input placeholder="Пени" style="margin-left: 5px" class="form-control"
+                                   name="payPeni[][payPeni]">
+                            <div style="margin-left: 5px" class="btn btn-success addPeriod">
+                                +
+                            </div>
+                        </div>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success saveRestruct" value="Сохранить">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="sms_confirm_modal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Подтвердить смс</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <div style="display: flex;" class="col-md-12">
+                    <input type="text" class="form-control code_asp"
+                           placeholder="SMS код"
+                           value="{if $is_developer}{$contract->accept_code}{/if}"/>
+                    <div class="phone_send_code badge badge-danger"
+                         style="position: absolute; margin-left: 350px; margin-top: 5px; right: 150px;display: none">
+                    </div>
+                    <button class="btn btn-info confirm_asp" type="button"
+                            data-user="{$order->user_id}"
+                            data-contract="{$contract->id}"
+                            style="margin-left: 15px;"
+                            data-phone="{$order->phone_mobile}">Подтвердить
+                    </button>
+                </div>
+                <br>
+                <div class="col-md-12">
+                    <button data-user="{$order->user_id}"
+                            id="send_asp"
+                            data-phone="{$order->phone_mobile}"
+                            data-order="{$order->order_id}"
+                            class="btn btn-primary btn-block send_asp_code">
+                        Отправить смс повторно
+                    </button>
+                </div>
             </div>
         </div>
     </div>
