@@ -276,7 +276,7 @@ class Nbkiscore_scoring extends Core
         elseif ($pdl_last_3m_limit >= 10000 && $pdl_last_3m_limit < 20000)
             $nbki_score -= 97;
         elseif ($pdl_last_3m_limit >= 20000 && $pdl_last_3m_limit < 50000)
-            $nbki_score -= 25;
+            $nbki_score += 25;
         elseif ($pdl_last_3m_limit >= 50000 && $pdl_last_3m_limit < 100000)
             $nbki_score += 132;
         elseif ($pdl_last_3m_limit >= 100000)
@@ -322,7 +322,7 @@ class Nbkiscore_scoring extends Core
         if ($consum_current_limit_max < 10000)
             $nbki_score -= 66;
         elseif ($consum_current_limit_max >= 10000 && $consum_current_limit_max < 100000)
-            $nbki_score -= 38;
+            $nbki_score += 38;
         elseif ($consum_current_limit_max >= 100000 && $consum_current_limit_max < 300000)
             $nbki_score += 56;
         elseif ($consum_current_limit_max >= 300000)
@@ -331,7 +331,7 @@ class Nbkiscore_scoring extends Core
         if ($consum_good_limit < 1)
             $nbki_score -= 28;
         elseif ($consum_good_limit >= 1 && $consum_good_limit < 100000)
-            $nbki_score -= 45;
+            $nbki_score += 45;
         elseif ($consum_good_limit >= 100000 && $consum_good_limit < 400000)
             $nbki_score += 61;
         elseif ($consum_good_limit >= 400000)
