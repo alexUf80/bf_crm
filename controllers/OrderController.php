@@ -3015,7 +3015,8 @@ class OrderController extends Controller
                     'loan_percents_summ' => $firstPay->payPrc,
                     'loan_peni_summ' => $firstPay->payPeni,
                     'next_pay' => date('Y-m-d', strtotime($firstPay->date)),
-                    'status' => 11
+                    'status' => 11,
+                    'stop_profit' => 1
                 ];
 
             ContractsORM::where('id', $contractId)->update($updateContract);
