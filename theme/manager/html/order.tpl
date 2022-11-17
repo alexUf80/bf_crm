@@ -2308,7 +2308,7 @@
                                                                 <input type="checkbox" class="custom-control-input"
                                                                        name="service_reason" id="service_reason"
                                                                        value="1"
-                                                                       {if $order->service_reason}checked="true"{/if} />
+                                                                       {if $order->service_reason == 1}checked="true"{/if} />
                                                                 <label class="custom-control-label"
                                                                        for="service_reason">Причина отказа</label>
                                                             </div>
@@ -2318,7 +2318,7 @@
                                                                 <input type="checkbox" class="custom-control-input"
                                                                        name="service_insurance" id="service_insurance"
                                                                        value="1"
-                                                                       {if $order->service_insurance}checked="true"{/if} />
+                                                                       {if $order->service_insurance == 1}checked="true"{/if} />
                                                                 <label class="custom-control-label"
                                                                        for="service_insurance">Страхование</label>
                                                             </div>
