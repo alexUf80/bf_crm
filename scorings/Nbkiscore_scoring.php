@@ -291,7 +291,7 @@ class Nbkiscore_scoring extends Core
         elseif ($pdl_last_good_max_limit >= 10000 && $pdl_last_good_max_limit < 20000)
             $nbki_score += 3;
         elseif ($pdl_last_good_max_limit >= 20000)
-            $nbki_score += 5;
+            $nbki_score += 15;
 
         if ($pdl_good_limit < 20000)
             $nbki_score -= 143;
