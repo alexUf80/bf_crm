@@ -2919,7 +2919,7 @@ class OrderController extends Controller
                     'order_id' => $orderId,
                     'user_id' => $userId,
                     'contract_id' => $contractId,
-                    'plan_date' => $schedule['date'],
+                    'plan_date' => date('Y-m-d', strtotime($schedule['date'])),
                     'plan_payment' => $schedule['payment'],
                     'plan_od' => $schedule['payOd'],
                     'plan_prc' => $schedule['payPrc'],
