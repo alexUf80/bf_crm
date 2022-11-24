@@ -603,7 +603,16 @@ class Best2pay extends Core
 
         $data['signature'] = $this->get_signature($data);
 
-        $this->send('Reverse', $data);
+        $response = $this->send('Reverse', $data);
+
+        $log =
+            [
+                'className' => self::class,
+                'log' => json_encode($response),
+                'params' => json_encode($data)
+            ];
+
+        LogsORM::insert($log);
     }
 
     private function get_signature($data)
