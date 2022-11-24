@@ -870,50 +870,8 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        // отправляем письмо независимо от того сняли за причину отказа или нет
-        $this->notify->send_reject_reason($order_id);
-
-        // проверяем были ли уже списания за причину отказа, что бы не списать второй раз
-        $reject_operations = $this->operations->get_operations(array(
-            'type' => 'REJECT_REASON',
-            'order_id' => $order->order_id
-        ));
-
-        // Снимаем за причину отказа
-        // Снимаем "Узнай причину отказа"
-        if (!empty($reject_operations)) {
-            $service_summ = 39;
-            $service_amount = $service_summ * 100;
-
-            $description = 'Услуга "Узнай причину отказа"';
-
-            $xml = $this->best2pay->purchase_by_token($contract->card_id, $service_amount, $description);
-
-            $status = (string)$xml->state;
-
-            if ($status == 'APPROVED') {
-                $transaction = $this->transactions->get_operation_transaction($xml->order_id, $xml->id);
-
-                $contract = $this->contracts->get_contract($contract->id);
-
-                $payment_amount = $service_amount / 100;
-
-                $operation_id = $this->operations->add_operation(array(
-                    'contract_id' => $contract->id,
-                    'user_id' => $contract->user_id,
-                    'order_id' => $contract->order_id,
-                    'type' => 'REJECT_REASON',
-                    'amount' => $payment_amount,
-                    'created' => date('Y-m-d H:i:s'),
-                    'transaction_id' => $transaction->id,
-                ));
-
-                //Отправляем чек по страховке
-                $this->Cloudkassir->send_reject_reason($contract->order_id);
-                $this->operations->update_operation($operation_id, array('sent_receipt' => 1));
-
-            }
-        }
+        //Отправляем чек по страховке
+        $this->Cloudkassir->send_reject_reason($contract->order_id);
 
         //отказной трафик
         LeadFinances::sendRequest($order->user_id);

@@ -108,9 +108,9 @@ class Cloudkassir extends Core
             $items = array();
             $item = array(
                 'label' => 'Информирование о причине отказа',
-                'price' => 39,
+                'price' => 19,
                 'quantity' => 1,
-                'amount' => 39,
+                'amount' => 19,
                 'vat' => 20,
                 'method' => 4,
                 'object' => 4,

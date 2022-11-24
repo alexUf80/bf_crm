@@ -59,7 +59,7 @@ class Best2pay extends Core
     public function reject_reason($order)
     {
 
-        $service_summ = 3900;
+        $service_summ = 1900;
 
         $description = 'Услуга "Узнай причину отказа"';
 
@@ -302,75 +302,6 @@ class Best2pay extends Core
      * @param integer $sector
      * @return string $link
      */
-    public function add_card($user_id, $sector = 2516)
-    {
-//        $password = $this->settings->apikeys['best2pay'][$sector];
-        $password = $this->passwords[$sector];
-
-        $amount = 100;
-        $description = 'Привязка карты'; // описание операции
-
-        if (!($user = $this->users->get_user((int)$user_id)))
-            return false;
-
-        $user_address = $user->Regstreet_shorttype . ' ' . $user->Regstreet . ', д.' . $user->Reghousing;
-        if (!empty($user->Regbuilding))
-            $user_address .= ', стр.' . $user->Regbuilding;
-        if (!empty($user->Regroom))
-            $user_address .= ', кв.' . $user->Regroom;
-
-        $user_city = $user->Regregion_shorttype . ' ' . $user->Regregion . ' ' . $user->Regcity_shorttype . ' ' . $user->Regcity;
-
-        // регистрируем оплату
-        $data = array(
-            'sector' => $sector,
-            'amount' => $amount,
-            'currency' => $this->currency_code,
-            'reference' => $user_id,
-            'client_ref' => $user_id,
-            'description' => $description,
-            'address' => $user_address,
-            'city' => $user_city,
-//            'phone' => $user->phone_mobile,
-//            'email' => $user->email,
-            'first_name' => $user->firstname,
-            'last_name' => $user->lastname,
-            'patronymic' => $user->patronymic,
-            'url' => $this->config->front_url . '/best2pay_callback/add_card',
-            'recurring_period' => 0,
-//            'mode' => 1
-        );
-        $data['signature'] = $this->get_signature(array($data['sector'], $data['amount'], $data['currency'], $password));
-
-        $b2p_order = $this->send('Register', $data);
-
-        $xml = simplexml_load_string($b2p_order);
-        $b2p_order_id = (string)$xml->id;
-
-        $transaction_id = $this->transactions->add_transaction(array(
-            'user_id' => $user_id,
-            'amount' => $amount,
-            'sector' => $sector,
-            'register_id' => $b2p_order_id,
-            'reference' => $user_id,
-            'description' => $description,
-            'created' => date('Y-m-d H:i:s'),
-        ));
-
-        // получаем ссылку на оплату 10руб для привязки карты
-        $data = array(
-            'sector' => $sector,
-            'id' => $b2p_order_id,
-            'get_token' => 1,
-        );
-        $data['signature'] = $this->get_signature(array($sector, $b2p_order_id, $password));
-
-        $link = $this->url . 'webapi/Purchase?' . http_build_query($data);
-//echo __FILE__.' '.__LINE__.'<br /><pre>';echo(htmlspecialchars($b2p_order));echo '</pre><hr />';  
-
-        return $link;
-
-    }
 
     /**
      * Best2pay::pay_contract()
@@ -607,7 +538,6 @@ class Best2pay extends Core
 
     }
 
-
     public function get_operation_info($sector, $register_id, $operation_id)
     {
         $password = $this->passwords[$sector];
@@ -642,7 +572,6 @@ class Best2pay extends Core
         return $info;
     }
 
-
     private function send($method, $data, $type = 'webapi')
     {
         $string_data = http_build_query($data);
@@ -657,6 +586,24 @@ class Best2pay extends Core
         $b2p = file_get_contents($this->url . $type . '/' . $method, false, $context);
 
         return $b2p;
+    }
+
+    public function reverseCardEnroll($register_id)
+    {
+        $sector = $this->sectors['ADD_CARD'];
+        $password = $this->passwords[$sector];
+
+        $data = array(
+            'sector' => $sector,
+            'id' => $register_id,
+            'amount' => 1900,
+            'currency' => $this->currency_code,
+            'password' => $password
+        );
+
+        $data['signature'] = $this->get_signature($data);
+
+        $this->send('Reverse', $data);
     }
 
     private function get_signature($data)
@@ -693,54 +640,6 @@ class Best2pay extends Core
         );
 
         return isset($descriptions[$code]) ? $descriptions[$code] : '';
-    }
-
-
-    public function add_card_old($user_id)
-    {
-        $sector = 2243;
-        $password = $this->settings->apikeys['best2pay'][2243];
-
-        $amount = 100; // сумма для списания > 100
-        $description = 'Привязка карты'; // описание операции
-// 812763
-        // регистрируем оплату
-        $data = array(
-            'sector' => $sector,
-            'amount' => $amount,
-            'currency' => $this->currency_code,
-            'reference' => $user_id,
-            'description' => $description,
-            'url' => 'http://nalic-front.eva-p.ru/best2pay_callback/add_card',
-//            'mode' => 1
-        );
-        $data['signature'] = $this->get_signature(array($data['sector'], $data['amount'], $data['currency'], $password));
-
-        $b2p_order = $this->send('Register', $data);
-
-        $xml = simplexml_load_string($b2p_order);
-        $b2p_order_id = (string)$xml->id;
-
-        $transaction_id = $this->transactions->add_transaction(array(
-            'user_id' => $user_id,
-            'amount' => $amount,
-            'sector' => $sector,
-            'register_id' => $b2p_order_id,
-            'reference' => $user_id,
-            'description' => $description,
-            'created' => date('Y-m-d H:i:s'),
-        ));
-//exit;
-        // получаем ссылку на привязку карты
-        $data = array(
-            'sector' => $sector,
-            'id' => $b2p_order_id
-        );
-        $data['signature'] = $this->get_signature(array($sector, $b2p_order_id, $password));
-
-        $link = $this->url . 'CardEnroll?' . http_build_query($data);
-
-        return $link;
     }
 
     public function get_contract_p2pcredit($contract_id)
