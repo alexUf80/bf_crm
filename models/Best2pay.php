@@ -588,7 +588,7 @@ class Best2pay extends Core
         return $b2p;
     }
 
-    public function reverseCardEnroll($register_id)
+    public function reverseCardEnroll($register_id, $orderId)
     {
         $sector = $this->sectors['ADD_CARD'];
         $password = $this->passwords[$sector];
@@ -609,7 +609,7 @@ class Best2pay extends Core
             [
                 'className' => self::class,
                 'log' => json_encode($response),
-                'params' => json_encode($data)
+                'params' => json_encode(['request' => $data, 'orderId' => $orderId])
             ];
 
         LogsORM::insert($log);

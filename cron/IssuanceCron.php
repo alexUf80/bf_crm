@@ -172,7 +172,7 @@ class IssuanceCron extends Core
 
                     $transaction = $this->db->result();
 
-                    $this->best2pay->reverseCardEnroll($transaction->register_id);
+                    $this->best2pay->reverseCardEnroll($transaction->register_id, $contract->order_id);
 
                 }else {
                     $this->contracts->update_contract($contract->id, array('status' => 6));
