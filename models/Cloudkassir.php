@@ -116,7 +116,7 @@ class Cloudkassir extends Core
                 'object' => 4,
                 'measurementUnit' => 'ед',
             );
-            $total_amount = 39;
+            $total_amount = 19;
 
             $items[] = $item;
 
