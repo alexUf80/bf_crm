@@ -2962,19 +2962,18 @@ class OrderController extends Controller
 
         } else {
 
-            $schedule = PaymentsSchedulesORM::where('contract_id', $contractId)->first()->toArray();
-            $schedule = json_decode($schedule['payment_schedules']);
-
-            $firstPay = array_shift($schedule);
+            $nextPay = PaymentsToSchedules::where('contract_id', $contractId)->orderBy('id', 'asc')->first();
 
             $updateContract =
                 [
-                    'loan_body_summ' => $firstPay->payOd,
-                    'loan_percents_summ' => $firstPay->payPrc,
-                    'loan_peni_summ' => $firstPay->payPeni,
-                    'next_pay' => date('Y-m-d', strtotime($firstPay->date)),
+                    'loan_body_summ' => $nextPay->plan_od,
+                    'loan_percents_summ' => $nextPay->plan_prc,
+                    'loan_peni_summ' => $nextPay->plan_peni,
+                    'next_pay' => date('Y-m-d', strtotime($nextPay->plan_date)),
+                    'payment_id' => $nextPay->id,
                     'status' => 11,
-                    'stop_profit' => 1
+                    'stop_profit' => 1,
+                    'is_restructed' => 1
                 ];
 
             ContractsORM::where('id', $contractId)->update($updateContract);
