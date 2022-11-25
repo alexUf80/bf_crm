@@ -163,6 +163,15 @@ class Cloudkassir extends Core
             $res = curl_exec($ch);
             curl_close($ch);
 
+            $insert =
+                [
+                    'className' => self::class,
+                    'log' => json_encode($data),
+                    'params' => json_encode($res)
+                ];
+
+            LogsORM::insert($insert);
+
             return $res;
 
 
