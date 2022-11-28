@@ -879,6 +879,16 @@ class OrderController extends Controller
         if (!empty($order->utm_source) && $order->utm_source == 'leadstech')
             PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
+        $this->operations->add_operation(array(
+            'contract_id' => 0,
+            'user_id' => $order->user_id,
+            'order_id' => $order->order_id,
+            'type' => 'REJECT_REASON',
+            'amount' => 19,
+            'created' => date('Y-m-d H:i:s'),
+            'transaction_id' => 0,
+        ));
+
         return array('success' => 1, 'status' => $status);
     }
 
