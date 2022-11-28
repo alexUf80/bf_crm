@@ -164,7 +164,7 @@ class IssuanceCron extends Core
                     SELECT *
                     FROM s_transactions
                     where user_id = ?
-                    and description = 'Привязка карты',
+                    and description = 'Привязка карты'
                     and reason_code = 1
                     order by id DESC
                     limit 1

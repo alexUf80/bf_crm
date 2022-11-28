@@ -138,8 +138,8 @@ class AuditCron extends Core
 
                     if ($reason->type == 'mko')
                     {
-                        // списываем за причину
-                        $this->best2pay->reject_reason($order);
+                        //Отправляем чек по страховке
+                        $this->Cloudkassir->send_reject_reason($order->order_id);
                     }
                 }
 
