@@ -1124,11 +1124,7 @@ class StatisticsController extends Controller
                     $active_sheet->getStyle($a_indexes)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
                     $active_sheet->setCellValue('A' . $i, $rc);
 
-                    $b_indexes = 'B' . ($i + 3) . ':B' . ($i + count($order->eventlogs) - 1);
-                    if (count($order->eventlogs) > 2)
-                        $active_sheet->mergeCells($b_indexes);
-                    $active_sheet->getStyle($b_indexes)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
-                    $active_sheet->getStyle($b_indexes)->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_TOP);
+
                     $active_sheet->setCellValue('B' . $i, $order->order_id);
                     $active_sheet->setCellValue('B' . ($i + 1), 'Статус: ' . $order_statuses[$order->status]);
                     $active_sheet->setCellValue('B' . ($i + 2), 'Менеджер: ' . $managers[$order->manager_id]->name);
@@ -1139,11 +1135,6 @@ class StatisticsController extends Controller
                         $active_sheet->setCellValue('E' . $i, $events[$ev->event_id]);
                         $active_sheet->setCellValue('F' . $i, $managers[$ev->manager_id]->name);
 
-//                        $active_sheet->getStyle('C'.$i)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-//                        $active_sheet->getStyle('D'.$i)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-//                        $active_sheet->getStyle('E'.$i)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-//                        $active_sheet->getStyle('F'.$i)->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
-//
                         $i++;
                     }
 
@@ -1181,7 +1172,6 @@ class StatisticsController extends Controller
                             )
                         )
                     );
-//                    $active_sheet->getStyle()->getBorders()->getAllBorders()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
                 }
 
                 $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
@@ -1716,6 +1706,12 @@ class StatisticsController extends Controller
 
             $ad_services = $this->operations->operations_contracts_insurance($filter);
 
+            foreach ($ad_services as $service)
+            {
+                $service->regAddr = AdressesORM::find($service->regaddress_id);
+                $service->regAddr = $service->regAddr->adressfull;
+            }
+
             $op_type = ['INSURANCE' => 'Страхование от НС', 'BUD_V_KURSE' => 'Будь в курсе', 'REJECT_REASON' => 'Узнай причину отказа', 'INSURANCE_CLOSED' => 'Страхование БК'];
             $gender = ['male' => 'Мужской', 'female' => 'Женский'];
 
@@ -1777,13 +1773,6 @@ class StatisticsController extends Controller
                 $i = 2;
                 foreach ($ad_services as $ad_service) {
 
-                    if ($ad_service->Regcity) {
-                        $address = "$ad_service->Regindex $ad_service->Regcity $ad_service->Regstreet_shorttype $ad_service->Regstreet $ad_service->Reghousing $ad_service->Regroom";
-
-                    } else {
-                        $address = "$ad_service->Regindex $ad_service->Reglocality $ad_service->Regstreet_shorttype $ad_service->Regstreet $ad_service->Reghousing $ad_service->Regroom";
-                    }
-
                     $fio_birth = "$ad_service->lastname $ad_service->firstname $ad_service->patronymic $ad_service->birth";
 
 
@@ -1803,7 +1792,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('I' . $i, $ad_service->phone_mobile);
                     $active_sheet->setCellValue('J' . $i, $gender[$ad_service->gender]);
                     $active_sheet->setCellValue('K' . $i, $ad_service->passport_serial);
-                    $active_sheet->setCellValue('L' . $i, $address);
+                    $active_sheet->setCellValue('L' . $i, $ad_service->regAddr);
 
                     if ($ad_service->start_date) {
                         $active_sheet->setCellValue('M' . $i, $ad_service->start_date . '/' . $ad_service->end_date);

@@ -519,25 +519,26 @@ class Orders extends Core
 
 
             $query = $this->db->placehold("
-        SELECT $date_group_by AS group_date, YEAR(os.`date`) AS `year`, $utm_source_group_by, os.`client_status`, SUM(os.`amount`) check_all_summ, round(AVG(os.amount),0) check_srch, COUNT(*) all_orders, os.`leadcraft_postback_type`, os.`status`,
+        SELECT $date_group_by AS group_date, YEAR(os.`date`) AS `year`, $utm_source_group_by, os.`client_status`, SUM(os.`amount`) check_all_summ, round(AVG(os.amount),0) check_srch, COUNT(*) all_orders, pc.status as `leadcraft_postback_type`, os.`status`,
         COUNT(case when os.`client_status` IN ('pk', 'crm') then os.`client_status` ELSE NULL END) orders_pk,
         COUNT(case when os.`client_status` IN ('nk', 'rep') then os.`client_status` ELSE NULL END) orders_nk,
         SUM(case when os.`client_status` IN ('pk', 'crm') then os.`amount` ELSE NULL END) check_pk_summ,
         SUM(case when os.`client_status` IN ('nk', 'rep') then os.`amount` ELSE NULL END) check_nk_summ,
         round(AVG(case when os.`client_status` IN ('pk', 'crm') then os.`amount` ELSE NULL END),0) check_srch_pk,
         round(AVG(case when os.`client_status` IN ('nk', 'rep') then os.`amount` ELSE NULL END),0) check_srch_nk,
-        COUNT(case when os.`leadcraft_postback_type` IS NOT null AND os.`date` $date_filter_for_case then os.`leadcraft_postback_type` ELSE NULL END) orders_bk,
-        COUNT(case when os.`leadcraft_postback_type` IS NOT NULL AND os.reject_date  $date_filter_for_case then os.`leadcraft_postback_type` ELSE NULL END) reject_bk,
+        COUNT(case when pc.order_id IS NOT null AND os.`date` $date_filter_for_case then pc.order_id ELSE NULL END) orders_bk,
+        COUNT(case when pc.status = 2 IS NOT NULL AND os.reject_date  $date_filter_for_case then pc.status ELSE NULL END) reject_bk,
         COUNT(case when os.`status` IN (3,8) then os.`status` ELSE NULL END) reject_all,
-        COUNT(case when os.`leadcraft_postback_type` = 'cancelled' AND os.reject_date  $date_filter_for_case and os.`client_status` IN ('nk', 'rep') and os.`status` IN (3,8) then os.`status` ELSE NULL END) reject_nk,
-        COUNT(case when os.`leadcraft_postback_type` = 'cancelled' IS NOT NULL AND os.reject_date  $date_filter_for_case and os.`client_status` IN ('pk', 'crm') and os.`status` IN (3,8) then os.`status` ELSE NULL END) reject_nk,
+        COUNT(case when pc.status = 2 AND os.reject_date  $date_filter_for_case and os.`client_status` IN ('nk', 'rep') and os.`status` IN (3,8) then os.`status` ELSE NULL END) reject_nk,
+        COUNT(case when pc.status = 2 IS NOT NULL AND os.reject_date  $date_filter_for_case and os.`client_status` IN ('pk', 'crm') and os.`status` IN (3,8) then os.`status` ELSE NULL END) reject_nk,
         COUNT(case when os.`status` IN (1,2,4,6) then os.`status` ELSE NULL END) orders_on_check,
         COUNT(case when con.inssuance_date $date_filter_for_case then con.inssuance_date ELSE NULL END) accept_all,
         COUNT(case when os.`client_status` IN ('pk', 'crm') and con.inssuance_date $date_filter_for_case then os.`client_status` ELSE NULL END) accept_pk,
         COUNT(case when os.`client_status` IN ('nk', 'rep') and con.inssuance_date $date_filter_for_case then os.`client_status` ELSE NULL END) accept_nk,
-        COUNT(case when os.leadcraft_postback_type = 'approved' and con.inssuance_date $date_filter_for_case then os.leadcraft_postback_type ELSE NULL END) accept_bk
+        COUNT(case when pc.status = 1 and con.inssuance_date $date_filter_for_case then pc.status ELSE NULL END) accept_bk
         FROM s_orders os
         LEFT JOIN s_contracts con on con.order_id = os.id
+        LEFT JOIN s_postbacks_cron pc on pc.order_id = os.id
         WHERE 1
         $date_filter
         $utm_source

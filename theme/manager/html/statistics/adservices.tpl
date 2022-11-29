@@ -17,107 +17,6 @@
             });
         })
     </script>
-    <script>
-        function ReportPaymentsApp() {
-            var app = this;
-
-            app.init = function () {
-
-                app.send_operation();
-
-                app.init_search();
-            };
-
-            app.send_operation = function () {
-
-                $('.js-send-operation').click(function (e) {
-                    e.preventDefault();
-
-                    var operation_id = $(this).data('operation');
-
-                    $.ajax({
-                        data: {
-                            operation_id: operation_id
-                        },
-                        success: function (resp) {
-                            if (!!resp.error)
-                                Swal.fire('Ошибка', resp.error, 'error');
-                            else
-                                Swal.fire('Успешно', resp.success, 'success');
-                        }
-                    });
-                });
-            };
-
-            app.load = function (_url, loading) {
-                $.ajax({
-                    url: _url,
-                    beforeSend: function () {
-                        if (loading) {
-                            $('.jsgrid-load-shader').show();
-                            $('.jsgrid-load-panel').show();
-                        }
-                    },
-                    success: function (resp) {
-
-
-                        if (loading) {
-                            $('html, body').animate({
-                                scrollTop: $("#basicgrid").offset().top - 80
-                            }, 1000);
-
-                            $('.jsgrid-load-shader').hide();
-                            $('.jsgrid-load-panel').hide();
-                        }
-
-                    }
-                })
-            };
-
-            app.init_search = function () {
-                $(document).on('change', '.js-search-block input', function () {
-
-                    var _searches = {};
-                    $('.js-search-block input').each(function () {
-                        if ($(this).val() != '') {
-                            _searches[$(this).attr('name')] = $(this).val();
-                        }
-                    });
-                    var _request = {};
-                    var _query = Object.keys(_request).map(
-                        k => encodeURIComponent(k) + '=' + encodeURIComponent(_request[k])
-                    ).join('&');
-
-                    _request.search = _searches;
-                    if (!$.isEmptyObject(_searches)) {
-                        _query_searches = '';
-                        for (key in _searches) {
-                            _query_searches += '&search[' + key + ']=' + _searches[key];
-                        }
-                        _query += _query_searches;
-                    }
-
-                    $.ajax({
-                        data: _request,
-                        beforeSend: function () {
-                        },
-                        success: function (resp) {
-                            var _table = $(resp).find('#table_content').html();
-                            console.log(_table)
-                            $('#table_content').html(_table)
-                        }
-                    })
-                });
-            };
-
-            ;(function () {
-                app.init();
-            })();
-        };
-        $(function () {
-            new ReportPaymentsApp();
-        });
-    </script>
 {/capture}
 
 {capture name='page_styles'}
@@ -235,8 +134,7 @@
                                         <td>{$ad_service->phone_mobile}</td>
                                         <td>{$gender[$ad_service->gender]}</td>
                                         <td>{$ad_service->passport_serial}</td>
-                                        <td>{$ad_service->Regindex} {if $ad_service->Regcity}{$ad_service->Regcity}{else}{$ad_service->Reglocality}{/if}{$ad_service->Regstreet_shorttype} {$ad_service->Regstreet}
-                                            {$ad_service->Reghousing} {$ad_service->Regroom}</td>
+                                        <td>{$ad_service->regAddr}</td>
                                         {if $ad_service->start_date}
                                             <td>{$ad_service->start_date} / {$ad_service->end_date} </td>
                                         {else}
