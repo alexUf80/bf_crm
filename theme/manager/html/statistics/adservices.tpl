@@ -223,10 +223,10 @@
                                         <td>{$ad_service->created} <p>{$ad_service->contract_id}</p></td>
                                         <td>{$ad_service->user_id}</td>
                                         <td>{$ad_service->number}</td>
-                                        {if $ad_service->type == 'INSURANCE' && in_array($ad_service->amount_insurance, [200, 400])}
-                                            <td>Страхование БК</td>
+                                        {if $ad_service->type == 'INSURANCE'}
+                                            <td>Страхование от НС</td>
                                         {else}
-                                            <td>{$op_type[$ad_service->type]}</td>
+                                            <td>Страхование от БК</td>
                                         {/if}
                                         <td>{$ad_service->id}</td>
                                         <td>{$ad_service->uid}</td>
