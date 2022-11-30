@@ -148,7 +148,7 @@
                                         <th style="width: 150px" class="jsgrid-header-cell">
                                             <input type="text" class="form-control searchable">
                                         </th>
-                                        <th class="jsgrid-header-cell" colspan="2"></th>
+                                        <th class="jsgrid-header-cell"></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -162,11 +162,6 @@
                                                     style="width: 150px">{if $code->is_active == 1}Да{else}Нет{/if}</td>
                                                 <td class="jsgrid-header-cell" style="width: 150px">{$code->discount}</td>
                                                 <td class="jsgrid-header-cell">{$code->comment}</td>
-                                                <td class="jsgrid-header-cell">
-                                                    <div data-code="{$code->id}" class="btn btn-outline-danger delete">
-                                                        Удалить
-                                                    </div>
-                                                </td>
                                             </tr>
                                         {/foreach}
                                     {/if}
