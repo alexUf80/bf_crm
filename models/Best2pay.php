@@ -637,7 +637,7 @@ class Best2pay extends Core
             [
                 'className' => self::class,
                 'log' => json_encode($response),
-                'params' => json_encode(['request' => $data, 'userId' => $transaction->userId])
+                'params' => json_encode(['request' => $data, 'userId' => $transaction->user_id])
             ];
 
         LogsORM::insert($log);
