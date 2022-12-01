@@ -603,7 +603,7 @@ class Best2pay extends Core
 
         $data['signature'] = $this->get_signature($data);
 
-        $response = $this->send('Reverse', $data);
+        $response = $this->send('Complete', $data);
 
         $log =
             [
@@ -613,6 +613,36 @@ class Best2pay extends Core
             ];
 
         LogsORM::insert($log);
+    }
+
+    public function completeCardEnroll($transaction)
+    {
+
+        $sector = $this->sectors['ADD_CARD'];
+        $password = $this->passwords[$sector];
+
+        $data = array(
+            'sector' => $sector,
+            'id' => $transaction->register_id,
+            'amount' => $transaction->amount,
+            'currency' => $this->currency_code,
+            'password' => $password
+        );
+
+        $data['signature'] = $this->get_signature($data);
+
+        $response = $this->send('Complete', $data);
+
+        $log =
+            [
+                'className' => self::class,
+                'log' => json_encode($response),
+                'params' => json_encode(['request' => $data, 'userId' => $transaction->userId])
+            ];
+
+        LogsORM::insert($log);
+
+        TransactionsORM::where('id', $transaction->id)->update(['checked' => 1]);
     }
 
     private function get_signature($data)
