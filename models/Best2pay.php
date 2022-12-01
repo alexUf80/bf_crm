@@ -642,7 +642,14 @@ class Best2pay extends Core
 
         LogsORM::insert($log);
 
-        TransactionsORM::where('id', $transaction->id)->update(['checked' => 1]);
+        $xml = simplexml_load_string($response);
+        $status = (string)$xml->state;
+
+
+        if ($status == 'APPROVED')
+            TransactionsORM::where('id', $transaction->id)->update(['checked' => 1]);
+
+
     }
 
     private function get_signature($data)
