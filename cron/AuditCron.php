@@ -139,7 +139,23 @@ class AuditCron extends Core
                     if ($reason->type == 'mko')
                     {
                         //Отправляем чек по страховке
-                        $this->Cloudkassir->send_reject_reason($order->order_id);
+                        $resp = $this->Cloudkassir->send_reject_reason($order->order_id);
+
+                        if (!empty($resp))
+                        {
+                            $resp = json_decode($resp);
+
+                            $this->receipts->add_receipt(array(
+                                'user_id' => $order->user_id,
+                                'Информирование о причине отказа',
+                                'order_id' => $order->order_id,
+                                'contract_id' => 0,
+                                'insurance_id' => 0,
+                                'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
+                                'response' => serialize($resp),
+                                'created' => date('Y-m-d H:i:s')
+                            ));
+                        }
                     }
                 }
 
