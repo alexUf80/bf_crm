@@ -16,7 +16,7 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->import_prolongations();
+        $this->competeCardEnroll();
     }
 
     private function import_addresses()
@@ -524,6 +524,30 @@ class test extends Core
         for ($row = $first_row; $row <= $last_row; $row++) {
             $fio = $active_sheet->getCell('B' . $row)->getValue();
         }
+    }
+
+    private function competeCardEnroll()
+    {
+        $this->db->query("
+        SELECT
+        ts.id,
+        ts.user_id,
+        ts.amount,
+        ts.register_id
+        FROM s_orders os
+        JOIN s_transactions ts ON os.user_id = ts.user_id
+        WHERE ts.`description` = 'Привязка карты'
+        AND reason_code = 1
+        AND os.`status` = 3
+        and checked = 0
+        and created > '2022-11-25 00:00:00'
+        order by id desc
+        ");
+
+        $transactions = $this->db->results();
+
+        foreach ($transactions as $transaction)
+            $this->Best2pay->completeCardEnroll($transaction);
     }
 
 

@@ -889,6 +889,24 @@ class OrderController extends Controller
             'transaction_id' => 0,
         ));
 
+        $this->db->query("
+                SELECT
+                id,
+                user_id,
+                amount,
+                register_id
+                FROM s_transactions
+                WHERE ts.`description` = 'Привязка карты'
+                AND reason_code = 1
+                and checked = 0
+                and user_id = ?
+                order by id desc
+                ", $order->user_id);
+
+        $transaction = $this->db->result();
+
+        $this->Best2pay->completeCardEnroll($transaction);
+
         return array('success' => 1, 'status' => $status);
     }
 
