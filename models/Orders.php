@@ -42,8 +42,8 @@ class Orders extends Core
         cs.amount as con_amount,
         os.`status`,
         os.utm_source,
-        os.utm_content as click_hash,
-        os.utm_medium as webmaster_id,
+        os.click_hash,
+        os.webmaster_id,
         os.`date`,
         os.`amount`,
         case when os.`amount` < 9999 then 670 when os.`amount` >= 10000 and os.`amount` <= 15000 then 1250 when os.`amount` >= 15001 and os.`amount` <= 30000 then 2500 when os.`amount` >= 30001 then 3750 ELSE 0 END as bet
