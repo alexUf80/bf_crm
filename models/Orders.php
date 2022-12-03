@@ -24,12 +24,16 @@ class Orders extends Core
     {
         $limit = 10000;
         $page = 1;
+        $integrationFilter = '';
 
         if (isset($filter['limit']))
             $limit = max(1, intval($filter['limit']));
 
         if (isset($filter['page']))
             $page = max(1, intval($filter['page']));
+
+        if (!empty($filter['integration_filter']))
+            $integrationFilter = $this->db->placehold("AND os.utm_source IN (?@)", $filter['integration_filter']);
 
         if(isset($filter['limit']) && isset($filter['page']))
             $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
@@ -50,6 +54,7 @@ class Orders extends Core
         FROM s_orders os
         left JOIN s_contracts as cs on os.id = cs.order_id
         WHERE os.`date` between ? and ?
+        $integrationFilter
         GROUP BY os.id DESC $sql_limit
         ", date('Y-m-d 00:00:00', strtotime($filter['date_from'])), date('Y-m-d 23:59:59', strtotime($filter['date_to'])));
 
@@ -64,12 +69,16 @@ class Orders extends Core
     {
         $limit = 10000;
         $page = 1;
+        $integrationFilter = '';
 
         if (isset($filter['limit']))
             $limit = max(1, intval($filter['limit']));
 
         if (isset($filter['page']))
             $page = max(1, intval($filter['page']));
+
+        if (!empty($filter['integration_filter']))
+            $integrationFilter = $this->db->placehold("AND os.utm_source IN (?@)", $filter['integration_filter']);
 
         if(isset($filter['limit']) && isset($filter['page']))
             $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
@@ -81,6 +90,7 @@ class Orders extends Core
         FROM s_orders os
         left JOIN s_contracts as cs on os.id = cs.order_id
         WHERE os.`date` between ? and ?
+        $integrationFilter
         $sql_limit
         ", date('Y-m-d 00:00:00', strtotime($filter['date_from'])), date('Y-m-d 23:59:59', strtotime($filter['date_to'])));
 

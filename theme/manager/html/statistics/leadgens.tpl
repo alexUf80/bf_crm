@@ -77,6 +77,27 @@
                                                value="{if $from && $to}{$from}-{$to}{/if}">
                                     </div>
                                 </div>
+                                <div class="col-2 col-md-2 metrix">
+                                    <button type="button" class="form-control dropdown-toggle"
+                                            data-toggle="dropdown" data-bs-auto-close="false">
+                                        Лидогенератор
+                                    </button>
+                                    <div class="dropdown-menu drop" data-bs-auto-close="false">
+                                        <div id="listener" style="margin-left: 5px">
+                                            <ul class="list-unstyled m-2" style="width: 150px">
+                                                <li class="metrix">
+                                                    {foreach $integrations as $integration}
+                                                        <div>
+                                                            <input type="checkbox" name="integration_filter[]"
+                                                                   value="{$integration->name}" {foreach $integration_filter as $filter} {if $filter == $integration->name}checked{/if}{/foreach}/>
+                                                            <label>{$integration->name}</label>
+                                                        </div>
+                                                    {/foreach}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-2 col-md-1">
                                     <button type="submit" class="btn btn-info">Применить</button>
                                 </div>

@@ -2571,6 +2571,9 @@ class StatisticsController extends Controller
             $filter = array();
             $filter['date_from'] = $date_from;
             $filter['date_to'] = $date_to;
+            $filter['integration_filter'] = $this->request->get('integration_filter');
+
+            $this->design->assign('integration_filter', $filter['integration_filter']);
 
             $current_page = $this->request->get('page', 'integer');
             $current_page = max(1, $current_page);
@@ -2661,6 +2664,9 @@ class StatisticsController extends Controller
                 exit;
             }
         }
+
+        $integrations = IntegrationsORM::get();
+        $this->design->assign('integrations', $integrations);
 
         return $this->design->fetch('statistics/leadgens.tpl');
     }
