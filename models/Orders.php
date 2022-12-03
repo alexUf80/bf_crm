@@ -20,6 +20,77 @@ class Orders extends Core
         return $this->statuses;
     }
 
+    public function leadgens($filter)
+    {
+        $limit = 10000;
+        $page = 1;
+
+        if (isset($filter['limit']))
+            $limit = max(1, intval($filter['limit']));
+
+        if (isset($filter['page']))
+            $page = max(1, intval($filter['page']));
+
+        if(isset($filter['limit']) && isset($filter['page']))
+            $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
+        else
+            $sql_limit = '';
+
+        $query = $this->db->placehold("
+        SELECT os.id,
+        cs.number,
+        cs.amount as con_amount,
+        os.`status`,
+        os.utm_source,
+        os.utm_content as click_hash,
+        os.utm_medium as webmaster_id,
+        os.`date`,
+        os.`amount`,
+        case when os.`amount` < 9999 then 670 when os.`amount` >= 10000 and os.`amount` <= 15000 then 1250 when os.`amount` >= 15001 and os.`amount` <= 30000 then 2500 when os.`amount` >= 30001 then 3750 ELSE 0 END as bet
+        FROM s_orders os
+        left JOIN s_contracts as cs on os.id = cs.order_id
+        WHERE os.`date` between ? and ?
+        GROUP BY os.id DESC $sql_limit
+        ", date('Y-m-d 00:00:00', strtotime($filter['date_from'])), date('Y-m-d 23:59:59', strtotime($filter['date_to'])));
+
+        $this->db->query($query);
+
+        $results = $this->db->results();
+
+        return $results;
+    }
+
+    public function count_leadgens($filter)
+    {
+        $limit = 10000;
+        $page = 1;
+
+        if (isset($filter['limit']))
+            $limit = max(1, intval($filter['limit']));
+
+        if (isset($filter['page']))
+            $page = max(1, intval($filter['page']));
+
+        if(isset($filter['limit']) && isset($filter['page']))
+            $sql_limit = $this->db->placehold(' LIMIT ?, ? ', ($page - 1) * $limit, $limit);
+        else
+            $sql_limit = '';
+
+        $query = $this->db->placehold("
+        SELECT count(*) as `count`
+        FROM s_orders os
+        left JOIN s_contracts as cs on os.id = cs.order_id
+        WHERE os.`date` between ? and ?
+        $sql_limit
+        ", date('Y-m-d 00:00:00', strtotime($filter['date_from'])), date('Y-m-d 23:59:59', strtotime($filter['date_to'])));
+
+        $this->db->query($query);
+
+        $result = $this->db->result('count');
+
+        return $result;
+    }
+
     public function orders_for_risks($filter)
     {
         $this->db->query("

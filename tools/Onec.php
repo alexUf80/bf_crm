@@ -13,71 +13,109 @@ class Onec implements ToolsInterface
 
         $xml =
             [
-                'Контрагент' =>
+                'Справочники' =>
                     [
-                        'Наименование' => $order->user->lastname . '' . $order->user->firstname . '' . $order->user->patronymic,
-                        'УИД' => $order->user->id,
-                        'СерияПаспорта' => $passportSerial,
-                        'НомерПаспорта' => $passportNumber,
-                        'ДатаВыдачиПаспорта' => date('Y-m-d', strtotime($order->user->passport_date)),
-                        'ДатаРождения' => date('Y-m-d', strtotime($order->user->birth)),
-                        'КемВыданПаспорт' => $order->user->passport_issued,
-                        'КодПодразделения' => $order->user->subdivision_code,
-                        'МестоРождения' => $order->user->birth_place,
-                        'Пол' => $order->user->gender,
-                        'СотовыйТелефон' => $order->user->phone_mobile,
-                        'Фамилия' => $order->user->lastname,
-                        'Имя' => $order->user->firstname,
-                        'Отчество' => $order->user->patronymic,
-                        'СНИЛС' => $order->user->snils,
-                        'ИНН' => $order->user->inn,
-                        'ИндексПоРегистрации' => $order->user->regAddress->zip,
-                        'ИндексФактическогоПроживания' => $order->user->factAddress->zip,
-                        'РайонОбластьПоРегистрации' => $order->user->regAddress->region . ' ' . $order->user->regAddress->region_type,
-                        'РайонОбластьФактическогоПроживания' => $order->user->factAddress->region . ' ' . $order->user->factAddress->region_type,
-                        'РайонПоРегистрации' => $order->user->regAddress->district . ' ' . $order->user->regAddress->district_type,
-                        'РайонФактическогоПроживания' => $order->user->factAddress->district . ' ' . $order->user->factAddress->district_type,
-                        'ГородПоРегистрации' => $order->user->regAddress->city . ' ' . $order->user->regAddress->city_type,
-                        'ГородФактическогоПроживания' => $order->user->factAddress->city . ' ' . $order->user->factAddress->city_type,
-                        'НаселенныйПунктПоРегистрации' => $order->user->regAddress->locality . ' ' . $order->user->regAddress->locality_type,
-                        'НаселенныйПунктФактическогоПроживания' => $order->user->factAddress->locality . ' ' . $order->user->factAddress->locality_type,
-                        'УлицаПоРегистрации' => $order->user->regAddress->street . ' ' . $order->user->regAddress->street_type,
-                        'УлицаФактическогоПроживания' => $order->user->factAddress->street . ' ' . $order->user->factAddress->street_type,
-                        'ДомПоРегистрации' => $order->user->regAddress->house,
-                        'ДомФактическогоПроживания' => $order->user->factAddress->house,
-                        'КорпусПоРегистрации' => $order->user->regAddress->building,
-                        'КорпусФактическогоПроживания' => $order->user->factAddress->building,
-                        'КвартираПоРегистрации' => $order->user->regAddress->room,
-                        'КвартираФактическогоПроживания' => $order->user->factAddress->room,
-                        'ПредставлениеАдресаПоРегистрации' => $order->user->regAddress->adressfull,
-                        'ПредставлениеАдресаФактическогоПроживания' => $order->user->factAddress->adressfull,
-                        'МестоРаботы' => $order->user->workplace,
-                        'РабочийТелефон' => $order->user->workphone,
-                        'Email' => $order->user->email,
-                        'СреднемесячныйДоход' => $order->user->income,
-                        'ДатаСоздания' => date('Y-m-d', strtotime($order->user->created))
+                        'Контрагент' =>
+                            [
+                                'Наименование' => trim($order->user->lastname . ' ' . $order->user->firstname . ' ' . $order->user->patronymic),
+                                'УИД' => trim($order->user->id),
+                                "ВидКонтрагента" => 'ФизЛицо',
+                                'СерияПаспорта' => trim($passportSerial),
+                                'НомерПаспорта' => trim($passportNumber),
+                                'ДатаРождения' => date('Y-m-d', strtotime($order->user->birth)),
+                                'КемВыданПаспорт' => trim($order->user->passport_issued . ' ' . date('Y-m-d', strtotime($order->user->passport_date))),
+                                'КодПодразделения' => trim($order->user->subdivision_code),
+                                'МестоРождения' => trim($order->user->birth_place),
+                                'Пол' => ($order->user->gender == 'female') ? 'Ж' : 'М',
+                                'СотовыйТелефон' => trim($order->user->phone_mobile),
+                                'Фамилия' => trim($order->user->lastname),
+                                'Имя' => trim($order->user->firstname),
+                                'Отчество' => trim($order->user->patronymic),
+                                'ИндексПоРегистрации' => trim($order->user->regAddress->zip),
+                                'ИндексФактическогоПроживания' => trim($order->user->factAddress->zip),
+                                'РайонОбластьПоРегистрации' => trim($order->user->regAddress->region),
+                                'РайонОбластьФактическогоПроживания' => trim($order->user->factAddress->region),
+                                'ГородПоРегистрации' => trim($order->user->regAddress->city . ' ' . $order->user->regAddress->city_type),
+                                'ГородФактическогоПроживания' => trim($order->user->factAddress->city . ' ' . $order->user->factAddress->city_type),
+                                'УлицаПоРегистрации' => trim($order->user->regAddress->street . ' ' . $order->user->regAddress->street_type),
+                                'УлицаФактическогоПроживания' => trim($order->user->factAddress->street . ' ' . $order->user->factAddress->street_type),
+                                'ДомПоРегистрации' => trim($order->user->regAddress->building),
+                                'ДомФактическогоПроживания' => trim($order->user->factAddress->building),
+                                'КвартираПоРегистрации' => trim($order->user->regAddress->room),
+                                'КвартираФактическогоПроживания' => trim($order->user->factAddress->room),
+                                'ПредставлениеАдресаПоРегистрации' => trim($order->user->regAddress->adressfull),
+                                'ПредставлениеАдресаФактическогоПроживания' => trim($order->user->factAddress->adressfull),
+                                'МестоРаботы' => trim($order->user->workplace),
+                                'РабочийТелефон' => trim($order->user->workphone),
+                                'Email' => trim($order->user->email),
+                                'ДатаСоздания' => date('Y-m-d', strtotime($order->user->created))
+                            ],
+                        'Подразделение' =>
+                            [
+                                'Наименование' => 'АРХАНГЕЛЬСК 1',
+                                'УИД' => 1
+                            ],
+                        'Организация' =>
+                            [
+                                'Наименование' => 'ООО МКК "БАРЕНЦ ФИНАНС"',
+                                'УИД' => 1
+                            ]
                     ],
-                'Сделка' =>
-                    [
-                        'ДатаЗайма' => date('Y-m-d', strtotime($contract->inssuance_date)),
-                        'НомерЗайма' => $contract->number,
-                        'УИД' => $contract->id,
-                        'ПСК' => round($contract->base_percent * 365, 3),
-                        'Организация' => 1,
-                        'Подразделение' => 1,
-                        'СуммаЗайма' => round($contract->amount, 2),
-                        'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
-                        'Заемщик' => $order->user->id,
-                        'ДатаПолнойОплаты' => date('Y-m-d', strtotime($contract->return_date)),
-                    ]
+                'Документы' => [
+                    'Сделка' =>
+                        [
+                            'ДатаЗайма' => date('Y-m-d', strtotime($contract->inssuance_date)),
+                            'НомерЗайма' => $contract->number,
+                            'УИД' => $contract->id,
+                            'ПСК' => number_format(round($contract->base_percent * 365, 3), 3, '.', ''),
+                        ]
+                ]
             ];
+
+        $xml['Справочники'][0]['КредитныеПродукты'] =
+            [
+                'Наименование' => 'Стандартный',
+                'УИД' => 1,
+                'Процент' => 1
+            ];
+
+        $promocodes = PromocodesORM::get();
+
+        $i = 1;
+        $xml['Документы']['Сделка']['КредитныйПродукт'] = 1;
+
+        foreach ($promocodes as $promocode) {
+
+            $percent = 1 - ($promocode->discount / 100);
+
+            $xml['Справочники'][$i]['КредитныеПродукты'] =
+                [
+                    'Наименование' => 'Стандартный-' . $promocode->id,
+                    'УИД' => $promocode->id,
+                    'Процент' => $percent
+                ];
+
+            if ($percent == $contract->base_percent)
+                $xml['Документы']['Сделка']['КредитныйПродукт'] = $promocode->id;
+
+            $i++;
+        }
+
+
+        $xml['Документы']['Сделка']['Организация'] = 1;
+        $xml['Документы']['Сделка']['Подразделение'] = 1;
+        $xml['Документы']['Сделка']['СуммаЗайма'] = number_format(round($contract->amount, 2), 2, '.', '');
+        $xml['Документы']['Сделка']['ДатаВозврата'] = date('Y-m-d', strtotime($contract->return_date));
+        $xml['Документы']['Сделка']['Заемщик'] = $order->user->id;
+        $xml['Документы']['Сделка']['ДатаПолнойОплаты'] = date('Y-m-d', strtotime($contract->return_date));
+        $xml['Документы']['Сделка']['ТипДокументаРасхода'] = 0;
 
         return self::processing($xml);
     }
 
     public static function processing($xml)
     {
-        $xmlSerializer = new XMLSerializer();
+        $xmlSerializer = new XMLSerializer("Выгрузка xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns='http://localhost/mfo'", 'Выгрузка');
         $xml = $xmlSerializer->serialize($xml);
         self::$params = $xml;
 

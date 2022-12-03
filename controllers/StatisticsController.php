@@ -76,6 +76,10 @@ class StatisticsController extends Controller
                 return $this->action_orders();
                 break;
 
+            case 'leadgens':
+                return $this->action_leadgens();
+                break;
+
             default:
                 return false;
 
@@ -2542,6 +2546,123 @@ class StatisticsController extends Controller
         }
 
         return $this->design->fetch('statistics/orders.tpl');
+    }
+
+    private function action_leadgens()
+    {
+        if ($daterange = $this->request->get('daterange')) {
+            list($from, $to) = explode('-', $daterange);
+
+            $items_per_page = $this->request->get('page_count');
+
+            if (empty($items_per_page))
+                $items_per_page = 25;
+
+            $this->design->assign('page_count', $items_per_page);
+
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
+
+            $this->design->assign('date_from', $date_from);
+            $this->design->assign('date_to', $date_to);
+            $this->design->assign('from', $from);
+            $this->design->assign('to', $to);
+
+            $filter = array();
+            $filter['date_from'] = $date_from;
+            $filter['date_to'] = $date_to;
+
+            $current_page = $this->request->get('page', 'integer');
+            $current_page = max(1, $current_page);
+            $this->design->assign('current_page_num', $current_page);
+
+            $count = $this->orders->count_leadgens($filter);
+
+            $filter['page'] = $current_page;
+            $filter['limit'] = $items_per_page;
+
+            $orders = $this->orders->leadgens($filter);
+
+            $orders_statuses = $this->orders->get_statuses();
+
+            if (!empty($orders)) {
+                foreach ($orders as $order)
+                    $order->status = $orders_statuses[$order->status];
+
+                $this->design->assign('orders', $orders);
+            }
+
+            $pages_num = ceil($count / $items_per_page);
+
+            $this->design->assign('total_pages_num', $pages_num);
+            $this->design->assign('total_orders_count', $count);
+
+            if ($this->request->get('download') == 'excel') {
+
+                unset($filter['page']);
+                unset($filter['limit']);
+
+                $orders = $this->orders->leadgens($filter);
+
+                if (!empty($orders)) {
+                    foreach ($orders as $order)
+                        $order->status = $orders_statuses[$order->status];
+                }
+
+                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+                $spreadsheet->getDefaultStyle()->getFont()->setName('Calibri')->setSize(12);
+
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->getDefaultRowDimension()->setRowHeight(20);
+                $sheet->getColumnDimension('A')->setWidth(20);
+                $sheet->getColumnDimension('B')->setWidth(40);
+                $sheet->getColumnDimension('C')->setWidth(18);
+                $sheet->getColumnDimension('D')->setWidth(35);
+                $sheet->getColumnDimension('E')->setWidth(15);
+                $sheet->getColumnDimension('F')->setWidth(15);
+                $sheet->getColumnDimension('G')->setWidth(15);
+                $sheet->getColumnDimension('H')->setWidth(15);
+                $sheet->getColumnDimension('I')->setWidth(20);
+                $sheet->getColumnDimension('J')->setWidth(20);
+
+                $sheet->setCellValue('A1', 'Номер заявки');
+                $sheet->setCellValue('B1', 'Номер контракта');
+                $sheet->setCellValue('C1', 'Статус');
+                $sheet->setCellValue('D1', 'Лидогенератор');
+                $sheet->setCellValue('E1', 'ID клика');
+                $sheet->setCellValue('F1', 'ID вебмастера');
+                $sheet->setCellValue('G1', 'Дата создания');
+                $sheet->setCellValue('H1', 'Сумма заявки');
+                $sheet->setCellValue('I1', 'Сумма контракта');
+                $sheet->setCellValue('J1', 'Ставка');
+
+                $i = 2;
+
+                foreach ($orders as $order) {
+
+                    $sheet->setCellValue('A' . $i, $order->id);
+                    $sheet->setCellValue('B' . $i, $order->number);
+                    $sheet->setCellValue('C' . $i, $order->status);
+                    $sheet->setCellValue('D' . $i, $order->utm_source);
+                    $sheet->setCellValue('E' . $i, $order->click_hash);
+                    $sheet->setCellValue('F' . $i, $order->webmaster_id);
+                    $sheet->setCellValue('G' . $i, date('d.m.Y', strtotime($order->date)));
+                    $sheet->setCellValue('H' . $i, $order->amount);
+                    $sheet->setCellValue('I' . $i, $order->con_amount);
+                    $sheet->setCellValue('J' . $i, $order->bet);
+
+                    $i++;
+                }
+
+                $filename = 'Leadgens.xlsx';
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                $writer->save($this->config->root_dir . $filename);
+                header('Location:' . $this->config->root_url . '/' . $filename);
+                exit;
+            }
+        }
+
+        return $this->design->fetch('statistics/leadgens.tpl');
     }
 
 }
