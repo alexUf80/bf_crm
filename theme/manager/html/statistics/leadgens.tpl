@@ -120,7 +120,7 @@
                                     <td>{$order->date|date}</td>
                                     <td>{$order->amount|number_format:2:',':' '}</td>
                                     <td>{$order->con_amount|number_format:2:',':' '}</td>
-                                    <td>{$order->bet}</td>
+                                    <td>0.00</td>
                                 </tr>
                             {/foreach}
                             </tbody>

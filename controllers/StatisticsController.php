@@ -2649,7 +2649,7 @@ class StatisticsController extends Controller
                     $sheet->setCellValue('G' . $i, date('d.m.Y', strtotime($order->date)));
                     $sheet->setCellValue('H' . $i, $order->amount);
                     $sheet->setCellValue('I' . $i, $order->con_amount);
-                    $sheet->setCellValue('J' . $i, $order->bet);
+                    $sheet->setCellValue('J' . $i, 0.00);
 
                     $i++;
                 }
