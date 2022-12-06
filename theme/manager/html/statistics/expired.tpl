@@ -127,35 +127,10 @@
                                             <small>{$contract->user->email}</small>
                                         </td>
                                         <td>
-                                            <span class="label label-primary">{$contract->user->Regcode}</span>
-                                            <small>
-
-                                                {if $contract->user->Regindex}{$contract->user->Regindex|escape}, {/if}
-                                                {$contract->user->Regregion} {$contract->user->Regregion_shorttype|escape}
-                                                ,
-                                                {if $contract->user->Regcity}{$contract->user->Regcity|escape} {$contract->user->Regcity_shorttype|escape},{/if}
-                                                {if $contract->user->Regdistrict}{$contract->user->Regdistrict|escape} {$contract->user->Regdistrict_shorttype|escape},{/if}
-                                                {if $contract->user->Reglocality}{$contract->user->Reglocality_shorttype|escape} {$contract->user->Reglocality|escape},{/if}
-                                                {$contract->user->Regstreet} {$contract->user->Regstreet_shorttype|escape}
-                                                ,
-                                                д.{$contract->user->Reghousing|escape},
-                                                {if $contract->user->Regbuilding}стр. {$contract->user->Regbuilding|escape},{/if}
-                                                {if $contract->user->Regroom}кв.{$contract->user->Regroom|escape}{/if}
-                                            </small>
+                                            <small>{$contract->user->regAddr->adressfull}</small>
                                         </td>
                                         <td>
-                                            <small>
-                                                {if $contract->user->Faktindex}{$contract->user->Faktindex|escape}, {/if}
-                                                {$contract->user->Faktregion} {$contract->user->Faktregion_shorttype|escape}
-                                                ,
-                                                {if $contract->user->Faktcity}{$contract->user->Faktcity|escape} {$contract->user->Faktcity_shorttype|escape},{/if}
-                                                {if $contract->user->Faktdistrict}{$contract->user->Faktdistrict|escape} {$contract->user->Faktdistrict_shorttype|escape},{/if}
-                                                {if $contract->user->Faktlocality}{$contract->user->Faktlocality_shorttype|escape} {$contract->user->Faktlocality|escape},{/if}
-                                                {if $contract->user->Faktstreet}{$contract->user->Faktstreet|escape} {$contract->user->Faktstreet_shorttype|escape},{/if}
-                                                д.{$contract->user->Fakthousing|escape},
-                                                {if $contract->user->Faktbuilding}стр. {$contract->user->Faktbuilding|escape},{/if}
-                                                {if $contract->user->Faktroom}кв.{$contract->user->Faktroom|escape}{/if}
-                                            </small>
+                                            <small>{$contract->user->faktAddr->adressfull}</small>
                                         </td>
                                         <td>
                                             <small>Сумма:&nbsp;{$contract->amount*1}P</small>

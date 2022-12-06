@@ -114,6 +114,25 @@ class Onec implements ToolsInterface
 
         $xml['Документы']['Сделка']['НомерДокументаРасхода'] = $issuanceOperation->id;
 
+        $operations = OperationsORM::where('contract_id', $contract->id)->where('type', 'PAY')->get();
+
+        foreach ($operations as $operation)
+        {
+            $transaction = TransactionsORM::find($operation->transaction_id);
+
+            $xml['Документы']['Сделка'][]['Оплаты'] =
+                [
+                    'НомерПриходника' => $operation->id,
+                    'ДатаОплаты' => date('Y-m-d', strtotime($operation->created)),
+                    'СуммаОплаты' => number_format(round($operation->amount, 2), 2, '.', ''),
+                    'ТипДокумента' => 0,
+                    'Подразделение' => 1,
+                    'СуммаПроцентовОплаченных' => ($transaction->loan_percents_summ != null) ? $transaction->loan_percents_summ : 0,
+                    'СуммаШтрафовОплаченных' => ($transaction->loan_peni_summ != null) ? $transaction->loan_peni_summ : 0,
+                    'СуммаОсновногоДолга' => ($transaction->loan_body_summ != null) ? $transaction->loan_body_summ : 0
+                ];
+        }
+
         return self::processing($xml);
     }
 

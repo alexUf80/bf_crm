@@ -160,7 +160,15 @@ class StatisticsController extends Controller
 
         foreach ($contracts as $contract) {
             if (isset($users[$contract->user_id]))
+            {
                 $contract->user = $users[$contract->user_id];
+
+                $contract->user->regAddr = AdressesORM::find($contract->user->regaddress_id);
+                $contract->user->faktAddr = AdressesORM::find($contract->user->faktaddress_id);
+
+                $this->design->assign('regAddr', $contract->user->regAddr->adressfull);
+                $this->design->assign('faktAddr', $contract->user->faktAddr->adressfull);
+            }
             if (isset($orders[$contract->order_id]))
                 $contract->order = $orders[$contract->order_id];
 
@@ -285,8 +293,8 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('E' . $i, $contract->user->phone_mobile);
                 $active_sheet->setCellValue('F' . $i, $contract->user->Regregion);
                 $active_sheet->setCellValue('G' . $i, $contract->user->Regcity);
-                $active_sheet->setCellValue('H' . $i, $contract->user->Regstreet . ', ' . $contract->user->Reghousing . ' ,' . $contract->user->Regroom);
-                $active_sheet->setCellValue('I' . $i, $contract->user->Regregion . ', ' . $contract->user->Regcity . ', ' . $contract->user->Faktstreet . ', ' . $contract->user->Fakthousing . ' ,' . $contract->user->Faktroom);
+                $active_sheet->setCellValue('H' . $i, $contract->user->regAddr->adressfull);
+                $active_sheet->setCellValue('I' . $i, $contract->user->faktAddr->adressfull);
                 $active_sheet->setCellValue('J' . $i, $contract->user->email);
                 $active_sheet->setCellValue('K' . $i, $contract->amount);//---
                 $active_sheet->setCellValue('L' . $i, date('d.m.Y', strtotime($contract->return_date)));//---
