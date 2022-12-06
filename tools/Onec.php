@@ -64,7 +64,7 @@ class Onec implements ToolsInterface
                 'Документы' => [
                     'Сделка' =>
                         [
-                            'ДатаЗайма' => date('Y-m-d', strtotime($contract->inssuance_date)),
+                            'ДатаЗайма' => date('Y-m-d', strtotime($order->date)),
                             'НомерЗайма' => $contract->number,
                             'УИД' => $contract->id,
                             'ПСК' => number_format(round($contract->base_percent * 365, 3), 3, '.', ''),
@@ -107,8 +107,12 @@ class Onec implements ToolsInterface
         $xml['Документы']['Сделка']['СуммаЗайма'] = number_format(round($contract->amount, 2), 2, '.', '');
         $xml['Документы']['Сделка']['ДатаВозврата'] = date('Y-m-d', strtotime($contract->return_date));
         $xml['Документы']['Сделка']['Заемщик'] = $order->user->id;
-        $xml['Документы']['Сделка']['ДатаПолнойОплаты'] = date('Y-m-d', strtotime($contract->return_date));
         $xml['Документы']['Сделка']['ТипДокументаРасхода'] = 0;
+        $xml['Документы']['Сделка']['ДатаРасхода'] = date('Y-m-d', strtotime($contract->inssuance_date));
+
+        $issuanceOperation = OperationsORM::where('contract_id', $contract->id)->where('type', 'P2P')->first();
+
+        $xml['Документы']['Сделка']['НомерДокументаРасхода'] = $issuanceOperation->id;
 
         return self::processing($xml);
     }
