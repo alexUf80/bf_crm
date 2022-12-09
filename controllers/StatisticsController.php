@@ -159,8 +159,7 @@ class StatisticsController extends Controller
 //exit;
 
         foreach ($contracts as $contract) {
-            if (isset($users[$contract->user_id]))
-            {
+            if (isset($users[$contract->user_id])) {
                 $contract->user = $users[$contract->user_id];
 
                 $contract->user->regAddr = AdressesORM::find($contract->user->regaddress_id);
@@ -1718,8 +1717,7 @@ class StatisticsController extends Controller
 
             $ad_services = $this->operations->operations_contracts_insurance($filter);
 
-            foreach ($ad_services as $service)
-            {
+            foreach ($ad_services as $service) {
                 $service->regAddr = AdressesORM::find($service->regaddress_id);
                 $service->regAddr = $service->regAddr->adressfull;
             }
@@ -2444,16 +2442,13 @@ class StatisticsController extends Controller
             $orders = $this->orders->orders_for_risks($filter);
             $orders_statuses = $this->orders->get_statuses();
 
-            foreach ($orders as $key => $order)
-            {
+            foreach ($orders as $key => $order) {
                 $order->scoreballs = $this->NbkiScoreballs->get($order->order_id);
 
-                if(empty($order->scoreballs))
-                {
+                if (empty($order->scoreballs)) {
                     unset($orders[$key]);
                     continue;
-                }else
-                {
+                } else {
                     $order->scoreballs->variables = json_decode($order->scoreballs->variables, true);
                     $order->scoreballs->variables['ball'] = $order->scoreballs->ball;
                     $order->scoreballs = $order->scoreballs->variables;
@@ -2461,14 +2456,13 @@ class StatisticsController extends Controller
 
                 $order->idx = $this->scorings->get_idx_scoring($order->order_id);
 
-                if(empty($order->idx))
-                {
+                if (empty($order->idx)) {
                     unset($orders[$key]);
                     continue;
-                }else
+                } else
                     $order->idx = $order->idx->body;
 
-                $order->status =  $orders_statuses[$order->status];
+                $order->status = $orders_statuses[$order->status];
             }
 
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -2519,6 +2513,16 @@ class StatisticsController extends Controller
             $sheet->setCellValue('R1', 'consum_current_limit_max');
             $sheet->setCellValue('S1', 'consum_good_limit');
 
+            $sheet->setCellValue('T1', 'days_from_last_closed');
+            $sheet->setCellValue('U1', 'prev_3000_500_paid_count_wo_del');
+            $sheet->setCellValue('V1', 'sumPayedPercents');
+            $sheet->setCellValue('W1', 'prev_max_delay');
+            $sheet->setCellValue('X1', 'last_credit_delay');
+            $sheet->setCellValue('Y1', 'current_overdue_sum');
+            $sheet->setCellValue('Z1', 'closed_to_total_credits_count_share');
+            $sheet->setCellValue('AA1', 'pdl_overdue_count');
+            $sheet->setCellValue('AB1', 'pdl_npl_90_limit_share');
+
             $i = 2;
 
             foreach ($orders as $order) {
@@ -2532,16 +2536,29 @@ class StatisticsController extends Controller
                 $sheet->setCellValue('G' . $i, $order->scoreballs['ball']);
                 $sheet->setCellValue('H' . $i, $order->idx);
                 $sheet->setCellValue('I' . $i, $order->scoreballs['limit']);
-                $sheet->setCellValue('J' . $i, $order->scoreballs['pdl_overdue_count']);
-                $sheet->setCellValue('K' . $i, $order->scoreballs['pdl_npl_limit_share']);
-                $sheet->setCellValue('L' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
-                $sheet->setCellValue('M' . $i, $order->scoreballs['pdl_current_limit_max']);
-                $sheet->setCellValue('N' . $i, $order->scoreballs['pdl_last_3m_limit']);
-                $sheet->setCellValue('O' . $i, $order->scoreballs['pdl_last_good_max_limit']);
-                $sheet->setCellValue('P' . $i, $order->scoreballs['pdl_good_limit']);
-                $sheet->setCellValue('Q' . $i, $order->scoreballs['pdl_prolong_3m_limit']);
-                $sheet->setCellValue('R' . $i, $order->scoreballs['consum_current_limit_max']);
-                $sheet->setCellValue('S' . $i, $order->scoreballs['consum_good_limit']);
+
+                if (in_array($order->client_status, ['nk', 'rep'])) {
+                    $sheet->setCellValue('J' . $i, $order->scoreballs['pdl_overdue_count']);
+                    $sheet->setCellValue('K' . $i, $order->scoreballs['pdl_npl_limit_share']);
+                    $sheet->setCellValue('L' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
+                    $sheet->setCellValue('M' . $i, $order->scoreballs['pdl_current_limit_max']);
+                    $sheet->setCellValue('N' . $i, $order->scoreballs['pdl_last_3m_limit']);
+                    $sheet->setCellValue('O' . $i, $order->scoreballs['pdl_last_good_max_limit']);
+                    $sheet->setCellValue('P' . $i, $order->scoreballs['pdl_good_limit']);
+                    $sheet->setCellValue('Q' . $i, $order->scoreballs['pdl_prolong_3m_limit']);
+                    $sheet->setCellValue('R' . $i, $order->scoreballs['consum_current_limit_max']);
+                    $sheet->setCellValue('S' . $i, $order->scoreballs['consum_good_limit']);
+                } else {
+                    $sheet->setCellValue('J' . $i, $order->scoreballs['days_from_last_closed']);
+                    $sheet->setCellValue('K' . $i, $order->scoreballs['prev_3000_500_paid_count_wo_del']);
+                    $sheet->setCellValue('L' . $i, $order->scoreballs['sumPayedPercents']);
+                    $sheet->setCellValue('M' . $i, $order->scoreballs['prev_max_delay']);
+                    $sheet->setCellValue('N' . $i, $order->scoreballs['last_credit_delay']);
+                    $sheet->setCellValue('O' . $i, $order->scoreballs['current_overdue_sum']);
+                    $sheet->setCellValue('P' . $i, $order->scoreballs['closed_to_total_credits_count_share']);
+                    $sheet->setCellValue('Q' . $i, $order->scoreballs['pdl_overdue_count']);
+                    $sheet->setCellValue('R' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
+                }
 
                 $i++;
             }
