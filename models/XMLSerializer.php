@@ -72,39 +72,9 @@ class XMLSerializer extends Core
                 continue;
             }
 
-            if (is_int($key))
-            {
-                foreach ($value as $key => $value) {
-                    $attributes = null;
-                    if (is_array($value) && isset($value[self::ATTRIBUTES_KEY])) {
-                        $attributes = $value[self::ATTRIBUTES_KEY];
-                    }
-
-                    $key_to_use = ($parent_key ? $parent_key : $key);
-
-                    $surrounding_key = true;
-                    if (is_array($value) && !self::has_string_keys($value)) {
-                        $surrounding_key = false;
-                    }
-
-                    if ($surrounding_key) {
-                        self::debug("Generating standard tag with key {$key_to_use}");
-                        self::tag_open($key_to_use, $depth, $attributes);
-                        self::tag_value($value, $depth);
-                        self::tag_close($key_to_use, (self::is_scalar($value) ? 0 : $depth));
-                        echo self::NEWLINE;
-                    } else {
-                        if (empty($value)) {
-                            self::debug("Generating self-closing tag for key {$key_to_use}");
-                            self::tag_open($key, $depth, null, true);
-                            echo self::NEWLINE;
-                        } else {
-                            self::debug("Generating numeric array item with key {$key_to_use}");
-                            self::_to_xml($value, $depth - 1, $key);
-                        }
-                    }
-                }
-            }else{
+            if (is_int($key)) {
+                self::_to_xml($value, 0);
+            } else {
                 $attributes = null;
                 if (is_array($value) && isset($value[self::ATTRIBUTES_KEY])) {
                     $attributes = $value[self::ATTRIBUTES_KEY];
@@ -113,9 +83,6 @@ class XMLSerializer extends Core
                 $key_to_use = ($parent_key ? $parent_key : $key);
 
                 $surrounding_key = true;
-                if (is_array($value) && !self::has_string_keys($value)) {
-                    $surrounding_key = false;
-                }
 
                 if ($surrounding_key) {
                     self::debug("Generating standard tag with key {$key_to_use}");
@@ -134,8 +101,6 @@ class XMLSerializer extends Core
                     }
                 }
             }
-
-
         }
     }
 

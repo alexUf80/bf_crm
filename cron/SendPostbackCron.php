@@ -39,10 +39,11 @@ class SendPostbackCron extends Core
             $postback->status = $cron->status;
             $postback->click_hash = $order->click_hash;
             $postback->goalId = $cron->goal_id;
+            $postback->transactionId = rand(0, 999999);
 
             LeadFinancesPostbacks::sendRequest($postback);
 
-            PostbacksCronORM::find($cron->id)->update(['is_complited' => 1]);
+            PostbacksCronORM::find($cron->id)->update(['is_complited' => 1, 'transaction_id' => $postback->transactionId]);
         }
     }
 }
