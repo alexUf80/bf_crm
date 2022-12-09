@@ -2549,15 +2549,15 @@ class StatisticsController extends Controller
                     $sheet->setCellValue('R' . $i, $order->scoreballs['consum_current_limit_max']);
                     $sheet->setCellValue('S' . $i, $order->scoreballs['consum_good_limit']);
                 } else {
-                    $sheet->setCellValue('J' . $i, $order->scoreballs['days_from_last_closed']);
-                    $sheet->setCellValue('K' . $i, $order->scoreballs['prev_3000_500_paid_count_wo_del']);
-                    $sheet->setCellValue('L' . $i, $order->scoreballs['sumPayedPercents']);
-                    $sheet->setCellValue('M' . $i, $order->scoreballs['prev_max_delay']);
-                    $sheet->setCellValue('N' . $i, $order->scoreballs['last_credit_delay']);
-                    $sheet->setCellValue('O' . $i, $order->scoreballs['current_overdue_sum']);
-                    $sheet->setCellValue('P' . $i, $order->scoreballs['closed_to_total_credits_count_share']);
-                    $sheet->setCellValue('Q' . $i, $order->scoreballs['pdl_overdue_count']);
-                    $sheet->setCellValue('R' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
+                    $sheet->setCellValue('T' . $i, $order->scoreballs['days_from_last_closed']);
+                    $sheet->setCellValue('U' . $i, $order->scoreballs['prev_3000_500_paid_count_wo_del']);
+                    $sheet->setCellValue('V' . $i, $order->scoreballs['sumPayedPercents']);
+                    $sheet->setCellValue('W' . $i, $order->scoreballs['prev_max_delay']);
+                    $sheet->setCellValue('X' . $i, $order->scoreballs['last_credit_delay']);
+                    $sheet->setCellValue('Y' . $i, $order->scoreballs['current_overdue_sum']);
+                    $sheet->setCellValue('Z' . $i, $order->scoreballs['closed_to_total_credits_count_share']);
+                    $sheet->setCellValue('AA' . $i, $order->scoreballs['pdl_overdue_count']);
+                    $sheet->setCellValue('AB' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
                 }
 
                 $i++;
