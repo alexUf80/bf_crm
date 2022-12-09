@@ -2480,7 +2480,7 @@ class StatisticsController extends Controller
             $sheet->getColumnDimension('H')->setWidth(15);
             $sheet->getColumnDimension('I')->setWidth(20);
 
-            $sheet->getColumnDimension('J:S')->setWidth(20);
+            $sheet->getColumnDimension('J:AB')->setWidth(20);
 
             $styles_cells =
                 [
@@ -2491,7 +2491,7 @@ class StatisticsController extends Controller
                     ],
                 ];
 
-            $sheet->getStyle('A:S')->applyFromArray($styles_cells);
+            $sheet->getStyle('A:AB')->applyFromArray($styles_cells);
 
             $sheet->setCellValue('A1', 'ID заявки');
             $sheet->setCellValue('B1', 'ID клиента');
@@ -2537,7 +2537,7 @@ class StatisticsController extends Controller
                 $sheet->setCellValue('H' . $i, $order->idx);
                 $sheet->setCellValue('I' . $i, $order->scoreballs['limit']);
 
-                if (in_array($order->client_status, ['nk', 'rep'])) {
+                if ($order->client_status == 'new') {
                     $sheet->setCellValue('J' . $i, $order->scoreballs['pdl_overdue_count']);
                     $sheet->setCellValue('K' . $i, $order->scoreballs['pdl_npl_limit_share']);
                     $sheet->setCellValue('L' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
