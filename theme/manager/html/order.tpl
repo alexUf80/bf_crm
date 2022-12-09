@@ -320,7 +320,7 @@
 
                 send_sms(order);
 
-                $('.send_asp_code').on('click',function () {
+                $('.send_asp_code').on('click', function () {
                     send_sms(order);
                 });
 
@@ -351,6 +351,22 @@
                             }
                         }
                     });
+                });
+            });
+
+            $('.editLoanProfit').on('click', function () {
+                $('#editLoanProfitModal').modal();
+            });
+
+            $('.saveEditLoanProfit').on('click', function () {
+                let form = $(this).closest('form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
                 });
             });
         })
@@ -955,14 +971,15 @@
                                                         {if $contract->outer_id}<h6>{$contract->outer_id}</h6>{/if}
                                                         {if $contract->status == 11}
                                                             <h4 class="text-white">Реструктуризирован</h4>
-                                                            <h5 class="text-white">Дата следующей оплаты: {$contract->next_pay|date}</h5>
+                                                            <h5 class="text-white">Дата следующей
+                                                                оплаты: {$contract->next_pay|date}</h5>
                                                         {/if}
                                                         {if !in_array($contract->status, [10,11])}
                                                             <h3 class="text-white">Выдан</h3>
-                                                        <h6 class="text-center text-white">
-                                                            Погашение: {$contract->loan_body_summ+$contract->loan_percents_summ+$contract->loan_charge_summ+$contract->loan_peni_summ}
-                                                            руб
-                                                        </h6>
+                                                            <h6 class="text-center text-white">
+                                                                Погашение: {$contract->loan_body_summ+$contract->loan_percents_summ+$contract->loan_charge_summ+$contract->loan_peni_summ}
+                                                                руб
+                                                            </h6>
                                                             <h6 class="text-center text-white">
                                                                 Продление:
                                                                 {if $contract->stop_profit}
@@ -988,6 +1005,12 @@
                                                 <div data-order="{$order->order_id}"
                                                      class="btn btn-block btn-success confirm_restruct">
                                                     Отправить смс и подтвердить реструктуризацию
+                                                </div>
+                                            {/if}
+                                            {if in_array($contract->status, [2,4])}
+                                                <div data-order="{$order->order_id}"
+                                                     class="btn btn-block btn-success editLoanProfit">
+                                                    Скорректировать долг/Остановить начисления
                                                 </div>
                                             {/if}
                                             {if in_array('close_contract', $manager->permissions)}
@@ -2256,6 +2279,9 @@
                                                                         {if $scoring_type->name == 'fssp'}
                                                                             <span>Сумма долга: {$scorings[$scoring_type->name]->body['amount']}</span>
                                                                             <br>
+
+
+
 
 
 
@@ -3601,6 +3627,44 @@
                         Отправить смс повторно
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="editLoanProfitModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Скорректировать долг / Остановить начисления</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="editLoanProfitForm">
+                    <input type="hidden" name="action" value="editLoanProfit">
+                    <input type="hidden" name="contractId" value="{$contract->id}">
+                    <div class="form-group">
+                        <label class="control-label">Основной долг:</label>
+                        <input type="text" class="form-control" name="body" value="{$contract->loan_body_summ}">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Процент:</label>
+                        <input type="text" class="form-control" name="prc" value="{$contract->loan_percents_summ}">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Пени:</label>
+                        <input type="text" class="form-control" name="peni" value="{$contract->loan_peni_summ}">
+                    </div>
+                    <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input" {if $contract->stop_profit == 1}checked{/if}>
+                        <label class="custom-control-label" for="stopProfit">
+                            Остановить начисления
+                        </label>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success saveEditLoanProfit" value="Сохранить">
+                </form>
             </div>
         </div>
     </div>

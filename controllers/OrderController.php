@@ -211,6 +211,10 @@ class OrderController extends Controller
                     return $this->action_confirm_asp();
                     break;
 
+                case 'editLoanProfit':
+                    return $this->action_editLoanProfit();
+                    break;
+
 
             endswitch;
 
@@ -3026,5 +3030,34 @@ class OrderController extends Controller
             echo json_encode(['success' => 1]);
             exit;
         }
+    }
+
+    private function action_editLoanProfit()
+    {
+        $contractId = $this->request->post('contractId');
+        $bodySum = $this->request->post('body');
+        $prcSum = $this->request->post('prc');
+        $peniSum = $this->request->post('peni');
+        $stopProfit = $this->request->post('stopProfit');
+
+        $bodySum = str_replace(',', '.', $bodySum);
+        $prcSum = str_replace(',', '.', $prcSum);
+        $peniSum = str_replace(',', '.', $peniSum);
+
+        if(empty($stopProfit))
+            $stopProfit = 0;
+        else
+            $stopProfit = 1;
+
+        $update =
+            [
+                'loan_body_summ' => $bodySum,
+                'loan_percents_summ' => $prcSum,
+                'loan_peni_summ' => $peniSum,
+                'stop_profit' => $stopProfit
+            ];
+
+        ContractsORM::where('id', $contractId)->update($update);
+        exit;
     }
 }
