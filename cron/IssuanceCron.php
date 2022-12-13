@@ -125,13 +125,13 @@ class IssuanceCron extends Core
                                         'created' => date('Y-m-d H:i:s'),
                                     ));
                                 }
+
+                                if (!empty($contract->service_insurance)) {
+                                    $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
+                                    $contract->amount += $insurance_cost;
+                                }
                             }
                         }
-                    }
-
-                    if (!empty($contract->service_insurance)) {
-                        $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
-                        $contract->amount += $insurance_cost;
                     }
 
                     $this->create_document('IND_USLOVIYA_NL', $contract);
