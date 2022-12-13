@@ -2480,8 +2480,6 @@ class StatisticsController extends Controller
             $sheet->getColumnDimension('H')->setWidth(15);
             $sheet->getColumnDimension('I')->setWidth(20);
 
-            $sheet->getColumnDimension('J:AB')->setWidth(20);
-
             $styles_cells =
                 [
                     'alignment' => [
