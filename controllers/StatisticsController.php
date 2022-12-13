@@ -1774,7 +1774,7 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('H1', 'ФИО, дата рождения');
                 $active_sheet->setCellValue('I1', 'Номер телефона');
                 $active_sheet->setCellValue('J1', 'Пол');
-                $active_sheet->setCellValue('K1', 'Паспорт, серия номер');
+                $active_sheet->setCellValue('K1', 'Паспорт');
                 $active_sheet->setCellValue('L1', 'Адрес');
                 $active_sheet->setCellValue('M1', 'Дата начала / завершения ответственности');
                 $active_sheet->setCellValue('N1', 'Страховая сумма');
@@ -1801,7 +1801,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('H' . $i, $fio_birth);
                     $active_sheet->setCellValue('I' . $i, $ad_service->phone_mobile);
                     $active_sheet->setCellValue('J' . $i, $gender[$ad_service->gender]);
-                    $active_sheet->setCellValue('K' . $i, $ad_service->passport_serial);
+                    $active_sheet->setCellValue('K' . $i, $ad_service->passport_serial.' выдан '.$ad_service->passport_issued.' '.date('Y-m-d', strtotime($ad_service->date)).' г '.'код подразделения '.$ad_service->subdivision_code);
                     $active_sheet->setCellValue('L' . $i, $ad_service->regAddr);
 
                     if ($ad_service->start_date) {
