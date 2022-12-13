@@ -53,10 +53,10 @@ class Idx_scoring extends Core
                 [
                     'status' => 'completed',
                     'body' => '',
-                    'success' => empty($score) ? 0 : 1
+                    'success' => empty($score || $score['validationScorePhone'] == 0) ? 0 : 1
                 ];
 
-            if (!empty($score))
+            if (!empty($score) && $score['validationScorePhone'] != 0)
             {
                 $update['string_result'] = 'Пользователь найден: '. $this->IdxApi->result[$score['validationScorePhone']];
                 $update['body'] = $score['validationScorePhone'];
