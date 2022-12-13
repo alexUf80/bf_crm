@@ -165,16 +165,6 @@ class AuditCron extends Core
                 if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
                     PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
-                $this->operations->add_operation(array(
-                    'contract_id' => 0,
-                    'user_id' => $order->user_id,
-                    'order_id' => $order->order_id,
-                    'type' => 'REJECT_REASON',
-                    'amount' => 19,
-                    'created' => date('Y-m-d H:i:s'),
-                    'transaction_id' => 0,
-                ));
-
                 $this->db->query("
                 SELECT
                 id,
@@ -192,6 +182,18 @@ class AuditCron extends Core
                 $transaction = $this->db->result();
 
                 $this->Best2pay->completeCardEnroll($transaction);
+
+                if ($resp == 'APPROVED') {
+                    $this->operations->add_operation(array(
+                        'contract_id' => 0,
+                        'user_id' => $order->user_id,
+                        'order_id' => $order->order_id,
+                        'type' => 'REJECT_REASON',
+                        'amount' => 19,
+                        'created' => date('Y-m-d H:i:s'),
+                        'transaction_id' => 0,
+                    ));
+                }
             }
         }
     }

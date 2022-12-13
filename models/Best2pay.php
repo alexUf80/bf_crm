@@ -649,7 +649,7 @@ class Best2pay extends Core
         if ($status == 'APPROVED')
             TransactionsORM::where('id', $transaction->id)->update(['checked' => 1]);
 
-
+        return $status;
     }
 
     private function get_signature($data)

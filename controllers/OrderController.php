@@ -878,8 +878,7 @@ class OrderController extends Controller
         //Отправляем чек по страховке
         $resp = $this->Cloudkassir->send_reject_reason($contract->order_id);
 
-        if (!empty($resp))
-        {
+        if (!empty($resp)) {
             $resp = json_decode($resp);
 
             $this->receipts->add_receipt(array(
@@ -900,16 +899,6 @@ class OrderController extends Controller
         if (!empty($order->utm_source) && $order->utm_source == 'leadstech')
             PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
-        $this->operations->add_operation(array(
-            'contract_id' => 0,
-            'user_id' => $order->user_id,
-            'order_id' => $order->order_id,
-            'type' => 'REJECT_REASON',
-            'amount' => 19,
-            'created' => date('Y-m-d H:i:s'),
-            'transaction_id' => 0,
-        ));
-
         $this->db->query("
                 SELECT
                 id,
@@ -926,7 +915,19 @@ class OrderController extends Controller
 
         $transaction = $this->db->result();
 
-        $this->Best2pay->completeCardEnroll($transaction);
+        $resp = $this->Best2pay->completeCardEnroll($transaction);
+
+        if ($resp == 'APPROVED') {
+            $this->operations->add_operation(array(
+                'contract_id' => 0,
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'REJECT_REASON',
+                'amount' => 19,
+                'created' => date('Y-m-d H:i:s'),
+                'transaction_id' => 0,
+            ));
+        }
 
         return array('success' => 1, 'status' => $status);
     }
@@ -3044,7 +3045,7 @@ class OrderController extends Controller
         $prcSum = str_replace(',', '.', $prcSum);
         $peniSum = str_replace(',', '.', $peniSum);
 
-        if(empty($stopProfit))
+        if (empty($stopProfit))
             $stopProfit = 0;
         else
             $stopProfit = 1;
