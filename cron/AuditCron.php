@@ -182,7 +182,7 @@ class AuditCron extends Core
                 amount,
                 register_id
                 FROM s_transactions
-                WHERE ts.`description` = 'Привязка карты'
+                WHERE `description` = 'Привязка карты'
                 AND reason_code = 1
                 and checked = 0
                 and user_id = ?
