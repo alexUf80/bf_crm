@@ -7,7 +7,11 @@ class Onec implements ToolsInterface
     public static function request($status)
     {
 
-        $orders = OrdersORM::with('user')->where('status', $status)->get();
+        $orders = OrdersORM::with('user')
+            ->where('status', $status)
+            ->orderBy('id', 'desc')
+            ->limit(5)
+            ->get();
 
         $i = 0;
 
@@ -94,12 +98,13 @@ class Onec implements ToolsInterface
                     'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
                     'Заемщик' => $order->user->id,
                     'ТипДокументаРасхода' => 0,
-                    'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date)),
+                    'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date))
                 ];
 
             $issuanceOperation = OperationsORM::where('contract_id', $contract->id)->where('type', 'P2P')->first();
 
             $xml['Документы'][$i]['Сделка']['НомерДокументаРасхода'] = $issuanceOperation->id;
+            $xml['Документы'][$i]['Сделка']['РасчетВоВнешнейСистеме'] = 'false';
 
             $promocodes = PromocodesORM::get();
 
