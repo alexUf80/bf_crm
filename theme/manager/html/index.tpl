@@ -155,7 +155,6 @@
                             </li>
                         {/if}
                     {/if}
-                    {*
                     {if in_array('my_contracts', $manager->permissions) || in_array('collection_report', $manager->permissions) || in_array('zvonobot', $manager->permissions)}
                         <li class="nav-small-cap">Коллекшн</li>
                         {if in_array('my_contracts', $manager->permissions)}
@@ -166,7 +165,6 @@
                             </li>
                         {/if}
                     {/if}
-                    *}
                     {if  in_array('managers', $manager->permissions) ||  in_array('changelogs', $manager->permissions) ||  in_array('settings', $manager->permissions) ||  in_array('handbooks', $manager->permissions) ||  in_array('pages', $manager->permissions)}
                         <li class="nav-small-cap">Управление</li>
                         {if in_array('managers', $manager->permissions)}
@@ -231,6 +229,10 @@
                                     {if in_array('communications', $manager->permissions)}
                                         <li {if in_array($module, ['RemindersEventsController'])}class="active"{/if}>
                                             <a href="reminders_events">События для ремайндеров</a></li>
+                                    {/if}
+                                    {if in_array('tags', $manager->permissions)}
+                                        <li {if in_array($module, ['CollectorTagsController'])}class="active"{/if}><a
+                                                    href="collector_tags">Теги для коллекторов</a></li>
                                     {/if}
                                     {*if in_array('ticket_handbooks', $manager->permissions)}
                                     <li {if in_array($module, ['TicketStatusesController'])}class="active"{/if}><a href="ticket_statuses">Статусы тикетов</a></li>
