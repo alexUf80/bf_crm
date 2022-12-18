@@ -148,13 +148,6 @@
                                             class="hide-menu">Заявки</span></a>
                             </li>
                         {/if}
-
-                        {*if in_array('offline', $manager->permissions)}
-                        <li {if $offline}class="active"{/if}>
-                            <a class="" href="orders/offline" aria-expanded="false"><i class="mdi mdi-animation"></i><span class="hide-menu">Оффлайн</span></a>
-                        </li>
-                        {/if*}
-
                         {if in_array('clients', $manager->permissions)}
                             <li {if in_array($module, ['ClientController', 'ClientsController'])}class="active"{/if}>
                                 <a class="" href="clients/" aria-expanded="false"><i
@@ -162,6 +155,18 @@
                             </li>
                         {/if}
                     {/if}
+                    {*
+                    {if in_array('my_contracts', $manager->permissions) || in_array('collection_report', $manager->permissions) || in_array('zvonobot', $manager->permissions)}
+                        <li class="nav-small-cap">Коллекшн</li>
+                        {if in_array('my_contracts', $manager->permissions)}
+                            <li {if in_array($module, ['CollectorContractsController'])}class="active"{/if}>
+                                <a class="" href="my_contracts/" aria-expanded="false"><i
+                                            class="mdi mdi-book-multiple"></i><span
+                                            class="hide-menu">Мои договоры</span></a>
+                            </li>
+                        {/if}
+                    {/if}
+                    *}
                     {if  in_array('managers', $manager->permissions) ||  in_array('changelogs', $manager->permissions) ||  in_array('settings', $manager->permissions) ||  in_array('handbooks', $manager->permissions) ||  in_array('pages', $manager->permissions)}
                         <li class="nav-small-cap">Управление</li>
                         {if in_array('managers', $manager->permissions)}
@@ -181,22 +186,24 @@
                                 <a class="has-arrow" href="settings" aria-expanded="false"><i
                                             class="mdi mdi-settings"></i><span class="hide-menu">Настройки</span></a>
                                 <ul aria-expanded="false" class="collapse">
+                                    <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
+                                                href="settings/">Общие</a></li>
+                                    {if $manager->role != 'chief_collector'}
+                                        <li {if in_array($module, ['ScoringsController'])}class="active"{/if}><a
+                                                    href="scorings/">Скоринги</a></li>
+                                        <li {if in_array($module, ['ApikeysController'])}class="active"{/if}><a
+                                                    href="apikeys/">Ключи для API</a></li>
+                                        <li {if in_array($module, ['WhitelistController'])}class="active"{/if}><a
+                                                    href="whitelist/">Whitelist</a></li>
+                                        <li {if in_array($module, ['BlacklistController'])}class="active"{/if}><a
+                                                    href="blacklist/">Blacklist</a></li>
+                                        <li {if in_array($module, ['RfmlistController'])}class="active"{/if}><a
+                                                    href="rfmlist/">RFMlist</a></li>
                                         <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
-                                                    href="settings/">Общие</a></li>
-                                        {if $manager->role != 'chief_collector'}
-                                            <li {if in_array($module, ['ScoringsController'])}class="active"{/if}><a
-                                                        href="scorings/">Скоринги</a></li>
-                                            <li {if in_array($module, ['ApikeysController'])}class="active"{/if}><a
-                                                        href="apikeys/">Ключи для API</a></li>
-                                            <li {if in_array($module, ['WhitelistController'])}class="active"{/if}><a
-                                                        href="whitelist/">Whitelist</a></li>
-                                            <li {if in_array($module, ['BlacklistController'])}class="active"{/if}><a
-                                                        href="blacklist/">Blacklist</a></li>
-                                            <li {if in_array($module, ['RfmlistController'])}class="active"{/if}><a
-                                                        href="rfmlist/">RFMlist</a></li>
-                                            <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
-                                                        href="msg_zvonobot">IVR (-3,-2,-1)</a></li>
-                                        {/if}
+                                                    href="msg_zvonobot">IVR (-3,-2,-1)</a></li>
+                                        <li {if in_array($module, ['CollectionPeriodsController'])}class="active"{/if}>
+                                            <a href="collection_periods">Периоды коллекшн</a></li>
+                                    {/if}
                                 </ul>
                             </li>
                         {/if}
