@@ -34,6 +34,8 @@ RewriteRule ^rfmlist/?$                 index.php?module=RfmlistController  [L,Q
 
 RewriteRule ^test_debug/?$              index.php?module=TestController  [L,QSA]
 
+RewriteRule ^reminders_events/?$        index.php?module=RemindersEventsController  [L,QSA]
+
 RewriteRule ^add_pay?/?$                index.php?module=AddPayController&user_id=$1&order_id=$2  [L,QSA]
 
 RewriteRule ^sudblock_contracts/?$      index.php?module=SudblockContractsController  [L,QSA]
