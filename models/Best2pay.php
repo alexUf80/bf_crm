@@ -21,29 +21,27 @@ class Best2pay extends Core
      * Sector ID: 8081 ООО МКК "Финансовый аспект" (ecozaym24.ru) (СНГБ) (C2A) (ФЛ) 3w69fF5
      */
 
-    private $url = 'https://pay.best2pay.net/';
+    private $url = '';
     private $currency_code = 643;
 
     private $fee = 0.03;
 
-    private $sectors = array(
-        'PAY_CREDIT' => '9733', //сектор для отправки кредита на карту клиента (P2PCredit)
-        'RECURRENT' => '9749', // сектор для совершения рекурентных платежей (token) ECOM
-        'ADD_CARD' => '9748', // сектор для привязки карты (token)
-        'PAYMENT' => '9750', // сектор для оплаты любой картой (C2A)
-    );
+    private $sectors = array();
 
-    private $passwords = array(
-        '9733' => 'Hs3Me74',
-        '9749' => 'D41i7R39',
-        '9748' => 'U44eS3Is715',
-        '9750' => 'W38iUdA3'
-    );
+    private $passwords = array();
 
 
     public function __construct()
     {
         parent::__construct();
+
+        $b2p = B2pAccessORM::get();
+
+        foreach ($b2p as $access) {
+            $this->sectors[$access->type] = $access->sector;
+            $this->passwords[$access->sector] = $access->password;
+            $this->url = $access->link;
+        }
     }
 
     public function get_sectors()
