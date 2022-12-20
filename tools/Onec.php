@@ -97,6 +97,8 @@ class Onec implements ToolsInterface
                     'СуммаЗайма' => number_format(round($contract->amount, 2), 2, '.', ''),
                     'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
                     'Заемщик' => $order->user->id,
+                    'Процент' => $contract->base_percent,
+                    'ПроцентПриПросрочке' => $contract->base_percent,
                     'ТипДокументаРасхода' => 0,
                     'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date))
                 ];
