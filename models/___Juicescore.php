@@ -10,8 +10,6 @@ class Juicescore extends Core
     	parent::__construct();
 
         $this->key = $this->settings->apikeys['juicescore']['api_key'];
-
-
     }
     
     
