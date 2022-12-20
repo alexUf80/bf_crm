@@ -133,7 +133,7 @@
                                             <p>{$ad_service->birth}</p></td>
                                         <td>{$ad_service->phone_mobile}</td>
                                         <td>{$gender[$ad_service->gender]}</td>
-                                        <td>{$ad_service->passport_serial} выдан {$ad_service->passport_issued} {$ad_service->date|date} г, код подразделения {$ad_service->subdivision_code}</td>
+                                        <td>{$ad_service->passport_serial} выдан {$ad_service->passport_issued} {$ad_service->passport_date|date} г, код подразделения {$ad_service->subdivision_code}</td>
                                         <td>{$ad_service->regAddr}</td>
                                         {if $ad_service->start_date}
                                             <td>{$ad_service->start_date} / {$ad_service->end_date} </td>
