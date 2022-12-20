@@ -9,31 +9,29 @@ class TestController extends Controller
 {
     public function fetch()
     {
-        $tmp_name = $this->config->root_dir . '/files/leadgen.xlsx';
-        $format = IOFactory::identify($tmp_name);
-        $reader = IOFactory::createReader($format);
-        $spreadsheet = $reader->load($tmp_name);
+        $contract = ContractsORM::find(2663);
+        $user = UsersORM::find(15195);
 
-        $active_sheet = $spreadsheet->getActiveSheet();
+        $paymentSchedules = PaymentsSchedulesORM::find(24);
 
-        $first_row = 2;
-        $last_row = $active_sheet->getHighestRow();
+        $schedule = new PaymentsSchedulesORM();
+        $schedule->order_id = $contract->order_id;
+        $schedule->user_id = 15195;
+        $schedule->contract_id = 2663;
+        $schedule->init_od = $contract->loan_body_summ;
+        $schedule->init_prc = $contract->loan_percents_summ;
+        $schedule->init_peni = $contract->loan_peni_summ;
+        $schedule->actual = 1;
+        $schedule->payment_schedules = $paymentSchedules->payment_schedules;
 
-        for ($row = $first_row; $row <= $last_row; $row++) {
-            $clickHash[] = $active_sheet->getCell('B' . $row)->getValue();
-        }
+        $params = [
+            'contract' => $contract,
+            'user' => $user,
+            'schedules' => $schedule
+        ];
 
-        $this->db->query("
-        SELECT us.lastname, us.firstname, us.patronymic, os.click_hash
-        FROM s_users us
-        JOIN s_orders os ON os.user_id = us.id
-        WHERE os.click_hash IN (?@)
-        ", $clickHash);
+        echo json_encode($params);
 
-        $users = $this->db->results();
-
-        echo '<pre>';
-        var_dump($users);
         exit;
     }
 }
