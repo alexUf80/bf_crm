@@ -15,7 +15,7 @@ class Onec implements ToolsInterface
 
         */
 
-        $orders = OrdersORM::whereIn('id', [33642, 30770, 33698, 33528])->get();
+        $orders = OrdersORM::whereIn('id', [33642, 33698, 33528])->get();
 
         $i = 0;
 
