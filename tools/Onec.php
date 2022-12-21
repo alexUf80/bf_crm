@@ -117,10 +117,7 @@ class Onec implements ToolsInterface
             $product = ['КредитныйПродукт' => 1];
 
             foreach ($promocodes as $promocode) {
-
-                $percent = 1 - ($promocode->discount / 100);
-
-                if ($percent == $contract->base_percent)
+                if ($order->promocode_id == $promocode->id)
                     $product = ['КредитныйПродукт' => $promocode->id];
             }
 
