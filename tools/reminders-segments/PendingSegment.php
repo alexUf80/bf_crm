@@ -21,7 +21,7 @@ class PendingSegment extends SegmentsAbastract
     {
         $acceptDate = date('Y-m-d H:i:s', strtotime('-'.$reminder->countTime.' days'));
 
-        $contracts = ContractsORM::where('accept_date', $acceptDate)->get();
+        $contracts = ContractsORM::where('accept_date', $acceptDate)->where('status', 0)->get();
 
         foreach ($contracts as $contract) {
             $user = UsersORM::where('id', $contract->user_id)->fisrt();
