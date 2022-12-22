@@ -102,6 +102,7 @@ class Onec implements ToolsInterface
                     'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
                     'Заемщик' => $order->user->id,
                     'Процент' => $contract->base_percent,
+                    'ПроцентПовышенный' => $contract->base_percent,
                     'ПроцентПриПросрочке' => $contract->base_percent + 0.005,
                     'ТипДокументаРасхода' => 0,
                     'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date))
