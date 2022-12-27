@@ -19,9 +19,10 @@ class PendingSegment extends SegmentsAbastract
 
     private static function daysWithoutSignReminder($reminder)
     {
-        $acceptDate = date('Y-m-d H:i:s', strtotime('-'.$reminder->countTime.' days'));
+        $acceptDateFrom = date('Y-m-d 00:00:00', strtotime('-' . $reminder->countTime . ' days'));
+        $acceptDateTo = date('Y-m-d 23:59:59', strtotime('-' . $reminder->countTime . ' days'));
 
-        $contracts = ContractsORM::where('accept_date', $acceptDate)->where('status', 0)->get();
+        $contracts = ContractsORM::where('status', 0)->whereBetween('create_date', [$acceptDateFrom, $acceptDateTo])->get();
 
         foreach ($contracts as $contract) {
             $user = UsersORM::where('id', $contract->user_id)->fisrt();

@@ -9,7 +9,12 @@ class TestController extends Controller
 {
     public function fetch()
     {
-        Onec::request(5);
+        $contracts = ContractsORM::with('user.regAddress', 'user.factAddress')
+            ->whereIn('status', [3])
+            ->where('inssuance_date', '>=', date('Y-m-d 00:00:00', strtotime('2022-11-01')))
+            ->get();
+
+        Onec::request($contracts);
         exit;
     }
 }
