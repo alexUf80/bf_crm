@@ -1018,12 +1018,14 @@
                                                     Закрыть договор
                                                 </button>
                                             {/if}
+                                            {*
                                             <br>
                                             <a href="/add_pay?user_id={$order->user_id}&order_id={$order->order_id}">
                                                 <button class="btn btn-info btn-block add_pay">
                                                     <span>Провести платеж</span>
                                                 </button>
                                             </a>
+                                            *}
                                         {/if}
                                         {if $order->status == 6}
                                             <div class="card card-danger mb-1">
