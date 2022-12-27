@@ -552,7 +552,7 @@ class Nbkiscore_scoring extends Core
             $nbki_score += 32;
         elseif ($closed_to_total_credits_count_share >= 0.9 && $closed_to_total_credits_count_share < 0.95)
             $nbki_score += 74;
-        elseif ($closed_to_total_credits_count_share >= 0.95 && $closed_to_total_credits_count_share < 1)
+        elseif ($closed_to_total_credits_count_share >= 0.95 && $closed_to_total_credits_count_share <= 1)
             $nbki_score += 133;
 
         if ($pdl_overdue_count < 3)
