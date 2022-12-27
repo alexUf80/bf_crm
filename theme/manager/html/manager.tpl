@@ -279,28 +279,30 @@
                                                    class="form-control form-control-line"/>
                                         </div>
                                     </div>
-                                    {if in_array($manager->role, ['chief_collector','admin','developer'])}
-                                        <div class="form-group">
-                                            <label class="col-md-12">Статусы договоров для коллекторов</label>
-                                            <div class="col-sm-12">
-                                                <select name="collection_status_id"
-                                                        class="form-control form-control-line">
-                                                    {foreach $periods as $period}
-                                                        <option value="{$period->id}"
-                                                                {if $user->collection_status_id == $period->id}selected{/if}>{$period->name}</option>
-                                                    {/foreach}
-                                                </select>
+                                    {if in_array($user->role, ['senior collector','collector'])}
+                                        {if in_array($manager->role, ['senior collector','admin','developer'])}
+                                            <div class="form-group">
+                                                <label class="col-md-12">Статусы договоров для коллекторов</label>
+                                                <div class="col-sm-12">
+                                                    <select name="collection_status_id"
+                                                            class="form-control form-control-line">
+                                                        {foreach $periods as $period}
+                                                            <option value="{$period->id}"
+                                                                    {if $user->collection_status_id == $period->id}selected{/if}>{$period->name}</option>
+                                                        {/foreach}
+                                                    </select>
+                                                </div>
                                             </div>
-                                        </div>
-                                    {else}
-                                        <div class="form-group">
-                                            <label class="col-md-12">Статусы договоров для коллекторов</label>
-                                            <div class="col-sm-12">
-                                                <p>{$collection_statuses[$user->collection_status_id]}</p>
-                                                <input type="hidden" name="collection_status_id"
-                                                       value="{$user->collection_status_id}"/>
+                                        {else}
+                                            <div class="form-group">
+                                                <label class="col-md-12">Статусы договоров для коллекторов</label>
+                                                <div class="col-sm-12">
+                                                    <p>{$collection_statuses[$user->collection_status_id]}</p>
+                                                    <input type="hidden" name="collection_status_id"
+                                                           value="{$user->collection_status_id}"/>
+                                                </div>
                                             </div>
-                                        </div>
+                                        {/if}
                                     {/if}
                                     <div class="form-group">
                                         <div class="col-sm-12">
