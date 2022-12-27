@@ -15,6 +15,7 @@ class ManagerController extends Controller
             $user->phone = $this->request->post('phone');
             $user->login = $this->request->post('login');
             $user->mango_number = $this->request->post('mango_number');
+            $user->collection_status_id = $this->request->post('collection_status_id');
 
             $user->role = $this->ManagersRoles->get($user->role);
             $user->role = $user->role->name;
@@ -91,6 +92,9 @@ class ManagerController extends Controller
         $this->design->assign('roles', $roles);
         
         $this->design->assign('meta_title', $meta_title);
+
+        $periods = CollectorPeriodsORM::get();
+        $this->design->assign('periods', $periods);
         
         return $this->design->fetch('manager.tpl');
     }
