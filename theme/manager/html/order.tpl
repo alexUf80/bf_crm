@@ -272,44 +272,42 @@
 
             $('.restruct').on('click', function () {
                 $('#restruct_modal').modal();
+            });
 
-                $('.addPeriod').on('click', function () {
+            $('.addPeriod').on('click', function () {
 
-                    let form = $('<div class="form-group" style="display: flex">' +
-                        '<input class="form-control daterange" name="date[][date]">' +
-                        '<input placeholder="Платеж" style="margin-left: 5px" class="form-control" name="payment[][payment]">' +
-                        '<input placeholder="ОД" style="margin-left: 5px" class="form-control" name="payOd[][payOd]">' +
-                        '<input placeholder="Процент" style="margin-left: 5px" class="form-control" name="payPrc[][payPrc]">' +
-                        '<input placeholder="Пени" style="margin-left: 5px" class="form-control" name="payPeni[][payPeni]">' +
-                        '<div style="margin-left: 5px" class="btn btn-danger deletePeriod"> - </div></div>');
+                let form = $('<div class="form-group" style="display: flex">' +
+                    '<input class="form-control daterange" name="date[][date]">' +
+                    '<input placeholder="Платеж" style="margin-left: 5px" class="form-control" name="payment[][payment]">' +
+                    '<input placeholder="ОД" style="margin-left: 5px" class="form-control" name="payOd[][payOd]">' +
+                    '<input placeholder="Процент" style="margin-left: 5px" class="form-control" name="payPrc[][payPrc]">' +
+                    '<input placeholder="Пени" style="margin-left: 5px" class="form-control" name="payPeni[][payPeni]">' +
+                    '<div style="margin-left: 5px" class="btn btn-danger deletePeriod"> - </div></div>');
 
-                    $('#payments_schedules').append(form);
+                $('#payments_schedules').append(form);
 
-                    form.find('.daterange').daterangepicker({
-                        singleDatePicker: true,
-                        showDropdowns: true,
-                        locale: {
-                            format: 'DD.MM.YYYY'
-                        },
-                    });
-
-                    //init();
+                form.find('.daterange').daterangepicker({
+                    singleDatePicker: true,
+                    showDropdowns: true,
+                    locale: {
+                        format: 'DD.MM.YYYY'
+                    },
                 });
+            });
 
-                $(document).on('click', '.deletePeriod', function () {
-                    $(this).closest('.form-group').remove();
-                });
+            $(document).on('click', '.deletePeriod', function () {
+                $(this).closest('.form-group').remove();
+            });
 
-                $('.saveRestruct').on('click', function () {
-                    let form = $('#restruct_form').serialize();
+            $('.saveRestruct').on('click', function () {
+                let form = $('#restruct_form').serialize();
 
-                    $.ajax({
-                        method: 'POST',
-                        data: form,
-                        success: function () {
-                            location.reload();
-                        }
-                    });
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
                 });
             });
 
@@ -319,38 +317,38 @@
                 $('#sms_confirm_modal').modal();
 
                 send_sms(order);
+            });
 
-                $('.send_asp_code').on('click', function () {
-                    send_sms(order);
-                });
+            $('.send_asp_code').on('click', function () {
+                send_sms(order);
+            });
 
-                $('.confirm_asp').on('click', function () {
-                    let phone = $(this).attr('data-phone');
-                    let user = $(this).attr('data-user');
-                    let contract = $(this).attr('data-contract');
-                    let code = $('.code_asp').val();
+            $('.confirm_asp').on('click', function () {
+                let phone = $(this).attr('data-phone');
+                let user = $(this).attr('data-user');
+                let contract = $(this).attr('data-contract');
+                let code = $('.code_asp').val();
 
-                    $.ajax({
-                        method: 'POST',
-                        dataType: 'JSON',
-                        data: {
-                            action: 'confirm_asp',
-                            user: user,
-                            phone: phone,
-                            code: code,
-                            contract: contract,
-                        },
-                        success: function (response) {
-                            if (response['error'] == 1) {
-                                Swal.fire({
-                                    title: 'Неверный код',
-                                    confirmButtonText: 'ОК'
-                                });
-                            } else {
-                                location.reload();
-                            }
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'confirm_asp',
+                        user: user,
+                        phone: phone,
+                        code: code,
+                        contract: contract,
+                    },
+                    success: function (response) {
+                        if (response['error'] == 1) {
+                            Swal.fire({
+                                title: 'Неверный код',
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            location.reload();
                         }
-                    });
+                    }
                 });
             });
 
