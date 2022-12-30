@@ -215,6 +215,10 @@ class OrderController extends Controller
                     return $this->action_editLoanProfit();
                     break;
 
+                case 'addPay':
+                    return $this->actionAddPay();
+                    break;
+
 
             endswitch;
 
@@ -2708,7 +2712,7 @@ class OrderController extends Controller
         $order->phone_mobile = preg_replace("/[^,.0-9]/", '', $order->phone_mobile);
         $code = random_int(0000, 9999);
 
-        $message = "Выш код: " . $code;
+        $message = "Ваш код: " . $code;
 
         $resp = $this->sms->send_smsc($order->phone_mobile, $message);
         $resp = $resp['resp'];
@@ -3060,5 +3064,204 @@ class OrderController extends Controller
 
         ContractsORM::where('id', $contractId)->update($update);
         exit;
+    }
+
+    private function actionAddPay()
+    {
+        $paySum = $this->request->post('paySum');
+        $amountPay = $paySum;
+        $contractId = $this->request->post('contractId');
+
+        $paySum = str_replace(',', '.', $paySum);
+        $paySum = trim($paySum);
+
+        $contract = ContractsORM::find($contractId);
+
+        if ($contract->status == 11)
+            $this->addPayRestruct($contractId, $paySum);
+        else {
+            // списываем основной долг
+            $contract_loan_body_summ = (float)$contract->loan_body_summ;
+            if ($contract->loan_body_summ > 0) {
+                if ($paySum >= $contract->loan_body_summ) {
+                    $contract_loan_body_summ = 0;
+                    $paySum = $paySum - $contract->loan_body_summ;
+                } else {
+                    $contract_loan_body_summ = $contract->loan_body_summ - $paySum;
+                    $paySum = 0;
+                }
+            }
+
+            // списываем проценты
+            $contract_loan_percents_summ = (float)$contract->loan_percents_summ;
+            if ($contract->loan_percents_summ > 0) {
+                if ($paySum >= $contract->loan_percents_summ) {
+                    $contract_loan_percents_summ = 0;
+                    $paySum = $paySum - $contract->loan_percents_summ;
+                } else {
+                    $contract_loan_percents_summ = $contract->loan_percents_summ - $paySum;
+                    $paySum = 0;
+                }
+            }
+
+            if ($contract_loan_percents_summ == 0 && $contract_loan_body_summ == 0) {
+                // списываем пени
+                $contract_loan_peni_summ = (float)$contract->loan_percents_summ;
+                if ($contract->loan_peni_summ > 0) {
+                    if ($paySum >= $contract->loan_peni_summ) {
+                        $contract_loan_peni_summ = 0;
+                        $paySum = $paySum - $contract->loan_peni_summ;
+                    } else {
+                        $contract_loan_peni_summ = $contract->loan_peni_summ - $paySum;
+                        $paySum = 0;
+                    }
+                }
+
+                if($contract_loan_peni_summ == 0)
+                    $this->closeContract($contract->id, $contract->order_id);
+            }
+
+            $this->operations->add_operation(array(
+                'contract_id' => $contract->id,
+                'user_id' => $contract->user_id,
+                'order_id' => $contract->order_id,
+                'type' => 'PAY',
+                'amount' => $amountPay,
+                'created' => date('Y-m-d H:i:s'),
+                'transaction_id' => 0,
+                'loan_body_summ' => 0,
+                'loan_percents_summ' => 0,
+                'loan_peni_summ' => 0,
+                'loan_charge_summ' => 0
+            ));
+
+            $this->contracts->update_contract($contract->id, array(
+                'loan_percents_summ' => $contract_loan_percents_summ,
+                'loan_peni_summ' => isset($contract_loan_peni_summ) ? $contract_loan_peni_summ : $contract->loan_peni_summ,
+                'loan_body_summ' => $contract_loan_body_summ,
+            ));
+        }
+
+        exit;
+    }
+
+    private function addPayRestruct($contractId, $rest_amount)
+    {
+        $contract = ContractsORM::find($contractId);
+        $planOperation = PaymentsToSchedules::getNext($contractId);
+
+        $faktOd = 0;
+        $faktPrc = 0;
+        $faktPeni = 0;
+
+        // списываем основной долг
+        if ($planOperation->plan_od > 0) {
+            if ($rest_amount >= $planOperation->plan_od) {
+                $faktOd = $planOperation->plan_od;
+                $rest_amount -= $planOperation->plan_od;
+            } else {
+                $faktOd = $planOperation->plan_od - $rest_amount;
+                $rest_amount = 0;
+            }
+        }
+
+        // списываем проценты
+        if ($planOperation->plan_prc > 0) {
+            if ($rest_amount >= $planOperation->plan_prc) {
+                $faktPrc = $planOperation->plan_prc;
+                $rest_amount -= $planOperation->plan_prc;
+            } else {
+                $faktPrc = $planOperation->plan_prc - $rest_amount;
+                $rest_amount = 0;
+            }
+        }
+
+        // списываем пени
+        if ($planOperation->plan_peni > 0) {
+            if ($rest_amount >= $planOperation->plan_peni) {
+                $faktPeni = $planOperation->plan_peni;
+                $rest_amount -= $planOperation->plan_peni;
+            } else {
+                $faktPeni = $planOperation->plan_peni - $rest_amount;
+                $rest_amount = 0;
+            }
+        }
+
+        $paySum = $faktOd + $faktPeni + $faktPrc;
+
+        $this->operations->add_operation(array(
+            'contract_id' => $contractId,
+            'user_id' => $contract->user_id,
+            'order_id' => $contract->order_id,
+            'type' => 'PAY',
+            'amount' => $paySum,
+            'created' => date('Y-m-d H:i:s'),
+            'transaction_id' => 0,
+            'loan_body_summ' => $faktOd,
+            'loan_percents_summ' => $faktPrc,
+            'loan_peni_summ' => $faktPeni,
+            'loan_charge_summ' => 0
+        ));
+
+        $status = 1;
+
+        if ($paySum >= $planOperation->plan_payment)
+            $status = 2;
+
+        $faktOperation =
+            [
+                'operation_id' => $planOperation->id,
+                'fakt_payment' => $rest_amount,
+                'fakt_od' => $faktOd,
+                'fakt_prc' => $faktPeni,
+                'fakt_peni' => $faktPrc,
+                'fakt_date' => date('Y-m-d H:i:s'),
+                'status' => $status
+            ];
+
+        PaymentsToSchedules::where('id', $planOperation->id)->update($faktOperation);
+
+        $countRemaining = PaymentsToSchedules::getCountRemaining($contract->id);
+
+        if ($countRemaining == 0) {
+            $this->closeContract($contractId, $contract->order_id);
+            exit;
+        }
+
+        if ($rest_amount > 0)
+            $this->addPayRestruct($contractId, $rest_amount);
+        else {
+            $nextPay = PaymentsToSchedules::getNext($contractId);
+
+            if ($status == 1) {
+                $nextPay->plan_od -= $faktOd;
+                $nextPay->plan_prc -= $faktPrc;
+                $nextPay->plan_peni -= $faktPeni;
+                $nextPay->id = $planOperation->id;
+                $nextPay->plan_date = $planOperation->plan_date;
+            }
+
+            $this->contracts->update_contract($contract->id, array(
+                'loan_body_summ' => $nextPay->plan_od,
+                'loan_percents_summ' => $nextPay->plan_prc,
+                'loan_peni_summ' => $nextPay->plan_peni,
+                'next_pay' => date('Y-m-d', strtotime($nextPay->plan_date)),
+                'payment_id' => $nextPay->id
+            ));
+        }
+
+    }
+
+    private function closeContract($contractId, $orderId)
+    {
+        $this->contracts->update_contract($contractId, array(
+            'status' => 3,
+            'collection_status' => 0,
+            'close_date' => date('Y-m-d H:i:s'),
+        ));
+
+        $this->orders->update_order($orderId, array(
+            'status' => 7
+        ));
     }
 }

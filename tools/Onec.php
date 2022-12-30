@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(-1);
+ini_set('display_errors', 'Off');
 class Onec implements ToolsInterface
 {
     protected static $params;
@@ -10,6 +12,40 @@ class Onec implements ToolsInterface
 
         foreach ($contracts as $contract) {
             list($passportSerial, $passportNumber) = explode('-', $contract->user->passport_serial);
+
+            if (empty($contract->user->regAddress)) {
+                $contract->user->regAddress->adressfull = '163000, Архангельск, Попова, д.15';
+                $contract->user->regAddress->zip = '163000';
+                $contract->user->regAddress->region = 'Архангельская';
+                $contract->user->regAddress->region_type = 'обл';
+                $contract->user->regAddress->city = 'Архангельск';
+                $contract->user->regAddress->city_type = 'г';
+                $contract->user->regAddress->district = '';
+                $contract->user->regAddress->district_type = '';
+                $contract->user->regAddress->locality = '';
+                $contract->user->regAddress->locality_type = '';
+                $contract->user->regAddress->street = 'Попова';
+                $contract->user->regAddress->street_type = 'ул';
+                $contract->user->regAddress->house = '15';
+                $contract->user->regAddress->room = '';
+            }
+
+            if (empty($contract->user->factAddress)) {
+                $contract->user->factAddress->adressfull = '163000, Архангельск, Попова, д.15';
+                $contract->user->factAddress->zip = '163000';
+                $contract->user->factAddress->region = 'Архангельская';
+                $contract->user->factAddress->region_type = 'обл';
+                $contract->user->factAddress->city = 'Архангельск';
+                $contract->user->factAddress->city_type = 'г';
+                $contract->user->factAddress->district = '';
+                $contract->user->factAddress->district_type = '';
+                $contract->user->factAddress->locality = '';
+                $contract->user->factAddress->locality_type = '';
+                $contract->user->factAddress->street = 'Попова';
+                $contract->user->factAddress->street_type = 'ул';
+                $contract->user->factAddress->house = '15';
+                $contract->user->factAddress->room = '';
+            }
 
             $xml['Справочники'][$i]['Контрагент'] =
                 [
@@ -53,6 +89,13 @@ class Onec implements ToolsInterface
         $xml['Справочники']['Подразделение'] = ['Наименование' => 'АРХАНГЕЛЬСК 1', 'УИД' => 1];
         $xml['Справочники']['Организация'] = ['Наименование' => 'ООО МКК "БАРЕНЦ ФИНАНС"', 'УИД' => 1];
 
+        $xml['Справочники'][$i]['СервисыОнлайнОплаты'] =
+            [
+                'Наименование' => 'Best2Pay',
+                'УИД' => '1',
+            ];
+        $i++;
+
         $xml['Справочники'][$i]['КредитныеПродукты'] =
             [
                 'Наименование' => 'Стандартный',
@@ -78,6 +121,8 @@ class Onec implements ToolsInterface
 
         foreach ($contracts as $contract) {
 
+            $issuanceOperation = OperationsORM::where('contract_id', $contract->id)->where('type', 'P2P')->first();
+
             $xml['Документы'][$i]['Сделка'] =
                 [
                     'ДатаЗайма' => date('Y-m-d', strtotime($contract->create_date)),
@@ -86,17 +131,16 @@ class Onec implements ToolsInterface
                     'ПСК' => number_format(round($contract->base_percent * 365, 3), 3, '.', ''),
                     'Организация' => 1,
                     'Подразделение' => 1,
-                    'СуммаЗайма' => number_format(round($contract->amount, 2), 2, '.', ''),
+                    'СервисДистанционнойВыдачи' => 1,
+                    'СуммаЗайма' => number_format(round($issuanceOperation->amount, 2), 2, '.', ''),
                     'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
                     'Заемщик' => $contract->user->id,
                     'Процент' => $contract->base_percent,
                     'ПроцентПовышенный' => $contract->base_percent,
-                    'ПроцентПриПросрочке' => $contract->base_percent + 0.005,
-                    'ТипДокументаРасхода' => 0,
+                    'ПроцентПриПросрочке' => $contract->base_percent + 0.05,
+                    'ТипДокументаРасхода' => 2,
                     'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date))
                 ];
-
-            $issuanceOperation = OperationsORM::where('contract_id', $contract->id)->where('type', 'P2P')->first();
 
             $xml['Документы'][$i]['Сделка']['НомерДокументаРасхода'] = $issuanceOperation->id;
             $xml['Документы'][$i]['Сделка']['РасчетВоВнешнейСистеме'] = 'false';
@@ -114,7 +158,7 @@ class Onec implements ToolsInterface
 
             $xml['Документы'][$i]['Сделка'] = array_slice($xml['Документы'][$i]['Сделка'], 0, 4, true) +
                 $product +
-                array_slice($xml['Документы'][$i]['Сделка'], 4, count($xml['Документы'][$i]['Сделка'])-4, true);
+                array_slice($xml['Документы'][$i]['Сделка'], 4, count($xml['Документы'][$i]['Сделка']) - 4, true);
 
             $operations = OperationsORM::where('contract_id', $contract->id)->where('type', 'PAY')->get();
 
@@ -123,19 +167,22 @@ class Onec implements ToolsInterface
             foreach ($operations as $operation) {
                 $transaction = TransactionsORM::find($operation->transaction_id);
 
-                $xml['Документы'][$i]['Сделка'][$k]['Оплаты'] =
-                    [
-                        'НомерПриходника' => $operation->id,
-                        'ДатаОплаты' => date('Y-m-d', strtotime($operation->created)),
-                        'СуммаОплаты' => number_format(round($operation->amount, 2), 2, '.', ''),
-                        'ТипДокумента' => 0,
-                        'Подразделение' => 1,
-                        'СуммаПроцентовОплаченных' => ($transaction->loan_percents_summ != null) ? $transaction->loan_percents_summ : 0,
-                        'СуммаШтрафовОплаченных' => ($transaction->loan_peni_summ != null) ? $transaction->loan_peni_summ : 0,
-                        'СуммаОсновногоДолга' => ($transaction->loan_body_summ != null) ? $transaction->loan_body_summ : 0
-                    ];
+                if (!empty($transaction)) {
+                    $xml['Документы'][$i]['Сделка'][$k]['Оплаты'] =
+                        [
+                            'НомерПриходника' => $operation->id,
+                            'ДатаОплаты' => date('Y-m-d', strtotime($operation->created)),
+                            'СуммаОплаты' => number_format(round($operation->amount, 2), 2, '.', ''),
+                            'ТипДокумента' => 2,
+                            'Подразделение' => 1,
+                            'СервисОнлайнОплаты' => 1,
+                            'СуммаПроцентовОплаченных' => ($transaction->loan_percents_summ != null) ? $transaction->loan_percents_summ : 0,
+                            'СуммаШтрафовОплаченных' => ($transaction->loan_peni_summ != null) ? $transaction->loan_peni_summ : 0,
+                            'СуммаОсновногоДолга' => ($transaction->loan_body_summ != null) ? $transaction->loan_body_summ : 0
+                        ];
 
-                $k++;
+                    $k++;
+                }
             }
 
             $i++;

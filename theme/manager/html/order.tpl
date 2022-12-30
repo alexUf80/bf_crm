@@ -272,44 +272,42 @@
 
             $('.restruct').on('click', function () {
                 $('#restruct_modal').modal();
+            });
 
-                $('.addPeriod').on('click', function () {
+            $('.addPeriod').on('click', function () {
 
-                    let form = $('<div class="form-group" style="display: flex">' +
-                        '<input class="form-control daterange" name="date[][date]">' +
-                        '<input placeholder="Платеж" style="margin-left: 5px" class="form-control" name="payment[][payment]">' +
-                        '<input placeholder="ОД" style="margin-left: 5px" class="form-control" name="payOd[][payOd]">' +
-                        '<input placeholder="Процент" style="margin-left: 5px" class="form-control" name="payPrc[][payPrc]">' +
-                        '<input placeholder="Пени" style="margin-left: 5px" class="form-control" name="payPeni[][payPeni]">' +
-                        '<div style="margin-left: 5px" class="btn btn-danger deletePeriod"> - </div></div>');
+                let form = $('<div class="form-group" style="display: flex">' +
+                    '<input class="form-control daterange" name="date[][date]">' +
+                    '<input placeholder="Платеж" style="margin-left: 5px" class="form-control" name="payment[][payment]">' +
+                    '<input placeholder="ОД" style="margin-left: 5px" class="form-control" name="payOd[][payOd]">' +
+                    '<input placeholder="Процент" style="margin-left: 5px" class="form-control" name="payPrc[][payPrc]">' +
+                    '<input placeholder="Пени" style="margin-left: 5px" class="form-control" name="payPeni[][payPeni]">' +
+                    '<div style="margin-left: 5px" class="btn btn-danger deletePeriod"> - </div></div>');
 
-                    $('#payments_schedules').append(form);
+                $('#payments_schedules').append(form);
 
-                    form.find('.daterange').daterangepicker({
-                        singleDatePicker: true,
-                        showDropdowns: true,
-                        locale: {
-                            format: 'DD.MM.YYYY'
-                        },
-                    });
-
-                    //init();
+                form.find('.daterange').daterangepicker({
+                    singleDatePicker: true,
+                    showDropdowns: true,
+                    locale: {
+                        format: 'DD.MM.YYYY'
+                    },
                 });
+            });
 
-                $(document).on('click', '.deletePeriod', function () {
-                    $(this).closest('.form-group').remove();
-                });
+            $(document).on('click', '.deletePeriod', function () {
+                $(this).closest('.form-group').remove();
+            });
 
-                $('.saveRestruct').on('click', function () {
-                    let form = $('#restruct_form').serialize();
+            $('.saveRestruct').on('click', function () {
+                let form = $('#restruct_form').serialize();
 
-                    $.ajax({
-                        method: 'POST',
-                        data: form,
-                        success: function () {
-                            location.reload();
-                        }
-                    });
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
                 });
             });
 
@@ -319,38 +317,38 @@
                 $('#sms_confirm_modal').modal();
 
                 send_sms(order);
+            });
 
-                $('.send_asp_code').on('click', function () {
-                    send_sms(order);
-                });
+            $('.send_asp_code').on('click', function () {
+                send_sms(order);
+            });
 
-                $('.confirm_asp').on('click', function () {
-                    let phone = $(this).attr('data-phone');
-                    let user = $(this).attr('data-user');
-                    let contract = $(this).attr('data-contract');
-                    let code = $('.code_asp').val();
+            $('.confirm_asp').on('click', function () {
+                let phone = $(this).attr('data-phone');
+                let user = $(this).attr('data-user');
+                let contract = $(this).attr('data-contract');
+                let code = $('.code_asp').val();
 
-                    $.ajax({
-                        method: 'POST',
-                        dataType: 'JSON',
-                        data: {
-                            action: 'confirm_asp',
-                            user: user,
-                            phone: phone,
-                            code: code,
-                            contract: contract,
-                        },
-                        success: function (response) {
-                            if (response['error'] == 1) {
-                                Swal.fire({
-                                    title: 'Неверный код',
-                                    confirmButtonText: 'ОК'
-                                });
-                            } else {
-                                location.reload();
-                            }
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'confirm_asp',
+                        user: user,
+                        phone: phone,
+                        code: code,
+                        contract: contract,
+                    },
+                    success: function (response) {
+                        if (response['error'] == 1) {
+                            Swal.fire({
+                                title: 'Неверный код',
+                                confirmButtonText: 'ОК'
+                            });
+                        } else {
+                            location.reload();
                         }
-                    });
+                    }
                 });
             });
 
@@ -368,6 +366,10 @@
                         location.reload();
                     }
                 });
+            });
+
+            $('.add_pay').on('click', function () {
+                $('#addPayModal').modal();
             });
         })
     </script>
@@ -1021,11 +1023,9 @@
                                                 </button>
                                             {/if}
                                             <br>
-                                            <a href="/add_pay?user_id={$order->user_id}&order_id={$order->order_id}">
-                                                <button class="btn btn-info btn-block add_pay">
-                                                    <span>Провести платеж</span>
-                                                </button>
-                                            </a>
+                                            <button class="btn btn-info btn-block add_pay">
+                                                <span>Провести платеж</span>
+                                            </button>
                                         {/if}
                                         {if $order->status == 6}
                                             <div class="card card-danger mb-1">
@@ -2279,6 +2279,7 @@
                                                                         {if $scoring_type->name == 'fssp'}
                                                                             <span>Сумма долга: {$scorings[$scoring_type->name]->body['amount']}</span>
                                                                             <br>
+
 
 
 
@@ -3657,10 +3658,35 @@
                         <input type="text" class="form-control" name="peni" value="{$contract->loan_peni_summ}">
                     </div>
                     <div class="custom-control custom-checkbox mr-sm-2 mb-3">
-                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input" {if $contract->stop_profit == 1}checked{/if}>
+                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input"
+                               {if $contract->stop_profit == 1}checked{/if}>
                         <label class="custom-control-label" for="stopProfit">
                             Остановить начисления
                         </label>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success saveEditLoanProfit" value="Сохранить">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="addPayModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Провести платеж</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="addPayForm">
+                    <input type="hidden" name="action" value="addPay">
+                    <input type="hidden" name="contractId" value="{$contract->id}">
+                    <div class="form-group">
+                        <label class="control-label">Сумма платежа:</label>
+                        <input type="text" class="form-control" name="paySum">
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="button" class="btn btn-success saveEditLoanProfit" value="Сохранить">

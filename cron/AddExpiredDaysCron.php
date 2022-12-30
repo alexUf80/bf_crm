@@ -14,7 +14,7 @@ class AddExpiredDaysCron extends Core
         $expiredContracts = ContractsORM::where('status', 4)->get();
 
         foreach ($expiredContracts as $contract) {
-            $countExpiredDays = $contract->count_expired_days++;
+            $countExpiredDays = $contract->count_expired_days + 1;
 
             ContractsORM::where('id', $contract->id)->update(['count_expired_days' => $countExpiredDays]);
         }
