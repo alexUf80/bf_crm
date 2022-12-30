@@ -367,6 +367,10 @@
                     }
                 });
             });
+
+            $('.add_pay').on('click', function () {
+                $('#addPayModal').modal();
+            });
         })
     </script>
     <script>
@@ -1018,14 +1022,10 @@
                                                     Закрыть договор
                                                 </button>
                                             {/if}
-                                            {*
                                             <br>
-                                            <a href="/add_pay?user_id={$order->user_id}&order_id={$order->order_id}">
-                                                <button class="btn btn-info btn-block add_pay">
-                                                    <span>Провести платеж</span>
-                                                </button>
-                                            </a>
-                                            *}
+                                            <button class="btn btn-info btn-block add_pay">
+                                                <span>Провести платеж</span>
+                                            </button>
                                         {/if}
                                         {if $order->status == 6}
                                             <div class="card card-danger mb-1">
@@ -2279,6 +2279,7 @@
                                                                         {if $scoring_type->name == 'fssp'}
                                                                             <span>Сумма долга: {$scorings[$scoring_type->name]->body['amount']}</span>
                                                                             <br>
+
 
 
 
@@ -3657,10 +3658,35 @@
                         <input type="text" class="form-control" name="peni" value="{$contract->loan_peni_summ}">
                     </div>
                     <div class="custom-control custom-checkbox mr-sm-2 mb-3">
-                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input" {if $contract->stop_profit == 1}checked{/if}>
+                        <input type="checkbox" id="stopProfit" name="stopProfit" class="custom-control-input"
+                               {if $contract->stop_profit == 1}checked{/if}>
                         <label class="custom-control-label" for="stopProfit">
                             Остановить начисления
                         </label>
+                    </div>
+                    <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
+                    <input type="button" class="btn btn-success saveEditLoanProfit" value="Сохранить">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="addPayModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Провести платеж</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert" style="display:none"></div>
+                <form method="POST" id="addPayForm">
+                    <input type="hidden" name="action" value="addPay">
+                    <input type="hidden" name="contractId" value="{$contract->id}">
+                    <div class="form-group">
+                        <label class="control-label">Сумма платежа:</label>
+                        <input type="text" class="form-control" name="paySum">
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
                     <input type="button" class="btn btn-success saveEditLoanProfit" value="Сохранить">
