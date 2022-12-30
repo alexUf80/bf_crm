@@ -89,6 +89,13 @@ class Onec implements ToolsInterface
         $xml['Справочники']['Подразделение'] = ['Наименование' => 'АРХАНГЕЛЬСК 1', 'УИД' => 1];
         $xml['Справочники']['Организация'] = ['Наименование' => 'ООО МКК "БАРЕНЦ ФИНАНС"', 'УИД' => 1];
 
+        $xml['Справочники'][$i]['СервисыОнлайнОплаты'] =
+            [
+                'Наименование' => 'Best2Pay',
+                'УИД' => '1',
+            ];
+        $i++;
+
         $xml['Справочники'][$i]['КредитныеПродукты'] =
             [
                 'Наименование' => 'Стандартный',
@@ -114,6 +121,8 @@ class Onec implements ToolsInterface
 
         foreach ($contracts as $contract) {
 
+            $issuanceOperation = OperationsORM::where('contract_id', $contract->id)->where('type', 'P2P')->first();
+
             $xml['Документы'][$i]['Сделка'] =
                 [
                     'ДатаЗайма' => date('Y-m-d', strtotime($contract->create_date)),
@@ -122,17 +131,16 @@ class Onec implements ToolsInterface
                     'ПСК' => number_format(round($contract->base_percent * 365, 3), 3, '.', ''),
                     'Организация' => 1,
                     'Подразделение' => 1,
-                    'СуммаЗайма' => number_format(round($contract->amount, 2), 2, '.', ''),
+                    'СервисДистанционнойВыдачи' => 1,
+                    'СуммаЗайма' => number_format(round($issuanceOperation->amount, 2), 2, '.', ''),
                     'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
                     'Заемщик' => $contract->user->id,
                     'Процент' => $contract->base_percent,
                     'ПроцентПовышенный' => $contract->base_percent,
-                    'ПроцентПриПросрочке' => $contract->base_percent + 0.005,
-                    'ТипДокументаРасхода' => 0,
+                    'ПроцентПриПросрочке' => $contract->base_percent + 0.05,
+                    'ТипДокументаРасхода' => 2,
                     'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date))
                 ];
-
-            $issuanceOperation = OperationsORM::where('contract_id', $contract->id)->where('type', 'P2P')->first();
 
             $xml['Документы'][$i]['Сделка']['НомерДокументаРасхода'] = $issuanceOperation->id;
             $xml['Документы'][$i]['Сделка']['РасчетВоВнешнейСистеме'] = 'false';
@@ -165,8 +173,9 @@ class Onec implements ToolsInterface
                             'НомерПриходника' => $operation->id,
                             'ДатаОплаты' => date('Y-m-d', strtotime($operation->created)),
                             'СуммаОплаты' => number_format(round($operation->amount, 2), 2, '.', ''),
-                            'ТипДокумента' => 0,
+                            'ТипДокумента' => 2,
                             'Подразделение' => 1,
+                            'СервисОнлайнОплаты' => 1,
                             'СуммаПроцентовОплаченных' => ($transaction->loan_percents_summ != null) ? $transaction->loan_percents_summ : 0,
                             'СуммаШтрафовОплаченных' => ($transaction->loan_peni_summ != null) ? $transaction->loan_peni_summ : 0,
                             'СуммаОсновногоДолга' => ($transaction->loan_body_summ != null) ? $transaction->loan_body_summ : 0
