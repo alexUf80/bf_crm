@@ -3685,6 +3685,10 @@
                     <input type="hidden" name="action" value="addPay">
                     <input type="hidden" name="contractId" value="{$contract->id}">
                     <div class="form-group">
+                        <label class="control-label">Дата платежа:</label>
+                        <input type="text" class="form-control daterange" name="payDate">
+                    </div>
+                    <div class="form-group">
                         <label class="control-label">Сумма платежа:</label>
                         <input type="text" class="form-control" name="paySum">
                     </div>

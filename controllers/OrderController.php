@@ -3069,6 +3069,7 @@ class OrderController extends Controller
     private function actionAddPay()
     {
         $paySum = $this->request->post('paySum');
+        $payDate = $this->request->post('payDate');
         $amountPay = $paySum;
         $contractId = $this->request->post('contractId');
 
@@ -3127,7 +3128,7 @@ class OrderController extends Controller
                 'order_id' => $contract->order_id,
                 'type' => 'PAY',
                 'amount' => $amountPay,
-                'created' => date('Y-m-d H:i:s'),
+                'created' => date('Y-m-d H:i:s', strtotime($payDate)),
                 'transaction_id' => 0,
                 'loan_body_summ' => 0,
                 'loan_percents_summ' => 0,
