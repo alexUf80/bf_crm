@@ -126,6 +126,7 @@
                                 <th>Email</th>
                                 <th>Менеджер</th>
                                 <th>Причина</th>
+                                <th>Номер операции</th>
                                 <th>Скориста</th>
                                 <th>Источник</th>
                             </tr>
@@ -154,6 +155,7 @@
                                         {$order->reject_reason|escape}
                                     {/if}
                                 </td>
+                                <td>{$order->operation} {if $order->checked == 1}(успех){else}(провал){/if}</td>
                                 <td>{$order->scoring->scorista_ball}</td>
                                 <td>{$order->utm_source}</td>
                             </tr>
