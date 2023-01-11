@@ -2969,7 +2969,7 @@
                                                     {if in_array($operation->type, ['PAY'])}table-success{/if} 
                                                     {if in_array($operation->type, ['PERCENTS', 'CHARGE', 'PENI'])}table-danger{/if} 
                                                     {if in_array($operation->type, ['P2P', 'IMPORT'])}table-info{/if} 
-                                                    {if in_array($operation->type, ['INSURANCE', 'BUD_V_KURSE', 'REJECT_REASON', 'RETURN_INSURANCE'])}table-warning{/if}
+                                                    {if in_array($operation->type, ['INSURANCE', 'BUD_V_KURSE', 'REJECT_REASON', 'RETURN_INSURANCE', 'INSURANCE_BC'])}table-warning{/if}
                                                 ">
                                                 <td>
                                                     {*}
@@ -2999,6 +2999,7 @@
                                                     {if $operation->type == 'CHARGE'}Ответственность{/if}
                                                     {if $operation->type == 'PENI'}Пени{/if}
                                                     {if $operation->type == 'IMPORT'}Импорт{/if}
+                                                    {if $operation->type == 'INSURANCE_BC'}Страховка БК{/if}
                                                 </td>
                                                 <td>
                                                     {$operation->amount} руб
