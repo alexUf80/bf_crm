@@ -655,6 +655,7 @@ class StatisticsController extends Controller
                     o.date AS order_date,
                     o.manager_id,
                     o.period,
+                    o.utm_source,
                     u.lastname,
                     u.firstname,
                     u.patronymic,
@@ -748,6 +749,7 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('L')->setWidth(10);
                 $active_sheet->getColumnDimension('M')->setWidth(10);
                 $active_sheet->getColumnDimension('N')->setWidth(10);
+                $active_sheet->getColumnDimension('O')->setWidth(10);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
@@ -763,6 +765,7 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('L1', 'Дней займа');
                 $active_sheet->setCellValue('M1', 'Дата факт возврата');
                 $active_sheet->setCellValue('N1', 'Сумма выплачено');
+                $active_sheet->setCellValue('O1', 'Источник');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -801,6 +804,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('L' . $i, $contract->period);
                     $active_sheet->setCellValue('M' . $i, date('d.m.Y', strtotime($contract->close_date)));
                     $active_sheet->setCellValue('N' . $i, $contract->sumPayed);
+                    $active_sheet->setCellValue('O' . $i, $contract->utm_source);
 
                     $i++;
                 }
