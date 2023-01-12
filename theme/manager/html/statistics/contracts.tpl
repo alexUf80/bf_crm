@@ -105,6 +105,7 @@
                                 <th>Телефон</th>
                                 <th>Email</th>
                                 <th>Сумма</th>
+                                <th>Сумма оплачено</th>
                                 <th>ПК/НК</th>
                                 <th>Менеджер</th>
                                 <th>Статус</th>
@@ -133,6 +134,7 @@
                                 <td>{$contract->phone_mobile}</td>
                                 <td><small>{$contract->email}</small></td>
                                 <td>{$contract->amount*1}</td>
+                                <td>{$contract->sumPayed|number_format:2:',':''}</td>
                                 <td>
                                     {if $contract->client_status == 'pk'}ПК{/if}
                                     {if $contract->client_status == 'nk'}НК{/if}
