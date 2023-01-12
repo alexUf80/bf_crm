@@ -498,14 +498,18 @@ class StatisticsController extends Controller
                     u.firstname,
                     u.patronymic,
                     u.phone_mobile,
-                    u.email
+                    u.email,
+                    ts.operation, 
+                    ts.checked
                 FROM __orders AS o
-                LEFT JOIN __users AS u
-                ON u.id = o.user_id
+                LEFT JOIN __users AS u ON u.id = o.user_id
+                LEFT JOIN s_transactions AS ts ON u.id = ts.user_id
                 WHERE o.status IN (3, 8)
                 $query_reason
                 AND DATE(o.date) >= ?
                 AND DATE(o.date) <= ?
+                AND `description` = 'Привязка карты'
+                AND reason_code = 1
                 GROUP BY order_id
             ", $date_from, $date_to);
             $this->db->query($query);
@@ -571,6 +575,7 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('G')->setWidth(10);
                 $active_sheet->getColumnDimension('H')->setWidth(30);
                 $active_sheet->getColumnDimension('I')->setWidth(15);
+                $active_sheet->getColumnDimension('J')->setWidth(15);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Заявка');
@@ -580,10 +585,14 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('F1', 'Менеджер');//---
                 $active_sheet->setCellValue('G1', 'Причина');
                 $active_sheet->setCellValue('H1', 'Скориста');//---
-                $active_sheet->setCellValue('H1', 'Источник');//---
+                $active_sheet->setCellValue('I1', 'Источник');//---
+                $active_sheet->setCellValue('J1', 'Операция');//---
 
                 $i = 2;
                 foreach ($orders as $contract) {
+
+                    $successTransaction = empty($contract->checked) ? ' (провал)' : ' успех';
+
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
                     $active_sheet->setCellValue('B' . $i, $contract->order_id);
                     $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
@@ -593,6 +602,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('G' . $i, ($contract->reason_id ? $reasons[$contract->reason_id]->admin_name : $contract->reject_reason));
                     $active_sheet->setCellValue('H' . $i, empty($contract->scoring) ? '' : $contract->scoring->scorista_ball);
                     $active_sheet->setCellValue('I' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('J' . $i, $contract->operation . $successTransaction);
 
 
                     $i++;
@@ -1726,7 +1736,7 @@ class StatisticsController extends Controller
                 $service->regAddr = $service->regAddr->adressfull;
             }
 
-            $op_type = ['INSURANCE' => 'Страхование от НС', 'BUD_V_KURSE' => 'Будь в курсе', 'REJECT_REASON' => 'Узнай причину отказа', 'INSURANCE_CLOSED' => 'Страхование БК'];
+            $op_type = ['INSURANCE' => 'Страхование от НС', 'BUD_V_KURSE' => 'Будь в курсе', 'REJECT_REASON' => 'Узнай причину отказа', 'INSURANCE_BC' => 'Страхование БК'];
             $gender = ['male' => 'Мужской', 'female' => 'Женский'];
 
             $this->design->assign('ad_services', $ad_services);
@@ -1805,7 +1815,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('H' . $i, $fio_birth);
                     $active_sheet->setCellValue('I' . $i, $ad_service->phone_mobile);
                     $active_sheet->setCellValue('J' . $i, $gender[$ad_service->gender]);
-                    $active_sheet->setCellValue('K' . $i, $ad_service->passport_serial.' выдан '.$ad_service->passport_issued.' '.date('Y-m-d', strtotime($ad_service->passport_date)).' г '.'код подразделения '.$ad_service->subdivision_code);
+                    $active_sheet->setCellValue('K' . $i, $ad_service->passport_serial . ' выдан ' . $ad_service->passport_issued . ' ' . date('Y-m-d', strtotime($ad_service->passport_date)) . ' г ' . 'код подразделения ' . $ad_service->subdivision_code);
                     $active_sheet->setCellValue('L' . $i, $ad_service->regAddr);
 
                     if ($ad_service->start_date) {

@@ -125,7 +125,7 @@
                                         {if $ad_service->type == 'INSURANCE'}
                                             <td>Страхование от НС</td>
                                         {else}
-                                            <td>Страхование от БК</td>
+                                            <td>Страхование БК</td>
                                         {/if}
                                         <td>{$ad_service->id}</td>
                                         <td>{$ad_service->uid}</td>
