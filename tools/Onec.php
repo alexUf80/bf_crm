@@ -125,7 +125,7 @@ class Onec implements ToolsInterface
 
             $xml['Документы'][$i]['Сделка'] =
                 [
-                    'ДатаЗайма' => date('Y-m-d', strtotime($contract->create_date)),
+                    'ДатаЗайма' => date('Y-m-d', strtotime($contract->inssuance_date)),
                     'НомерЗайма' => $contract->number,
                     'УИД' => $contract->id,
                     'ПСК' => number_format(round($contract->base_percent * 365, 3), 3, '.', ''),
