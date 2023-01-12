@@ -37,7 +37,8 @@ class Idx_scoring extends Core
                 [
                     'personLastName' => $order->lastname,
                     'personFirstName' => $order->firstname,
-                    'phone' => $order->phone_mobile
+                    'phone' => $order->phone_mobile,
+                    'personBirthDate' => date('d.m.Y', strtotime($order->birth))
                 ];
 
             if (!empty($order->birth))
