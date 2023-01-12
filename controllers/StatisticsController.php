@@ -640,6 +640,7 @@ class StatisticsController extends Controller
                     c.collection_status,
                     c.sold,
                     c.return_date,
+                    c.close_date,
                     o.client_status,
                     o.date AS order_date,
                     o.manager_id,
@@ -754,6 +755,7 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('I')->setWidth(10);
                 $active_sheet->getColumnDimension('K')->setWidth(10);
                 $active_sheet->getColumnDimension('L')->setWidth(10);
+                $active_sheet->getColumnDimension('M')->setWidth(10);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
@@ -767,6 +769,7 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('J1', 'Дата возврата');
                 $active_sheet->setCellValue('K1', 'ПДН');
                 $active_sheet->setCellValue('L1', 'Дней займа');
+                $active_sheet->setCellValue('M1', 'Дата факт возврата');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -803,6 +806,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('J' . $i, date('d.m.Y', strtotime($contract->return_date)));
                     $active_sheet->setCellValue('K' . $i, $contract->pdn);
                     $active_sheet->setCellValue('L' . $i, $contract->period);
+                    $active_sheet->setCellValue('M' . $i, date('d.m.Y', strtotime($contract->close_date)));
 
                     $i++;
                 }

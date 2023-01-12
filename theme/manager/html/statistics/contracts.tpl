@@ -108,7 +108,7 @@
                                 <th>ПК/НК</th>
                                 <th>Менеджер</th>
                                 <th>Статус</th>
-                                <th>Дата возврата</th>
+                                <th>Дата факт возврата</th>
                                 <th>ПДН</th>
                                 <th>Дней займа</th>
                             </tr>
@@ -156,7 +156,7 @@
                                     {/if}
                                 </td>
                                 <td>
-                                    {$contract->return_date}
+                                    {if !empty($contract->close_date)}{$contract->close_date|date}{else}-{/if}
                                 </td>
                                 <td>
                                     {$contract->pdn}
