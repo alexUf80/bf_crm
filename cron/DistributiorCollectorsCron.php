@@ -26,37 +26,6 @@ class DistributiorCollectorsCron extends Core
             ->orderByRaw('SUM(loan_body_summ + loan_percents_summ + loan_charge_summ + loan_peni_summ) DESC')
             ->get();
 
-        $periods = CollectorPeriodsORM::get()->toArray();
-
-        foreach ($periods as $period) {
-
-            if($period['id'] != 1)
-                continue;
-
-            $collectorsMove = CollectorsMoveGroupORM::where('period_id', $period['id'])->first();
-
-            $collectorsMoveId = json_decode($collectorsMove->collectors_id, true);
-
-            $collectors = ManagerORM::select('id')
-                ->where('role', 'collector')
-                ->where('collection_status_id', $period['id'])
-                ->get()
-                ->toArray();
-
-            if (count($collectorsMoveId) < count($collectors)) {
-                $collectorsId = [];
-
-                foreach ($collectors as $collector) {
-                    $collectorsId[] = $collector['id'];
-                }
-
-                $diff = array_diff($collectorsId, $collectorsMoveId);
-                $collectorsMoveId = array_merge($collectorsMoveId, $diff);
-            }
-
-            CollectorsMoveGroupORM::where('id', $collectorsMove->id)->update([json_encode($collectorsMoveId)]);
-        }
-
         foreach ($expiredContracts as $contract) {
 
             $returnDate = new DateTime(date('Y-m-d', strtotime($contract->return_date)));
