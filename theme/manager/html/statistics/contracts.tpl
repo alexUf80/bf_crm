@@ -105,10 +105,12 @@
                                 <th>Телефон</th>
                                 <th>Email</th>
                                 <th>Сумма</th>
+                                <th>Источник</th>
+                                <th>Сумма оплачено</th>
                                 <th>ПК/НК</th>
                                 <th>Менеджер</th>
                                 <th>Статус</th>
-                                <th>Дата возврата</th>
+                                <th>Дата факт возврата</th>
                                 <th>ПДН</th>
                                 <th>Дней займа</th>
                             </tr>
@@ -133,6 +135,8 @@
                                 <td>{$contract->phone_mobile}</td>
                                 <td><small>{$contract->email}</small></td>
                                 <td>{$contract->amount*1}</td>
+                                <td>{$contract->utm_source}</td>
+                                <td>{$contract->sumPayed|number_format:2:',':''}</td>
                                 <td>
                                     {if $contract->client_status == 'pk'}ПК{/if}
                                     {if $contract->client_status == 'nk'}НК{/if}
@@ -156,7 +160,7 @@
                                     {/if}
                                 </td>
                                 <td>
-                                    {$contract->return_date}
+                                    {if !empty($contract->close_date)}{$contract->close_date|date}{else}-{/if}
                                 </td>
                                 <td>
                                     {$contract->pdn}

@@ -650,10 +650,12 @@ class StatisticsController extends Controller
                     c.collection_status,
                     c.sold,
                     c.return_date,
+                    c.close_date,
                     o.client_status,
                     o.date AS order_date,
                     o.manager_id,
                     o.period,
+                    o.utm_source,
                     u.lastname,
                     u.firstname,
                     u.patronymic,
@@ -689,31 +691,12 @@ class StatisticsController extends Controller
                     if (!empty($client_contracts)) {
                         $this->orders->update_order($c->order_id, array('client_status' => 'crm'));
                     } else {
-                        /*
-                        $loan_history = $this->soap1c->get_client_credits($c->uid);
-                        if (!empty($loan_history))
-                        {
-                            $have_close_loans = 0;
-                            foreach ($loan_history as $lh)
-                            {
-                                if (!empty($lh->ДатаЗакрытия))
-                                {
-                                    if (strtotime($lh->ДатаЗакрытия) < strtotime($c->date))
-                                    {
-                                        $have_close_loans = 1;
-                                        $this->orders->update_order($c->order_id, array('client_status' => 'pk'));
-                                    }
-                                }
-                            }
-                        }
-                        */
                         if (empty($have_close_loans)) {
                             $have_old_orders = 0;
                             $orders = $this->orders->get_orders(array('user_id' => $c->user_id, 'date_to' => $c->date));
                             foreach ($orders as $order) {
                                 if ($order->order_id != $c->order_id) {
                                     $have_old_orders = 1;
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump('$order', $order);echo '</pre><hr />';
                                 }
                             }
 
@@ -724,8 +707,8 @@ class StatisticsController extends Controller
                             }
                         }
                     }
-
                 }
+                $c->sumPayed = OperationsORM::where('order_id', $c->order_id)->where('type', 'PAY')->sum('amount');
             }
 
             $statuses = $this->contracts->get_statuses();
@@ -764,6 +747,9 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('I')->setWidth(10);
                 $active_sheet->getColumnDimension('K')->setWidth(10);
                 $active_sheet->getColumnDimension('L')->setWidth(10);
+                $active_sheet->getColumnDimension('M')->setWidth(10);
+                $active_sheet->getColumnDimension('N')->setWidth(10);
+                $active_sheet->getColumnDimension('O')->setWidth(10);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
@@ -777,6 +763,9 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('J1', 'Дата возврата');
                 $active_sheet->setCellValue('K1', 'ПДН');
                 $active_sheet->setCellValue('L1', 'Дней займа');
+                $active_sheet->setCellValue('M1', 'Дата факт возврата');
+                $active_sheet->setCellValue('N1', 'Сумма выплачено');
+                $active_sheet->setCellValue('O1', 'Источник');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -813,6 +802,9 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('J' . $i, date('d.m.Y', strtotime($contract->return_date)));
                     $active_sheet->setCellValue('K' . $i, $contract->pdn);
                     $active_sheet->setCellValue('L' . $i, $contract->period);
+                    $active_sheet->setCellValue('M' . $i, date('d.m.Y', strtotime($contract->close_date)));
+                    $active_sheet->setCellValue('N' . $i, $contract->sumPayed);
+                    $active_sheet->setCellValue('O' . $i, $contract->utm_source);
 
                     $i++;
                 }
