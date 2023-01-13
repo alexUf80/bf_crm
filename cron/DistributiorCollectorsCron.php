@@ -18,7 +18,7 @@ class DistributiorCollectorsCron extends Core
     {
         $expiredContracts = ContractsORM::where('status', 4)
             ->where('return_date', '<', date('Y-m-d'))
-            ->orderByRaw('SUM(loan_body_summ, loan_percents_summ, loan_charge_summ, loan_peni_summ) DESC')
+            ->orderByRaw('SUM(loan_body_summ + loan_percents_summ + loan_charge_summ + loan_peni_summ) DESC')
             ->get();
 
         $periods = CollectorPeriodsORM::get()->toArray();
