@@ -16,14 +16,14 @@ class DistributiorCollectorsCron extends Core
 
     private function run()
     {
-        $expiredContracts = ContractsORM::select('id',
-            'SUM(loan_body_summ + loan_percents_summ + loan_charge_summ + loan_peni_summ) as debt',
-            'collection_status',
-            'collection_manager_id',
-            'return_date')
+        $expiredContracts = ContractsORM::selectRaw('id, 
+        return_date, 
+        collection_status, 
+        collection_manager_id, 
+        (loan_body_summ + loan_percents_summ + loan_charge_summ + loan_peni_summ) as debt')
             ->where('status', 4)
             ->where('return_date', '<', date('Y-m-d'))
-            ->orderByRaw('SUM(loan_body_summ + loan_percents_summ + loan_charge_summ + loan_peni_summ) DESC')
+            ->orderBy('debt', 'desc')
             ->get();
 
         $periods = CollectorPeriodsORM::get()->toArray();
@@ -54,7 +54,7 @@ class DistributiorCollectorsCron extends Core
                 $collectorsMoveId = array_merge($collectorsMoveId, $diff);
             }
 
-            CollectorsMoveGroupORM::where('id', $collectorsMove->id)->update([json_encode($collectorsMoveId)]);
+            CollectorsMoveGroupORM::where('id', $collectorsMove->id)->update(['collectors_id' => json_encode((object)$collectorsMoveId)]);
         }
 
         foreach ($expiredContracts as $contract) {
@@ -64,22 +64,25 @@ class DistributiorCollectorsCron extends Core
 
             $dateDiff = date_diff($returnDate, $now)->days;
 
-            $thisPeriod = CollectorPeriodsORM::where('period_from', '>=', $dateDiff)
-                ->where('period_from', '<=', $dateDiff)
+            $thisPeriod = CollectorPeriodsORM::where('period_from', '<=', $dateDiff)
+                ->where('period_to', '>=', $dateDiff)
                 ->first();
 
             if ($contract->collection_status == $thisPeriod->id && !empty($contract->collection_manager_id))
                 continue;
 
             $collectorsMove = CollectorsMoveGroupORM::where('period_id', $thisPeriod->id)->first();
+
             $collectorsMoveId = json_decode($collectorsMove->collectors_id, true);
 
             $lastCollectorId = array_shift($collectorsMoveId);
             array_push($collectorsMoveId, $lastCollectorId);
 
             ContractsORM::where('id', $contract->id)->update(['collection_status' => $thisPeriod->id, 'collection_manager_id' => $lastCollectorId]);
-            CollectorsMoveGroupORM::where('id', $collectorsMove->id)->update([json_encode($collectorsMoveId)]);
+            CollectorsMoveGroupORM::where('id', $collectorsMove->id)->update(['collectors_id' => json_encode((object)$collectorsMoveId)]);
         }
+
+        exit;
     }
 }
 
