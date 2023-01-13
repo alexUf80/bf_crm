@@ -16,7 +16,12 @@ class DistributiorCollectorsCron extends Core
 
     private function run()
     {
-        $expiredContracts = ContractsORM::where('status', 4)
+        $expiredContracts = ContractsORM::select('id',
+            'SUM(loan_body_summ + loan_percents_summ + loan_charge_summ + loan_peni_summ) as debt',
+            'collection_status',
+            'collection_manager_id',
+            'return_date')
+            ->where('status', 4)
             ->where('return_date', '<', date('Y-m-d'))
             ->orderByRaw('SUM(loan_body_summ + loan_percents_summ + loan_charge_summ + loan_peni_summ) DESC')
             ->get();
