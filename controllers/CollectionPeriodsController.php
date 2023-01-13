@@ -45,13 +45,15 @@ class CollectionPeriodsController extends Controller
     private function editPeriod()
     {
         $name = $this->request->post('name');
-        $period = $this->request->post('period');
+        $periodFrom = $this->request->post('period_from');
+        $periodTo = $this->request->post('period_to');
         $id = $this->request->post('id');
 
         $insert =
             [
                 'name' => $name,
-                'period' => $period,
+                'period_from' => $periodFrom,
+                'period_to' => $periodTo,
             ];
 
         CollectorPeriodsORM::where('id', $id)->update($insert);
@@ -61,12 +63,14 @@ class CollectionPeriodsController extends Controller
     private function addPeriod()
     {
         $name = $this->request->post('name');
-        $period = $this->request->post('period');
+        $periodFrom = $this->request->post('period_from');
+        $periodTo = $this->request->post('period_to');
 
         $insert =
             [
                 'name' => $name,
-                'period' => $period,
+                'period_from' => $periodFrom,
+                'period_to' => $periodTo,
             ];
 
         CollectorPeriodsORM::insert($insert);

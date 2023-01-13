@@ -24,7 +24,8 @@
                         },
                         success: function (period) {
                             $('#periodForm').find('input[name="name"]').val(period['name']);
-                            $('#periodForm').find('input[name="period"]').val(period['period']);
+                            $('#periodForm').find('input[name="period_from"]').val(period['period_from']);
+                            $('#periodForm').find('input[name="period_to"]').val(period['period_to']);
                         }
                     });
 
@@ -110,7 +111,11 @@
                                 </th>
                                 <th style="width: 30%"
                                     class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'index_number_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'index_number_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
-                                    Период
+                                    Период c
+                                </th>
+                                <th style="width: 30%"
+                                    class="jsgrid-header-cell jsgrid-align-right jsgrid-header-sortable {if $sort == 'index_number_desc'}jsgrid-header-sort jsgrid-header-sort-desc{elseif $sort == 'index_number_asc'}jsgrid-header-sort jsgrid-header-sort-asc{/if}">
+                                    Период по
                                 </th>
                                 <th style="width: 1%"></th>
                                 <th style="width: 30%"></th>
@@ -120,7 +125,8 @@
                             {foreach $periods as $period}
                                 <tr>
                                     <td>{$period->name}</td>
-                                    <td>{$period->period}</td>
+                                    <td>{$period->period_from}</td>
+                                    <td>{$period->period_to}</td>
                                     <td>
                                         <div class="btn btn-outline-warning editModal" data-id="{$period->id}"><i
                                                     class=" fas fa-edit"></i></div>
@@ -174,8 +180,13 @@
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
-                            <label>Период</label>
-                            <input type="text" name="period"
+                            <label>Период c</label>
+                            <input type="text" name="period_from"
+                                   class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label>Период по</label>
+                            <input type="text" name="period_to"
                                    class="form-control"/>
                         </div>
                         <div>
