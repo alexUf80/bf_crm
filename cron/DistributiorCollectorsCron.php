@@ -21,24 +21,32 @@ class DistributiorCollectorsCron extends Core
             ->orderByRaw('SUM(loan_body_summ, loan_percents_summ, loan_charge_summ, loan_peni_summ) DESC')
             ->get();
 
-        $periodsId = CollectorPeriodsORM::select('id')
-            ->get()
-            ->toArray();
+        $periods = CollectorPeriodsORM::get()->toArray();
 
-        foreach ($periodsId as $id) {
-            $collectorsMove = CollectorsMoveGroupORM::where('period_id', $id)->first();
+        foreach ($periods as $period) {
+
+            if($period['id'] != 1)
+                continue;
+
+            $collectorsMove = CollectorsMoveGroupORM::where('period_id', $period['id'])->first();
 
             $collectorsMoveId = json_decode($collectorsMove->collectors_id, true);
 
-            $collectorsId = ManagerORM::select('id')
+            $collectors = ManagerORM::select('id')
                 ->where('role', 'collector')
-                ->where('collection_status_id', $id)
+                ->where('collection_status_id', $period['id'])
                 ->get()
                 ->toArray();
 
-            if (count($collectorsMoveId) < count($collectorsId)) {
-                $diff = array_diff($collectorsMoveId, $collectorsId);
-                array_push($collectorsMoveId, $diff);
+            if (count($collectorsMoveId) < count($collectors)) {
+                $collectorsId = [];
+
+                foreach ($collectors as $collector) {
+                    $collectorsId[] = $collector['id'];
+                }
+
+                $diff = array_diff($collectorsId, $collectorsMoveId);
+                $collectorsMoveId = array_merge($collectorsMoveId, $diff);
             }
 
             CollectorsMoveGroupORM::where('id', $collectorsMove->id)->update([json_encode($collectorsMoveId)]);
