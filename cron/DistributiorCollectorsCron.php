@@ -41,6 +41,13 @@ class DistributiorCollectorsCron extends Core
                 continue;
 
             $collectorsMove = CollectorsMoveGroupORM::where('period_id', $thisPeriod->id)->first();
+
+            if (empty($collectorsMove->collectors_id)) {
+                ContractsORM::where('id', $contract->id)->update(['collection_status' => $thisPeriod->id]);
+                continue;
+            }
+
+
             $collectorsMoveId = json_decode($collectorsMove->collectors_id, true);
 
             $lastCollectorId = array_shift($collectorsMoveId);
