@@ -39,12 +39,19 @@ class ManagerController extends Controller
 
                     $period = CollectorsMoveGroupORM::where('period_id', $user->collection_status_id)->first();
 
-                    if (empty($period))
-                        CollectorsMoveGroupORM::insert(['period_id', $user->collection_status_id, 'collectors_id' => json_encode((object)[$user_id])]);
-                    else {
-                        $collectorsMoveId = json_decode($period->collectors_id, true);
-                        array_push($collectorsMoveId, $user_id);
-                        CollectorsMoveGroupORM::where(['id', $period->id, 'collectors_id' => json_encode((object)$collectorsMoveId)]);
+                    if (empty($period)) {
+                        $collectorsMoveId = [0 => $user_id];
+                        CollectorsMoveGroupORM::insert(['period_id' => $user->collection_status_id, 'collectors_id' => json_encode((object)$collectorsMoveId)]);
+                    } else {
+
+                        if (empty($period->collectors_id))
+                            $collectorsMoveId = [0 => $user_id];
+                        else {
+                            $collectorsMoveId = json_decode($period->collectors_id, true);
+                            array_push($collectorsMoveId, $user_id);
+                        }
+
+                        CollectorsMoveGroupORM::where('id', $period->id)->update(['collectors_id' => json_encode((object)$collectorsMoveId)]);
                     }
                 }
             } catch (Exception $e) {
