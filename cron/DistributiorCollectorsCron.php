@@ -36,6 +36,8 @@ class DistributiorCollectorsCron extends Core
                 ->where('period_to', '>=', $dateDiff)
                 ->first();
 
+            
+
             if ($contract->collection_status == $thisPeriod->id && !empty($contract->collection_manager_id))
                 continue;
 
