@@ -471,7 +471,7 @@ class Nbkiscore_scoring extends Core
             $pdl_npl_90_limit_share = $sumAllPdl / $sumPdl90;
 
         if($sumAccountRate != 0)
-            $closed_to_total_credits_count_share = $sumAccountRate / $sumAccountRate13;
+            $closed_to_total_credits_count_share =  $sumAccountRate13 / $sumAccountRate;
 
 
         if ($days_from_last_closed < 1)
