@@ -47,6 +47,11 @@ class CollectorContractController extends Controller
                     $this->design->assign('blacklisted', $blacklisted);
                 }
 
+                $regaddress = $this->Addresses->get_address($user->regaddress_id);
+                $faktaddress = $this->Addresses->get_address($user->faktaddress_id);
+                $this->design->assign('regaddress', $regaddress->adressfull);
+                $this->design->assign('faktaddress', $faktaddress->adressfull);
+
 
                 $fetch_api = $this->dadata->fetch_clean_api('address', [$user->Regregion]);
 

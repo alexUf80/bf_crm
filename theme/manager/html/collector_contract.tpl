@@ -1299,7 +1299,8 @@
                                                 </div>
                                             </form>
 
-                                            <form action="{url}" class="js-order-item-form mb-3 border"
+                                            <form action="{url}"
+                                                  class="js-order-item-form mb-3 border {if $penalties['addresses'] && $penalties['addresses']->status!=3}card-outline-danger{/if}"
                                                   id="address_form">
 
                                                 <input type="hidden" name="action" value="addresses"/>
@@ -1308,12 +1309,15 @@
 
                                                 <h5 class="card-header">
                                                     <span class="text-white">Адрес</span>
-                                                    {if $order->status == 1 && ($manager->id == $order->manager_id)}
+                                                    <span class="float-right">
+                                                            {penalty_button penalty_block='addresses'}
                                                         <a href="javascript:void(0);"
-                                                           class="text-white float-right js-edit-form"><i
+                                                           class="text-white js-edit-form js-event-add-click"
+                                                           data-event="34" data-manager="{$manager->id}"
+                                                           data-order="{$order->order_id}"
+                                                           data-user="{$order->user_id}"><i
                                                                     class=" fas fa-edit"></i></a>
-                                                        </h3>
-                                                    {/if}
+                                                        </span>
                                                 </h5>
 
                                                 <div class="row view-block {if $addresses_error}hide{/if}">
@@ -1321,31 +1325,11 @@
                                                         <table class="table table-hover mb-0">
                                                             <tr>
                                                                 <td>Адрес прописки</td>
-                                                                <td>
-                                                                    {$order->Regindex}
-                                                                    {$order->Regregion} {$order->Regregion_shorttype},
-                                                                    {if $order->Regcity}{$order->Regcity} {$order->Regcity_sorttype},{/if}
-                                                                    {if $order->Regdistrict}{$order->Regdistrict} {$order->Regdistrict_sorttype},{/if}
-                                                                    {$order->Regstreet} {$order->Regstreet_shorttype},
-                                                                    {if $order->Reglocality}{$order->Reglocality} {$order->Reglocality_sorttype},{/if}
-                                                                    д.{$order->Reghousing},
-                                                                    {if $order->Regbuilding}стр. {$order->Regbuilding},{/if}
-                                                                    {if $order->Regroom}кв.{$order->Regroom}{/if}
-                                                                </td>
+                                                                <td>{$faktaddress}</td>
                                                             </tr>
                                                             <tr>
                                                                 <td>Адрес проживания</td>
-                                                                <td>
-                                                                    {$order->Faktindex}
-                                                                    {$order->Faktregion} {$order->Faktregion_shorttype},
-                                                                    {if $order->Faktcity}{$order->Faktcity} {$order->Faktcity_shorttype},{/if}
-                                                                    {if $order->Faktdistrict}{$order->Faktdistrict} {$order->Faktdistrict_sorttype},{/if}
-                                                                    {if $order->Faktstreet}{$order->Faktstreet} {$order->Faktstreet_shorttype},{/if}
-                                                                    {if $order->Faktlocality}{$order->Faktlocality} {$order->Faktlocality_sorttype},{/if}
-                                                                    д.{$order->Fakthousing},
-                                                                    {if $order->Faktbuilding}стр. {$order->Faktbuilding},{/if}
-                                                                    {if $order->Faktroom}кв.{$order->Faktroom}{/if}
-                                                                </td>
+                                                                <td>{$regaddress}</td>
                                                             </tr>
                                                         </table>
                                                     </div>
@@ -1354,7 +1338,7 @@
                                                 <div class="edit-block m-0 {if !$addresses_error}hide{/if}">
 
                                                     <div class="row m-0 mb-2 mt-2 js-dadata-address">
-                                                        <h6 class="col-12 nav-small-cap">Фактический адрес</h6>
+                                                        <h6 class="col-12 nav-small-cap">Адрес прописки</h6>
                                                         {if $addresses_error}
                                                             <div class="col-md-12">
                                                                 <ul class="alert alert-danger">
@@ -1388,9 +1372,22 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-1 {if in_array('empty_regregion', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Область</label>
-                                                                <input type="text" class="form-control js-dadata-region"
-                                                                       name="Regregion" value="{$order->Regregion}"
-                                                                       placeholder="" required="true"/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-region"
+                                                                               name="Regregion"
+                                                                               value="{$order->Regregion}"
+                                                                               placeholder="" required="true"/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-region-type"
+                                                                               name="Regregion_shorttype"
+                                                                               value="{$order->Regregion_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                                 {if in_array('empty_regregion', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         область!
@@ -1401,9 +1398,21 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-1 {if in_array('empty_regcity', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Город</label>
-                                                                <input type="text" class="form-control js-dadata-city"
-                                                                       name="Regcity" value="{$order->Regcity}"
-                                                                       placeholder=""/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-city"
+                                                                               name="Regcity" value="{$order->Regcity}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-city-type"
+                                                                               name="Regcity_shorttype"
+                                                                               value="{$order->Regcity_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                                 {if in_array('empty_regcity', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         город!
@@ -1411,30 +1420,67 @@
                                                                 {/if}
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <div class="form-group mb-1 ">
                                                                 <label class="control-label">Район</label>
-                                                                <input type="text"
-                                                                       class="form-control js-dadata-district"
-                                                                       name="Regdistrict" value="{$order->Regdistrict}"
-                                                                       placeholder=""/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-district"
+                                                                               name="Regdistrict"
+                                                                               value="{$order->Regdistrict}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-district-type"
+                                                                               name="Regdistrict_shorttype"
+                                                                               value="{$order->Regdistrict_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <div class="form-group mb-1 ">
                                                                 <label class="control-label">Нас. пункт</label>
-                                                                <input type="text"
-                                                                       class="form-control js-dadata-locality"
-                                                                       name="Reglocality" value="{$order->Reglocality}"
-                                                                       placeholder=""/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-locality"
+                                                                               name="Reglocality"
+                                                                               value="{$order->Reglocality}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-locality-type"
+                                                                               name="Reglocality_shorttype"
+                                                                               value="{$order->Reglocality_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <div class="form-group mb-1 {if in_array('empty_regstreet', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Улица</label>
-                                                                <input type="text" class="form-control js-dadata-street"
-                                                                       name="Regstreet" value="{$order->Regstreet}"
-                                                                       placeholder=""/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-street"
+                                                                               name="Regstreet"
+                                                                               value="{$order->Regstreet}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-street-type"
+                                                                               name="Regstreet_shorttype"
+                                                                               value="{$order->Regstreet_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                                 {if in_array('empty_regstreet', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         улицу!
@@ -1443,6 +1489,16 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label class="control-label">Индекс</label>
+                                                                <input type="text" class="form-control js-dadata-index"
+                                                                       name="Regindex" value="{$order->Regindex}"
+                                                                       placeholder=""/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                        </div>
+                                                        <div class="col-md-4">
                                                             <div class="form-group {if in_array('empty_reghousing', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Дом</label>
                                                                 <input type="text" class="form-control js-dadata-house"
@@ -1454,7 +1510,7 @@
                                                                 {/if}
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label class="control-label">Строение</label>
                                                                 <input type="text"
@@ -1463,7 +1519,7 @@
                                                                        placeholder=""/>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label class="control-label">Квартира</label>
                                                                 <input type="text" class="form-control js-dadata-room"
@@ -1471,24 +1527,30 @@
                                                                        placeholder=""/>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label class="control-label">Индекс</label>
-                                                                <input type="text" class="form-control js-dadata-index"
-                                                                       name="Regindex" value="{$order->Regindex}"
-                                                                       placeholder=""/>
-                                                            </div>
-                                                        </div>
+
                                                     </div>
 
                                                     <div class="row m-0 js-dadata-address">
-                                                        <h6 class="col-12 nav-small-cap">Адрес регистрации</h6>
+                                                        <h6 class="col-12 nav-small-cap">Адрес проживания</h6>
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-1 {if in_array('empty_faktregion', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Область</label>
-                                                                <input type="text" class="form-control js-dadata-region"
-                                                                       name="Faktregion" value="{$order->Faktregion}"
-                                                                       placeholder="" required="true"/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-region"
+                                                                               name="Faktregion"
+                                                                               value="{$order->Faktregion}"
+                                                                               placeholder="" required="true"/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-region-type"
+                                                                               name="Faktregion_shorttype"
+                                                                               value="{$order->Faktregion_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                                 {if in_array('empty_faktregion', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         область!
@@ -1499,9 +1561,22 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group mb-1 {if in_array('empty_faktcity', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Город</label>
-                                                                <input type="text" class="form-control js-dadata-city"
-                                                                       name="Faktcity" value="{$order->Faktcity}"
-                                                                       placeholder=""/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-city"
+                                                                               name="Faktcity"
+                                                                               value="{$order->Faktcity}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-city-type"
+                                                                               name="Faktcity_shorttype"
+                                                                               value="{$order->Faktcity_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                                 {if in_array('empty_faktcity', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         город!
@@ -1509,30 +1584,67 @@
                                                                 {/if}
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <div class="form-group mb-1 ">
                                                                 <label class="control-label">Район</label>
-                                                                <input type="text"
-                                                                       class="form-control js-dadata-district"
-                                                                       name="Faktdistrict"
-                                                                       value="{$order->Faktdistrict}" placeholder=""/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-district"
+                                                                               name="Faktdistrict"
+                                                                               value="{$order->Faktdistrict}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-district-type"
+                                                                               name="Faktdistrict_shorttype"
+                                                                               value="{$order->Faktdistrict_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <div class="form-group mb-1 ">
                                                                 <label class="control-label">Нас. пункт</label>
-                                                                <input type="text"
-                                                                       class="form-control js-dadata-locality"
-                                                                       name="Faktlocality"
-                                                                       value="{$order->Faktlocality}" placeholder=""/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-locality"
+                                                                               name="Faktlocality"
+                                                                               value="{$order->Faktlocality}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-locality-type"
+                                                                               name="Faktlocality_shorttype"
+                                                                               value="{$order->Faktlocality_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-6">
                                                             <div class="form-group mb-1 {if in_array('empty_faktstreet', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Улица</label>
-                                                                <input type="text" class="form-control js-dadata-street"
-                                                                       name="Faktstreet" value="{$order->Faktstreet}"
-                                                                       placeholder=""/>
+                                                                <div class="row">
+                                                                    <div class="col-9">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-street"
+                                                                               name="Faktstreet"
+                                                                               value="{$order->Faktstreet}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                    <div class="col-3">
+                                                                        <input type="text"
+                                                                               class="form-control js-dadata-street-type"
+                                                                               name="Faktstreet_shorttype"
+                                                                               value="{$order->Faktstreet_shorttype}"
+                                                                               placeholder=""/>
+                                                                    </div>
+                                                                </div>
                                                                 {if in_array('empty_faktstreet', (array)$addresses_error)}
                                                                     <small class="form-control-feedback">Укажите
                                                                         улицу!
@@ -1541,6 +1653,16 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label class="control-label">Индекс</label>
+                                                                <input type="text" class="form-control js-dadata-index"
+                                                                       name="Faktindex" value="{$order->Faktindex}"
+                                                                       placeholder=""/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                        </div>
+                                                        <div class="col-md-4">
                                                             <div class="form-group {if in_array('empty_fakthousing', (array)$addresses_error)}has-danger{/if}">
                                                                 <label class="control-label">Дом</label>
                                                                 <input type="text" class="form-control js-dadata-house"
@@ -1552,7 +1674,7 @@
                                                                 {/if}
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label class="control-label">Строение</label>
                                                                 <input type="text"
@@ -1561,19 +1683,11 @@
                                                                        value="{$order->Faktbuilding}" placeholder=""/>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-3">
+                                                        <div class="col-md-4">
                                                             <div class="form-group">
                                                                 <label class="control-label">Квартира</label>
                                                                 <input type="text" class="form-control js-dadata-room"
                                                                        name="Faktroom" value="{$order->Faktroom}"
-                                                                       placeholder=""/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label class="control-label">Индекс</label>
-                                                                <input type="text" class="form-control js-dadata-index"
-                                                                       name="Faktindex" value="{$order->Faktindex}"
                                                                        placeholder=""/>
                                                             </div>
                                                         </div>
@@ -1582,7 +1696,11 @@
                                                     <div class="row m-0 mt-2 mb-2">
                                                         <div class="col-md-12">
                                                             <div class="form-actions">
-                                                                <button type="submit" class="btn btn-success"><i
+                                                                <button type="submit"
+                                                                        class="btn btn-success js-event-add-click"
+                                                                        data-event="44" data-manager="{$manager->id}"
+                                                                        data-order="{$order->order_id}"
+                                                                        data-user="{$order->user_id}"><i
                                                                             class="fa fa-check"></i> Сохранить
                                                                 </button>
                                                                 <button type="button"
