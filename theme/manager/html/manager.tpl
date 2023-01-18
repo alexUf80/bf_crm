@@ -304,11 +304,13 @@
                                             </div>
                                         {/if}
                                     {/if}
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <button class="btn btn-success" type="submit">Сохранить</button>
+                                    {if $manager->id == $user->id}
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <button class="btn btn-success" type="submit">Сохранить</button>
+                                            </div>
                                         </div>
-                                    </div>
+                                    {/if}
                                 </div>
                             </div>
                         </div>
