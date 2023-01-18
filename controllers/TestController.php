@@ -17,7 +17,7 @@ class TestController extends Controller
     {
         $contracts = ContractsORM::with('user.regAddress', 'user.factAddress')
             ->whereIn('status', [2,3,4,11])
-            ->whereBetween('inssuance_date', [date('Y-m-d 00:00:00', strtotime('2022-10-29')), date('Y-m-d 00:00:00', strtotime('2023-01-08'))])
+            ->whereBetween('inssuance_date', [date('Y-m-d 00:00:00', strtotime('2022-11-01')), date('Y-m-d 23:59:59', strtotime('2023-01-16'))])
             ->get();
 
         Onec::request($contracts);
