@@ -131,7 +131,10 @@ class CollectorContractsController extends Controller
 
         $filter['type'] = 'base';
 
-        $filter['collection_status'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        if($this->manager->role == 'collector')
+            $filter['collection_status'] = array($this->manager->collection_status_id);
+        else
+            $filter['collection_status'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
 
         if ($this->request->get('status', 'integer')) {
