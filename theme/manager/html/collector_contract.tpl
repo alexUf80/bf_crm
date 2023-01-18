@@ -1310,7 +1310,6 @@
                                                 <h5 class="card-header">
                                                     <span class="text-white">Адрес</span>
                                                     <span class="float-right">
-                                                            {penalty_button penalty_block='addresses'}
                                                         <a href="javascript:void(0);"
                                                            class="text-white js-edit-form js-event-add-click"
                                                            data-event="34" data-manager="{$manager->id}"
