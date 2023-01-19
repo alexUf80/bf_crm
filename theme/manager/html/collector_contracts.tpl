@@ -844,13 +844,7 @@
                                             </td>
 
                                             <td  class="jsgrid-cell">
-
-                                                <div class="button-toggle-wrapper" style="margin-right:20px;">
-                                                    <button class="js-open-contract button-toggle"
-                                                            data-id="{$contract->id}" type="button"
-                                                            title="Подробнее"></button>
-                                                </div>
-                                                <div style="padding-left:20px;">
+                                                <div>
                                                     <span class="label label-primary">{$collection_statuses[$contract->collection_status]}</span>
                                                 </div>
                                                 <a href="collector_contract/{$contract->id}">
@@ -881,7 +875,7 @@
                                             <td  class="jsgrid-cell">
                                                 {($contract->loan_percents_summ + $contract->loan_charge_summ + $contract->loan_peni_summ) * 1}
                                             </td>
-                                            <td s class="jsgrid-cell">
+                                            <td class="jsgrid-cell">
                                                 <strong>
                                                     {($contract->loan_body_summ + $contract->loan_percents_summ + $contract->loan_charge_summ + $contract->loan_peni_summ) * 1}
                                                 </strong>
@@ -974,62 +968,6 @@
                                                 {$contract->return_date|date}
                                             </td>
                                         </tr>
-                                        {foreach $contract->contactpersons as $cp}
-                                            <tr class="jsgrid-row js-open-show js-dopinfo-{$contract->id}"
-                                                {if $have_contactperson_search}style="display:table-row"{/if}>
-                                                <td  class="jsgrid-cell jsgrid-align-right">
-                                                </td>
-                                                <td  class="jsgrid-cell">
-                                                </td>
-                                                <td  class="jsgrid-cell">
-                                                    {$cp->name|escape}
-                                                </td>
-                                                <td  class="jsgrid-cell">
-                                                </td>
-                                                <td  class="jsgrid-cell">
-                                                </td>
-                                                <td  class="jsgrid-cell">
-                                                </td>
-                                                <td  class="jsgrid-cell">
-                                                    {if $search['phone'] && $search['phone'] == $cp->phone}
-                                                        <span class="text-danger js-search-found">{$cp->phone|escape}</span>
-                                                    {else}
-                                                        {$cp->phone|escape}
-                                                    {/if}
-                                                    {*if $contract->collection_status != 8}
-                                                    <button class="js-mango-call mango-call {if $contract->sold}js-yuk{/if}" data-phone="{$contract->phone}" title="Выполнить звонок"><i class="fas fa-mobile-alt"></i></button>
-                                                    {/if*}
-                                                </td>
-                                                <td  class="jsgrid-cell">
-                                                </td>
-                                                <td  class="jsgrid-cell">
-                                                    <div>
-                                                        <form action="order/{$contract->order->order_id}">
-                                                            <select class="form-control js-contactperson-status"
-                                                                    data-contactperson="{$cp->id}"
-                                                                    name="contactperson_status[{$cp->id}]">
-                                                                <option value="0"
-                                                                        {if !$cp->contact_status}selected{/if}>Нет
-                                                                    данных
-                                                                </option>
-                                                                {foreach $collector_tags as $t}
-                                                                    <option value="{$t->id}"
-                                                                            {if $cp->contact_status == $t->id}selected{/if}>{$t->name|escape}</option>
-                                                                {/foreach}
-                                                            </select>
-                                                        </form>
-                                                    </div>
-                                                </td>
-                                                <td style="line-height:1" class="jsgrid-cell">
-                                                    <small>{$cp->comment}</small>
-                                                    <button class="js-contactperson float-right btn btn-link js-open-comment-form"
-                                                            title="Добавить комментарий" data-contactperson="{$cp->id}"
-                                                            data-order="{$contract->order_id}">
-                                                        <i class="fa-lg fas fa-comment-dots"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        {/foreach}
                                     {/foreach}
                                     </tbody>
                                 </table>

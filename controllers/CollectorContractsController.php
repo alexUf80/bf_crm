@@ -197,12 +197,6 @@ class CollectorContractsController extends Controller
 
 
         if (!empty($contracts)) {
-            $contactpersons = array();
-            foreach ($this->contactpersons->get_contactpersons(array('user_id' => $user_ids)) as $cp) {
-                if (!isset($contactpersons[$cp->user_id]))
-                    $contactpersons[$cp->user_id] = array();
-                $contactpersons[$cp->user_id][] = $cp;
-            }
 
             $comments = array();
             $managers = [];
@@ -246,35 +240,6 @@ class CollectorContractsController extends Controller
                         'Regregion' => $contract->order->Regregion,
                         'Regcity' => $contract->order->Regcity,
                     ]);
-                }
-
-                if (!empty($contactpersons[$contract->user_id])) {
-                    $contract->contactpersons = $contactpersons[$contract->user_id];
-                } else {
-
-                    if (!empty($contract->order->contact_person_name) && !empty($contract->order->contact_person_phone)) {
-                        $new_contactperson = array(
-                            'user_id' => $contract->user_id,
-                            'name' => $contract->order->contact_person_name,
-                            'relation' => $contract->order->contact_person_relation,
-                            'phone' => $contract->order->contact_person_phone,
-                        );
-                        $new_contactperson['id'] = $this->contactpersons->add_contactperson($new_contactperson);
-
-                        $contract->contactpersons[] = (object)$new_contactperson;
-                    }
-
-                    if (!empty($contract->order->contact_person2_name) && !empty($contract->order->contact_person2_phone)) {
-                        $new_contactperson2 = array(
-                            'user_id' => $contract->user_id,
-                            'name' => $contract->order->contact_person2_name,
-                            'relation' => $contract->order->contact_person2_relation,
-                            'phone' => $contract->order->contact_person2_phone,
-                        );
-                        $new_contactperson2['id'] = $this->contactpersons->add_contactperson($new_contactperson2);
-                        $contract->contactpersons[] = (object)$new_contactperson2;
-                    }
-
                 }
 
 
