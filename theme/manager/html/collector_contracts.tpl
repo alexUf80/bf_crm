@@ -518,14 +518,14 @@
             <div class="col-md-6 col-4 ">
                 <div class="row">
                     <div class="col-6 ">
-                        {if in_array($manager->role, ['developer', 'admin', 'chief_collector', 'team_collector'])}
+                        {if in_array($manager->role, ['developer', 'admin', 'senior collector', 'team_collector'])}
                             <div class="float-left">
                                 <div class="btn btn-success download_excel">
                                     <i class="fas fa-file-excel"></i> Скачать
                                 </div>
                             </div>
                         {/if}
-                        {if in_array($manager->role, ['developer', 'admin', 'chief_collector', 'team_collector'])}
+                        {if in_array($manager->role, ['developer', 'admin', 'senior collector', 'team_collector'])}
                             <button class="btn btn-primary js-distribute-open float-right" type="button"><i
                                         class="mdi mdi-account-convert"></i> Распределить
                             </button>
