@@ -344,7 +344,13 @@ class CollectorContractsController extends Controller
 
 
         $collection_statuses = CollectorPeriodsORM::get();
-        $this->design->assign('collection_statuses', $collection_statuses);
+        $sortCollectors = [];
+
+        foreach ($collection_statuses as $status) {
+            $sortCollectors[$status->id] = $status->name;
+        }
+
+        $this->design->assign('collection_statuses', $sortCollectors);
         $this->design->assign('contract_dates', $this->contract_dates);
 
         $risk_op = ['complaint' => 'Жалоба', 'bankrupt' => 'Банкрот', 'refusal' => 'Отказ от взаимодействия',

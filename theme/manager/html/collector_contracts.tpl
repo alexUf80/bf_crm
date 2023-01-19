@@ -584,8 +584,9 @@
                         <div class="clearfix">
                             <h4 class="card-title  float-left">Список договоров </h4>
                             <div class="float-right js-filter-client">
-                                {foreach $collection_statuses as $status}
-                                    <a class="btn btn-xs btn-outline-success">{$status->name}</a>
+                                {foreach $collection_statuses as $cs_id => $cs_name}
+                                    <a href="{if $filter_status==$cs_id}{url status=null page=null}{else}{url status=$cs_id page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==$cs_id}btn-success{else}btn-outline-success{/if}">{$cs_name|escape}</a>
                                 {/foreach}
                             </div>
                         </div>
