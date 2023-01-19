@@ -304,7 +304,7 @@
                                             </div>
                                         {/if}
                                     {/if}
-                                    {if !in_array($manager->role, ['developer', 'admin'])}
+                                    {if in_array($manager->role, ['developer', 'admin'])}
                                         <div class="form-group">
                                             <div class="col-sm-12">
                                                 <button class="btn btn-success" type="submit">Сохранить</button>
