@@ -851,11 +851,7 @@
                                                             title="Подробнее"></button>
                                                 </div>
                                                 <div style="padding-left:20px;">
-                                                    {foreach $collection_statuses as $status}
-                                                        {if $contract->collection_status == $status->id}
-                                                            <span class="label label-primary">{$status->name}</span>
-                                                        {/if}
-                                                    {/foreach}
+                                                    <span class="label label-primary">{$collection_statuses[$contract->collection_status]}</span>
                                                 </div>
                                                 <a href="collector_contract/{$contract->id}">
                                                     {$contract->order->lastname}
