@@ -92,35 +92,6 @@ class CollectorContractsController extends Controller
         $sms_templates = $this->sms->get_templates();
         $this->design->assign('sms_templates', $sms_templates);
 
-        if (!($period = $this->request->get('period')))
-            $period = 'all';
-
-        switch ($period):
-
-            case 'month':
-                $filter['inssuance_date_from'] = date('Y-m-01');
-                break;
-
-            case 'year':
-                $filter['inssuance_date_from'] = date('Y-01-01');
-                break;
-
-            case 'all':
-                $filter['inssuance_date_from'] = null;
-                $filter['inssuance_date_to'] = null;
-                break;
-
-            case 'optional':
-                $daterange = $this->request->get('daterange');
-                $filter_daterange = array_map('trim', explode('-', $daterange));
-                $filter['inssuance_date_from'] = date('Y-m-d', strtotime($filter_daterange[0]));
-                $filter['inssuance_date_to'] = date('Y-m-d', strtotime($filter_daterange[1]));
-                break;
-
-        endswitch;
-
-        $this->design->assign('period', $period);
-
         if ($search = $this->request->get('search')) {
             if(isset($search['order_id']))
                 $search['order_id'] = explode(' ', $search['order_id']);
@@ -148,25 +119,6 @@ class CollectorContractsController extends Controller
         }
         $this->design->assign('sort', $sort);
         $filter['sort'] = $sort;
-
-
-        if ($page_count = $this->request->get('page_count')) {
-            setcookie('page_count', $page_count, time() + 86400 * 30, '/');
-            if ($page_count == 'all')
-                $items_per_page = 10000;
-            else
-                $items_per_page = $page_count;
-
-            $this->design->assign('page_count', $page_count);
-        } elseif (!empty($_COOKIE['page_count'])) {
-            if ($_COOKIE['page_count'] == 'all')
-                $items_per_page = 10000;
-            else
-                $items_per_page = $_COOKIE['page_count'];
-
-            $this->design->assign('page_count', $_COOKIE['page_count']);
-        }
-
 
         $current_page = $this->request->get('page', 'integer');
         $current_page = max(1, $current_page);
@@ -227,8 +179,6 @@ class CollectorContractsController extends Controller
                     $o->comments = $comments[$o->order_id];
 
                 $orders[$o->order_id] = $o;
-//                if (isset($contracts[$o->contract_id]))
-//                    $contracts[$o->contract_id]->order = $o;
             }
 
 
@@ -284,29 +234,6 @@ class CollectorContractsController extends Controller
             $this->design->assign('contracts', $contracts);
 
         }
-
-        $fetch_api_regions = $this->dadata->fetch_clean_api('address', $this->regions);
-
-
-        if (array_key_exists(0, $fetch_api_regions)) {
-            $fetch_api_cities = $this->dadata->fetch_clean_api('address', $this->cities);
-
-            foreach ($this->contract_dates as $key => $data) {
-                if ($fetch_api_regions[$data['region_key']]['timezone']) {
-                    $data['date'] = $this->helpers->get_current_time($fetch_api_regions[$data['region_key']]['timezone'], 'H:i:s');
-                } else {
-                    $data['date'] = $this->helpers->get_current_time($fetch_api_cities[$data['city_key']]['timezone'], 'H:i:s');
-                }
-            }
-        } else {
-            $key = 0;
-            foreach ($contracts as $contract) {
-                $this->contract_dates[$key]['date'] = (new DateTime($contract->client_time))->format('H:i:s');
-                $key++;
-            }
-
-        }
-
 
         $collection_statuses = CollectorPeriodsORM::get();
         $sortCollectors = [];

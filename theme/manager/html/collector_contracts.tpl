@@ -335,13 +335,20 @@
 
             });
 
-            /*
-                    $(document).on('change', '#check_all', function(){
-                        var lch = $('.js-contract-check:not(checked)').length
 
-                        console.log(lch)
+            $(document).on('click', '#check_all', function () {
+
+                if ($(this).is(':checked')) {
+                    $('.js-contract-check').each(function () {
+                        $(this).prop('checked', true);
                     });
-            */
+                } else {
+                    $('.js-contract-check').each(function () {
+                        $(this).prop('checked', false);
+                    });
+                }
+            });
+
             $(document).on('click', '.js-distribute-open', function (e) {
                 e.preventDefault();
 
@@ -531,42 +538,6 @@
                             </button>
                         {/if}
                     </div>
-
-                    <div class="col-6 dropdown text-right hidden-sm-down js-period-filter">
-                        <input type="hidden" value="{$period}" id="filter_period"/>
-                        <button class="btn btn-secondary dropdown-toggle float-right" type="button"
-                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
-                            <i class="fas fa-calendar-alt"></i>
-                            {if $period == 'month'}В этом месяце
-                            {elseif $period == 'year'}В этом году
-                            {elseif $period == 'all'}За все время
-                            {elseif $period == 'optional'}Произвольный
-                            {else}{$period}{/if}
-
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item js-period-link {if $period == 'month'}active{/if}"
-                               href="{url period='month' page=null}">В этом месяце</a>
-                            <a class="dropdown-item js-period-link {if $period == 'year'}active{/if}"
-                               href="{url period='year' page=null}">В этом году</a>
-                            <a class="dropdown-item js-period-link {if $period == 'all'}active{/if}"
-                               href="{url period='all' page=null}">За все время</a>
-                            <a class="dropdown-item js-open-daterange {if $period == 'optional'}active{/if}"
-                               href="{url period='optional' page=null}">Произвольный</a>
-                        </div>
-
-                        <div class="js-daterange-filter input-group mb-3"
-                             {if $period!='optional'}style="display:none"{/if}>
-                            <input type="text" name="daterange" class="form-control daterange js-daterange-input"
-                                   value="{if $from && $to}{$from}-{$to}{/if}">
-                            <div class="input-group-append">
-                                <span class="input-group-text">
-                                    <span class="ti-calendar"></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -597,7 +568,14 @@
                                 <table class="jsgrid-table table table-striped table-hover">
                                     <tbody>
                                     <tr class="jsgrid-header-row">
-                                        <th  class="jsgrid-header-cell">#</th>
+                                        <td class="jsgrid-cell">
+                                            <div class="custom-checkbox custom-control">
+                                                <input type="checkbox" class="custom-control-input" id="check_all"
+                                                       value=""/>
+                                                <label for="check_all" title="Отметить все"
+                                                       class="custom-control-label"> </label>
+                                            </div>
+                                        </td>
 
                                         {if in_array($manager->role, ['developer', 'admin', 'chief_collector', 'team_collector'])}
                                             <th
@@ -683,14 +661,7 @@
                                     </tr>
 
                                     <tr class="jsgrid-filter-row" id="search_form">
-                                        <td  class="jsgrid-cell">
-                                            <div class="custom-checkbox custom-control">
-                                                <input type="checkbox" class="custom-control-input" id="check_all"
-                                                       value=""/>
-                                                <label for="check_all" title="Отметить все"
-                                                       class="custom-control-label"> </label>
-                                            </div>
-                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"></td>
 
                                         {if in_array($manager->role, ['developer', 'admin', 'chief_collector', 'team_collector'])}
                                             <td class="jsgrid-cell">
@@ -707,27 +678,27 @@
                                             </td>
                                         {/if}
 
-                                        <td  class="jsgrid-cell jsgrid-align-right">
+                                        <td class="jsgrid-cell jsgrid-align-right">
                                             <input type="hidden" name="sort" value="{$sort}"/>
                                             <input type="text" name="order_id" value="{$search['order_id']}"
                                                    class="form-control input-sm">
                                         </td>
 
-                                        <td  class="jsgrid-cell">
+                                        <td class="jsgrid-cell">
                                             <input type="text" name="fio" value="{$search['fio']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td  class="jsgrid-cell">
+                                        <td class="jsgrid-cell">
                                         </td>
-                                        <td  class="jsgrid-cell">
+                                        <td class="jsgrid-cell">
                                         </td>
-                                        <td  class="jsgrid-cell">
+                                        <td class="jsgrid-cell">
                                         </td>
-                                        <td  class="jsgrid-cell">
+                                        <td class="jsgrid-cell">
                                             <input type="text" name="phone" value="{$search['phone']}"
                                                    class="form-control input-sm">
                                         </td>
-                                        <td  class="jsgrid-cell">
+                                        <td class="jsgrid-cell">
                                             <div class="row no-gutter">
                                                 <div class="col-6 pr-0">
                                                     <input type="text" placeholder="c" name="delay_from"
@@ -740,10 +711,10 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td  class="jsgrid-cell">
+                                        <td class="jsgrid-cell">
 
                                         </td>
-                                        <td  class="jsgrid-cell">
+                                        <td class="jsgrid-cell">
                                             <select class="form-control" name="tag_id">
                                                 <option value="0"></option>
                                                 {foreach $collector_tags as $t}
@@ -751,7 +722,7 @@
                                                 {/foreach}
                                             </select>
                                         </td>
-                                        <td  class="jsgrid-cell">
+                                        <td class="jsgrid-cell">
                                         </td>
                                     </tr>
                                     {foreach $contracts as $contract}
@@ -782,7 +753,7 @@
                                         {/foreach}
                                         <tr class="jsgrid-row js-contract-row {if $contract->collection_workout}workout-row{/if} contract-row-{$contract->order->user_id}"
                                             data-contract="{$contract->id}">
-                                            <td  class="jsgrid-cell text-center">
+                                            <td class="jsgrid-cell text-center">
                                                 <div class="custom-checkbox custom-control">
                                                     <input type="checkbox"
                                                            class="custom-control-input js-contract-check"
@@ -795,7 +766,7 @@
 
 
                                             {if in_array($manager->role, ['developer', 'admin', 'chief_collector', 'team_collector'])}
-                                                <td  class="jsgrid-cell">
+                                                <td class="jsgrid-cell">
                                                     <div class="js-open-hide js-dopinfo-{$contract->id} js-collection-manager-block {if $have_contactperson_search}open{/if}">
                                                         <small>{$managers[$contract->collection_manager_id]->name|escape}</small>
                                                     </div>
@@ -824,26 +795,11 @@
                                                 </td>
                                             {/if}
 
-                                            <td  class="jsgrid-cell jsgrid-align-right">
-                                                {*}
-                                                <div class="button-toggle-wrapper">
-                                                    <button class="js-open-contract button-toggle" data-id="{$contract->id}" type="button" title="Подробнее"></button>
-                                                </div>
-
-                                                <a href="my_contract/{$contract->order->order_id}">
-                                                    {$contract->order->order_id}
-                                                </a>
-                                                {*}
+                                            <td class="jsgrid-cell jsgrid-align-right">
                                                 {$contract->order->order_id}
-                                                {*}
-                                                <span class="label label-primary">{$collection_statuses[$contract->collection_status]}</span>
-                                                {if $contract->sud}
-                                                <span class="label label-danger">Суд</span>
-                                                {/if}
-                                                {*}
                                             </td>
 
-                                            <td  class="jsgrid-cell">
+                                            <td class="jsgrid-cell">
                                                 <div>
                                                     <span class="label label-primary">{$collection_statuses[$contract->collection_status]}</span>
                                                 </div>
@@ -869,10 +825,10 @@
                                                     {$contract->order->last_activity}
                                                 </small>
                                             </td>
-                                            <td  class="jsgrid-cell">
+                                            <td class="jsgrid-cell">
                                                 {$contract->loan_body_summ*1}
                                             </td>
-                                            <td  class="jsgrid-cell">
+                                            <td class="jsgrid-cell">
                                                 {($contract->loan_percents_summ + $contract->loan_charge_summ + $contract->loan_peni_summ) * 1}
                                             </td>
                                             <td class="jsgrid-cell">
@@ -880,7 +836,7 @@
                                                     {($contract->loan_body_summ + $contract->loan_percents_summ + $contract->loan_charge_summ + $contract->loan_peni_summ) * 1}
                                                 </strong>
                                             </td>
-                                            <td  class="jsgrid-cell">
+                                            <td class="jsgrid-cell">
                                                 <div>
                                                     <span class="label {if $contract->client_time_warning == true}label-danger{else}label-success{/if} "><i
                                                                 class="far fa-clock"></i> {$contract->user_time}</span>
@@ -890,20 +846,8 @@
                                                 {else}
                                                     <small>{$contract->order->phone_mobile}</small>
                                                 {/if}
-                                                <br/>
-                                                <button class="js-mango-call mango-call {if $contract->sold}js-yuk{/if}"
-                                                        data-user="{$contract->user_id}"
-                                                        data-phone="{$contract->order->phone_mobile}"
-                                                        title="Выполнить звонок">
-                                                    <i class="fas fa-mobile-alt"></i>
-                                                </button>
-                                                <button class="js-open-sms-modal mango-call {if $contract->sold}js-yuk{/if}"
-                                                        data-user="{$contract->user_id}"
-                                                        data-order="{$contract->order_id}">
-                                                    <i class=" far fa-share-square"></i>
-                                                </button>
                                             </td>
-                                            <td  class="jsgrid-cell">
+                                            <td class="jsgrid-cell">
                                                 {$contract->delay} {$contract->delay|plural:'день':'дней':'дня'}
                                             </td>
                                             <td style="line-height:1;" class="jsgrid-cell">
@@ -913,7 +857,7 @@
                                                     <p>{$contract->order->Regregion}</p>
                                                 {/if}
                                             </td>
-                                            <td  class="jsgrid-cell">
+                                            <td class="jsgrid-cell">
                                                 <div class="js-open-hide js-dopinfo-{$contract->id} js-contact-status-block">
                                                     {if !$contract->order->contact_status}
                                                         <span class="label label-warning">Нет данных</span>
@@ -964,7 +908,7 @@
                                                         <br><b>{$comm->user_name}</b></small>
                                                 </div>
                                             </td>
-                                            <td  class="jsgrid-cell">
+                                            <td class="jsgrid-cell">
                                                 {$contract->return_date|date}
                                             </td>
                                         </tr>
@@ -1116,94 +1060,6 @@
                         <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Отмена</button>
                         <button type="submit" class="btn btn-success waves-effect waves-light">Сохранить</button>
                     </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="modal_send_sms" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-     aria-labelledby="mySmallModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h4 class="modal-title">Отправить смс-сообщение?</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body">
-
-
-                <div class="card">
-                    <div class="card-body">
-
-                        <div class="tab-content tabcontent-border p-3" id="myTabContent">
-                            <div role="tabpanel" class="tab-pane fade active show" id="waiting_reason"
-                                 aria-labelledby="home-tab">
-                                <form class="js-sms-form" data-manager-id="{$manager->id}">
-                                    <input type="hidden" name="manager_id" value="{$manager->id}"/>
-                                    <input type="hidden" name="user_id" value="{$order->user_id}"/>
-                                    <input type="hidden" name="order_id" value=""/>
-                                    <input type="hidden" name="yuk" value=""/>
-                                    <input type="hidden" name="action" value="send_sms"/>
-                                    <div class="form-group">
-                                        <label for="name" class="control-label">Выберите шаблон сообщения:</label>
-                                        <select name="template_id" class="form-control">
-                                            {foreach $sms_templates as $sms_template}
-                                                {if in_array($manager->role, ['developer', 'admin'])}
-                                                    <option value="{$sms_template->id}"
-                                                            title="{$sms_template->template|escape}">
-                                                        {$sms_template->name|escape} ({$sms_template->template})
-                                                    </option>
-                                                {else}
-                                                    {if $sms_template->type == 'collection'}
-                                                        <option value="{$sms_template->id}"
-                                                                title="{$sms_template->template|escape}">
-                                                            {$sms_template->name|escape} ({$sms_template->template})
-                                                        </option>
-                                                    {/if}
-                                                {/if}
-                                            {/foreach}
-                                        </select>
-                                    </div>
-                                    <div class="form-action clearfix">
-                                        <button type="button" class="btn btn-danger btn-lg float-left waves-effect"
-                                                data-dismiss="modal">Отменить
-                                        </button>
-                                        <button type="submit"
-                                                class="btn btn-success btn-lg float-right waves-effect waves-light">Да,
-                                            отправить
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div style="margin-left: 90px;" class="form-group">
-                    <button class="btn btn-info btn-lg waves-effect waves-light" id="casual_sms">Свободное сообщение
-                    </button>
-                </div>
-                <form class="js-sms-form" name="manager_id" data-manager-id="{$manager->id}">
-                    <input type="hidden" name="manager_id" value="{$manager->id}"/>
-                    <input type="hidden" name="user_id" value="{$order->user_id}"/>
-                    <input type="hidden" name="order_id" value="{$order->id}"/>
-                    <input type="hidden" name="role" value="{$manager->role}"/>
-                    <input type="hidden" name="action" value="send_sms"/>
-                    <textarea name="text_sms" class="form-control casual-sms-form"
-                              style="display: none; height: 250px;"></textarea>
-                    <ul class="casual-sms-form" style="display: none; margin-top: 5px">
-                        <li>$firstname = Имя</li>
-                        <li>$fio = ФИО</li>
-                        <li>$prolongation_sum = Сумма для пролонгации</li>
-                        <li>$final_sum = Сумма для погашения займа</li>
-                        <li>Примечание: "ООО МКК Финансовый Аспект https://ecozaym24.ru/lk/login" дописывается
-                            автоматически в любом сообщении
-                        </li>
-                    </ul>
-                    <button class="btn btn-success btn-lg waves-effect waves-light casual-sms-form" id="send_casual_sms"
-                            style="display: none;">Отправить свободное сообщение
-                    </button>
                 </form>
             </div>
         </div>
