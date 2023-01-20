@@ -162,8 +162,14 @@ class CollectionReportController extends Controller
         $this->design->assign('total', $total);
         $this->design->assign('collectors', $collectors);
 
-        $collection_statuses = $this->contracts->get_collection_statuses();
-        $this->design->assign('collection_statuses', $collection_statuses);
+        $collection_statuses = CollectorPeriodsORM::get();
+        $sortCollectors = [];
+
+        foreach ($collection_statuses as $status) {
+            $sortCollectors[$status->id] = $status->name;
+        }
+
+        $this->design->assign('collection_statuses', $sortCollectors);
         
         return $this->design->fetch('collection_report.tpl');
     }

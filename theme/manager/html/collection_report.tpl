@@ -313,15 +313,10 @@
                             <h4 class="card-title  float-left">Отчет по коллекторам</h4>
                             
                             <div class="float-right js-filter-status">
-                                <a href="{url status=2}" class="btn btn-xs {if $filter_status==2}btn-info{else}btn-outline-info{/if}">0-2 дни</a>
-                                <a href="{url status=3}" class="btn btn-xs {if $filter_status==3}btn-secondary{else}btn-outline-secondary{/if}">Ожидание-1</a>
-                                <a href="{url status=4}" class="btn btn-xs {if $filter_status==4}btn-primary{else}btn-outline-primary{/if}">Предсофт</a>
-                                <a href="{url status=5}" class="btn btn-xs {if $filter_status==5}btn-secondary{else}btn-outline-secondary{/if}">Ожидание-2</a>
-                                <a href="{url status=6}" class="btn btn-xs {if $filter_status==6}btn-warning{else}btn-outline-warning{/if}">Софт</a>
-                                <a href="{url status=7}" class="btn btn-xs {if $filter_status==7}btn-secondary{else}btn-outline-secondary{/if}">Ожидание-3</a>
-                                <a href="{url status=8}" class="btn btn-xs {if $filter_status==8}btn-danger{else}btn-outline-danger{/if}">Хард</a>
-                                <a href="{url status=9}" class="btn btn-xs {if $filter_status==9}btn-secondary{else}btn-outline-secondary{/if}">Ожидание-4</a>
-                                <a href="{url status=10}" class="btn btn-xs {if $filter_status==10}btn-danger{else}btn-outline-danger{/if}">Хард-2</a>
+                                {foreach $collection_statuses as $cs_id => $cs_name}
+                                    <a href="{if $filter_status==$cs_id}{url status=null page=null}{else}{url status=$cs_id page=null}{/if}"
+                                       class="btn btn-xs {if $filter_status==$cs_id}btn-success{else}btn-outline-success{/if}">{$cs_name|escape}</a>
+                                {/foreach}
                             </div>
 
                         </div>
