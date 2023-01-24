@@ -85,12 +85,8 @@ class CollectorContractsController extends Controller
 
         $order_ids = array();
         $user_ids = array();
-        $contracts = array();
 
         $filter = array();
-
-        $sms_templates = $this->sms->get_templates();
-        $this->design->assign('sms_templates', $sms_templates);
 
         if ($search = $this->request->get('search')) {
             if(isset($search['order_id']))
@@ -100,41 +96,12 @@ class CollectorContractsController extends Controller
             $this->design->assign('search', array_filter($search));
         }
 
-        $filter['type'] = 'base';
-
         if($this->manager->role == 'collector')
-            $filter['collection_status'] = array($this->manager->collection_status_id);
+            $contracts = ContractsORM::where('collection_status', $this->manager->collection_status_id)->get();
         else
-            $filter['collection_status'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            $contracts = ContractsORM::where('collection_status', '!=', 0)->get();
 
-
-        if ($this->request->get('status', 'integer')) {
-            $filter_status = $this->request->get('status', 'integer');
-            $filter['collection_status'] = array($filter_status);
-            $this->design->assign('filter_status', $filter_status);
-        }
-
-        if (!($sort = $this->request->get('sort'))) {
-            $sort = 'order_id_asc';
-        }
-        $this->design->assign('sort', $sort);
-        $filter['sort'] = $sort;
-
-        $current_page = $this->request->get('page', 'integer');
-        $current_page = max(1, $current_page);
-        $this->design->assign('current_page_num', $current_page);
-        $this->design->assign('items_per_page', $items_per_page);
-
-        $contracts_count = $this->contracts->count_contracts($filter);
-
-        $pages_num = ceil($contracts_count / $items_per_page);
-        $this->design->assign('total_pages_num', $pages_num);
-        $this->design->assign('total_orders_count', $contracts_count);
-
-        $filter['page'] = $current_page;
-        $filter['limit'] = $items_per_page;
-
-        foreach ($this->contracts->get_contracts($filter) as $con) {
+        foreach ($contracts as $con) {
             $order_ids[] = $con->order_id;
             $user_ids[] = $con->user_id;
 
@@ -172,7 +139,6 @@ class CollectorContractsController extends Controller
                 }
             }
 
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments);echo '</pre><hr />';
             $orders = array();
             foreach ($this->orders->get_orders(array('id' => $order_ids)) as $o) {
                 if (isset($comments[$o->order_id]))
@@ -185,11 +151,6 @@ class CollectorContractsController extends Controller
             foreach ($contracts as $contract) {
                 if (isset($orders[$contract->order_id])) {
                     $contract->order = $orders[$contract->order_id];
-
-                    $contract->region_key = $this->addContract([
-                        'Regregion' => $contract->order->Regregion,
-                        'Regcity' => $contract->order->Regcity,
-                    ]);
                 }
 
 
@@ -227,9 +188,6 @@ class CollectorContractsController extends Controller
                 $contract->order->last_activity = date('d.m.Y H:i:s', $contract->order->last_activity);
 
             }
-            // echo '<pre>';print_r ($contracts[0]->order->Regregion);echo '</pre>';
-            // echo '<pre>';print_r ($contracts[102287]->order->Regregion);echo '</pre>';
-            //  echo '<pre>';print_r ($contracts);echo '</pre>';
 
             $this->design->assign('contracts', $contracts);
 
@@ -258,8 +216,6 @@ class CollectorContractsController extends Controller
         foreach ($this->collector_tags->get_tags() as $ct)
             $collector_tags[$ct->id] = $ct;
         $this->design->assign('collector_tags', $collector_tags);
-
-//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($collection_statuses);echo '</pre><hr />';
 
         if ($this->request->get('download') == 'excel') {
 
