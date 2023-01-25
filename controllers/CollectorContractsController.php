@@ -135,7 +135,7 @@ class CollectorContractsController extends Controller
         if ($this->manager->role == 'collector') {
             $filter['collection_status'] = array($this->manager->collection_status_id);
             $filter['collection_manager_id'] = $this->manager->id;
-        } elseif (in_array($this->manager->role, array('developer', 'admin', 'chief_collector'))) {
+        } elseif (in_array($this->manager->role, array('developer', 'admin', 'senior collector'))) {
             $filter['collection_status'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
             $filter['collection_manager_id'] = null;
         }
@@ -773,7 +773,7 @@ class CollectorContractsController extends Controller
                     if ($this->manager->role == 'collector') {
                         $filter['collection_status'] = array($this->manager->collection_status_id);
                         $filter['collection_manager_id'] = $this->manager->id;
-                    } elseif (in_array($this->manager->role, array('developer', 'admin', 'chief_collector'))) {
+                    } elseif (in_array($this->manager->role, array('developer', 'admin', 'senior collector'))) {
                         $filter['collection_status'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
                         $filter['collection_manager_id'] = null;
                     } elseif ($this->manager->role == 'team_collector') {
