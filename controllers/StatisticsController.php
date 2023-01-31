@@ -2495,7 +2495,7 @@ class StatisticsController extends Controller
                     ],
                 ];
 
-            $sheet->getStyle('A:AB')->applyFromArray($styles_cells);
+            $sheet->getStyle('A:AC')->applyFromArray($styles_cells);
 
             $sheet->setCellValue('A1', 'ID заявки');
             $sheet->setCellValue('B1', 'ID клиента');
