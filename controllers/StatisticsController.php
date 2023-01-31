@@ -2465,6 +2465,10 @@ class StatisticsController extends Controller
                     $order->idx = $order->idx->body;
 
                 $order->status = $orders_statuses[$order->status];
+
+                $nbki = $this->scorings->get_type_scoring($order->order_id, 'nbki');
+                $nbki = unserialize($nbki->body);
+                $order->number_of_active = $nbki['number_of_active'][0];
             }
 
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -2522,6 +2526,7 @@ class StatisticsController extends Controller
             $sheet->setCellValue('Z1', 'closed_to_total_credits_count_share');
             $sheet->setCellValue('AA1', 'pdl_overdue_count');
             $sheet->setCellValue('AB1', 'pdl_npl_90_limit_share');
+            $sheet->setCellValue('AC1', 'Количество активных займов');
 
             $i = 2;
 
@@ -2559,6 +2564,8 @@ class StatisticsController extends Controller
                     $sheet->setCellValue('AA' . $i, $order->scoreballs['pdl_overdue_count']);
                     $sheet->setCellValue('AB' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
                 }
+
+                $sheet->setCellValue('AС' . $i, $order->number_of_active);
 
                 $i++;
             }
