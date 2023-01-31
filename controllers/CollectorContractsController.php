@@ -85,23 +85,110 @@ class CollectorContractsController extends Controller
 
         $order_ids = array();
         $user_ids = array();
+        $contracts = array();
 
         $filter = array();
 
+        $sms_templates = $this->sms->get_templates();
+        $this->design->assign('sms_templates', $sms_templates);
+
+        if (!($period = $this->request->get('period')))
+            $period = 'all';
+
+        switch ($period):
+
+            case 'month':
+                $filter['inssuance_date_from'] = date('Y-m-01');
+                break;
+
+            case 'year':
+                $filter['inssuance_date_from'] = date('Y-01-01');
+                break;
+
+            case 'all':
+                $filter['inssuance_date_from'] = null;
+                $filter['inssuance_date_to'] = null;
+                break;
+
+            case 'optional':
+                $daterange = $this->request->get('daterange');
+                $filter_daterange = array_map('trim', explode('-', $daterange));
+                $filter['inssuance_date_from'] = date('Y-m-d', strtotime($filter_daterange[0]));
+                $filter['inssuance_date_to'] = date('Y-m-d', strtotime($filter_daterange[1]));
+                break;
+
+        endswitch;
+
+        $this->design->assign('period', $period);
+
         if ($search = $this->request->get('search')) {
-            if(isset($search['order_id']))
+            if (isset($search['order_id']))
                 $search['order_id'] = explode(' ', $search['order_id']);
 
             $filter['search'] = array_filter($search);
             $this->design->assign('search', array_filter($search));
         }
 
-        if($this->manager->role == 'collector')
-            $contracts = ContractsORM::where('collection_status', $this->manager->collection_status_id)->get();
-        else
-            $contracts = ContractsORM::where('collection_status', '!=', 0)->get();
+        $filter['type'] = 'base';
 
-        foreach ($contracts as $con) {
+
+        if ($this->manager->role == 'collector') {
+            $filter['collection_status'] = array($this->manager->collection_status_id);
+            $filter['collection_manager_id'] = $this->manager->id;
+        } elseif (in_array($this->manager->role, array('developer', 'admin', 'senior collector'))) {
+            $filter['collection_status'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            $filter['collection_manager_id'] = null;
+        }
+
+
+        if ($this->request->get('status', 'integer')) {
+            $filter_status = $this->request->get('status', 'integer');
+            $filter['collection_status'] = array($filter_status);
+            $this->design->assign('filter_status', $filter_status);
+        }
+
+        if (!($sort = $this->request->get('sort'))) {
+            $sort = 'order_id_asc';
+        }
+        $this->design->assign('sort', $sort);
+        $filter['sort'] = $sort;
+
+
+        if ($page_count = $this->request->get('page_count')) {
+            setcookie('page_count', $page_count, time() + 86400 * 30, '/');
+            if ($page_count == 'all')
+                $items_per_page = 10000;
+            else
+                $items_per_page = $page_count;
+
+            $this->design->assign('page_count', $page_count);
+        } elseif (!empty($_COOKIE['page_count'])) {
+            if ($_COOKIE['page_count'] == 'all')
+                $items_per_page = 10000;
+            else
+                $items_per_page = $_COOKIE['page_count'];
+
+            $this->design->assign('page_count', $_COOKIE['page_count']);
+        }
+
+
+        $current_page = $this->request->get('page', 'integer');
+        $current_page = max(1, $current_page);
+        $this->design->assign('current_page_num', $current_page);
+        $this->design->assign('items_per_page', $items_per_page);
+
+        $contracts_count = $this->contracts->count_contracts($filter);
+
+        $pages_num = ceil($contracts_count / $items_per_page);
+        $this->design->assign('total_pages_num', $pages_num);
+        $this->design->assign('total_orders_count', $contracts_count);
+
+        $filter['page'] = $current_page;
+        $filter['limit'] = $items_per_page;
+
+        $filter['sort_workout'] = 1;
+
+        foreach ($this->contracts->get_contracts($filter) as $con) {
             $order_ids[] = $con->order_id;
             $user_ids[] = $con->user_id;
 
@@ -116,6 +203,12 @@ class CollectorContractsController extends Controller
 
 
         if (!empty($contracts)) {
+            $contactpersons = array();
+            foreach ($this->contactpersons->get_contactpersons(array('user_id' => $user_ids)) as $cp) {
+                if (!isset($contactpersons[$cp->user_id]))
+                    $contactpersons[$cp->user_id] = array();
+                $contactpersons[$cp->user_id][] = $cp;
+            }
 
             $comments = array();
             $managers = [];
@@ -139,18 +232,55 @@ class CollectorContractsController extends Controller
                 }
             }
 
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($comments);echo '</pre><hr />';
             $orders = array();
             foreach ($this->orders->get_orders(array('id' => $order_ids)) as $o) {
                 if (isset($comments[$o->order_id]))
                     $o->comments = $comments[$o->order_id];
 
                 $orders[$o->order_id] = $o;
+//                if (isset($contracts[$o->contract_id]))
+//                    $contracts[$o->contract_id]->order = $o;
             }
 
 
             foreach ($contracts as $contract) {
                 if (isset($orders[$contract->order_id])) {
                     $contract->order = $orders[$contract->order_id];
+
+                    $contract->region_key = $this->addContract([
+                        'Regregion' => $contract->order->Regregion,
+                        'Regcity' => $contract->order->Regcity,
+                    ]);
+                }
+
+                if (!empty($contactpersons[$contract->user_id])) {
+                    $contract->contactpersons = $contactpersons[$contract->user_id];
+                } else {
+
+                    if (!empty($contract->order->contact_person_name) && !empty($contract->order->contact_person_phone)) {
+                        $new_contactperson = array(
+                            'user_id' => $contract->user_id,
+                            'name' => $contract->order->contact_person_name,
+                            'relation' => $contract->order->contact_person_relation,
+                            'phone' => $contract->order->contact_person_phone,
+                        );
+                        $new_contactperson['id'] = $this->contactpersons->add_contactperson($new_contactperson);
+
+                        $contract->contactpersons[] = (object)$new_contactperson;
+                    }
+
+                    if (!empty($contract->order->contact_person2_name) && !empty($contract->order->contact_person2_phone)) {
+                        $new_contactperson2 = array(
+                            'user_id' => $contract->user_id,
+                            'name' => $contract->order->contact_person2_name,
+                            'relation' => $contract->order->contact_person2_relation,
+                            'phone' => $contract->order->contact_person2_phone,
+                        );
+                        $new_contactperson2['id'] = $this->contactpersons->add_contactperson($new_contactperson2);
+                        $contract->contactpersons[] = (object)$new_contactperson2;
+                    }
+
                 }
 
 
@@ -188,10 +318,36 @@ class CollectorContractsController extends Controller
                 $contract->order->last_activity = date('d.m.Y H:i:s', $contract->order->last_activity);
 
             }
+            // echo '<pre>';print_r ($contracts[0]->order->Regregion);echo '</pre>';
+            // echo '<pre>';print_r ($contracts[102287]->order->Regregion);echo '</pre>';
+            //  echo '<pre>';print_r ($contracts);echo '</pre>';
 
             $this->design->assign('contracts', $contracts);
 
         }
+
+        $fetch_api_regions = $this->dadata->fetch_clean_api('address', $this->regions);
+
+
+        if (array_key_exists(0, $fetch_api_regions)) {
+            $fetch_api_cities = $this->dadata->fetch_clean_api('address', $this->cities);
+
+            foreach ($this->contract_dates as $key => $data) {
+                if ($fetch_api_regions[$data['region_key']]['timezone']) {
+                    $data['date'] = $this->helpers->get_current_time($fetch_api_regions[$data['region_key']]['timezone'], 'H:i:s');
+                } else {
+                    $data['date'] = $this->helpers->get_current_time($fetch_api_cities[$data['city_key']]['timezone'], 'H:i:s');
+                }
+            }
+        } else {
+            $key = 0;
+            foreach ($contracts as $contract) {
+                $this->contract_dates[$key]['date'] = (new DateTime($contract->client_time))->format('H:i:s');
+                $key++;
+            }
+
+        }
+
 
         $collection_statuses = CollectorPeriodsORM::get();
         $sortCollectors = [];
@@ -216,6 +372,8 @@ class CollectorContractsController extends Controller
         foreach ($this->collector_tags->get_tags() as $ct)
             $collector_tags[$ct->id] = $ct;
         $this->design->assign('collector_tags', $collector_tags);
+
+//echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($collection_statuses);echo '</pre><hr />';
 
         if ($this->request->get('download') == 'excel') {
 
@@ -265,7 +423,7 @@ class CollectorContractsController extends Controller
 
                 $sheet->setCellValue('A' . $i, $managers[$contract->collection_manager_id]->name);
                 $sheet->setCellValue('B' . $i, $contract->order->order_id);
-                $sheet->setCellValue('C' . $i, $collection_statuses[$contract->collection_status]);
+                $sheet->setCellValue('C' . $i, $sortCollectors[$contract->collection_status]);
                 $sheet->setCellValue('D' . $i, $fio);
                 $sheet->setCellValue('E' . $i, $contract->order->birth);
                 $sheet->setCellValue('F' . $i, $contract->order->last_activity);
@@ -615,7 +773,7 @@ class CollectorContractsController extends Controller
                     if ($this->manager->role == 'collector') {
                         $filter['collection_status'] = array($this->manager->collection_status_id);
                         $filter['collection_manager_id'] = $this->manager->id;
-                    } elseif (in_array($this->manager->role, array('developer', 'admin', 'chief_collector'))) {
+                    } elseif (in_array($this->manager->role, array('developer', 'admin', 'senior collector'))) {
                         $filter['collection_status'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9);
                         $filter['collection_manager_id'] = null;
                     } elseif ($this->manager->role == 'team_collector') {
