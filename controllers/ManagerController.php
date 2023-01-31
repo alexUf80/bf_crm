@@ -5,6 +5,11 @@ class ManagerController extends Controller
     public function fetch()
     {
         if ($this->request->method('post')) {
+
+            if ($this->request->post('action') == 'deleteManager')
+                $this->deleteManager();
+
+
             $user = new StdClass();
             $user_id = $this->request->post('id', 'integer');
 
@@ -126,6 +131,13 @@ class ManagerController extends Controller
         $this->design->assign('periods', $periods);
 
         return $this->design->fetch('manager.tpl');
+    }
+
+    private function deleteManager()
+    {
+        $id = $this->request->post('id');
+        ContractsORM::where('collection_manager_id', $id)->update(['collection_manager_id' => null]);
+        ManagerORM::destroy($id);
     }
 
 }

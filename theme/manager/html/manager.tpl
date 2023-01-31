@@ -54,7 +54,22 @@
                     }
                 })
             });
-        })
+
+            $('.deleteManager').on('click', function () {
+                let id = $('input[name="id"]').val();
+
+                $.ajax({
+                    method: 'POST',
+                    data: {
+                        action: 'deleteManager',
+                        id: id
+                    },
+                    success: function () {
+                        location.replace('/managers');
+                    }
+                });
+            });
+        });
 
         $('.js-filter-status').click(function (e) {
             e.preventDefault();
@@ -159,6 +174,11 @@
                             </button>
                         </div>
                     {/if}
+                    {if in_array($manager->role, ['developer']) && $user->role == 'collector'}
+                        <div class="mt-2 pt-2 pb-2 text-center">
+                            <div class="btn btn-outline-danger btn-lg deleteManager">Удалить</div>
+                        </div>
+                    {/if}
                 </div>
             </div>
             <!-- Column -->
@@ -223,7 +243,8 @@
                                                         required="true">
                                                     <option value=""></option>
                                                     {foreach $roles as $role}
-                                                        <option value="{$role->id}" {if $user->role == $role->name}selected{/if}>{$role->translate}</option>
+                                                        <option value="{$role->id}"
+                                                                {if $user->role == $role->name}selected{/if}>{$role->translate}</option>
                                                     {/foreach}
                                                 </select>
                                                 {if in_array('empty_role', (array)$errors)}
