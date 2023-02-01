@@ -132,7 +132,7 @@ class CollectorContractsController extends Controller
         $filter['type'] = 'base';
 
 
-        if ($this->manager->role == 'collector') {
+        if (in_array($this->manager->role, ['collector', 'manager'])) {
             $filter['collection_status'] = array($this->manager->collection_status_id);
             $filter['collection_manager_id'] = $this->manager->id;
         } elseif (in_array($this->manager->role, array('developer', 'admin', 'senior collector'))) {
