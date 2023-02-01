@@ -300,7 +300,7 @@
                                                    class="form-control form-control-line"/>
                                         </div>
                                     </div>
-                                    {if in_array($user->role, ['collector', 'manager'])}
+                                    {if in_array($user->role, ['collector'])}
                                         {if in_array($manager->role, ['senior collector','admin','developer'])}
                                             <div class="form-group">
                                                 <label class="col-md-12">Статусы договоров для коллекторов</label>
