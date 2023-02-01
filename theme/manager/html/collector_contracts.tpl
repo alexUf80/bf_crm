@@ -1100,7 +1100,7 @@
                         <label for="name" class="control-label"><strong>Менеджеры для распределения:</strong></label>
                         <ul class="list-unstyled" style="max-height:250px;overflow:hidden auto;">
                             {foreach $managers as $m}
-                                {if $m->role == 'collector' && !$m->blocked}
+                                {if in_array($m->role, ['collector', 'manager']) && !$m->blocked}
                                     <li>
                                         <div class="">
                                             <input class="" name="managers[]" id="distribute_{$m->id}" value="{$m->id}"
