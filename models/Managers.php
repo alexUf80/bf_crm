@@ -188,7 +188,7 @@ class Managers extends Core
             'managers' => array('developer', 'admin', 'manager', 'senior manager'), // просмотр менеджеров
             'block_manager' => array('developer', 'admin', 'senior collector', 'city_manager'), // блокирование менеджеров
             'create_managers' => array('developer', 'admin', 'senior collector', 'chief_exactor', 'chief_sudblock', 'city_manager'), // создание и редактирование менеджеров
-            'my_contracts' => array('developer', 'admin', 'collector', 'senior collector', 'team_collector'),
+            'my_contracts' => array('developer', 'admin', 'collector', 'senior collector', 'team_collector', 'manager'),
             'collection_report' => array('developer', 'admin', 'senior collector', 'team_collector', 'collector'),
             'zvonobot' => array('developer', 'admin', 'senior collector'),
             'orders' => array('developer', 'admin', 'manager', 'contact_center', 'quality_control', 'senior collector', 'team_collector'),
