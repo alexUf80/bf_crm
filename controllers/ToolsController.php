@@ -372,6 +372,7 @@ class ToolsController extends Controller
                 ->get();
 
             Onec::request($contracts);
+            exit;
         }
 
 
