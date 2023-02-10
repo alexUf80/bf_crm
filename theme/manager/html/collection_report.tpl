@@ -332,6 +332,9 @@
                                         <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'pay_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'pay_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Кол-во оплат
                                         </th>
+                                        <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'pay_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'pay_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            Текущий долг по контрактам
+                                        </th>
                                         <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'closed_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'closed_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             Закрыто
                                         </th>
@@ -364,6 +367,9 @@
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
                                                 <strong>{$collector->actions} / {$collector->totals|round}</strong>
+                                            </td>
+                                            <td style="width: 70px;" class="jsgrid-cell">
+                                                <strong>{$collector->all_contracts} / {$collector->all_debt_sum|round}</strong>
                                             </td>
                                             <td style="width: 70px;" class="jsgrid-cell">
                                                 <strong>{$collector->closed|round}</strong>
@@ -449,6 +455,9 @@
                                         </th>
                                         <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {$total->actions} / {$total->totals|round}
+                                        </th>
+                                        <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
+                                            {$total->total_contracts} / {$total->total_debt|round}
                                         </th>
                                         <th style="width: 70px;" class="jsgrid-header-cell jsgrid-header-sortable {if $sort == 'fio_asc'}jsgrid-header-sort jsgrid-header-sort-asc{elseif $sort == 'fio_desc'}jsgrid-header-sort jsgrid-header-sort-desc{/if}">
                                             {$total->closed|round}
