@@ -37,15 +37,15 @@ class Idx_scoring extends Core
                 [
                     'personLastName' => $order->lastname,
                     'personFirstName' => $order->firstname,
-                    'phone' => $order->phone_mobile,
+                    'phone' => preg_replace('/[^0-9]/', '', $order->phone_mobile),
                     'personBirthDate' => date('d.m.Y', strtotime($order->birth))
                 ];
 
             if (!empty($order->birth))
                 $person['personBirthDate'] = date('d.m.Y', strtotime($order->birth));
 
-            if (!empty($order->phone_mobile))
-                $person['personMidName'] = preg_replace('/[^0-9]/', '', $order->phone_mobile);
+            if (!empty($order->patronymic))
+                $person['personMidName'] = $order->patronymic;
 
             $score = $this->IdxApi->search($person);
 

@@ -57,6 +57,14 @@
                     </a>
                 </div>
             </div>
+            <div class="col-md-6 col-lg-3 col-xlg-3">
+                <div class="card card-inverse card-success">
+                    <a href="tools/onec_download" class="box text-center">
+                        <h1 class="font-light text-white">1C</h1>
+                        <h6 class="text-white">Выгрузка клиентов в 1с</h6>
+                    </a>
+                </div>
+            </div>
         </div>
 
     </div>

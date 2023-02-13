@@ -24,6 +24,10 @@ class ToolsController extends Controller
                     return $this->action_reminders();
                     break;
 
+                case 'onec_download':
+                    return $this->action_onec_download();
+                    break;
+
             endswitch;
         }
     }
@@ -352,5 +356,26 @@ class ToolsController extends Controller
         $id = $this->request->post('id');
         RemindersORM::destroy($id);
         exit;
+    }
+
+    private function action_onec_download()
+    {
+        if ($daterange = $this->request->get('daterange')) {
+            list($from, $to) = explode('-', $daterange);
+
+            $from = date('Y-m-d 00:00:00', strtotime($from));
+            $to   = date('Y-m-d 23:59:59', strtotime($to));
+
+            $contracts = ContractsORM::with('user.regAddress', 'user.factAddress')
+                ->whereIn('status', [2,3,4,11])
+                ->whereBetween('inssuance_date', [$from, $to])
+                ->get();
+
+            Onec::request($contracts);
+            exit;
+        }
+
+
+        return $this->design->fetch('tools/onec_downloads.tpl');
     }
 }
