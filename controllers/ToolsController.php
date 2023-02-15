@@ -294,6 +294,7 @@ class ToolsController extends Controller
         $count = $this->request->post('count');
         $msgSms = $this->request->post('msgSms');
         $msgZvon = $this->request->post('msgZvon');
+        $timeToSend = $this->request->post('timeToSend');
 
         $insert =
             [
@@ -302,7 +303,8 @@ class ToolsController extends Controller
                 'timeType' => $typeTime,
                 'countTime' => $count,
                 'msgSms' => $msgSms,
-                'msgZvon' => $msgZvon
+                'msgZvon' => $msgZvon,
+                'timeToSend' => $timeToSend
             ];
 
         RemindersORM::insert($insert);
@@ -336,6 +338,7 @@ class ToolsController extends Controller
         $count = $this->request->post('count');
         $msgSms = $this->request->post('msgSms');
         $msgZvon = $this->request->post('msgZvon');
+        $timeToSend = $this->request->post('timeToSend');
 
         $update =
             [
@@ -344,7 +347,8 @@ class ToolsController extends Controller
                 'timeType' => $typeTime,
                 'countTime' => $count,
                 'msgSms' => $msgSms,
-                'msgZvon' => $msgZvon
+                'msgZvon' => $msgZvon,
+                'timeToSend' => $timeToSend
             ];
 
         RemindersORM::where('id', $id)->update($update);

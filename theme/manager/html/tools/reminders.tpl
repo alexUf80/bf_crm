@@ -297,6 +297,11 @@
                                    class="form-control"/>
                         </div>
                         <div class="form-group">
+                            <label>Время отправки (для просроченных)</label>
+                            <input type="text" name="timeToSend"
+                                   class="form-control"/>
+                        </div>
+                        <div class="form-group">
                             <label>Сообщение (СМС)</label>
                             <input type="text" name="msgSms"
                                    class="form-control"/>
