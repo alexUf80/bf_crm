@@ -371,7 +371,7 @@ class ToolsController extends Controller
                 ->whereBetween('inssuance_date', [$from, $to])
                 ->get();
 
-            Onec::request($contracts);
+            Onec::action(['method' => 'sendIssuedContracts', 'items' => $contracts]);
             exit;
         }
 

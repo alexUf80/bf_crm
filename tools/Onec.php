@@ -2,11 +2,135 @@
 
 error_reporting(-1);
 ini_set('display_errors', 'Off');
+
 class Onec implements ToolsInterface
 {
     protected static $params;
 
-    public static function request($contracts)
+    public static function action($params)
+    {
+        return self::{$params['method']}($params['items']);
+    }
+
+    private static function sendCancelledOrders($orders)
+    {
+        $i = 0;
+
+        foreach ($orders as $order) {
+            list($passportSerial, $passportNumber) = explode('-', $order->user->passport_serial);
+
+            if (empty($order->user->regAddress)) {
+                $order->user->regAddress->adressfull = '163000, Архангельск, Попова, д.15';
+                $order->user->regAddress->zip = '163000';
+                $order->user->regAddress->region = 'Архангельская';
+                $order->user->regAddress->region_type = 'обл';
+                $order->user->regAddress->city = 'Архангельск';
+                $order->user->regAddress->city_type = 'г';
+                $order->user->regAddress->district = '';
+                $order->user->regAddress->district_type = '';
+                $order->user->regAddress->locality = '';
+                $order->user->regAddress->locality_type = '';
+                $order->user->regAddress->street = 'Попова';
+                $order->user->regAddress->street_type = 'ул';
+                $order->user->regAddress->house = '15';
+                $order->user->regAddress->room = '';
+            }
+
+            if (empty($order->user->factAddress)) {
+                $order->user->factAddress->adressfull = '163000, Архангельск, Попова, д.15';
+                $order->user->factAddress->zip = '163000';
+                $order->user->factAddress->region = 'Архангельская';
+                $order->user->factAddress->region_type = 'обл';
+                $order->user->factAddress->city = 'Архангельск';
+                $order->user->factAddress->city_type = 'г';
+                $order->user->factAddress->district = '';
+                $order->user->factAddress->district_type = '';
+                $order->user->factAddress->locality = '';
+                $order->user->factAddress->locality_type = '';
+                $order->user->factAddress->street = 'Попова';
+                $order->user->factAddress->street_type = 'ул';
+                $order->user->factAddress->house = '15';
+                $order->user->factAddress->room = '';
+            }
+
+            $xml['Справочники'][$i]['Контрагент'] =
+                [
+                    'Наименование' => trim($order->user->lastname . ' ' . $order->user->firstname . ' ' . $order->user->patronymic),
+                    'УИД' => trim($order->user->id),
+                    "ВидКонтрагента" => 'ФизЛицо',
+                    'СерияПаспорта' => trim($passportSerial),
+                    'НомерПаспорта' => trim($passportNumber),
+                    'ДатаВыдачиПаспорта' => date('Y-m-d', strtotime($order->user->passport_date)),
+                    'ДатаРождения' => date('Y-m-d', strtotime($order->user->birth)),
+                    'КемВыданПаспорт' => trim($order->user->passport_issued),
+                    'КодПодразделения' => trim($order->user->subdivision_code),
+                    'МестоРождения' => trim($order->user->birth_place),
+                    'Пол' => ($order->user->gender == 'female') ? 'Ж' : 'М',
+                    'СотовыйТелефон' => trim($order->user->phone_mobile),
+                    'Фамилия' => trim($order->user->lastname),
+                    'Имя' => trim($order->user->firstname),
+                    'Отчество' => trim($order->user->patronymic),
+                    'ИндексПоРегистрации' => trim($order->user->regAddress->zip),
+                    'ИндексФактическогоПроживания' => trim($order->user->factAddress->zip),
+                    'РайонОбластьПоРегистрации' => trim($order->user->regAddress->region),
+                    'РайонОбластьФактическогоПроживания' => trim($order->user->factAddress->region),
+                    'ГородПоРегистрации' => trim($order->user->regAddress->city . ' ' . $order->user->regAddress->city_type),
+                    'ГородФактическогоПроживания' => trim($order->user->factAddress->city . ' ' . $order->user->factAddress->city_type),
+                    'УлицаПоРегистрации' => trim($order->user->regAddress->street . ' ' . $order->user->regAddress->street_type),
+                    'УлицаФактическогоПроживания' => trim($order->user->factAddress->street . ' ' . $order->user->factAddress->street_type),
+                    'ДомПоРегистрации' => trim($order->user->regAddress->building),
+                    'ДомФактическогоПроживания' => trim($order->user->factAddress->building),
+                    'КвартираПоРегистрации' => trim($order->user->regAddress->room),
+                    'КвартираФактическогоПроживания' => trim($order->user->factAddress->room),
+                    'ПредставлениеАдресаПоРегистрации' => trim($order->user->regAddress->adressfull),
+                    'ПредставлениеАдресаФактическогоПроживания' => trim($order->user->factAddress->adressfull),
+                    'МестоРаботы' => trim($order->user->workplace),
+                    'РабочийТелефон' => trim($order->user->workphone),
+                    'Email' => trim($order->user->email),
+                    'ДатаСоздания' => date('Y-m-d', strtotime($order->user->created)),
+                    'Решение' => $order->status == 3 ? 2 : 1
+                ];
+
+            $i++;
+        }
+
+        $xml['Справочники']['Подразделение'] = ['Наименование' => 'АРХАНГЕЛЬСК 1', 'УИД' => 1];
+        $xml['Справочники']['Организация'] = ['Наименование' => 'ООО МКК "БАРЕНЦ ФИНАНС"', 'УИД' => 1];
+
+        $xml['Справочники'][$i]['СервисыОнлайнОплаты'] =
+            [
+                'Наименование' => 'Best2Pay',
+                'УИД' => '1',
+            ];
+        $i++;
+
+        $xml['Справочники'][$i]['КредитныеПродукты'] =
+            [
+                'Наименование' => 'Стандартный',
+                'УИД' => 1,
+                'Процент' => 1
+            ];
+
+        $i++;
+
+        $promocodes = PromocodesORM::get();
+
+        foreach ($promocodes as $promocode) {
+            $percent = 1 - ($promocode->discount / 100);
+
+            $xml['Справочники'][$i]['КредитныеПродукты'] =
+                [
+                    'Наименование' => 'Стандартный-' . $promocode->id,
+                    'УИД' => $promocode->id,
+                    'Процент' => $percent
+                ];
+            $i++;
+        }
+
+        return self::processing($xml);
+    }
+
+    private static function sendIssuedContracts($contracts)
     {
         $i = 0;
 
@@ -192,7 +316,7 @@ class Onec implements ToolsInterface
         return self::processing($xml);
     }
 
-    public static function processing($xml)
+    private static function processing($xml)
     {
         $xmlSerializer = new XMLSerializer("Выгрузка xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns='http://localhost/mfo'", 'Выгрузка');
         $xml = $xmlSerializer->serialize($xml);
@@ -201,7 +325,7 @@ class Onec implements ToolsInterface
         return self::response($xml);
     }
 
-    public static function response($resp)
+    private static function response($resp)
     {
         self::toLogs($resp);
 
@@ -211,7 +335,7 @@ class Onec implements ToolsInterface
         echo $resp;
     }
 
-    public static function toLogs($log)
+    private static function toLogs($log)
     {
         $insert =
             [
