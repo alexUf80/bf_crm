@@ -32,6 +32,7 @@
                             $('#addReminderForm').find('input[name="count"]').val(reminder['countTime']);
                             $('#addReminderForm').find('input[name="msgSms"]').val(reminder['msgSms']);
                             $('#addReminderForm').find('input[name="msgZvon"]').val(reminder['msgZvon']);
+                            $('#addReminderForm').find('input[name="timeToSend"]').val(reminder['timeToSend']);
                             $('#addReminderForm').find('input[name="id"]').attr('value', reminder['id']);
                         }
                     });
