@@ -614,7 +614,6 @@ class OrderController extends Controller
             return array('error' => 'Не хватает прав для выполнения операции', 'manager_id' => $order->manager_id);
 
         $update = array(
-            'status' => empty($manager_id) ? 0 : 1,
             'manager_id' => $manager_id,
             'uid' => exec($this->config->root_dir . 'generic/uidgen'),
         );
