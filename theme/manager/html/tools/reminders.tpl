@@ -1,7 +1,10 @@
 {$meta_title = 'Интеграции' scope=parent}
 
 {capture name='page_scripts'}
+    <script src="https://cdn.jsdelivr.net/npm/jquery.maskedinput@1.4.1/src/jquery.maskedinput.min.js" type="text/javascript"></script>
     <script>
+        $('input[name="timeToSend"]').mask('99:99');
+
         $(function () {
             $('.addReminderModal, .editReminderModal').on('click', function () {
                 $('#ReminderModal').modal();
@@ -40,7 +43,6 @@
                     $('#addReminderForm').find('input[name="id"]').attr('value', id);
                 }
             });
-
             $(document).on('click', '.addReminder, .editReminder', function () {
                 let form = $(this).closest('form').serialize();
 
@@ -52,7 +54,6 @@
                     }
                 });
             });
-
             $('.deleteReminder').on('click', function () {
                 let id = $(this).attr('data-id');
 
@@ -67,7 +68,6 @@
                     }
                 });
             });
-
             $('.reminderSwitcher').on('change', function () {
                 let id = $(this).attr('data-id');
 
