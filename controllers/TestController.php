@@ -15,6 +15,14 @@ class TestController extends Controller
 
     private function onec()
     {
+        $orders = OrdersORM::with('user.regAddress', 'user.factAddress')
+            ->whereIn('status', [3,8])
+            ->get();
+
+        Onec::action(['method' => 'sendCancelledOrders', 'items' => $orders]);
+        exit;
+
+        /*
         $contracts = ContractsORM::with('user.regAddress', 'user.factAddress')
             ->whereIn('status', [2,3,4,11])
             ->whereBetween('inssuance_date', [date('Y-m-d 00:00:00', strtotime('2022-11-01')), date('Y-m-d 23:59:59', strtotime('2023-01-31'))])
@@ -22,6 +30,7 @@ class TestController extends Controller
 
         Onec::request($contracts);
         exit;
+        */
     }
 
     private function restrDocs()
