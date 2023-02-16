@@ -29,5 +29,15 @@ class InsurancesORM extends \Illuminate\Database\Eloquent\Model
             return 490;
         elseif ($amount >= 20000)
             return 590;
+
+
+        if ($amount <= 3999)
+            return 390;
+        elseif ($amount >= 4000 && $amount <= 4999)
+            return 490;
+        elseif ($amount >= 5000 && $amount <= 7999)
+            return 590;
+        elseif ($amount >= 8000)
+            return 890;
     }
 }
