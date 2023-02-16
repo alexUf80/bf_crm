@@ -54,4 +54,36 @@ class PromocodesController extends Controller
         $this->promocodes->add($promocode);
         exit;
     }
+
+    private function action_edit()
+    {
+        $id = $this->request->post('id');
+        $code = $this->request->post('code');
+        $term = $this->request->post('term');
+        $is_active = $this->request->post('is_active');
+        $discount = $this->request->post('discount');
+        $comment = $this->request->post('comment');
+
+        $promocode =
+            [
+                'code' => $code,
+                'term' => $term,
+                'is_active' => $is_active,
+                'discount' => $discount,
+                'comment' => $comment
+            ];
+
+        PromocodesORM::where('id', $id)->update($promocode);
+        exit;
+    }
+
+    private function action_get_promocode()
+    {
+        $id = $this->request->post('id');
+
+        $promocode = PromocodesORM::find($id);
+
+        echo json_encode($promocode);
+        exit;
+    }
 }

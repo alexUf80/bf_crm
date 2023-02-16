@@ -19,21 +19,47 @@
     <script>
         $(function () {
 
-            $('.add-promocode-modal').on('click', function () {
+            $('.add-promocode-modal, .edit-promocode-modal').on('click', function () {
                 $('#add_promocode_form')[0].reset();
-                $('#add-promocode-modal').modal();
 
-                $('.add_promocode').on('click', function () {
-                    let form = $('#add_promocode_form').serialize();
+                if ($(this).hasClass('edit-promocode-modal')) {
+                    let id = $(this).attr('data-id');
 
                     $.ajax({
                         method: 'POST',
-                        data: form,
-                        success: function () {
-                            location.reload();
+                        dataType: 'JSON',
+                        data: {
+                            id: id,
+                            action: 'get_promocode'
+                        },
+                        success: function (promocode) {
+                            $('#code').val(promocode['code']);
+                            $('#term').val(promocode['term']);
+                            $('#is_active option[value='+promocode['is_active']+']').prop('selected', true);
+                            $('#discount').val(promocode['discount']);
+                            $('#comment').val(promocode['comment']);
+                            $('input[name="action"]').val('edit');
+                            $('input[name="id"]').val(id);
                         }
                     })
-                });
+                }else{
+                    $('input[name="action"]').val('add');
+                }
+
+
+                $('#add-promocode-modal').modal();
+            });
+
+            $('.formSubmit').on('click', function () {
+                let form = $('#add_promocode_form').serialize();
+
+                $.ajax({
+                    method: 'POST',
+                    data: form,
+                    success: function () {
+                        location.reload();
+                    }
+                })
             });
 
             $('.delete').on('click', function () {
@@ -43,7 +69,7 @@
 
                 $.ajax({
                     method: 'POST',
-                    data:{
+                    data: {
                         action: 'delete',
                         code_id: code_id
                     },
@@ -160,8 +186,15 @@
                                                 <td class="jsgrid-header-cell" style="width: 200px">{$code->term}</td>
                                                 <td class="jsgrid-header-cell"
                                                     style="width: 150px">{if $code->is_active == 1}Да{else}Нет{/if}</td>
-                                                <td class="jsgrid-header-cell" style="width: 150px">{$code->discount}</td>
+                                                <td class="jsgrid-header-cell"
+                                                    style="width: 150px">{$code->discount}</td>
                                                 <td class="jsgrid-header-cell">{$code->comment}</td>
+                                                <td class="jsgrid-header-cell">
+                                                    <div data-id="{$code->id}"
+                                                         class="btn btn-outline-warning edit-promocode-modal"><i
+                                                                class=" fas fa-edit"></i>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         {/foreach}
                                     {/if}
@@ -193,7 +226,8 @@
             <div class="modal-body">
                 <div class="alert" style="display:none"></div>
                 <form method="POST" id="add_promocode_form">
-                    <input type="hidden" name="action" value="add">
+                    <input type="hidden" name="action">
+                    <input type="hidden" name="id">
                     <div class="form-group">
                         <label for="code" class="control-label">Код</label>
                         <input type="text" class="form-control" name="code" id="code" value=""/>
@@ -220,7 +254,7 @@
                     </div>
                     <div>
                         <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
-                        <input type="button" class="btn btn-success add_promocode" value="Сохранить">
+                        <input type="button" class="btn btn-success formSubmit" value="Сохранить">
                     </div>
                 </form>
             </div>
