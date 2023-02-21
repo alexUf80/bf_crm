@@ -2276,13 +2276,6 @@
                                                                         {/if}
                                                                     {/if}
                                                                     <span class="time">
-                                                                        {if $scoring_type->name == 'fssp'}
-                                                                            <span>Сумма
-                                                                            долга: {$scorings[$scoring_type->name]->body['amount']}</span>{if isset($scorings[$scoring_type->name]->body['badArticles'])}
-                                                                            <span>{$scorings[$scoring_type->name]->body['badArticles']}</span>
-                                                                            <br>
-                                                                        {/if}
-                                                                        {/if}
                                                                         {if $scorings[$scoring_type->name]->created}
                                                                             {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
                                                                         {/if}
