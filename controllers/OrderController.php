@@ -877,25 +877,6 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        //Отправляем чек по страховке
-        //Отправляем чек по страховке
-        $resp = $this->Cloudkassir->send_reject_reason($contract->order_id);
-
-        if (!empty($resp)) {
-            $resp = json_decode($resp);
-
-            $this->receipts->add_receipt(array(
-                'user_id' => $contract->user_id,
-                'Информирование о причине отказа',
-                'order_id' => $contract->order_id,
-                'contract_id' => 0,
-                'insurance_id' => 0,
-                'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
-                'response' => serialize($resp),
-                'created' => date('Y-m-d H:i:s')
-            ));
-        }
-
         //отказной трафик
         LeadFinances::sendRequest($order->user_id);
 
@@ -930,6 +911,24 @@ class OrderController extends Controller
                 'created' => date('Y-m-d H:i:s'),
                 'transaction_id' => 0,
             ));
+
+            //Отправляем чек по страховке
+            $resp = $this->Cloudkassir->send_reject_reason($contract->order_id);
+
+            if (!empty($resp)) {
+                $resp = json_decode($resp);
+
+                $this->receipts->add_receipt(array(
+                    'user_id' => $contract->user_id,
+                    'Информирование о причине отказа',
+                    'order_id' => $contract->order_id,
+                    'contract_id' => 0,
+                    'insurance_id' => 0,
+                    'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
+                    'response' => serialize($resp),
+                    'created' => date('Y-m-d H:i:s')
+                ));
+            }
         }
 
         return array('success' => 1, 'status' => $status);
