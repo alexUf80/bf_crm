@@ -750,6 +750,8 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('M')->setWidth(10);
                 $active_sheet->getColumnDimension('N')->setWidth(10);
                 $active_sheet->getColumnDimension('O')->setWidth(10);
+                $active_sheet->getColumnDimension('P')->setWidth(10);
+                $active_sheet->getColumnDimension('Q')->setWidth(10);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
@@ -766,6 +768,8 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('M1', 'Дата факт возврата');
                 $active_sheet->setCellValue('N1', 'Сумма выплачено');
                 $active_sheet->setCellValue('O1', 'Источник');
+                $active_sheet->setCellValue('P1', 'ID заявки');
+                $active_sheet->setCellValue('Q1', 'ID клиента');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -805,6 +809,8 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('M' . $i, date('d.m.Y', strtotime($contract->close_date)));
                     $active_sheet->setCellValue('N' . $i, $contract->sumPayed);
                     $active_sheet->setCellValue('O' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('P' . $i, $contract->order_id);
+                    $active_sheet->setCellValue('Q' . $i, $contract->user_id);
 
                     $i++;
                 }
