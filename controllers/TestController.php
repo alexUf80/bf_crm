@@ -9,28 +9,92 @@ class TestController extends Controller
 {
     public function fetch()
     {
-        $this->onec();
+        var_dump($this->run_scoring(28882));
         exit;
     }
 
-    private function onec()
+    public function run_scoring($scoring_id)
     {
-        $orders = OrdersORM::with('user.regAddress', 'user.factAddress')
-            ->whereIn('status', [3,8])
-            ->get();
+        $scoring = $this->scorings->get_scoring($scoring_id);
+        $order = $this->orders->get_order((int)$scoring->order_id);
 
-        Onec::action(['method' => 'sendCancelledOrders', 'items' => $orders]);
-        exit;
+        $person =
+            [
+                'personLastName' => $order->lastname,
+                'personFirstName' => $order->firstname,
+                'phone' => preg_replace('/[^0-9]/', '', $order->phone_mobile),
+                'personBirthDate' => date('d.m.Y', strtotime($order->birth))
+            ];
 
-        /*
-        $contracts = ContractsORM::with('user.regAddress', 'user.factAddress')
-            ->whereIn('status', [2,3,4,11])
-            ->whereBetween('inssuance_date', [date('Y-m-d 00:00:00', strtotime('2022-11-01')), date('Y-m-d 23:59:59', strtotime('2023-01-31'))])
-            ->get();
+        if (!empty($order->patronymic))
+            $person['personMidName'] = $order->patronymic;
 
-        Onec::request($contracts);
-        exit;
-        */
+        $score = $this->IdxApi->search($person);
+
+        if (empty($score)) {
+
+            $update =
+                [
+                    'status' => 'error',
+                    'body' => '',
+                    'success' => 0,
+                    'string_result' => 'Ошибка запроса'
+                ];
+
+            $this->scorings->update_scoring($scoring_id, $update);
+            $this->logging($person, $score);
+            return $update;
+        }
+
+        if ($score['operationResult'] == 'fail') {
+            $update =
+                [
+                    'status' => 'completed',
+                    'body' => '',
+                    'success' => 0,
+                    'string_result' => 'Клиент не найден в списке'
+                ];
+
+            $this->scorings->update_scoring($scoring_id, $update);
+            $this->logging($person, $score);
+            return $update;
+        }
+
+        $update =
+            [
+                'status' => 'completed',
+                'body' => $score['validationScorePhone'],
+                'success' => 1,
+                'string_result' => 'Пользователь найден: ' . $this->IdxApi->result[$score['validationScorePhone']]
+            ];
+
+        $this->scorings->update_scoring($scoring_id, $update);
+        return $this->logging($person, $score);
+    }
+
+    private function logging($request, $response, $filename = 'idxLog.txt')
+    {
+        echo 1;
+
+
+        $log_filename = $this->config->root_dir.'logs/'. $filename;
+
+        if (date('d', filemtime($log_filename)) != date('d')) {
+            $archive_filename = $this->config->root_dir.'logs/' . 'archive/' . date('ymd', filemtime($log_filename)) . '.' . $filename;
+            rename($log_filename, $archive_filename);
+            file_put_contents($log_filename, "\xEF\xBB\xBF");
+        }
+
+
+        $str = PHP_EOL . '===================================================================' . PHP_EOL;
+        $str .= date('d.m.Y H:i:s') . PHP_EOL;
+        $str .= var_export($request, true) . PHP_EOL;
+        $str .= var_export($response, true) . PHP_EOL;
+        $str .= 'END' . PHP_EOL;
+
+        file_put_contents($this->config->root_dir.'logs/' . $filename, $str, FILE_APPEND);
+
+        return 1;
     }
 
     private function restrDocs()

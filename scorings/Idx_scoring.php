@@ -31,6 +31,7 @@ class Idx_scoring extends Core
                 ];
 
             $this->scorings->update_scoring($scoring_id, $update);
+            $this->logging($person, $score);
             return $update;
         }
 
@@ -44,6 +45,7 @@ class Idx_scoring extends Core
                 ];
 
             $this->scorings->update_scoring($scoring_id, $update);
+            $this->logging($person, $score);
             return $update;
         }
 
@@ -62,10 +64,10 @@ class Idx_scoring extends Core
 
     private function logging($request, $response, $filename = 'idxLog.txt')
     {
-        $log_filename = $this->log_dir . $filename;
+        $log_filename = $this->config->root_dir.'logs/'. $filename;
 
         if (date('d', filemtime($log_filename)) != date('d')) {
-            $archive_filename = $this->log_dir . 'archive/' . date('ymd', filemtime($log_filename)) . '.' . $filename;
+            $archive_filename = $this->config->root_dir.'logs/' . 'archive/' . date('ymd', filemtime($log_filename)) . '.' . $filename;
             rename($log_filename, $archive_filename);
             file_put_contents($log_filename, "\xEF\xBB\xBF");
         }
@@ -77,7 +79,7 @@ class Idx_scoring extends Core
         $str .= var_export($response, true) . PHP_EOL;
         $str .= 'END' . PHP_EOL;
 
-        file_put_contents($this->log_dir . $filename, $str, FILE_APPEND);
+        file_put_contents($this->config->root_dir.'logs/' . $filename, $str, FILE_APPEND);
 
         return 1;
     }
