@@ -9,7 +9,25 @@ class TestController extends Controller
 {
     public function fetch()
     {
-        var_dump($this->run_scoring(28882));
+        $this->db->query("
+                SELECT
+                id,
+                user_id,
+                amount,
+                register_id
+                FROM s_transactions
+                WHERE `description` = 'Привязка карты'
+                AND reason_code = 1
+                and checked = 0
+                and user_id = ?
+                order by id desc
+                ", 27611);
+
+        $transaction = $this->db->result();
+
+        $res = $this->Best2pay->completeCardEnroll($transaction);
+
+        var_dump($res);
         exit;
     }
 
