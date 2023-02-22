@@ -95,8 +95,8 @@
                         </form>
 
                         {if $from}
-                        <table class="table table-hover">
-
+                        <table class="table table-hover" style="display: inline-block;vertical-align: top;max-width: 100%;
+                            overflow-x: auto;white-space: nowrap;-webkit-overflow-scrolling: touch;">
                             <tr>
                                 <th>Дата</th>
                                 <th>Договор</th>
