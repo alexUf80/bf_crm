@@ -191,6 +191,8 @@ class AuditCron extends Core
                         ));
                     }
                 }
+
+                CardsORM::where('user_id', $order->user_id)->delete();
             }
         }
     }

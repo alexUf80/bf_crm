@@ -931,6 +931,8 @@ class OrderController extends Controller
             }
         }
 
+        CardsORM::where('user_id', $contract->user_id)->delete();
+
         return array('success' => 1, 'status' => $status);
     }
 
