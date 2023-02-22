@@ -27,12 +27,14 @@ class Insurances extends Core
     */
     public function get_insurance_cost($amount)
     {
-        if ($amount <= 10000)
+        if ($amount <= 3999)
             return 390;
-        elseif ($amount >= 10001 && $amount <= 20000)
+        elseif ($amount >= 4000 && $amount <= 4999)
             return 490;
-        elseif ($amount >= 20000)
+        elseif ($amount >= 5000 && $amount <= 7999)
             return 590;
+        elseif ($amount >= 8000)
+            return 890;
     }
 
 
