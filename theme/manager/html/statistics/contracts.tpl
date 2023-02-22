@@ -100,6 +100,8 @@
                             <tr>
                                 <th>Дата</th>
                                 <th>Договор</th>
+                                <th>ID клиента</th>
+                                <th>ID договора</th>
                                 <th>Дата возврата</th>
                                 <th>ФИО</th>
                                 <th>Телефон</th>
@@ -121,6 +123,8 @@
                                 <td>
                                     <a target="_blank" href="order/{$contract->order_id}">{$contract->number}</a>
                                 </td>
+                                <td>{$contract->user_id}</td>
+                                <td>{$contract->order_id}</td>
                                 <td>
                                     {$contract->return_date|date}
                                 </td>
