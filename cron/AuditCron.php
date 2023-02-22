@@ -181,7 +181,7 @@ class AuditCron extends Core
 
                 $transaction = $this->db->result();
 
-                $this->Best2pay->completeCardEnroll($transaction);
+                $resp = $this->Best2pay->completeCardEnroll($transaction);
 
                 if ($resp == 'APPROVED') {
                     $this->operations->add_operation(array(

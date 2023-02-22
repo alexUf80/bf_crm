@@ -7,67 +7,80 @@ class Idx_scoring extends Core
         $scoring = $this->scorings->get_scoring($scoring_id);
         $order = $this->orders->get_order((int)$scoring->order_id);
 
-        if (empty($order)) {
+        $person =
+            [
+                'personLastName' => $order->lastname,
+                'personFirstName' => $order->firstname,
+                'phone' => preg_replace('/[^0-9]/', '', $order->phone_mobile),
+                'personBirthDate' => date('d.m.Y', strtotime($order->birth))
+            ];
+
+        if (!empty($order->patronymic))
+            $person['personMidName'] = $order->patronymic;
+
+        $score = $this->IdxApi->search($person);
+
+        if (empty($score)) {
+
             $update =
                 [
                     'status' => 'error',
-                    'string_result' => 'Не найдена заявка'
-                ];
-        } elseif (empty($order->lastname)) {
-            $update =
-                [
-                    'status' => 'error',
-                    'string_result' => 'в заявке не указана фамилия'
-                ];
-        } elseif (empty($order->firstname)) {
-            $update =
-                [
-                    'status' => 'error',
-                    'string_result' => 'в заявке не указано имя'
-                ];
-        } elseif (empty($order->phone_mobile)) {
-            $update =
-                [
-                    'status' => 'error',
-                    'string_result' => 'в заявке не указан телефон'
-                ];
-        } else {
-
-            $person =
-                [
-                    'personLastName' => $order->lastname,
-                    'personFirstName' => $order->firstname,
-                    'phone' => preg_replace('/[^0-9]/', '', $order->phone_mobile),
-                    'personBirthDate' => date('d.m.Y', strtotime($order->birth))
+                    'body' => '',
+                    'success' => 0,
+                    'string_result' => 'Ошибка запроса'
                 ];
 
-            if (!empty($order->birth))
-                $person['personBirthDate'] = date('d.m.Y', strtotime($order->birth));
+            $this->scorings->update_scoring($scoring_id, $update);
+            $this->logging($person, $score);
+            return $update;
+        }
 
-            if (!empty($order->patronymic))
-                $person['personMidName'] = $order->patronymic;
-
-            $score = $this->IdxApi->search($person);
-
-
+        if ($score['operationResult'] == 'fail') {
             $update =
                 [
                     'status' => 'completed',
                     'body' => '',
-                    'success' => empty($score || $score['validationScorePhone'] == 0) ? 0 : 1
+                    'success' => 0,
+                    'string_result' => 'Клиент не найден в списке'
                 ];
 
-            if (!empty($score) && $score['validationScorePhone'] != 0)
-            {
-                $update['string_result'] = 'Пользователь найден: '. $this->IdxApi->result[$score['validationScorePhone']];
-                $update['body'] = $score['validationScorePhone'];
-            }
-            else
-                $update['string_result'] = 'Клиент не найден в списке';
+            $this->scorings->update_scoring($scoring_id, $update);
+            $this->logging($person, $score);
+            return $update;
         }
 
-        $this->scorings->update_scoring($scoring_id, $update);
+        $update =
+            [
+                'status' => 'completed',
+                'body' => $score['validationScorePhone'],
+                'success' => 1,
+                'string_result' => 'Пользователь найден: ' . $this->IdxApi->result[$score['validationScorePhone']]
+            ];
 
+        $this->scorings->update_scoring($scoring_id, $update);
+        $this->logging($person, $score);
         return $update;
+    }
+
+    private function logging($request, $response, $filename = 'idxLog.txt')
+    {
+        $log_filename = $this->config->root_dir.'logs/'. $filename;
+
+        if (date('d', filemtime($log_filename)) != date('d')) {
+            $archive_filename = $this->config->root_dir.'logs/' . 'archive/' . date('ymd', filemtime($log_filename)) . '.' . $filename;
+            rename($log_filename, $archive_filename);
+            file_put_contents($log_filename, "\xEF\xBB\xBF");
+        }
+
+
+        $str = PHP_EOL . '===================================================================' . PHP_EOL;
+        $str .= date('d.m.Y H:i:s') . PHP_EOL;
+        $str .= var_export($request, true) . PHP_EOL;
+        $str .= var_export($response, true) . PHP_EOL;
+        $str .= 'END' . PHP_EOL;
+
+        file_put_contents($this->config->root_dir.'logs/' . $filename, $str, FILE_APPEND);
+
+        return 1;
     }
 }
