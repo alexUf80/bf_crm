@@ -148,7 +148,7 @@
                     }
                 })
 
-            })
+            });
 
             $('.accept_contract').on('click', function () {
 
@@ -2428,7 +2428,7 @@
                                                         {foreach $polises as $polise}
                                                             <div style="display: flex; justify-content: space-between">
                                                                 <label class="control-label">
-                                                                    {if $polise->type == 'POLIS_STRAHOVANIYA'}
+                                                                    {if $polise->type == 'POLIS'}
                                                                         {if isset($polise->issuance_flag)}
                                                                             Полис при выдаче {$polise->created|date}
                                                                         {else}
@@ -2949,6 +2949,7 @@
                                                     {if in_array($operation->type, ['PERCENTS', 'CHARGE', 'PENI'])}table-danger{/if} 
                                                     {if in_array($operation->type, ['P2P', 'IMPORT'])}table-info{/if} 
                                                     {if in_array($operation->type, ['INSURANCE', 'BUD_V_KURSE', 'REJECT_REASON', 'RETURN_INSURANCE', 'INSURANCE_BC'])}table-warning{/if}
+                                                    {if in_array($operation->type, ['RETURN_INSURANCE', 'RETURN_REJECT_REASON'])}table-secondary{/if}
                                                 ">
                                                 <td>
                                                     {*}
