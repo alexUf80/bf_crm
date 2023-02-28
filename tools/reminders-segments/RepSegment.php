@@ -1,11 +1,11 @@
 <?php
 
-class RepSegment extends SegmentsAbastract
+class RepSegment extends SegmentsAbstract
 {
 
-    public static function sendReminder($reminder)
+    public static function processing($reminder)
     {
-        $reminders = RemindersORM::where('segmentId', 4)->get();
+        $reminders = RemindersORM::where('segmentId', 4)->where('is_on', 1)->get();
 
         foreach ($reminders as $reminder) {
 
