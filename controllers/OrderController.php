@@ -877,25 +877,6 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        //Отправляем чек по страховке
-        //Отправляем чек по страховке
-        $resp = $this->Cloudkassir->send_reject_reason($contract->order_id);
-
-        if (!empty($resp)) {
-            $resp = json_decode($resp);
-
-            $this->receipts->add_receipt(array(
-                'user_id' => $contract->user_id,
-                'Информирование о причине отказа',
-                'order_id' => $contract->order_id,
-                'contract_id' => 0,
-                'insurance_id' => 0,
-                'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
-                'response' => serialize($resp),
-                'created' => date('Y-m-d H:i:s')
-            ));
-        }
-
         //отказной трафик
         //LeadFinances::sendRequest($order->user_id);
 
@@ -930,7 +911,27 @@ class OrderController extends Controller
                 'created' => date('Y-m-d H:i:s'),
                 'transaction_id' => 0,
             ));
+
+            //Отправляем чек по страховке
+            $resp = $this->Cloudkassir->send_reject_reason($contract->order_id);
+
+            if (!empty($resp)) {
+                $resp = json_decode($resp);
+
+                $this->receipts->add_receipt(array(
+                    'user_id' => $contract->user_id,
+                    'Информирование о причине отказа',
+                    'order_id' => $contract->order_id,
+                    'contract_id' => 0,
+                    'insurance_id' => 0,
+                    'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
+                    'response' => serialize($resp),
+                    'created' => date('Y-m-d H:i:s')
+                ));
+            }
         }
+
+        CardsORM::where('user_id', $contract->user_id)->delete();
 
         return array('success' => 1, 'status' => $status);
     }
@@ -2756,7 +2757,6 @@ class OrderController extends Controller
     private function action_add_receipt()
     {
         $type = $this->request->post('type');
-        $issuance = $this->request->post('issuance_flag');
         $order_id = $this->request->post('order_id');
         $operation_id = $this->request->post('operation_id');
         $receipt_uid = md5(time());
@@ -2768,37 +2768,23 @@ class OrderController extends Controller
             case 'reject_reason':
                 $operations = $this->operations->get_operations(['order_id' => $order_id, 'type' => 'REJECT_REASON']);
                 $type = 'RETURN_REJECT_REASON';
-                $operation_id = $operations[0]->id;
                 $operation_amount = $operations[0]->amount;
                 $title = 'Возврат услуги "Узнай причину отказа"';
+
+                $res = $this->Cloudkassir->return_reject_reason($order_id);
                 break;
 
-            case 'POLIS_STRAHOVANIYA':
+            default:
                 $operation = $this->operations->get_operation($operation_id);
                 $operation_amount = $operation->amount;
                 $type = 'RETURN_INSURANCE';
-                $title = 'Возврат услуги "Страхование от несчастного случая"';
-                break;
-
-            case 'POLIS_ZAKRITIE':
-                $operation = $this->operations->get_operation($operation_id);
-                $operation_amount = $operation->amount;
-                $type = 'RETURN_INSURANCE';
-                $title = 'Возврат услуги "Страхование банковской карты"';
+                $title = 'Возврат услуги «Финансовая защита»';
+                $res = $this->Cloudkassir->return_insurance($operation->id);
                 break;
 
         endswitch;
 
-        $receipt =
-            [
-                'title' => $title,
-                'order_id' => $receipt_uid,
-                'amount' => $operation_amount,
-                'email' => $order->email
-            ];
-
-        $res = $this->Ekam->return_receipt_request($receipt);
-        $res = json_decode($res);
+        $res = json_decode($res, true);
 
         $data =
             [
@@ -2807,7 +2793,7 @@ class OrderController extends Controller
                 'order_id' => $order->order_id,
                 'contract_id' => $order->contract_id,
                 'insurance_id' => 0,
-                'receipt_url' => $res->online_cashier_url,
+                'receipt_url' => $res['Model']['ReceiptLocalUrl'],
                 'response' => json_encode($res),
                 'created' => date('Y-m-d H:i:s')
 
@@ -2830,6 +2816,7 @@ class OrderController extends Controller
             'loan_peni_summ' => 0,
             'type_payment' => 0
         ));
+
         exit;
     }
 
