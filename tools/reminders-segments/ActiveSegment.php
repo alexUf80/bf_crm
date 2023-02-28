@@ -9,12 +9,12 @@ class ActiveSegment extends SegmentsAbstract
 
         foreach ($reminders as $reminder) {
 
-            switch ($reminder->id) {
-                case 4:
+            switch ($reminder->timeType) {
+                case 'hours':
                     self::toDayReminder($reminder);
                     break;
 
-                case 6:
+                case 'days':
                     self::beforeDayReminder($reminder);
                     break;
             }
