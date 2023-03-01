@@ -24,7 +24,7 @@ class Best2pay extends Core
     private $url = '';
     private $currency_code = 643;
 
-    private $fee = 0.03;
+    private $fee = 0.05;
 
     private $sectors = array();
 

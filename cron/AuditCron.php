@@ -138,10 +138,10 @@ class AuditCron extends Core
                 }
 
                 //отказной трафик
-                LeadFinances::sendRequest($order->user_id);
+                //LeadFinances::sendRequest($order->user_id);
 
-                if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
-                    PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
+                //if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
+                    //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
                 $this->db->query("
                 SELECT

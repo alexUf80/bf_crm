@@ -341,16 +341,16 @@ class Nbkiscore_scoring extends Core
             $nbki_score += 88;
 
 
-        if ($nbki_score < 200)
+        if ($nbki_score < 300)
             $limit = 0;
-        elseif ($nbki_score >= 200 && $nbki_score < 799)
+        elseif ($nbki_score >= 300 && $nbki_score < 799)
             $limit = 3000;
         elseif ($nbki_score >= 800 && $nbki_score < 899)
             $limit = 5000;
         elseif ($nbki_score >= 900)
             $limit = 7000;
 
-        if ($nbki_score < 200)
+        if ($nbki_score < 300)
             $update = [
                 'status' => 'completed',
                 'body' => 'Проверка не пройдена',
