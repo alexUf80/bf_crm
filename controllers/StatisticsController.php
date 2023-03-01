@@ -1006,14 +1006,14 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('B' . $i, $contract->contract_number . ' ' . ($contract->sector == '7036' ? 'ЮК' : 'МКК'));
                     $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
                     $active_sheet->setCellValue('D' . $i, $contract->inssuance_date);
-                    $active_sheet->setCellValue('D' . $i, $contract->contractAmount);
-                    $active_sheet->setCellValue('E' . $i, $contract->amount);
-                    $active_sheet->setCellValue('F' . $i, $contract->pan);
-                    $active_sheet->setCellValue('G' . $i, $contract->description . ' ' . ($contract->prolongation ? '(пролонгация)' : ''));
-                    $active_sheet->setCellValue('H' . $i, $contract->register_id);
-                    $active_sheet->setCellValue('I' . $i, $contract->operation);//--
-                    $active_sheet->setCellValue('J' . $i, $contract->insurance_number . ' ' . ($contract->insurance_amount ? $contract->insurance_amount . ' руб' : ''));
-                    $active_sheet->setCellValue('K' . $i, $contract->return_date);
+                    $active_sheet->setCellValue('E' . $i, $contract->contractAmount);
+                    $active_sheet->setCellValue('F' . $i, $contract->amount);
+                    $active_sheet->setCellValue('G' . $i, $contract->pan);
+                    $active_sheet->setCellValue('H' . $i, $contract->description . ' ' . ($contract->prolongation ? '(пролонгация)' : ''));
+                    $active_sheet->setCellValue('I' . $i, $contract->register_id);
+                    $active_sheet->setCellValue('J' . $i, $contract->operation);//--
+                    $active_sheet->setCellValue('K' . $i, $contract->insurance_number . ' ' . ($contract->insurance_amount ? $contract->insurance_amount . ' руб' : ''));
+                    $active_sheet->setCellValue('L' . $i, $contract->return_date);
 
                     $i++;
                 }
