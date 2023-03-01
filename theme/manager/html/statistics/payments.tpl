@@ -202,6 +202,8 @@
                                     <th>Дата</th>
                                     <th>Договор</th>
                                     <th>ФИО</th>
+                                    <th>Дата выдачи</th>
+                                    <th>Cумма займа</th>
                                     <th>Сумма</th>
                                     <th>Карта</th>
                                     <th>Описание</th>
@@ -221,6 +223,14 @@
                                     </td>
                                     <td>
                                         <input type="text" name="number" value="{$search['number']}"
+                                               class="form-control input-sm">
+                                    </td>
+                                    <td>
+                                        <input type="text" name="fio" value="{$search['fio']}"
+                                               class="form-control input-sm">
+                                    </td>
+                                    <td>
+                                        <input type="text" name="fio" value="{$search['fio']}"
                                                class="form-control input-sm">
                                     </td>
                                     <td>
@@ -287,6 +297,12 @@
                                                 </strong><br/>
                                                 {$operation->birth|escape}
                                             </a>
+                                        </td>
+                                        <td>
+                                            {$operation->inssuance_date|date}
+                                        </td>
+                                        <td>
+                                            {$operation->contractAmount}
                                         </td>
                                         <td>
                                             <strong class="text-success">{$operation->amount*1}</strong>

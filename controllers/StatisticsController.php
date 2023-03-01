@@ -913,6 +913,8 @@ class StatisticsController extends Controller
                     `o`.sent_date,
                     `c`.number AS contract_number,
                     `c`.return_date,
+                    `c`.inssuance_date,
+                    `c`.amount as contractAmount,
                     `u`.lastname,
                     `u`.firstname,
                     `u`.patronymic,
@@ -976,22 +978,26 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('C')->setWidth(45);
                 $active_sheet->getColumnDimension('D')->setWidth(20);
                 $active_sheet->getColumnDimension('E')->setWidth(20);
-                $active_sheet->getColumnDimension('F')->setWidth(10);
-                $active_sheet->getColumnDimension('G')->setWidth(10);
-                $active_sheet->getColumnDimension('H')->setWidth(30);
+                $active_sheet->getColumnDimension('F')->setWidth(20);
+                $active_sheet->getColumnDimension('G')->setWidth(20);
+                $active_sheet->getColumnDimension('H')->setWidth(10);
                 $active_sheet->getColumnDimension('I')->setWidth(10);
-                $active_sheet->getColumnDimension('J')->setWidth(15);
+                $active_sheet->getColumnDimension('J')->setWidth(30);
+                $active_sheet->getColumnDimension('K')->setWidth(10);
+                $active_sheet->getColumnDimension('L')->setWidth(15);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
                 $active_sheet->setCellValue('C1', 'ФИО');
-                $active_sheet->setCellValue('D1', 'Сумма');
-                $active_sheet->setCellValue('E1', 'Карта');
-                $active_sheet->setCellValue('F1', 'Описание');
-                $active_sheet->setCellValue('G1', 'B2P OrderID');
-                $active_sheet->setCellValue('H1', 'B2P OperationID');
-                $active_sheet->setCellValue('I1', 'Страховка');
-                $active_sheet->setCellValue('J1', 'Дата возврата');
+                $active_sheet->setCellValue('D1', 'Дата выдачи');
+                $active_sheet->setCellValue('E1', 'Сумма займа');
+                $active_sheet->setCellValue('F1', 'Сумма');
+                $active_sheet->setCellValue('G1', 'Карта');
+                $active_sheet->setCellValue('H1', 'Описание');
+                $active_sheet->setCellValue('I1', 'B2P OrderID');
+                $active_sheet->setCellValue('J1', 'B2P OperationID');
+                $active_sheet->setCellValue('K1', 'Страховка');
+                $active_sheet->setCellValue('L1', 'Дата возврата');
 
                 $i = 2;
                 foreach ($operations as $contract) {
@@ -999,13 +1005,15 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->created)));
                     $active_sheet->setCellValue('B' . $i, $contract->contract_number . ' ' . ($contract->sector == '7036' ? 'ЮК' : 'МКК'));
                     $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
-                    $active_sheet->setCellValue('D' . $i, $contract->amount);
-                    $active_sheet->setCellValue('E' . $i, $contract->pan);
-                    $active_sheet->setCellValue('F' . $i, $contract->description . ' ' . ($contract->prolongation ? '(пролонгация)' : ''));
-                    $active_sheet->setCellValue('G' . $i, $contract->register_id);
-                    $active_sheet->setCellValue('H' . $i, $contract->operation);//--
-                    $active_sheet->setCellValue('I' . $i, $contract->insurance_number . ' ' . ($contract->insurance_amount ? $contract->insurance_amount . ' руб' : ''));
-                    $active_sheet->setCellValue('J' . $i, $contract->return_date);
+                    $active_sheet->setCellValue('D' . $i, $contract->inssuance_date);
+                    $active_sheet->setCellValue('D' . $i, $contract->contractAmount);
+                    $active_sheet->setCellValue('E' . $i, $contract->amount);
+                    $active_sheet->setCellValue('F' . $i, $contract->pan);
+                    $active_sheet->setCellValue('G' . $i, $contract->description . ' ' . ($contract->prolongation ? '(пролонгация)' : ''));
+                    $active_sheet->setCellValue('H' . $i, $contract->register_id);
+                    $active_sheet->setCellValue('I' . $i, $contract->operation);//--
+                    $active_sheet->setCellValue('J' . $i, $contract->insurance_number . ' ' . ($contract->insurance_amount ? $contract->insurance_amount . ' руб' : ''));
+                    $active_sheet->setCellValue('K' . $i, $contract->return_date);
 
                     $i++;
                 }
