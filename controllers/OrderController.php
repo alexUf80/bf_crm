@@ -3030,6 +3030,7 @@ class OrderController extends Controller
         $prcSum = $this->request->post('prc');
         $peniSum = $this->request->post('peni');
         $stopProfit = $this->request->post('stopProfit');
+        $hideProlongation = $this->request->post('hideProlongation');
 
         $bodySum = str_replace(',', '.', $bodySum);
         $prcSum = str_replace(',', '.', $prcSum);
@@ -3040,13 +3041,24 @@ class OrderController extends Controller
         else
             $stopProfit = 1;
 
+        if (empty($hideProlongation))
+            $hideProlongation = 0;
+        else
+            $hideProlongation = 1;
+        
         $update =
             [
                 'loan_body_summ' => $bodySum,
                 'loan_percents_summ' => $prcSum,
                 'loan_peni_summ' => $peniSum,
-                'stop_profit' => $stopProfit
+                'stop_profit' => $stopProfit,
+                'hide_prolongation' => $hideProlongation
             ];
+
+        if (!empty($hideProlongation))
+            $update["prolongation"] = 5;
+        else
+            $update["prolongation"] = 0;
 
         ContractsORM::where('id', $contractId)->update($update);
         exit;
