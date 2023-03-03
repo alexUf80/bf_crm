@@ -33,8 +33,8 @@ class RfmlistController extends Controller
 
                 $removeAll = $this->request->post("remove_all");
 
-                var_dump($removeAll);
-                exit;
+                if(!empty($removeAll))
+
 
                 foreach ($xml as $value) {
 
