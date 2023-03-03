@@ -34,7 +34,7 @@ class RfmlistController extends Controller
                 $removeAll = $this->request->post("remove_all");
 
                 if(!empty($removeAll))
-
+                    RfmORM::truncate();
 
                 foreach ($xml as $value) {
 
