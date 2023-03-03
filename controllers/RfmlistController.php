@@ -31,20 +31,26 @@ class RfmlistController extends Controller
 
                 $success = true;
 
+                $removeAll = $this->request->post("remove_all");
+
+                var_dump($removeAll);
+                exit;
+
                 foreach ($xml as $value) {
 
-                        $string = str_replace(['<![CDATA[', ']]', '*', '>'], '', (string)$value->TERRORISTS_NAME);
+                    $fio = str_replace(['<![CDATA[', ']]', '*', '>'], '', (string)$value->TERRORISTS_NAME);
+                    $birth = str_replace(['<![CDATA[', ']]', '*', '>'], '', (string)$value->BIRTH_DATE);
 
-                        $substr = substr($string, 1);
+                    $substrFio = substr($fio, 1);
 
-                        $prepare_item['fio'] = mb_strtolower($substr);
+                    $prepare_item['fio'] = mb_strtolower($substrFio);
+                    $prepare_item['birth'] = date('d.m.Y', strtotime($birth));
 
-                        $result = $this->rfmlist->add_person($prepare_item);
+                    $result = $this->rfmlist->add_person($prepare_item);
 
-                        if($result == false)
-                        {
-                            $success == false;
-                        }
+                    if ($result == false) {
+                        $success = false;
+                    }
                 }
 
                 $this->design->assign('success', $success);
