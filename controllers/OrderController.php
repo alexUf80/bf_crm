@@ -3120,6 +3120,11 @@ class OrderController extends Controller
                     $this->closeContract($contract->id, $contract->order_id);
             }
 
+            // сохраняем количество дней просрочки
+            $contract_expired_period = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d', strtotime($contract->return_date)))) / 86400);
+            if($contract_expired_period < 0)
+                $contract_expired_period = 0;
+
             $this->operations->add_operation(array(
                 'contract_id' => $contract->id,
                 'user_id' => $contract->user_id,
@@ -3131,7 +3136,8 @@ class OrderController extends Controller
                 'loan_body_summ' => 0,
                 'loan_percents_summ' => 0,
                 'loan_peni_summ' => 0,
-                'loan_charge_summ' => 0
+                'loan_charge_summ' => 0,
+                'expired_period' => $contract_expired_period
             ));
 
             $this->contracts->update_contract($contract->id, array(
