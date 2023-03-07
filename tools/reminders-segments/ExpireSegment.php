@@ -39,24 +39,7 @@ class ExpireSegment extends SegmentsAbstract
             $limitWeek = 0;
             $limitMonth = 0;
 
-
-            $communications = CallBotCronORM::where('userId', $contract->user_id)->get();
             $canSend = 1;
-
-            if (!empty($communications)) {
-                foreach ($communications as $communication) {
-                    $created = date('Y-m-d H:i:s', strtotime($communication->created));
-
-                    if ($created >= $thisDayFrom && $created <= $thisDayTo)
-                        $limitDays++;
-
-                    if ($created >= $thisWeekFrom && $created <= $thisWeekTo)
-                        $limitWeek++;
-
-                    if ($created >= $thisMonthFrom && $created <= $thisMonthTo)
-                        $limitMonth++;
-                }
-            }
 
             $communications = RemindersCronORM::where('userId', $contract->user_id)->get();
 
