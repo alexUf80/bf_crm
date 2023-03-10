@@ -25,48 +25,30 @@ class PendingSegment extends SegmentsAbstract
         $contracts = ContractsORM::where('status', 0)->whereBetween('create_date', [$acceptDateFrom, $acceptDateTo])->get();
 
         foreach ($contracts as $contract) {
-            $user = UsersORM::where('id', $contract->user_id)->fisrt();
+            $user = UsersORM::where('id', $contract->user_id)->first();
 
             $isSent = RemindersCronORM::where('userId', $user->id)->where('reminderId', $reminder->id)->first();
 
             if (!empty($isSent))
                 continue;
 
-            if (empty($user->time_zone))
-                continue;
+            $reminderLog =
+                [
+                    'reminderId' => $reminder->id,
+                    'userId' => $user->id,
+                    'message' => $reminder->msgSms,
+                    'phone' => $user->phone_mobile
+                ];
 
-            $clientTime = gmdate('Y-m-d H:i:s', strtotime($user->time_zone));
+            RemindersCronORM::insert($reminderLog);
 
-            $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d'))->first();
-            $settings = new Settings();
-            $sent = 0;
+            $send =
+                [
+                    'phone' => $user->phone_mobile,
+                    'msg' => $reminder->msgSms
+                ];
 
-            if (!empty($isHoliday) && date('G', strtotime($clientTime)) >= $settings->holiday_worktime['from'] && date('G', strtotime($clientTime)) < $settings->holiday_worktime['to'])
-                $sent = 1;
-
-            if (empty($isHoliday) && date('G', strtotime($clientTime)) >= $settings->workday_worktime['from'] && date('G', strtotime($clientTime)) < $settings->workday_worktime['to'])
-                $sent = 1;
-
-            if ($sent == 1) {
-
-                $reminderLog =
-                    [
-                        'reminderId' => $reminder->id,
-                        'userId' => $user->id,
-                        'message' => $reminder->msgSms,
-                        'phone' => $user->phone_mobile
-                    ];
-
-                RemindersCronORM::insert($reminderLog);
-
-                $send =
-                    [
-                        'phone' => $user->phone_mobile,
-                        'msg' => $reminder->msgSms
-                    ];
-
-                self::send($send);
-            }
+            self::send($send);
         }
     }
 }

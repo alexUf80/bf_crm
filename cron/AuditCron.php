@@ -135,9 +135,9 @@ class AuditCron extends Core
                         'order_id' => $order->order_id,
                         'user_id' => $order->user_id,
                     ));
-                }
 
-                CardsORM::where('user_id', $order->user_id)->delete();
+                    CardsORM::where('user_id', $order->user_id)->delete();
+                }
 
                 //отказной трафик
                 //LeadFinances::sendRequest($order->user_id);

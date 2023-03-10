@@ -19,17 +19,16 @@ class RepSegment extends SegmentsAbstract
 
     private static function daysWithoutLoanReminder($reminder)
     {
-        $closeDate = date('Y-m-d H:i:s', strtotime('-'.$reminder->countTime.' days'));
+        $closeDate = date('Y-m-d H:i:s', strtotime('-' . $reminder->countTime . ' days'));
 
         $contracts = ContractsORM::where('close_date', $closeDate)->get();
 
-        foreach ($contracts as $contract)
-        {
+        foreach ($contracts as $contract) {
             $user = UsersORM::where('id', $contract->user_id)->fisrt();
 
-            $hasActiveContract = ContractsORM::where('user_id', $user->user_id)->whereIn('status', [0,1,2,4,9])->first();
+            $hasActiveContract = ContractsORM::where('user_id', $user->user_id)->whereIn('status', [0, 1, 2, 4, 9])->first();
 
-            if(!empty($hasActiveContract))
+            if (!empty($hasActiveContract))
                 continue;
 
             $isSent = RemindersCronORM::where('userId', $user->id)->where('reminderId', $reminder->id)->first();
@@ -37,41 +36,23 @@ class RepSegment extends SegmentsAbstract
             if (!empty($isSent))
                 continue;
 
-            if (empty($user->time_zone))
-                continue;
+            $reminderLog =
+                [
+                    'reminderId' => $reminder->id,
+                    'userId' => $user->id,
+                    'message' => $reminder->msgSms,
+                    'phone' => $user->phone_mobile
+                ];
 
-            $clientTime = gmdate('Y-m-d H:i:s', strtotime($user->time_zone));
+            RemindersCronORM::insert($reminderLog);
 
-            $isHoliday = WeekendCalendarORM::where('date', date('Y-m-d'))->first();
-            $settings = new Settings();
-            $sent = 0;
+            $send =
+                [
+                    'phone' => $user->phone_mobile,
+                    'msg' => $reminder->msgSms
+                ];
 
-            if (!empty($isHoliday) && date('G', strtotime($clientTime)) >= $settings->holiday_worktime['from'] && date('G', strtotime($clientTime)) < $settings->holiday_worktime['to'])
-                $sent = 1;
-
-            if (empty($isHoliday) && date('G', strtotime($clientTime)) >= $settings->workday_worktime['from'] && date('G', strtotime($clientTime)) < $settings->workday_worktime['to'])
-                $sent = 1;
-
-            if ($sent == 1) {
-
-                $reminderLog =
-                    [
-                        'reminderId' => $reminder->id,
-                        'userId' => $user->id,
-                        'message' => $reminder->msgSms,
-                        'phone' => $user->phone_mobile
-                    ];
-
-                RemindersCronORM::insert($reminderLog);
-
-                $send =
-                    [
-                        'phone' => $user->phone_mobile,
-                        'msg' => $reminder->msgSms
-                    ];
-
-                self::send($send);
-            }
+            self::send($send);
         }
     }
 }
