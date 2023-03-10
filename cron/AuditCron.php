@@ -137,6 +137,8 @@ class AuditCron extends Core
                     ));
                 }
 
+                CardsORM::where('user_id', $order->user_id)->delete();
+
                 //отказной трафик
                 //LeadFinances::sendRequest($order->user_id);
 
@@ -191,8 +193,6 @@ class AuditCron extends Core
                         ));
                     }
                 }
-
-                CardsORM::where('user_id', $order->user_id)->delete();
             }
         }
     }
