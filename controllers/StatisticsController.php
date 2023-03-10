@@ -928,7 +928,8 @@ class StatisticsController extends Controller
                     `i`.number AS insurance_number,
                     `i`.amount AS insurance_amount,
                     `t`.sector,
-                    `o`.type_payment
+                    `o`.type_payment,
+                    `o`.expired_period
                 FROM __operations        AS `o`
                 LEFT JOIN __contracts    AS `c` ON `c`.id = `o`.contract_id
                 LEFT JOIN __users        AS `u` ON `u`.id = `o`.user_id
@@ -985,6 +986,7 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('J')->setWidth(30);
                 $active_sheet->getColumnDimension('K')->setWidth(10);
                 $active_sheet->getColumnDimension('L')->setWidth(15);
+                $active_sheet->getColumnDimension('M')->setWidth(15);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
@@ -998,6 +1000,7 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('J1', 'B2P OperationID');
                 $active_sheet->setCellValue('K1', 'Страховка');
                 $active_sheet->setCellValue('L1', 'Дата возврата');
+                $active_sheet->setCellValue('M1', 'Срок просрочки (дни)');
 
                 $i = 2;
                 foreach ($operations as $contract) {
@@ -1014,6 +1017,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('J' . $i, $contract->operation);//--
                     $active_sheet->setCellValue('K' . $i, $contract->insurance_number . ' ' . ($contract->insurance_amount ? $contract->insurance_amount . ' руб' : ''));
                     $active_sheet->setCellValue('L' . $i, $contract->return_date);
+                    $active_sheet->setCellValue('M' . $i, $contract->expired_period);
 
                     $i++;
                 }

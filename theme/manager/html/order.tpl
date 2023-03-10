@@ -2275,6 +2275,14 @@
                                                                                 </span>
                                                                         {/if}
                                                                     {/if}
+
+                                                                    {if $scoring_type->name == 'nbkiscore' && $scorings[$scoring_type->name]->status == 'completed'}
+                                                                        <span class="mail-desc"
+                                                                            title="Скоринговый балл:">
+                                                                                Скоринговый балл: <b>{$scorings['nbkiscore']->scorista_ball}</b>
+                                                                        </span>
+                                                                    {/if}
+
                                                                     <span class="time">
                                                                         {if $scorings[$scoring_type->name]->created}
                                                                             {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
@@ -3643,6 +3651,13 @@
                                {if $contract->stop_profit == 1}checked{/if}>
                         <label class="custom-control-label" for="stopProfit">
                             Остановить начисления
+                        </label>
+                    </div>
+                    <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                        <input type="checkbox" id="hideProlongation" name="hideProlongation" class="custom-control-input"
+                               {if $contract->hide_prolongation == 1}checked{/if}>
+                        <label class="custom-control-label" for="hideProlongation">
+                            Отключить возможность пролонгации
                         </label>
                     </div>
                     <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">

@@ -3030,6 +3030,7 @@ class OrderController extends Controller
         $prcSum = $this->request->post('prc');
         $peniSum = $this->request->post('peni');
         $stopProfit = $this->request->post('stopProfit');
+        $hideProlongation = $this->request->post('hideProlongation');
 
         $bodySum = str_replace(',', '.', $bodySum);
         $prcSum = str_replace(',', '.', $prcSum);
@@ -3040,13 +3041,24 @@ class OrderController extends Controller
         else
             $stopProfit = 1;
 
+        if (empty($hideProlongation))
+            $hideProlongation = 0;
+        else
+            $hideProlongation = 1;
+        
         $update =
             [
                 'loan_body_summ' => $bodySum,
                 'loan_percents_summ' => $prcSum,
                 'loan_peni_summ' => $peniSum,
-                'stop_profit' => $stopProfit
+                'stop_profit' => $stopProfit,
+                'hide_prolongation' => $hideProlongation
             ];
+
+        if (!empty($hideProlongation))
+            $update["prolongation"] = 5;
+        else
+            $update["prolongation"] = 0;
 
         ContractsORM::where('id', $contractId)->update($update);
         exit;
@@ -3108,6 +3120,11 @@ class OrderController extends Controller
                     $this->closeContract($contract->id, $contract->order_id);
             }
 
+            // сохраняем количество дней просрочки
+            $contract_expired_period = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d', strtotime($contract->return_date)))) / 86400);
+            if($contract_expired_period < 0)
+                $contract_expired_period = 0;
+
             $this->operations->add_operation(array(
                 'contract_id' => $contract->id,
                 'user_id' => $contract->user_id,
@@ -3119,7 +3136,8 @@ class OrderController extends Controller
                 'loan_body_summ' => 0,
                 'loan_percents_summ' => 0,
                 'loan_peni_summ' => 0,
-                'loan_charge_summ' => 0
+                'loan_charge_summ' => 0,
+                'expired_period' => $contract_expired_period
             ));
 
             $this->contracts->update_contract($contract->id, array(
