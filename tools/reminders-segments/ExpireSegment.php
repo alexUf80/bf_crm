@@ -25,7 +25,7 @@ class ExpireSegment extends SegmentsAbstract
 
         $settings = new Settings();
         $limitCommunications = $settings->sms_limit_communications;
-        $contracts = ContractsORM::where('status', 4)->where('return_date', '>=', date('Y-m-d 00:00:00', strtotime('2023-02-19')))->get();
+        $contracts = ContractsORM::where('status', 4)->where('return_date', '>=', date('Y-m-d 00:00:00', strtotime('2023-02-19')))->get()       ;
 
         foreach ($contracts as $contract) {
 
