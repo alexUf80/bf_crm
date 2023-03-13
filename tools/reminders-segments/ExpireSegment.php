@@ -25,12 +25,8 @@ class ExpireSegment extends SegmentsAbstract
 
         $settings = new Settings();
         $limitCommunications = $settings->sms_limit_communications;
-<<<<<<< HEAD
-        $contracts = ContractsORM::where('status', 4)->where('return_date', '>=', date('Y-m-d 00:00:00', strtotime('2023-02-19')))->get()       ;
-=======
 
-        $contracts = ContractsORM::where('status', 4)->where('return_date', '>=', date('Y-m-d 00:00:00', strtotime('2023-02-19')))->get();
->>>>>>> fe81c6fa2bd07f0a339bc072918d9b35a4e437bf
+        $contracts = ContractsORM::where('status', 4)->where('return_date', '>=', date('Y-m-d 00:00:00', strtotime('2023-02-19')))->get()       ;
 
         foreach ($contracts as $contract) {
 
@@ -44,24 +40,7 @@ class ExpireSegment extends SegmentsAbstract
             $limitWeek = 0;
             $limitMonth = 0;
 
-
-            $communications = CallBotCronORM::where('userId', $contract->user_id)->get();
             $canSend = 1;
-
-            if (!empty($communications)) {
-                foreach ($communications as $communication) {
-                    $created = date('Y-m-d H:i:s', strtotime($communication->created));
-
-                    if ($created >= $thisDayFrom && $created <= $thisDayTo)
-                        $limitDays++;
-
-                    if ($created >= $thisWeekFrom && $created <= $thisWeekTo)
-                        $limitWeek++;
-
-                    if ($created >= $thisMonthFrom && $created <= $thisMonthTo)
-                        $limitMonth++;
-                }
-            }
 
             $communications = RemindersCronORM::where('userId', $contract->user_id)->get();
 
