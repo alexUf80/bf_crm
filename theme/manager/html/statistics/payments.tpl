@@ -211,6 +211,7 @@
                                     <th>B2P OperationID</th>
                                     <th>Страховка</th>
                                     <th>Дата возврата</th>
+                                    <th>Срок просрочки (дни)</th>
                                     <th></th>
                                 </tr>
 
@@ -330,6 +331,9 @@
                                         </td>
                                         <td>
                                             {$operation->return_date}
+                                        </td>
+                                        <td>
+                                            {$operation->expired_period}
                                         </td>
                                         <td>
                                             <button class="btn btn-sm btn-primary js-send-operation"
