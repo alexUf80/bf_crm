@@ -145,27 +145,12 @@ class AuditCron extends Core
                 //if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
                     //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
-                $this->db->query("
-                SELECT
-                id,
-                user_id,
-                amount,
-                register_id
-                FROM s_transactions
-                WHERE `description` = 'Привязка карты'
-                AND reason_code = 1
-                and checked = 0
-                and user_id = ?
-                order by id desc
-                ", $order->user_id);
+                $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
 
-                $transaction = $this->db->result();
+                $resp = $this->Best2pay->purchase_by_token($defaultCard->id, 19, 'Списание за услугу "Причина отказа"');
+                $status = (string)$resp->state;
 
-                /*
-
-                $resp = $this->Best2pay->completeCardEnroll($transaction);
-
-                if ($resp == 'APPROVED') {
+                if ($status == 'APPROVED') {
                     $this->operations->add_operation(array(
                         'contract_id' => 0,
                         'user_id' => $order->user_id,
@@ -195,7 +180,6 @@ class AuditCron extends Core
                         ));
                     }
                 }
-                */
             }
         }
     }
