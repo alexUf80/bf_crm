@@ -164,10 +164,6 @@ class IssuanceCron extends Core
                     $this->contracts->update_contract($contract->id, array('status' => 6));
 
                     $this->orders->update_order($contract->order_id, array('status' => 6)); // статус 6 - не удалосб выдать
-
-                    if ($order = $this->orders->get_order((int)$contract->order_id)) {
-                        $this->soap1c->send_order_status($order->id_1c, 'Отказано');
-                    }
                 }
             }
         }
