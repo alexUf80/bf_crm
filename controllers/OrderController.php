@@ -3146,7 +3146,7 @@ class OrderController extends Controller
             ));
 
             
-            $this->transactions->update_transaction($transaction->id, array(
+            $this->transactions->update_transaction($transaction_id, array(
                 'loan_percents_summ' => $contract_loan_percents_summ,
                 'loan_peni_summ' => isset($contract_loan_peni_summ) ? $contract_loan_peni_summ : $contract->loan_peni_summ,
                 'loan_body_summ' => $contract_loan_body_summ,
