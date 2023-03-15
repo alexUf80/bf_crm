@@ -901,6 +901,8 @@ class OrderController extends Controller
 
         $transaction = $this->db->result();
 
+        /*
+
         $resp = $this->Best2pay->completeCardEnroll($transaction);
 
         if ($resp == 'APPROVED') {
@@ -932,6 +934,8 @@ class OrderController extends Controller
                 ));
             }
         }
+
+        */
 
         return array('success' => 1, 'status' => $status);
     }

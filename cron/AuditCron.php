@@ -161,6 +161,8 @@ class AuditCron extends Core
 
                 $transaction = $this->db->result();
 
+                /*
+
                 $resp = $this->Best2pay->completeCardEnroll($transaction);
 
                 if ($resp == 'APPROVED') {
@@ -193,6 +195,7 @@ class AuditCron extends Core
                         ));
                     }
                 }
+                */
             }
         }
     }
