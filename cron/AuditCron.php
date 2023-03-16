@@ -145,39 +145,43 @@ class AuditCron extends Core
                 //if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
                     //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
-                $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
+                $user = UsersORM::find($scoring->user_id);
 
-                $resp = $this->Best2pay->purchase_by_token($defaultCard->id, 19, 'Списание за услугу "Причина отказа"');
-                $status = (string)$resp->state;
+                if ($user->service_reason == 1) {
+                    $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
 
-                if ($status == 'APPROVED') {
-                    $this->operations->add_operation(array(
-                        'contract_id' => 0,
-                        'user_id' => $order->user_id,
-                        'order_id' => $order->order_id,
-                        'type' => 'REJECT_REASON',
-                        'amount' => 19,
-                        'created' => date('Y-m-d H:i:s'),
-                        'transaction_id' => 0,
-                    ));
+                    $resp = $this->Best2pay->purchase_by_token($defaultCard->id, 1900, 'Списание за услугу "Причина отказа"');
+                    $status = (string)$resp->state;
 
-                    //Отправляем чек по страховке
-                    $resp = $this->Cloudkassir->send_reject_reason($order->order_id);
-
-                    if (!empty($resp))
-                    {
-                        $resp = json_decode($resp);
-
-                        $this->receipts->add_receipt(array(
-                            'user_id' => $order->user_id,
-                            'Информирование о причине отказа',
-                            'order_id' => $order->order_id,
+                    if ($status == 'APPROVED') {
+                        $this->operations->add_operation(array(
                             'contract_id' => 0,
-                            'insurance_id' => 0,
-                            'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
-                            'response' => serialize($resp),
-                            'created' => date('Y-m-d H:i:s')
+                            'user_id' => $order->user_id,
+                            'order_id' => $order->order_id,
+                            'type' => 'REJECT_REASON',
+                            'amount' => 19,
+                            'created' => date('Y-m-d H:i:s'),
+                            'transaction_id' => 0,
                         ));
+
+                        //Отправляем чек по страховке
+                        $resp = $this->Cloudkassir->send_reject_reason($order->order_id);
+
+                        if (!empty($resp))
+                        {
+                            $resp = json_decode($resp);
+
+                            $this->receipts->add_receipt(array(
+                                'user_id' => $order->user_id,
+                                'Информирование о причине отказа',
+                                'order_id' => $order->order_id,
+                                'contract_id' => 0,
+                                'insurance_id' => 0,
+                                'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
+                                'response' => serialize($resp),
+                                'created' => date('Y-m-d H:i:s')
+                            ));
+                        }
                     }
                 }
             }
