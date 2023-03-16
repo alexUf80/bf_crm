@@ -921,6 +921,7 @@ class OrderController extends Controller
             }
         }
 
+
         return array('success' => 1, 'status' => $status);
     }
 
@@ -3104,28 +3105,28 @@ class OrderController extends Controller
                     }
                 }
 
-                if ($contract_loan_peni_summ == 0)
+                if($contract_loan_peni_summ == 0)
                     $this->closeContract($contract->id, $contract->order_id);
             }
 
             // сохраняем количество дней просрочки
             $contract_expired_period = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d', strtotime($contract->return_date)))) / 86400);
-            if ($contract_expired_period < 0)
+            if($contract_expired_period < 0)
                 $contract_expired_period = 0;
 
-            $transaction_id = $this->transactions->add_transaction(array(
-                'user_id' => $contract->user_id,
-                'amount' => $amountPay * 100,
-                'sector' => 0,
-                'register_id' => 0,
-                'reference' => ' ',
-                'description' => 'Проведение менеджером оплаты по договору ' . $contract->number,
-                'created' => date('Y-m-d H:i:s', strtotime($payDate)),
-                'prolongation' => 0,
-                'commision_summ' => 0,
-                'sms' => 0,
-                'body' => ' ',
-            ));
+                $transaction_id = $this->transactions->add_transaction(array(
+                    'user_id' => $contract->user_id,
+                    'amount' => $amountPay * 100,
+                    'sector' => 0,
+                    'register_id' => 0,
+                    'reference' => ' ',
+                    'description' => 'Проведение менеджером оплаты по договору ' . $contract->number,
+                    'created' => date('Y-m-d H:i:s', strtotime($payDate)),
+                    'prolongation' => 0,
+                    'commision_summ' => 0,
+                    'sms' => 0,
+                    'body' => ' ',
+                ));
 
             $this->operations->add_operation(array(
                 'contract_id' => $contract->id,
@@ -3148,7 +3149,7 @@ class OrderController extends Controller
                 'loan_body_summ' => $contract_loan_body_summ,
             ));
 
-
+            
             $this->transactions->update_transaction($transaction->id, array(
                 'loan_percents_summ' => $contract_loan_percents_summ,
                 'loan_peni_summ' => isset($contract_loan_peni_summ) ? $contract_loan_peni_summ : $contract->loan_peni_summ,

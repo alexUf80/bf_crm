@@ -23,13 +23,11 @@ class InsurancesORM extends \Illuminate\Database\Eloquent\Model
 
     public static function get_insurance_cost($amount)
     {
-        if ($amount <= 3999)
-            return 390;
-        elseif ($amount >= 4000 && $amount <= 4999)
-            return 490;
-        elseif ($amount >= 5000 && $amount <= 7999)
+        if ($amount <= 4999)
             return 590;
-        elseif ($amount >= 8000)
+        elseif ($amount >= 5000 && $amount <= 8999)
             return 890;
+        elseif ($amount >= 9000)
+            return 990;
     }
 }
