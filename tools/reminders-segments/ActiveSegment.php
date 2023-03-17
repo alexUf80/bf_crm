@@ -23,41 +23,37 @@ class ActiveSegment extends SegmentsAbstract
 
     private static function toDayReminder($reminder)
     {
-        $nowHour = date('H');
+        $startTime = date('Y-m-d 00:00:00');
+        $endTime = date('Y-m-d 23:59:59');
 
-        if ($nowHour == $reminder->countTime) {
-            $startTime = date('Y-m-d 00:00:00');
-            $endTime = date('Y-m-d 23:59:59');
+        $contracts = ContractsORM::whereBetween('return_date', [$startTime, $endTime])->where('status', 2)->get();
 
-            $contracts = ContractsORM::whereBetween('return_date', [$startTime, $endTime])->where('status', 2)->get();
+        foreach ($contracts as $contract) {
 
-            foreach ($contracts as $contract) {
+            $user = UsersORM::where('id', $contract->user_id)->first();
 
-                $user = UsersORM::where('id', $contract->user_id)->first();
+            $isSent = RemindersCronORM::where('userId', $user->id)->whereBetween('created', [$startTime, $endTime])->first();
 
-                $isSent = RemindersCronORM::where('userId', $user->id)->whereBetween('created', [$startTime, $endTime])->first();
+            if (!empty($isSent))
+                continue;
 
-                if (!empty($isSent))
-                    continue;
+            $reminderLog =
+                [
+                    'reminderId' => $reminder->id,
+                    'userId' => $user->id,
+                    'message' => $reminder->msgSms,
+                    'phone' => $user->phone_mobile
+                ];
 
-                $reminderLog =
-                    [
-                        'reminderId' => $reminder->id,
-                        'userId' => $user->id,
-                        'message' => $reminder->msgSms,
-                        'phone' => $user->phone_mobile
-                    ];
+            RemindersCronORM::insert($reminderLog);
+            $send =
+                [
+                    'phone' => $user->phone_mobile,
+                    'msg' => $reminder->msgSms
+                ];
 
-                RemindersCronORM::insert($reminderLog);
-                $send =
-                    [
-                        'phone' => $user->phone_mobile,
-                        'msg' => $reminder->msgSms
-                    ];
+            self::send($send);
 
-                self::send($send);
-
-            }
         }
     }
 
