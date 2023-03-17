@@ -874,8 +874,6 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        CardsORM::where('user_id', $order->user_id)->delete();
-
         //отказной трафик
         //LeadFinances::sendRequest($order->user_id);
 
@@ -917,6 +915,7 @@ class OrderController extends Controller
             }
         }
 
+        CardsORM::where('user_id', $order->user_id)->delete();
 
         return array('success' => 1, 'status' => $status);
     }
