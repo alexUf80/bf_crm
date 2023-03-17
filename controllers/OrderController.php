@@ -882,42 +882,38 @@ class OrderController extends Controller
         //if (!empty($order->utm_source) && $order->utm_source == 'leadstech')
         //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
-        $user = UsersORM::find($order->user_id);
+        $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
 
-        if ($user->service_reason == 1) {
-            $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
+        $resp = $this->Best2pay->purchase_by_token($defaultCard->id, 1900, 'Списание за услугу "Причина отказа"');
+        $status = (string)$resp->state;
 
-            $resp = $this->Best2pay->purchase_by_token($defaultCard->id, 1900, 'Списание за услугу "Причина отказа"');
-            $status = (string)$resp->state;
+        if ($status == 'APPROVED') {
+            $this->operations->add_operation(array(
+                'contract_id' => 0,
+                'user_id' => $order->user_id,
+                'order_id' => $order->order_id,
+                'type' => 'REJECT_REASON',
+                'amount' => 19,
+                'created' => date('Y-m-d H:i:s'),
+                'transaction_id' => 0,
+            ));
 
-            if ($status == 'APPROVED') {
-                $this->operations->add_operation(array(
+            //Отправляем чек по страховке
+            $resp = $this->Cloudkassir->send_reject_reason($contract->order_id);
+
+            if (!empty($resp)) {
+                $resp = json_decode($resp);
+
+                $this->receipts->add_receipt(array(
+                    'user_id' => $contract->user_id,
+                    'Информирование о причине отказа',
+                    'order_id' => $contract->order_id,
                     'contract_id' => 0,
-                    'user_id' => $order->user_id,
-                    'order_id' => $order->order_id,
-                    'type' => 'REJECT_REASON',
-                    'amount' => 19,
-                    'created' => date('Y-m-d H:i:s'),
-                    'transaction_id' => 0,
+                    'insurance_id' => 0,
+                    'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
+                    'response' => serialize($resp),
+                    'created' => date('Y-m-d H:i:s')
                 ));
-
-                //Отправляем чек по страховке
-                $resp = $this->Cloudkassir->send_reject_reason($contract->order_id);
-
-                if (!empty($resp)) {
-                    $resp = json_decode($resp);
-
-                    $this->receipts->add_receipt(array(
-                        'user_id' => $contract->user_id,
-                        'Информирование о причине отказа',
-                        'order_id' => $contract->order_id,
-                        'contract_id' => 0,
-                        'insurance_id' => 0,
-                        'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
-                        'response' => serialize($resp),
-                        'created' => date('Y-m-d H:i:s')
-                    ));
-                }
             }
         }
 
@@ -3105,28 +3101,28 @@ class OrderController extends Controller
                     }
                 }
 
-                if($contract_loan_peni_summ == 0)
+                if ($contract_loan_peni_summ == 0)
                     $this->closeContract($contract->id, $contract->order_id);
             }
 
             // сохраняем количество дней просрочки
             $contract_expired_period = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d', strtotime($contract->return_date)))) / 86400);
-            if($contract_expired_period < 0)
+            if ($contract_expired_period < 0)
                 $contract_expired_period = 0;
 
-                $transaction_id = $this->transactions->add_transaction(array(
-                    'user_id' => $contract->user_id,
-                    'amount' => $amountPay * 100,
-                    'sector' => 0,
-                    'register_id' => 0,
-                    'reference' => ' ',
-                    'description' => 'Проведение менеджером оплаты по договору ' . $contract->number,
-                    'created' => date('Y-m-d H:i:s', strtotime($payDate)),
-                    'prolongation' => 0,
-                    'commision_summ' => 0,
-                    'sms' => 0,
-                    'body' => ' ',
-                ));
+            $transaction_id = $this->transactions->add_transaction(array(
+                'user_id' => $contract->user_id,
+                'amount' => $amountPay * 100,
+                'sector' => 0,
+                'register_id' => 0,
+                'reference' => ' ',
+                'description' => 'Проведение менеджером оплаты по договору ' . $contract->number,
+                'created' => date('Y-m-d H:i:s', strtotime($payDate)),
+                'prolongation' => 0,
+                'commision_summ' => 0,
+                'sms' => 0,
+                'body' => ' ',
+            ));
 
             $this->operations->add_operation(array(
                 'contract_id' => $contract->id,
@@ -3149,7 +3145,7 @@ class OrderController extends Controller
                 'loan_body_summ' => $contract_loan_body_summ,
             ));
 
-            
+
             $this->transactions->update_transaction($transaction->id, array(
                 'loan_percents_summ' => $contract_loan_percents_summ,
                 'loan_peni_summ' => isset($contract_loan_peni_summ) ? $contract_loan_peni_summ : $contract->loan_peni_summ,
