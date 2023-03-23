@@ -874,17 +874,15 @@ class OrderController extends Controller
             'user_id' => $order->user_id,
         ));
 
-        CardsORM::where('user_id', $order->user_id)->delete();
-
         //отказной трафик
         //LeadFinances::sendRequest($order->user_id);
 
         //if (!empty($order->utm_source) && $order->utm_source == 'leadstech')
-            //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
+        //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
         $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
 
-        $resp = $this->Best2pay->purchase_by_token($defaultCard->id, 19, 'Списание за услугу "Причина отказа"');
+        $resp = $this->Best2pay->purchase_by_token($defaultCard->id, 1900, 'Списание за услугу "Причина отказа"');
         $status = (string)$resp->state;
 
         if ($status == 'APPROVED') {
@@ -917,6 +915,7 @@ class OrderController extends Controller
             }
         }
 
+        CardsORM::where('user_id', $order->user_id)->delete();
 
         return array('success' => 1, 'status' => $status);
     }
@@ -3030,7 +3029,7 @@ class OrderController extends Controller
             $hideProlongation = 0;
         else
             $hideProlongation = 1;
-        
+
         $update =
             [
                 'loan_body_summ' => $bodySum,
@@ -3101,28 +3100,28 @@ class OrderController extends Controller
                     }
                 }
 
-                if($contract_loan_peni_summ == 0)
+                if ($contract_loan_peni_summ == 0)
                     $this->closeContract($contract->id, $contract->order_id);
             }
 
             // сохраняем количество дней просрочки
             $contract_expired_period = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d', strtotime($contract->return_date)))) / 86400);
-            if($contract_expired_period < 0)
+            if ($contract_expired_period < 0)
                 $contract_expired_period = 0;
 
-                $transaction_id = $this->transactions->add_transaction(array(
-                    'user_id' => $contract->user_id,
-                    'amount' => $amountPay * 100,
-                    'sector' => 0,
-                    'register_id' => 0,
-                    'reference' => ' ',
-                    'description' => 'Проведение менеджером оплаты по договору ' . $contract->number,
-                    'created' => date('Y-m-d H:i:s', strtotime($payDate)),
-                    'prolongation' => 0,
-                    'commision_summ' => 0,
-                    'sms' => 0,
-                    'body' => ' ',
-                ));
+            $transaction_id = $this->transactions->add_transaction(array(
+                'user_id' => $contract->user_id,
+                'amount' => $amountPay * 100,
+                'sector' => 0,
+                'register_id' => 0,
+                'reference' => ' ',
+                'description' => 'Проведение менеджером оплаты по договору ' . $contract->number,
+                'created' => date('Y-m-d H:i:s', strtotime($payDate)),
+                'prolongation' => 0,
+                'commision_summ' => 0,
+                'sms' => 0,
+                'body' => ' ',
+            ));
 
             $this->operations->add_operation(array(
                 'contract_id' => $contract->id,
@@ -3145,8 +3144,8 @@ class OrderController extends Controller
                 'loan_body_summ' => $contract_loan_body_summ,
             ));
 
-            
-            $this->transactions->update_transaction($transaction_id, array(
+
+            $this->transactions->update_transaction($transaction->id, array(
                 'loan_percents_summ' => $contract_loan_percents_summ,
                 'loan_peni_summ' => isset($contract_loan_peni_summ) ? $contract_loan_peni_summ : $contract->loan_peni_summ,
                 'loan_body_summ' => $contract_loan_body_summ,

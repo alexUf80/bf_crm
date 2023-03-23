@@ -24,7 +24,7 @@ class ExpireSegment extends SegmentsAbstract
         $thisMonthTo = date('Y-m-t 23:59:59', strtotime('monday this week'));
 
         $settings = new Settings();
-        $limitCommunications = $settings->sms_limit_communications;
+        $limitCommunications = $settings->limit_communications;
 
         $contracts = ContractsORM::where('status', 4)->where('return_date', '>=', date('Y-m-d 00:00:00', strtotime('2023-02-19')))->get()       ;
 
