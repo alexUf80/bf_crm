@@ -52,7 +52,7 @@ class TaxingCron extends Core
                 and `type` in ('PERCENTS', 'PENI')
                 ", $contract->id);
 
-                $sum_taxing = $this->db->result();
+                $sum_taxing = $this->db->result('sum_taxing');
 
                 $taxing_limit = $contract->amount * 1.5;
                 $stop_taxing = 0;
