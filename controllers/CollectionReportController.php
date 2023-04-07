@@ -115,7 +115,7 @@ class CollectionReportController extends Controller
         if ($collections = $this->collections->get_collections($filter)) {
 
             foreach ($collections as $col) {
-                if (!empty($collectors[intval($col->manager_id)])) {
+                if (!empty($collectors[intval($col->manager_id)]) && !is_null($col->manager_id)) {
                     $col->contract = $this->contracts->get_contract($col->contract_id);
                     $col->user = $this->users->get_user($col->contract->user_id);
 
