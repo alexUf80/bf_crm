@@ -833,7 +833,7 @@ class OrderController extends Controller
     }
 
     private function reject_order_action()
-    {
+    {        
         $order_id = $this->request->post('order_id', 'integer');
         $reason_id = $this->request->post('reason', 'integer');
         $status = $this->request->post('status', 'integer');
@@ -897,15 +897,15 @@ class OrderController extends Controller
             ));
 
             //Отправляем чек по страховке
-            $resp = $this->Cloudkassir->send_reject_reason($contract->order_id);
+            $resp = $this->Cloudkassir->send_reject_reason($order->order_id);
 
             if (!empty($resp)) {
                 $resp = json_decode($resp);
 
                 $this->receipts->add_receipt(array(
-                    'user_id' => $contract->user_id,
+                    'user_id' => $order->user_id,
                     'Информирование о причине отказа',
-                    'order_id' => $contract->order_id,
+                    'order_id' => $order->order_id,
                     'contract_id' => 0,
                     'insurance_id' => 0,
                     'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
@@ -3109,19 +3109,19 @@ class OrderController extends Controller
             if ($contract_expired_period < 0)
                 $contract_expired_period = 0;
 
-            $transaction_id = $this->transactions->add_transaction(array(
-                'user_id' => $contract->user_id,
-                'amount' => $amountPay * 100,
-                'sector' => 0,
-                'register_id' => 0,
-                'reference' => ' ',
-                'description' => 'Проведение менеджером оплаты по договору ' . $contract->number,
-                'created' => date('Y-m-d H:i:s', strtotime($payDate)),
-                'prolongation' => 0,
-                'commision_summ' => 0,
-                'sms' => 0,
-                'body' => ' ',
-            ));
+            // $transaction_id = $this->transactions->add_transaction(array(
+            //     'user_id' => $contract->user_id,
+            //     'amount' => $amountPay * 100,
+            //     'sector' => 0,
+            //     'register_id' => 0,
+            //     'reference' => ' ',
+            //     'description' => 'Проведение менеджером оплаты по договору ' . $contract->number,
+            //     'created' => date('Y-m-d H:i:s', strtotime($payDate)),
+            //     'prolongation' => 0,
+            //     'commision_summ' => 0,
+            //     'sms' => 0,
+            //     'body' => ' ',
+            // ));
 
             $this->operations->add_operation(array(
                 'contract_id' => $contract->id,
@@ -3130,7 +3130,8 @@ class OrderController extends Controller
                 'type' => 'PAY',
                 'amount' => $amountPay,
                 'created' => date('Y-m-d H:i:s', strtotime($payDate)),
-                'transaction_id' => $transaction_id,
+                // 'transaction_id' => $transaction_id,
+                'transaction_id' => 0,
                 'loan_body_summ' => 0,
                 'loan_percents_summ' => 0,
                 'loan_peni_summ' => 0,
@@ -3145,11 +3146,11 @@ class OrderController extends Controller
             ));
 
 
-            $this->transactions->update_transaction($transaction->id, array(
-                'loan_percents_summ' => $contract_loan_percents_summ,
-                'loan_peni_summ' => isset($contract_loan_peni_summ) ? $contract_loan_peni_summ : $contract->loan_peni_summ,
-                'loan_body_summ' => $contract_loan_body_summ,
-            ));
+            // $this->transactions->update_transaction($transaction->id, array(
+            //     'loan_percents_summ' => $contract_loan_percents_summ,
+            //     'loan_peni_summ' => isset($contract_loan_peni_summ) ? $contract_loan_peni_summ : $contract->loan_peni_summ,
+            //     'loan_body_summ' => $contract_loan_body_summ,
+            // ));
 
         }
 
