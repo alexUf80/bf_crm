@@ -1832,7 +1832,7 @@ class StatisticsController extends Controller
                     if ($ad_service->number) {
                         $active_sheet->setCellValue('N' . $i, ($ad_service->amount_contract * 3) . ' руб');
                     }
-                    $active_sheet->setCellValue('O' . $i, $ad_service->amount_insurance . 'руб');
+                    $active_sheet->setCellValueExplicit('O' . $i, $ad_service->amount_insurance, PHPExcel_Cell_DataType::TYPE_NUMERIC);
 
                     $i++;
                 }
