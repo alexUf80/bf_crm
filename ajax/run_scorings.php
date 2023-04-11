@@ -47,11 +47,7 @@ class RunScoringsApp extends Core
                         break;
                         
                         case 'all':
-                            $exist_nbki = $this->scorings->get_scorings([
-                                'type' => 'nbki',
-                                'user_id' => $order->user_id,
-                                'limit' => 1,
-                            ]);
+
                             foreach ($scoring_types as $scoring_type)
                             {
                                 $add_scoring = array(
@@ -60,13 +56,7 @@ class RunScoringsApp extends Core
                                     'type' => $scoring_type->name,
                                     'status' => 'new',
                                 );
-                                if ($scoring_type->name == 'nbki') {
-                                    if (count($exist_nbki) <= 0) {
-                                        $this->scorings->add_scoring($add_scoring);
-                                    }
-                                } else {
-                                    $this->scorings->add_scoring($add_scoring);
-                                }
+                                $this->scorings->add_scoring($add_scoring);
                             }
                             $this->response['success'] = 1;
                             
