@@ -1345,13 +1345,16 @@ class StatisticsController extends Controller
                         'sum_repeat_orders' => 0
                     ];
                 }
+                $operations = $this->operations->get_operations(array('contract_id'=>$contract->contract_id, 'type'=>'P2P'));
                 if ($contract->client_status == 'nk' || $contract->client_status == 'rep') {
                     $new_rep_orders[$date]['count_new_orders'] += 1;
-                    $new_rep_orders[$date]['sum_new_orders'] += $contract->amount;
+                    // $new_rep_orders[$date]['sum_new_orders'] += $contract->amount;
+                    $new_rep_orders[$date]['sum_new_orders'] += $operations[0]->amount;
                 }
                 if ($contract->client_status == 'pk' || $contract->client_status == 'crm') {
                     $new_rep_orders[$date]['count_repeat_orders'] += 1;
-                    $new_rep_orders[$date]['sum_repeat_orders'] += $contract->amount;
+                    // $new_rep_orders[$date]['sum_repeat_orders'] += $contract->amount;
+                    $new_rep_orders[$date]['sum_repeat_orders'] += $operations[0]->amount;
                 }
             }
 
@@ -1440,10 +1443,10 @@ class StatisticsController extends Controller
                     $operations_by_date[$date]['count_insurance'] += 1;
                     $operations_by_date[$date]['sum_insurance'] += $operation->amount;
 
-                    if ($operation->prolongation == 1) {
-                        $operations_by_date[$date]['count_insurance_prolongation'] += 1;
-                        $operations_by_date[$date]['sum_insurance_prolongation'] += $operation->amount;
-                    }
+                }
+                if ($operation->type == 'INSURANCE_BC') {
+                    $operations_by_date[$date]['count_insurance_prolongation'] += 1;
+                    $operations_by_date[$date]['sum_insurance_prolongation'] += $operation->amount;
                 }
 
                 if ($operation->type == 'BUD_V_KURSE') {
