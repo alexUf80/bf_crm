@@ -159,7 +159,11 @@ class NeworderController extends Controller
         );
 
         if ($order_id = $this->orders->add_order($order)) {
-
+            $exist_nbki = $this->scorings->get_scorings([
+                'type' => 'nbki',
+                'user_id' => $user_id,
+                'limit' => 1,
+            ]);
             $scoring_types = $this->scorings->get_types();
             foreach ($scoring_types as $scoring_type) {
                 if ($scoring_type->active && empty($scoring_type->is_paid)) {
@@ -170,7 +174,13 @@ class NeworderController extends Controller
                         'status' => 'new',
                         'created' => date('Y-m-d H:i:s')
                     );
-                    $this->scorings->add_scoring($add_scoring);
+                    if ($scoring_type->name == 'nbki') {
+                        if (count($exist_nbki) <= 0) {
+                            $this->scorings->add_scoring($add_scoring);
+                        }
+                    } else {
+                        $this->scorings->add_scoring($add_scoring);
+                    }
                 }
             }
 
