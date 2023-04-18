@@ -80,6 +80,10 @@ class StatisticsController extends Controller
                 return $this->action_leadgens();
                 break;
 
+            case 'requests_contracts':
+                return $this->action_requests_contracts();
+                break;
+
             default:
                 return false;
 
@@ -2723,6 +2727,192 @@ class StatisticsController extends Controller
         $this->design->assign('integrations', $integrations);
 
         return $this->design->fetch('statistics/leadgens.tpl');
+    }
+
+    private function action_requests_contracts()
+    {
+        if ($daterange = $this->request->get('daterange')) {
+            list($from, $to) = explode('-', $daterange);
+
+            $items_per_page = $this->request->get('page_count');
+
+            if (empty($items_per_page))
+                $items_per_page = 25;
+
+            $this->design->assign('page_count', $items_per_page);
+
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
+
+            $this->design->assign('date_from', $date_from);
+            $this->design->assign('date_to', $date_to);
+            $this->design->assign('from', $from);
+            $this->design->assign('to', $to);
+
+            $filter = array();
+
+            $current_page = $this->request->get('page', 'integer');
+            $current_page = max(1, $current_page);
+            $this->design->assign('current_page_num', $current_page);
+
+            $query = OrdersORM::query();
+
+            $query->whereBetween('accept_date', [$date_from, $date_to]);
+            $query->orWhereBetween('reject_date', [$date_from, $date_to]);
+
+            $count = $query->count();
+
+            $data = $query->limit($items_per_page)->offset(($current_page-1) * $items_per_page);
+            $orders = $data->get();
+
+            $orders_statuses = $this->orders->get_statuses();
+            if (!empty($orders)) {
+                foreach ($orders as $order) {
+                    $order->manager = ManagerORM::where('id', '=', $order->manager_id)->first();
+                    $order->contract = ContractsORM::where('id', '=', $order->contract_id)->first();
+                    $order->client = UsersORM::where('id', '=', $order->user_id)->first();
+                    $order->status = $orders_statuses[$order->status];
+                    $promocode = PromocodesORM::where('id', '=', $order->promocode_id)->first();
+                    $insurance = InsurancesORM::where('order_id', '=', $order->order_id)->first();
+                    $order->insurance_summ = $insurance ? $insurance->amount : 0;
+                    $order->promocode = $promocode ? $promocode->code : '';
+                    $order->payed_summ = round(OperationsORM::query()
+                        ->where('order_id', '=', $order->order_id)
+                        ->where('type', '=', 'PAY')
+                        ->sum('amount'), 2);
+                }
+                $this->design->assign('orders', $orders);
+            }
+
+            $pages_num = ceil($count / $items_per_page);
+
+            $this->design->assign('total_pages_num', $pages_num);
+            $this->design->assign('total_orders_count', $count);
+
+            if ($this->request->get('download') == 'excel') {
+
+                unset($filter['page']);
+                unset($filter['limit']);
+
+                $query = OrdersORM::query();
+
+                $query->whereBetween('accept_date', [$date_from, $date_to]);
+                $query->orWhereBetween('reject_date', [$date_from, $date_to]);
+                $orders = $query->get();
+
+                $orders_statuses = $this->orders->get_statuses();
+                if (!empty($orders)) {
+                    foreach ($orders as $order) {
+                        $order->manager = ManagerORM::where('id', '=', $order->manager_id)->first();
+                        $order->contract = ContractsORM::where('id', '=', $order->contract_id)->first();
+                        $order->client = UsersORM::where('id', '=', $order->user_id)->first();
+                        $order->status = $orders_statuses[$order->status];
+                        $promocode = PromocodesORM::where('id', '=', $order->promocode_id)->first();
+                        $insurance = InsurancesORM::where('order_id', '=', $order->order_id)->first();
+                        $order->insurance_summ = $insurance ? $insurance->amount : 0;
+                        $order->promocode = $promocode ? $promocode->code : '';
+                        $order->payed_summ = round(OperationsORM::query()
+                            ->where('order_id', '=', $order->order_id)
+                            ->where('type', '=', 'PAY')
+                            ->sum('amount'), 2);
+                    }
+                    $this->design->assign('orders', $orders);
+                }
+
+
+                $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+                $spreadsheet->getDefaultStyle()->getFont()->setName('Calibri')->setSize(12);
+
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->getDefaultRowDimension()->setRowHeight(20);
+                $sheet->getColumnDimension('A')->setWidth(20);
+                $sheet->getColumnDimension('B')->setWidth(20);
+                $sheet->getColumnDimension('C')->setWidth(35);
+                $sheet->getColumnDimension('D')->setWidth(15);
+                $sheet->getColumnDimension('E')->setWidth(25);
+                $sheet->getColumnDimension('F')->setWidth(10);
+                $sheet->getColumnDimension('G')->setWidth(10);
+                $sheet->getColumnDimension('H')->setWidth(15);
+                $sheet->getColumnDimension('I')->setWidth(15);
+                $sheet->getColumnDimension('J')->setWidth(70);
+                $sheet->getColumnDimension('K')->setWidth(15);
+                $sheet->getColumnDimension('L')->setWidth(20);
+                $sheet->getColumnDimension('M')->setWidth(10);
+                $sheet->getColumnDimension('N')->setWidth(15);
+                $sheet->getColumnDimension('O')->setWidth(20);
+                $sheet->getColumnDimension('P')->setWidth(20);
+                $sheet->getColumnDimension('Q')->setWidth(25);
+                $sheet->getColumnDimension('R')->setWidth(10);
+                $sheet->getColumnDimension('S')->setWidth(10);
+
+                $sheet->setCellValue('A1', 'Дата');
+                $sheet->setCellValue('B1', 'Договор');
+                $sheet->setCellValue('C1', 'ФИО');
+                $sheet->setCellValue('D1', 'Телефон');
+                $sheet->setCellValue('E1', 'Почта');
+                $sheet->setCellValue('F1', 'Сумма');
+                $sheet->setCellValue('G1', 'ПК/НК');
+                $sheet->setCellValue('H1', 'Менеджер');
+                $sheet->setCellValue('I1', 'Статус');
+                $sheet->setCellValue('J1', 'Причина отказа');
+                $sheet->setCellValue('K1', 'Промокод');
+                $sheet->setCellValue('L1', 'Дата возврата');
+                $sheet->setCellValue('M1', 'ПДН');
+                $sheet->setCellValue('N1', 'Дней займа');
+                $sheet->setCellValue('O1', 'Дата факт возврата');
+                $sheet->setCellValue('P1', 'Сумма выплачено');
+                $sheet->setCellValue('Q1', 'Источник привлечения');
+                $sheet->setCellValue('R1', 'ID заявки');
+                $sheet->setCellValue('S1', 'ID клиента');
+
+                $i = 2;
+
+                foreach ($orders as $order) {
+                    $pk = '';
+                    if ($order->client_status) {
+                        if ($order->client_status == 'pk') {
+                            $pk = 'ПК';
+                        } elseif($order->client_status == 'crm') {
+                            $pk = 'ПК CRM';
+                        } elseif($order->client_status == 'rep') {
+                            $pk = 'Повтор';
+                        } elseif($order->client_status == 'nk') {
+                            $pk = 'Новая';
+                        }
+                    }
+                    $sheet->setCellValue('A' . $i, $order->date);
+                    $sheet->setCellValue('B' . $i, $order->contract->number);
+                    $sheet->setCellValue('C' . $i, "{$order->client->lastname} {$order->client->firstname} {$order->client->patronymic}");
+                    $sheet->setCellValue('D' . $i, $order->client->phone_mobile);
+                    $sheet->setCellValue('E' . $i, $order->client->email);
+                    $sheet->setCellValue('F' . $i, $order->amount + $order->insurance_summ);
+                    $sheet->setCellValue('G' . $i, $pk);
+                    $sheet->setCellValue('H' . $i, $order->manager->name);
+                    $sheet->setCellValue('I' . $i, $order->status);
+                    $sheet->setCellValue('J' . $i, $order->reject_reason);
+                    $sheet->setCellValue('K' . $i, $order->promocode);
+                    $sheet->setCellValue('L' . $i, $order->contract->return_date);
+                    $sheet->setCellValue('M' . $i, $order->client->pdn);
+                    $sheet->setCellValue('N' . $i, $order->period);
+                    $sheet->setCellValue('O' . $i, $order->contract->close_date);
+                    $sheet->setCellValue('P' . $i, $order->payed_summ);
+                    $sheet->setCellValue('Q' . $i, $order->utm_source ?? 'Не оп');
+                    $sheet->setCellValue('R' . $i, $order->order_id);
+                    $sheet->setCellValue('S' . $i, $order->user_id);
+
+                    $i++;
+                }
+
+                $filename = 'Report.xlsx';
+                $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+                $writer->save($this->config->root_dir . $filename);
+                header('Location:' . $this->config->root_url . '/' . $filename);
+                exit;
+            }
+        }
+
+
+        return $this->design->fetch('statistics/requests_contracts.tpl');
     }
 
 }
