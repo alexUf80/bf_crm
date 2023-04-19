@@ -2741,8 +2741,8 @@ class StatisticsController extends Controller
 
             $this->design->assign('page_count', $items_per_page);
 
-            $date_from = date('Y-m-d', strtotime($from));
-            $date_to = date('Y-m-d', strtotime($to));
+            $date_from = date('Y-m-d 00:00:00', strtotime($from));
+            $date_to = date('Y-m-d 23:59:59', strtotime($to));
 
             $this->design->assign('date_from', $date_from);
             $this->design->assign('date_to', $date_to);
