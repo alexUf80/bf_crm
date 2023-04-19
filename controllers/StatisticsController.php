@@ -500,7 +500,8 @@ class StatisticsController extends Controller
                     u.phone_mobile,
                     u.email,
                     ts.operation, 
-                    ts.checked
+                    ts.checked,
+                    o.promocode_id
                 FROM __orders AS o
                 LEFT JOIN __users AS u ON u.id = o.user_id
                 LEFT JOIN s_transactions AS ts ON u.id = ts.user_id
@@ -515,8 +516,11 @@ class StatisticsController extends Controller
             $this->db->query($query);
 
             $orders = array();
-            foreach ($this->db->results() as $o)
+            foreach ($this->db->results() as $o){
                 $orders[$o->order_id] = $o;
+                $promocode = $this->promocodes->get($o->promocode_id);
+                $orders[$o->order_id]->promocode = $promocode->code;
+            }
 
             if (!empty($orders))
                 if ($scorings = $this->scorings->get_scorings(array('order_id' => array_keys($orders), 'type' => 'scorista')))
@@ -576,6 +580,7 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('H')->setWidth(30);
                 $active_sheet->getColumnDimension('I')->setWidth(15);
                 $active_sheet->getColumnDimension('J')->setWidth(15);
+                $active_sheet->getColumnDimension('K')->setWidth(15);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Заявка');
@@ -587,6 +592,7 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('H1', 'Скориста');//---
                 $active_sheet->setCellValue('I1', 'Источник');//---
                 $active_sheet->setCellValue('J1', 'Операция');//---
+                $active_sheet->setCellValue('K1', 'Промокод');//---
 
                 $i = 2;
                 foreach ($orders as $contract) {
@@ -603,6 +609,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('H' . $i, empty($contract->scoring) ? '' : $contract->scoring->scorista_ball);
                     $active_sheet->setCellValue('I' . $i, $contract->utm_source);
                     $active_sheet->setCellValue('J' . $i, $contract->operation . $successTransaction);
+                    $active_sheet->setCellValue('K' . $i, $contract->promocode);
 
 
                     $i++;
@@ -663,7 +670,9 @@ class StatisticsController extends Controller
                     u.email,
                     u.birth,
                     u.pdn,
-                    u.UID AS uid
+                    u.UID AS uid,
+                    o.promocode_id,
+                    o.id as order_id
                 FROM __contracts AS c
                 LEFT JOIN __users AS u
                 ON u.id = c.user_id
@@ -678,8 +687,22 @@ class StatisticsController extends Controller
             $this->db->query($query);
 
             $contracts = array();
-            foreach ($this->db->results() as $c)
+            foreach ($this->db->results() as $c){
                 $contracts[$c->contract_id] = $c;
+
+                $contracts[$c->contract_id]->promocode = '';
+                if($c->promocode_id != '0'){
+                    $query = $this->db->placehold("
+                    SELECT * 
+                    FROM __promocodes
+                    where id = ?
+                    ", $c->promocode_id);
+                    $this->db->query($query);
+                    $promocode =  $this->db->result();
+                    $contracts[$c->contract_id]->promocode = $promocode->code;
+                }
+        
+            }
 
             foreach ($contracts as $c) {
                 if (empty($c->client_status)) {
@@ -752,6 +775,7 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('O')->setWidth(10);
                 $active_sheet->getColumnDimension('P')->setWidth(10);
                 $active_sheet->getColumnDimension('Q')->setWidth(10);
+                $active_sheet->getColumnDimension('R')->setWidth(10);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
@@ -770,6 +794,7 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('O1', 'Источник');
                 $active_sheet->setCellValue('P1', 'ID заявки');
                 $active_sheet->setCellValue('Q1', 'ID клиента');
+                $active_sheet->setCellValue('R1', 'Промокод');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -811,6 +836,7 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('O' . $i, $contract->utm_source);
                     $active_sheet->setCellValue('P' . $i, $contract->order_id);
                     $active_sheet->setCellValue('Q' . $i, $contract->user_id);
+                    $active_sheet->setCellValue('R' . $i, $contract->promocode);
 
                     $i++;
                 }
