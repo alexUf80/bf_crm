@@ -2780,6 +2780,13 @@ class StatisticsController extends Controller
                         ->where('order_id', '=', $order->order_id)
                         ->where('type', '=', 'PAY')
                         ->sum('amount'), 2);
+                    $order->total_amt = $order->amount;
+                    if ($insurance) {
+                        $order->total_amt += $insurance->amount;
+                    }
+                    if ($order->contract && $order->contract->loan_body_summ) {
+                        $order->total_amt = $order->contract->loan_body_summ;
+                    }
                 }
                 $this->design->assign('orders', $orders);
             }
@@ -2815,6 +2822,13 @@ class StatisticsController extends Controller
                             ->where('order_id', '=', $order->order_id)
                             ->where('type', '=', 'PAY')
                             ->sum('amount'), 2);
+                        $order->total_amt = $order->amount;
+                        if ($insurance) {
+                            $order->total_amt += $insurance->amount;
+                        }
+                        if ($order->contract && $order->contract->loan_body_summ) {
+                            $order->total_amt = $order->contract->loan_body_summ;
+                        }
                     }
                     $this->design->assign('orders', $orders);
                 }
@@ -2885,7 +2899,7 @@ class StatisticsController extends Controller
                     $sheet->setCellValue('C' . $i, "{$order->client->lastname} {$order->client->firstname} {$order->client->patronymic}");
                     $sheet->setCellValue('D' . $i, $order->client->phone_mobile);
                     $sheet->setCellValue('E' . $i, $order->client->email);
-                    $sheet->setCellValue('F' . $i, $order->amount + $order->insurance_summ);
+                    $sheet->setCellValue('F' . $i, $order->total_amt);
                     $sheet->setCellValue('G' . $i, $pk);
                     $sheet->setCellValue('H' . $i, $order->manager->name);
                     $sheet->setCellValue('I' . $i, $order->status);

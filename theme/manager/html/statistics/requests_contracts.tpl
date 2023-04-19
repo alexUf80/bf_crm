@@ -111,13 +111,7 @@
                                     <td>{$order->client->lastname} {$order->client->firstname} {$order->client->patronymic}</td>
                                     <td>{$order->client->phone_mobile}</td>
                                     <td>{$order->client->email}</td>
-                                    <td>
-                                        {if $order->insurance_summ != 0}
-                                            {$order->amount + $order->insurance_summ}
-                                        {else}
-                                            {$order->contract->loan_body_summ}
-                                        {/if}
-                                    </td>
+                                    <td>{$order->total_amt}</td>
                                     <td>
                                         {if $order->client_status}
                                             {if $order->client_status == 'pk'}
