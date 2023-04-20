@@ -170,6 +170,14 @@
                     </a>
                 </div>
             </div>
+            <div class="col-md-6 col-lg-3 col-xlg-3">
+                <div class="card card-inverse card-warning">
+                    <a href="statistics/requests_contracts" class="box text-center">
+                        <h1 class="font-light text-white">Контракты</h1>
+                        <h6 class="text-white">Отказные заявки и заключенные договора</h6>
+                    </a>
+                </div>
+            </div>
         </div>
 
     </div>

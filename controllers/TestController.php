@@ -10,24 +10,16 @@ class TestController extends Controller
     public function fetch()
     {
         $this->db->query("
-                SELECT
-                id,
-                user_id,
-                amount,
-                register_id
-                FROM s_transactions
-                WHERE `description` = 'Привязка карты'
-                AND reason_code = 1
-                and checked = 0
-                and user_id = ?
-                order by id desc
-                ", 27611);
+                select sum(amount) as sum_taxing
+                from s_operations
+                where order_id = ?
+                and `type` in ('PERCENTS', 'PENI')
+                ", 30642);
 
-        $transaction = $this->db->result();
+        $sum_taxing = $this->db->result('sum_taxing');
 
-        $res = $this->Best2pay->completeCardEnroll($transaction);
+        var_dump($sum_taxing);
 
-        var_dump($res);
         exit;
     }
 

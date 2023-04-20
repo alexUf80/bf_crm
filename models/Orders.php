@@ -268,10 +268,10 @@ class Orders extends Core
         
         if (isset($filter['offline']))
             $offline_filter = $this->db->placehold("AND o.offline = ?", (int)$filter['offline']);
-        
+
         if (!empty($filter['date_from']))
             $date_from_filter = $this->db->placehold("AND DATE(o.date) >= ?", $filter['date_from']);
-            
+
         if (!empty($filter['date_to']))
             $date_to_filter = $this->db->placehold("AND DATE(o.date) <= ?", $filter['date_to']);
 
@@ -470,6 +470,7 @@ class Orders extends Core
                 o.penalty_date,
                 o.quality_workout,
                 o.id_deal,
+                o.promocode_id,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,
