@@ -36,38 +36,32 @@ class TaxingCron extends Core
         if ($contracts = $this->contracts->get_contracts(array('status' => [2, 4], 'type' => 'base', 'stop_profit' => 0, 'is_restructed' => 0))) {
 
             foreach ($contracts as $contract) {
-
-                if ($contract->loan_percents_summ >= $contract->amount * 1.5) {
+                $amount = $contract->loan_body_summ;
+                $taxing_limit = $amount * 2.5;
+                $current_summ = $contract->loan_body_summ + $contract->loan_percents_summ + $contract->loan_charge_summ + $contract->loan_peni_summ;
+                if ($current_summ >= $taxing_limit) {
                     $this->contracts->update_contract($contract->id, array(
                         'stop_profit' => 1
                     ));
-
-                    continue;
+                    echo "\r\nCS $current_summ > TL $taxing_limit = stop profit\r\n";
+                    exit();
                 }
-
-                $this->db->query("
-                select sum(amount) as sum_taxing
-                from s_operations
-                where contract_id = ?
-                and `type` in ('PERCENTS', 'PENI')
-                ", $contract->id);
-
-                $sum_taxing = $this->db->result('sum_taxing');
-
-                $taxing_limit = $contract->amount * 1.5;
-                $stop_taxing = 0;
-
-
-
+                echo "\r\n Calc percents\r\n";
                 //Начисление процентов
                 $percents_summ = round($contract->loan_body_summ / 100 * $contract->base_percent, 2);
 
-                if($percents_summ > ($taxing_limit - $sum_taxing))
+                if($current_summ + $percents_summ > $taxing_limit)
                 {
-                    $percents_summ = $taxing_limit - $sum_taxing;
-                    $stop_taxing = 1;
+                    $this->contracts->update_contract($contract->id, array(
+                        'stop_profit' => 1
+                    ));
+                    echo "\r\nCS $current_summ + PS $percents_summ > TL $taxing_limit = stop profit\r\n";
+                    exit();
                 }
-
+                echo "\r\n Save percents\r\n";
+                $this->contracts->update_contract($contract->id, array(
+                    'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
+                ));
                 $this->operations->add_operation(array(
                     'contract_id' => $contract->id,
                     'user_id' => $contract->user_id,
@@ -82,20 +76,21 @@ class TaxingCron extends Core
                 ));
 
                 //Начисление пени, если просрочен займ
-                if ($contract->status == 4 && $stop_taxing == 0) {
+                if ($contract->status == 4) {
+                    echo "\r\n Contract expored calc peni\r\n";
                     $peni_summ = round((0.05 / 100) * $contract->loan_body_summ, 2);
-
-                    if($peni_summ > ($taxing_limit - $sum_taxing))
+                    if($current_summ + $peni_summ + $percents_summ > $taxing_limit)
                     {
-                        $peni_summ = $taxing_limit - $sum_taxing;
-                        $stop_taxing = 1;
+                        $this->contracts->update_contract($contract->id, array(
+                            'stop_profit' => 1
+                        ));
+                        echo "\r\nCS $current_summ + PS $peni_summ + PS $percents_summ > TL $taxing_limit = stop profit\r\n";
+                        exit();
                     }
-
+                    echo "\r\n Save peni\r\n";
                     $this->contracts->update_contract($contract->id, array(
                         'loan_peni_summ' => $contract->loan_peni_summ + $peni_summ
                     ));
-
-
                     $this->operations->add_operation(array(
                         'contract_id' => $contract->id,
                         'user_id' => $contract->user_id,
@@ -109,11 +104,7 @@ class TaxingCron extends Core
                         'loan_peni_summ' => $contract->loan_peni_summ + $peni_summ,
                     ));
                 }
-
-                $this->contracts->update_contract($contract->id, array(
-                    'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
-                    'stop_profit' => $stop_taxing
-                ));
+                echo "\r\n End script\r\n";
             }
         }
     }

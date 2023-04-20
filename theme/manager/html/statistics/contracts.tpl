@@ -115,6 +115,7 @@
                                 <th>Дата факт возврата</th>
                                 <th>ПДН</th>
                                 <th>Дней займа</th>
+                                <th>Промокод</th>
                             </tr>
 
                             {foreach $contracts as $contract}
@@ -171,6 +172,9 @@
                                 </td>
                                 <td>
                                     {$contract->period}
+                                </td>
+                                <td>
+                                    {$contract->promocode}
                                 </td>
                             </tr>
                             {/foreach}

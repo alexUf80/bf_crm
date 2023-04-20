@@ -129,6 +129,7 @@
                                 <th>Номер операции</th>
                                 <th>Скориста</th>
                                 <th>Источник</th>
+                                <th>Промокод</th>
                             </tr>
                             
                             {foreach $orders as $order}
@@ -158,6 +159,7 @@
                                 <td>{$order->operation} {if $order->checked == 1}(успех){else}(провал){/if}</td>
                                 <td>{$order->scoring->scorista_ball}</td>
                                 <td>{$order->utm_source}</td>
+                                <td>{$order->promocode}</td>
                             </tr>
                             {/foreach}
                             
