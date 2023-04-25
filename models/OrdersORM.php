@@ -11,6 +11,11 @@ class OrdersORM extends \Illuminate\Database\Eloquent\Model
         return $this->hasOne(UsersORM::class, 'id','user_id');
     }
 
+    public function contract()
+    {
+        return $this->hasOne(ContractsORM::class, 'id', 'contract_id');
+    }
+
     public function manager()
     {
         return $this->hasOne(ManagerORM::class, 'id','manager_id');

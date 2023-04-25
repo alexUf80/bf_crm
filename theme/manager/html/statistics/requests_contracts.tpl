@@ -145,7 +145,7 @@
                                             Не оп
                                         {/if}
                                     </td>
-                                    <td>{$order->order_id}</td>
+                                    <td>{$order->id}</td>
                                     <td>{$order->user_id}</td>
                                 </tr>
                             {/foreach}
