@@ -306,7 +306,14 @@ class Onec implements ToolsInterface
                             'СуммаШтрафовОплаченных' => ($transaction->loan_peni_summ != null) ? $transaction->loan_peni_summ : 0,
                             'СуммаОсновногоДолга' => ($transaction->loan_body_summ != null) ? $transaction->loan_body_summ : 0
                         ];
+                    $k++;
+                }
+            }
+            $k = 0;
+            foreach ($operations as $operation) {
+                $transaction = TransactionsORM::find($operation->transaction_id);
 
+                if (!empty($transaction)) {
                     if ($transaction->prolongation == 1) {
                         $xml['Документы'][$i]['Сделка'][$k]['ДатыПролонгации'] =
                             [
