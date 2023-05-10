@@ -2878,7 +2878,6 @@ class StatisticsController extends Controller
                             $order->total_amt = $order->contract->loan_body_summ;
                         }
                     }
-                    $this->design->assign('orders', $orders);
                 }
 
 

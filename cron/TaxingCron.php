@@ -298,6 +298,27 @@ class TaxingCron extends Core
 
     private function run()
     {
+        /*$operations = OperationsORM::query()
+            ->whereIn('type', ['PERCENTS', 'PENI'])
+            ->where('created', '>', '2023-05-05')
+            ->get();
+        foreach ($operations as $operation) {
+            $contract = ContractsORM::query()->where('id', '=', $operation->contract_id)->first();
+            if ($contract) {
+                if ($operation->type == 'PERCENTS') {
+                    $contract->update([
+                        'loan_percents_summ' => $contract->loan_percents_summ - $operation->amount,
+                    ]);
+                }
+                if ($operation->type == 'PENI') {
+                    $contract->update([
+                        'loan_peni_summ' => $contract->loan_peni_summ + $operation->amount
+                    ]);
+                }
+            }
+            $operation->delete();
+        }
+        return;*/
         //Перевод в просрочку всех у кого подошел срок
         $this->contracts->check_expiration_contracts();
 
@@ -308,7 +329,17 @@ class TaxingCron extends Core
             ->where('stop_profit', '=', 0)
             ->where('is_restructed', '=', 0)
             ->get();
+        //$current_date = '2023.05.03 00:00:01';
+        $current_date = date('Y.m.d 00:00:01');
         foreach ($contracts as $contract) {
+            $vid = OperationsORM::query()->where('contract_id', '=', $contract->id)->where('type', '=', 'P2P')->first();
+            if ($vid) {
+                $date = date('Y.m.d 00:00:01', strtotime($vid->created));
+                if ($date >= $current_date) {
+                    print_r('test');
+                    continue;
+                }
+            }
             $amount = $contract->loan_body_summ;
             $taxing_limit = $amount * 2.5;
             $current_summ = $contract->loan_body_summ + $contract->loan_percents_summ + $contract->loan_charge_summ + $contract->loan_peni_summ;
@@ -341,7 +372,7 @@ class TaxingCron extends Core
                 'order_id' => $contract->order_id,
                 'type' => 'PERCENTS',
                 'amount' => $percents_summ,
-                'created' => date('Y-m-d H:i:s'),
+                'created' => $current_date,
                 'loan_body_summ' => $contract->loan_body_summ,
                 'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
                 'loan_charge_summ' => $contract->loan_charge_summ,
@@ -370,7 +401,7 @@ class TaxingCron extends Core
                     'order_id' => $contract->order_id,
                     'type' => 'PENI',
                     'amount' => $peni_summ,
-                    'created' => date('Y-m-d H:i:s'),
+                    'created' => $current_date,
                     'loan_body_summ' => $contract->loan_body_summ,
                     'loan_percents_summ' => $contract->loan_percents_summ,
                     'loan_charge_summ' => $contract->loan_charge_summ,

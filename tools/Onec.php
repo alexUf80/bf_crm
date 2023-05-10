@@ -263,7 +263,7 @@ class Onec implements ToolsInterface
                     'Процент' => $contract->base_percent,
                     'ПроцентПовышенный' => $contract->base_percent,
                     'ПроцентПриПросрочке' => $contract->base_percent + 0.05,
-                    'ДатаПолнойОплаты' => date('Y-m-d', strtotime($contract->close_date)),
+                    'ДатаПолнойОплаты' => $contract->close_date ? date('Y-m-d', strtotime($contract->close_date)) : '',
                     'ТипДокументаРасхода' => 2,
                     'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date))
                 ];
@@ -315,7 +315,7 @@ class Onec implements ToolsInterface
 
                 if (!empty($transaction)) {
                     if ($transaction->prolongation == 1) {
-                        $xml['Документы'][$i]['Сделка'][$k]['ДатыПролонгации'] =
+                        $xml['Документы'][$i]['Сделка']['ДатыПролонгации'][] =
                             [
                                 'ДатаПролонгации' => date('Y-m-d', strtotime($operation->created)),
                                 'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
