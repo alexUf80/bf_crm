@@ -298,6 +298,7 @@ class TaxingCron extends Core
 
     private function run()
     {
+
         /*$operations = OperationsORM::query()
             ->whereIn('type', ['PERCENTS', 'PENI'])
             ->where('created', '>', '2023-05-14')
