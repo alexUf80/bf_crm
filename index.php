@@ -11,6 +11,13 @@ require 'vendor/autoload.php';
 
 try {
     $view = new IndexController();
+
+    /*if (1 || empty($view->is_developer))
+    {
+        echo '<h1 style="color:red;text-align:center;margin-top:10%">На сайте проводятся технические работы. <br />Ориентировочное время окончания 17:00 11.05.2023<br />Приносим извинения за неудобства</h1>';    
+        exit;
+    }*/
+
     if (($res = $view->fetch()) !== false) {
         if ($res == 403) {
             header("http/1.0 403 Forbidden");

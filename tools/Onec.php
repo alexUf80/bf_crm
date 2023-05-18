@@ -258,7 +258,7 @@ class Onec implements ToolsInterface
                     'Подразделение' => 1,
                     'СервисДистанционнойВыдачи' => 1,
                     'СуммаЗайма' => number_format(round($issuanceOperation->amount, 2), 2, '.', ''),
-                    'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
+                    'ДатаВозврата' => date("Y-m-d", strtotime("+" . $contract->period . " days", strtotime($contract->inssuance_date))),
                     'Заемщик' => $contract->user->id,
                     'Процент' => $contract->base_percent,
                     'ПроцентПовышенный' => $contract->base_percent,
@@ -267,6 +267,10 @@ class Onec implements ToolsInterface
                     'ТипДокументаРасхода' => 2,
                     'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date))
                 ];
+
+            if (isset($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты']) && empty($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты'])) {
+                unset($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты']);
+            }
 
             $xml['Документы'][$i]['Сделка']['НомерДокументаРасхода'] = $issuanceOperation->id;
             $xml['Документы'][$i]['Сделка']['РасчетВоВнешнейСистеме'] = 'false';
