@@ -370,7 +370,7 @@ class ToolsController extends Controller
             $from = date('Y-m-d 00:00:00', strtotime($from));
             $to   = date('Y-m-d 23:59:59', strtotime($to));
 
-            $contracts = ContractsORM::with('user.regAddress', 'user.factAddress')
+            $contracts = ContractsORM::with('user.regAddress', 'user.factAddress', 'order')
                 ->whereIn('status', [2,3,4,11])
                 ->whereBetween('inssuance_date', [$from, $to])
                 ->get();

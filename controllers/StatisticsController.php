@@ -2783,8 +2783,19 @@ class StatisticsController extends Controller
 
             $query = OrdersORM::query();
 
-            $query->whereBetween('accept_date', [$date_from, $date_to]);
-            $query->orWhereBetween('reject_date', [$date_from, $date_to]);
+            $query->whereBetween('reject_date', [$date_from, $date_to]);
+            $cQuery = ContractsORM::query();
+            $cQuery->orWhereBetween('accept_date', [$date_from, $date_to]);
+
+            $orderIds = [];
+            foreach ($cQuery->get() as $contract) {
+                $orderIds[] = $contract->order_id;
+            }
+            foreach ($query->get() as $order) {
+                $orderIds[] = $order->id;
+            }
+            $query = OrdersORM::query();
+            $query->whereIn('id', $orderIds);
 
             $count = $query->count();
 
@@ -2829,8 +2840,19 @@ class StatisticsController extends Controller
 
                 $query = OrdersORM::query();
 
-                $query->whereBetween('accept_date', [$date_from, $date_to]);
-                $query->orWhereBetween('reject_date', [$date_from, $date_to]);
+                $query->whereBetween('reject_date', [$date_from, $date_to]);
+                $cQuery = ContractsORM::query();
+                $cQuery->orWhereBetween('accept_date', [$date_from, $date_to]);
+
+                $orderIds = [];
+                foreach ($cQuery->get() as $contract) {
+                    $orderIds[] = $contract->order_id;
+                }
+                foreach ($query->get() as $order) {
+                    $orderIds[] = $order->id;
+                }
+                $query = OrdersORM::query();
+                $query->whereIn('id', $orderIds);
                 $orders = $query->get();
 
                 $orders_statuses = $this->orders->get_statuses();
@@ -2856,7 +2878,6 @@ class StatisticsController extends Controller
                             $order->total_amt = $order->contract->loan_body_summ;
                         }
                     }
-                    $this->design->assign('orders', $orders);
                 }
 
 
@@ -2937,7 +2958,7 @@ class StatisticsController extends Controller
                     $sheet->setCellValue('O' . $i, $order->contract->close_date);
                     $sheet->setCellValue('P' . $i, $order->payed_summ);
                     $sheet->setCellValue('Q' . $i, $order->utm_source ?? 'Не оп');
-                    $sheet->setCellValue('R' . $i, $order->order_id);
+                    $sheet->setCellValue('R' . $i, $order->id);
                     $sheet->setCellValue('S' . $i, $order->user_id);
 
                     $i++;
