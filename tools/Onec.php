@@ -320,10 +320,12 @@ class Onec implements ToolsInterface
 
                 if (!empty($transaction)) {
                     if ($transaction->prolongation == 1) {
-                        $xml['Документы'][$i]['Сделка']['ДатыПролонгации'][] =
+                        $xml['Документы'][$i]['Сделка'][] =
                             [
-                                'ДатаПролонгации' => date('Y-m-d', strtotime($operation->created)),
-                                'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
+                                'ДатыПролонгации' => [
+                                    'ДатаПролонгации' => date('Y-m-d', strtotime($operation->created)),
+                                    'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
+                                ]
                             ];
                     }
                     $k++;
