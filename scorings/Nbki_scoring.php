@@ -99,7 +99,7 @@ class Nbki_scoring extends Core
         },
         "registration_numbers": {
             "taxpayer_number": "'.$inn.'",
-            "state_registration_number": "'.$snils.'"
+            "state_registration_number": "'.str_replace('-', '', $snils).'"
         }
     },
     "requisites": {
