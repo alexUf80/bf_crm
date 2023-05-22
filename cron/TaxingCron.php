@@ -298,9 +298,10 @@ class TaxingCron extends Core
 
     private function run()
     {
+
         /*$operations = OperationsORM::query()
             ->whereIn('type', ['PERCENTS', 'PENI'])
-            ->where('created', '>', '2023-05-05')
+            ->where('created', '>', '2023-05-14')
             ->get();
         foreach ($operations as $operation) {
             $contract = ContractsORM::query()->where('id', '=', $operation->contract_id)->first();

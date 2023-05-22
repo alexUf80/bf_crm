@@ -454,7 +454,7 @@ class OrderController extends Controller
                             $order->contract = $this->contracts->get_contract($order->contract_id);
 
                         if (!empty($order->contract) && ($order->contract->close_date)) {
-                            $dateBegin = DateTime::createFromFormat("Y-m-d H:i:s", $order->contract->inssuance_date); //дата получения
+                            $dateBegin = DateTime::createFromFormat("Y-m-d H:i:s", $order->contract->inssuance_date ?? $order->contract->create_date); //дата получения
                             $dateClose = DateTime::createFromFormat("Y-m-d H:i:s", $order->contract->close_date); //дата закрытия
                             $interval = $dateBegin->diff($dateClose);
 
@@ -2206,6 +2206,7 @@ class OrderController extends Controller
 
         $this->design->assign('files', $files);
     }
+
 
     private function action_services()
     {

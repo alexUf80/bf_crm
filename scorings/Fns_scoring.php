@@ -21,7 +21,7 @@ class Fns_scoring extends Core
         {
             if ($order = $this->orders->get_order((int)$scoring->order_id))
             {
-                if (!empty($order->inn))
+                if (!empty($order->inn) && $order->inn != '#NULL!')
                 {
                     $update = array(
                         'status' => 'completed',

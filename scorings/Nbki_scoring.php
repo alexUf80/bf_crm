@@ -39,7 +39,9 @@ class Nbki_scoring extends Core
                     $user->passport_date,
                     $user->passport_issued,
                     $user->gender,
-                    $user->client_status
+                    $user->client_status,
+                    $user->inn,
+                    $user->snils
                 );
             } else {
                 $update = array(
@@ -64,7 +66,9 @@ class Nbki_scoring extends Core
         $passport_date,
         $passport_issued,
         $gender,
-        $client_status
+        $client_status,
+        $inn,
+        $snils
     )
     {
         $genderArr = [
@@ -92,6 +96,10 @@ class Nbki_scoring extends Core
         "registration_address": {
             "city": "' . addslashes($Regcity) . '",
             "street": "' . addslashes($Regstreet) . '"
+        },
+        "registration_numbers": {
+            "taxpayer_number": "'.$inn.'",
+            "state_registration_number": "'.str_replace('-', '', $snils).'"
         }
     },
     "requisites": {
