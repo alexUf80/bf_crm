@@ -24,8 +24,10 @@ class Leadgens extends Core
     public function send_approved_postback_click2money($order_id, $order)
     {
 
+        $order = $this->orders->get_order($order_id);
+
         $base_link = 'https://c2mpbtrck.com/cpaCallback';
-        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=approve&partner=finfive&lead_id=' . $order->id;
+        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=approve&partner=barents&lead_id=' . $order_id;
 
         $ch = curl_init($link_lead);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -41,9 +43,10 @@ class Leadgens extends Core
 
     public function send_cancelled_postback_click2money($order_id, $order)
     {
+        $order = $this->orders->get_order($order_id);
         
         $base_link = 'https://c2mpbtrck.com/cpaCallback';
-        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=reject&partner=finfive&lead_id=' . $order->id;
+        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=reject&partner=barents&lead_id=' . $order_id;
 
         $ch = curl_init($link_lead);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
