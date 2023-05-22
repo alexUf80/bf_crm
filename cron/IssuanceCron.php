@@ -20,6 +20,7 @@ require 'autoload.php';
  */
 class IssuanceCron extends Core
 {
+
     public function __construct()
     {
         parent::__construct();

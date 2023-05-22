@@ -258,15 +258,20 @@ class Onec implements ToolsInterface
                     'Подразделение' => 1,
                     'СервисДистанционнойВыдачи' => 1,
                     'СуммаЗайма' => number_format(round($issuanceOperation->amount, 2), 2, '.', ''),
-                    'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
+                    'ДатаВозврата' => date("Y-m-d", strtotime("+" . $contract->period . " days", strtotime($contract->inssuance_date))),
                     'Заемщик' => $contract->user->id,
                     'Процент' => $contract->base_percent,
                     'ПроцентПовышенный' => $contract->base_percent,
                     'ПроцентПриПросрочке' => $contract->base_percent + 0.05,
-                    'ДатаПолнойОплаты' => date('Y-m-d', strtotime($contract->close_date)),
+                    'ДатаПолнойОплаты' => $contract->close_date ? date('Y-m-d', strtotime($contract->close_date)) : '',
                     'ТипДокументаРасхода' => 2,
                     'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date))
                 ];
+
+            if (isset($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты']) && empty($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты'])) {
+                unset($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты']);
+            }
+
 
             $xml['Документы'][$i]['Сделка']['НомерДокументаРасхода'] = $issuanceOperation->id;
             $xml['Документы'][$i]['Сделка']['РасчетВоВнешнейСистеме'] = 'false';
@@ -315,10 +320,12 @@ class Onec implements ToolsInterface
 
                 if (!empty($transaction)) {
                     if ($transaction->prolongation == 1) {
-                        $xml['Документы'][$i]['Сделка'][$k]['ДатыПролонгации'] =
+                        $xml['Документы'][$i]['Сделка'][] =
                             [
-                                'ДатаПролонгации' => date('Y-m-d', strtotime($operation->created)),
-                                'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
+                                'ДатыПролонгации' => [
+                                    'ДатаПролонгации' => date('Y-m-d', strtotime($operation->created)),
+                                    'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
+                                ]
                             ];
                     }
                     $k++;
