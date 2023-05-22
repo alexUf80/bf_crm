@@ -324,7 +324,11 @@ class Onec implements ToolsInterface
                             [
                                 'ДатыПролонгации' => [
                                     'ДатаПролонгации' => date('Y-m-d', strtotime($operation->created)),
+<<<<<<< HEAD
                                     'ДатаВозврата' => date('Y-m-d', strtotime($operation->created) + (86400 * 30)),
+=======
+                                    'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
+>>>>>>> 08c684b2b0d7260be773c70843635148d90c5606
                                 ]
                             ];
                     }
