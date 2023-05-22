@@ -917,6 +917,18 @@ class OrderController extends Controller
 
         CardsORM::where('user_id', $order->user_id)->delete();
 
+        // $file = $this->config->root_dir. 'logs/2.txt';
+        // $current .= $order->utm_source . " - " .  $order->lead_postback_type;
+        // file_put_contents($file, $current);
+        
+        if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->lead_postback_type)) {
+            try {
+                $this->leadgens->send_cancelled_postback_click2money($order_id, $order);
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
+        }
+
         return array('success' => 1, 'status' => $status);
     }
 
