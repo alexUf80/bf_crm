@@ -80,6 +80,10 @@ class StatisticsController extends Controller
                 return $this->action_leadgens();
                 break;
 
+            case 'ip_rejects':
+                return $this->action_ip_rejects();
+                break;
+
             default:
                 return false;
 
@@ -2749,6 +2753,117 @@ class StatisticsController extends Controller
         $this->design->assign('integrations', $integrations);
 
         return $this->design->fetch('statistics/leadgens.tpl');
+    }
+
+    private function action_ip_rejects()
+    {
+        // $reasons = array();
+        // foreach ($this->reasons->get_reasons() as $reason)
+        //     $reasons[$reason->id] = $reason;
+        // $this->design->assign('reasons', $reasons);
+
+
+        if ($daterange = $this->request->get('daterange')) {
+            list($from, $to) = explode('-', $daterange);
+
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
+
+            $this->design->assign('date_from', $date_from);
+            $this->design->assign('date_to', $date_to);
+            $this->design->assign('from', $from);
+            $this->design->assign('to', $to);
+
+                // $query_reason = '';
+                // if ($filter_reason = $this->request->get('reason_id')) {
+                //     if ($filter_reason != 'all') {
+                //         $query_reason = $this->db->placehold("AND o.reason_id = ?", (int)$filter_reason);
+                //     }
+
+                //     $this->design->assign('filter_reason', $filter_reason);
+                // }
+
+            $query = $this->db->placehold("
+                SELECT
+                    o.id AS order_id,
+                    o.ip,
+                    u.lastname,
+                    u.firstname,
+                    u.patronymic,
+                    u.id as user_id
+                    
+                FROM __orders AS o
+                LEFT JOIN __users AS u ON u.id = o.user_id
+                WHERE o.status IN (3, 8)
+                AND DATE(o.date) >= ?
+                AND DATE(o.date) <= ?
+                GROUP BY order_id
+            ", $date_from, $date_to);
+            // echo $query;
+            // die;
+            $this->db->query($query);
+
+            $orders = array();
+            foreach ($this->db->results() as $o){
+                $orders[$o->order_id] = $o;
+                $promocode = $this->promocodes->get($o->promocode_id);
+                $orders[$o->order_id]->promocode = $promocode->code;
+            }
+
+            if ($this->request->get('download') == 'excel') {
+                $managers = array();
+                foreach ($this->managers->get_managers() as $m)
+                    $managers[$m->id] = $m;
+
+                $filename = 'files/reports/ip_rejects.xls';
+                require $this->config->root_dir . 'PHPExcel/Classes/PHPExcel.php';
+
+                $excel = new PHPExcel();
+
+                $excel->setActiveSheetIndex(0);
+                $active_sheet = $excel->getActiveSheet();
+
+                $active_sheet->setTitle("Выдачи " . $from . "-" . $to);
+
+                $excel->getDefaultStyle()->getFont()->setName('Calibri')->setSize(12);
+                $excel->getDefaultStyle()->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+                $active_sheet->getColumnDimension('A')->setWidth(15);
+                $active_sheet->getColumnDimension('B')->setWidth(15);
+                $active_sheet->getColumnDimension('C')->setWidth(45);
+                $active_sheet->getColumnDimension('D')->setWidth(20);
+
+                $active_sheet->setCellValue('A1', 'Дата');
+                $active_sheet->setCellValue('B1', 'Заявка');
+                $active_sheet->setCellValue('C1', 'ФИО');
+                $active_sheet->setCellValue('D1', 'IP');
+
+                $i = 2;
+                foreach ($orders as $contract) {
+
+                    $successTransaction = empty($contract->checked) ? ' (провал)' : ' успех';
+
+                    $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
+                    $active_sheet->setCellValue('B' . $i, $contract->order_id);
+                    $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
+                    $active_sheet->setCellValue('D' . $i, $contract->ip);
+
+                    $i++;
+                }
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+
+                $objWriter->save($this->config->root_dir . $filename);
+
+                header('Location:' . $this->config->root_url . '/' . $filename);
+                exit;
+            }
+
+
+            $this->design->assign('orders', $orders);
+        }
+
+        return $this->design->fetch('statistics/ip_rejects.tpl');
     }
 
 }
