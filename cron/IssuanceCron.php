@@ -162,7 +162,7 @@ class IssuanceCron extends Core
 
                     if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->click_hash)) {
                         try {
-                            $this->leadgens->send_approved_postback_click2money($order->order_id, $order);
+                            $this->leadgens->send_approved_postback_click2money($order->id, $order);
                         } catch (\Throwable $th) {
                             //throw $th;
                         }

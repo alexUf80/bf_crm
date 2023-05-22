@@ -39,15 +39,16 @@ class Leadgens extends Core
         // }
 
         // file_put_contents($file, $counter);
-        // $base_link = 'https://c2mpbtrck.com/cpaCallback';
-        // $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=approve&partner=finfive&lead_id=' . $order->id_1c;
 
-        // $ch = curl_init($link_lead);
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        // curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-        // $res = curl_exec($ch);
-        // curl_close($ch);
+        $base_link = 'https://c2mpbtrck.com/cpaCallback';
+        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=approve&partner=finfive&lead_id=' . $order->id_1c;
+
+        $ch = curl_init($link_lead);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        $res = curl_exec($ch);
+        curl_close($ch);
 
         // var_dump($ch);
 
@@ -55,27 +56,25 @@ class Leadgens extends Core
 
         // var_dump($result);
 
-        // $this->to_log(__METHOD__, 'approved', $link_lead, $res, 'lead_click2money.txt');
+        $this->to_log(__METHOD__, 'approved', $link_lead, $res, 'lead_click2money.txt');
     }
 
     public function send_cancelled_postback_click2money($order_id, $order)
     {
-        // var_dump('send_cancelled_postback_click2money');
-        // die;
+        
+        $base_link = 'https://c2mpbtrck.com/cpaCallback';
+        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=reject&partner=finfive&lead_id=' . $order->id_1c;
 
-        // $base_link = 'https://c2mpbtrck.com/cpaCallback';
-        // $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=reject&partner=finfive&lead_id=' . $order->id_1c;
-
-        // $ch = curl_init($link_lead);
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        // curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-        // $res = curl_exec($ch);
-        // curl_close($ch);
+        $ch = curl_init($link_lead);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        $res = curl_exec($ch);
+        curl_close($ch);
 
         $this->orders->update_order($order_id, array('lead_postback_date' => date('Y-m-d H:i'), 'lead_postback_type' => 'cancelled'));
 
-        // $this->to_log(__METHOD__, 'cancelled', $link_lead, $res, 'lead_click2money.txt');
+        $this->to_log(__METHOD__, 'cancelled', $link_lead, $res, 'lead_click2money.txt');
     }
 
     public function to_log($method, $url, $request, $response, $log_filename = 'leads.txt')
