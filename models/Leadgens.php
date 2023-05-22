@@ -3,45 +3,29 @@
 class Leadgens extends Core
 {
 
-    public function send_pending_postback_click2money($order_id, $order)
-    {
+    // public function send_pending_postback_click2money($order_id, $order)
+    // {
 
-        // $base_link = 'https://c2mpbtrck.com/cpaCallback';
-        // $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=hold&partner=finfive&lead_id=' . $order->id_1c;
+    //     // $base_link = 'https://c2mpbtrck.com/cpaCallback';
+    //     // $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=hold&partner=finfive&lead_id=' . $order->id;
 
-        // $ch = curl_init($link_lead);
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        // curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-        // $res = curl_exec($ch);
-        // curl_close($ch);
+    //     // $ch = curl_init($link_lead);
+    //     // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    //     // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    //     // curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    //     // $res = curl_exec($ch);
+    //     // curl_close($ch);
 
-        $result = $this->orders->update_order($order_id, array('lead_postback_date' => date('Y-m-d H:i'), 'lead_postback_type' => 'pending'));
+    //     $result = $this->orders->update_order($order_id, array('lead_postback_date' => date('Y-m-d H:i'), 'lead_postback_type' => 'pending'));
 
-        // $this->to_log(__METHOD__, 'hold', $link_lead, $res, 'lead_click2money.txt');
-    }
+    //     // $this->to_log(__METHOD__, 'hold', $link_lead, $res, 'lead_click2money.txt');
+    // }
 
     public function send_approved_postback_click2money($order_id, $order)
     {
 
-        // var_dump('send_approved_postback_click2money');
-        // die;
-
-        $counter = 1;
-
-        // $file = 'logs/lead_click2money_counter.txt';
-
-        // var_dump($order_id);
-        // var_dump($order);
-
-        // if (file_exists($file)) {
-        //     $counter += file_get_contents($file);
-        // }
-
-        // file_put_contents($file, $counter);
-
         $base_link = 'https://c2mpbtrck.com/cpaCallback';
-        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=approve&partner=finfive&lead_id=' . $order->id_1c;
+        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=approve&partner=finfive&lead_id=' . $order->id;
 
         $ch = curl_init($link_lead);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -50,11 +34,7 @@ class Leadgens extends Core
         $res = curl_exec($ch);
         curl_close($ch);
 
-        // var_dump($ch);
-
         $result = $this->orders->update_order($order_id, array('lead_postback_date' => date('Y-m-d H:i'), 'lead_postback_type' => 'approved'));
-
-        // var_dump($result);
 
         $this->to_log(__METHOD__, 'approved', $link_lead, $res, 'lead_click2money.txt');
     }
@@ -63,7 +43,7 @@ class Leadgens extends Core
     {
         
         $base_link = 'https://c2mpbtrck.com/cpaCallback';
-        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=reject&partner=finfive&lead_id=' . $order->id_1c;
+        $link_lead = $base_link . '?cid=' . $order->click_hash . '&action=reject&partner=finfive&lead_id=' . $order->id;
 
         $ch = curl_init($link_lead);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
