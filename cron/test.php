@@ -16,7 +16,8 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        $this->competeCardEnroll();
+        //$classname = "Fns_scoring";
+        //$scoring_result = $this->{$classname}->run_scoring(109595);
     }
 
     private function import_addresses()
