@@ -59,7 +59,6 @@ class Fns_scoring extends Core
                             ];
 
                         $request = $this->send_request($params);
-
                         $inn = 0;
 
                         if(isset($request['Source']['@attributes']['checktype']) && $request['Source']['@attributes']['checktype'] != 'fns_inn')
