@@ -833,7 +833,7 @@ class StatisticsController extends Controller
                     }
 
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
-                    $active_sheet->setCellValue('B' . $i, $contract->number);
+                    $active_sheet->setCellValue('B' . $i, $contract->number); 
                     $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
                     $active_sheet->setCellValue('D' . $i, $contract->birth);
                     $active_sheet->setCellValue('E' . $i, $contract->phone_mobile);
