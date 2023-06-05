@@ -104,6 +104,7 @@
                                 <th>ID договора</th>
                                 <th>Дата возврата</th>
                                 <th>ФИО</th>
+                                <th>Дата рождения</th>
                                 <th>Телефон</th>
                                 <th>Email</th>
                                 <th>Сумма</th>
@@ -137,6 +138,7 @@
                                         {$contract->birth|escape}
                                     </a>
                                 </td>
+                                <td>{$contract->birth}</td>
                                 <td>{$contract->phone_mobile}</td>
                                 <td><small>{$contract->email}</small></td>
                                 <td>{$contract->amount*1}</td>
