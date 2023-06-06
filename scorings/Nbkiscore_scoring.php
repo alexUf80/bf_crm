@@ -12,10 +12,9 @@ class Nbkiscore_scoring extends Core
         WHERE order_id = ?
         and `type` = 'nbki'
         and `status` = 'completed'
-        ", $scoring->order_id);
+        LIMIT 1", $scoring->order_id);
 
         $nbki = $this->db->result();
-
         $error = 0;
 
         if (empty($nbki)) {
@@ -46,7 +45,6 @@ class Nbkiscore_scoring extends Core
         }
 
         $order = OrdersORM::find($scoring->order_id);
-
         if (in_array($order->client_status, ['nk', 'rep']))
             return $this->newClient($nbki, $scoring);
         else
@@ -174,7 +172,7 @@ class Nbkiscore_scoring extends Core
 
         foreach ($nbki['json']['AccountReply'] as $scor) {
 
-            if (in_array($scor['acctType'], [16]) && $scor['creditLimit'] <= 30000 && $scor['fact_term_m'] >= 3) {
+            if (in_array($scor['acctType'], [16]) && $scor['creditLimit'] <= 30000 && isset($scor['fact_term_m']) && $scor['fact_term_m'] >= 3) {
 
                 $scor['paymtPat'] = preg_replace('/[^0-9]/', '', $scor['paymtPat']);
 

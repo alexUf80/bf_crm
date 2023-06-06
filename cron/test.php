@@ -19,8 +19,9 @@ class test extends Core
         /*$classname = "Fns_scoring";
         $scoring_result = $this->{$classname}->run_scoring(111708);*/
         //42223,42635,42222,42231,41978,41991
-        $contract = $this->Contracts->get_contract(4540);
-        $this->create_document('IND_USLOVIYA_NL', $contract);
+        $classname = "Nbkiscore_scoring";
+
+        $scoring_result = $this->{$classname}->run_scoring(123710);
     }
 
     public function create_document($document_type, $contract)
