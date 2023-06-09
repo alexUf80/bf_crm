@@ -318,10 +318,10 @@ class OrderController extends Controller
                         usort($contract_operations,
                             function ($a, $b) {
 
-                                if ($a->created == $b->created)
+                                if ($a->created > $b->created)
                                     return 0;
 
-                                return (date('Y-m-d', strtotime($a->created)) < date('Y-m-d', strtotime($b->created))) ? -1 : 1;
+                                // return (date('Y-m-d', strtotime($a->created)) < date('Y-m-d', strtotime($b->created))) ? -1 : 1;
                             });
                     }
 
