@@ -239,26 +239,26 @@ class Nbkiscore_scoring extends Core
             $pdl_npl_90_limit_share = $npl90CreditLimit / $pdlCreditLimit;
         }
 
-        if ($pdl_npl_limit_share < 10)
+        if ($pdl_npl_limit_share < (10 / 100))
             $nbki_score += 30;
-        elseif ($pdl_npl_limit_share >= 10 && $pdl_npl_limit_share < 20)
+        elseif ($pdl_npl_limit_share >= (10 / 100) && $pdl_npl_limit_share < (20 / 100))
             $nbki_score += 20;
-        elseif ($pdl_npl_limit_share >= 20 && $pdl_npl_limit_share < 30)
+        elseif ($pdl_npl_limit_share >= (20 / 100) && $pdl_npl_limit_share < (30 / 100))
             $nbki_score -= 9;
-        elseif ($pdl_npl_limit_share >= 30 && $pdl_npl_limit_share < 50)
+        elseif ($pdl_npl_limit_share >= (30 / 100) && $pdl_npl_limit_share < (50 / 100))
             $nbki_score -= 42;
-        elseif ($pdl_npl_limit_share >= 50)
+        elseif ($pdl_npl_limit_share >= (50 / 100))
             $nbki_score -= 128;
 
-        if ($pdl_npl_90_limit_share < 10)
+        if ($pdl_npl_90_limit_share < (10 / 100))
             $nbki_score += 57;
-        elseif ($pdl_npl_90_limit_share >= 10 && $pdl_npl_90_limit_share < 20)
+        elseif ($pdl_npl_90_limit_share >= (10 / 100) && $pdl_npl_90_limit_share < (20 / 100))
             $nbki_score += 1;
-        elseif ($pdl_npl_90_limit_share >= 20 && $pdl_npl_90_limit_share < 30)
+        elseif ($pdl_npl_90_limit_share >= (20 / 100) && $pdl_npl_90_limit_share < (30 / 100))
             $nbki_score -= 66;
-        elseif ($pdl_npl_90_limit_share >= 30 && $pdl_npl_90_limit_share < 50)
+        elseif ($pdl_npl_90_limit_share >= (30 / 100) && $pdl_npl_90_limit_share < (50 / 100))
             $nbki_score -= 137;
-        elseif ($pdl_npl_90_limit_share >= 50)
+        elseif ($pdl_npl_90_limit_share >= (30 / 100))
             $nbki_score -= 291;
 
         if ($pdl_current_limit_max < 2500)

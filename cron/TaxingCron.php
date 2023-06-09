@@ -300,9 +300,8 @@ class TaxingCron extends Core
     {
 
         /*$operations = OperationsORM::query()
-            ->where('contract_id', '=', 3683)
             ->whereIn('type', ['PERCENTS', 'PENI'])
-            ->where('created', '>', '2023-05-20')
+            ->where('created', '>', '2023-06-06')
             ->get();
         foreach ($operations as $operation) {
             $contract = ContractsORM::query()->where('id', '=', $operation->contract_id)->first();
@@ -328,7 +327,7 @@ class TaxingCron extends Core
         $contracts = ContractsORM::query()
             ->whereIn('status', [2,4])
             ->where('type', '=', 'base')
-            ->where('stop_profit', '=', 0)
+            ->where('stop_profit', '=' , 0)
             ->where('is_restructed', '=', 0)
             ->get();
         //$current_date = '2023.05.03 00:00:01';
