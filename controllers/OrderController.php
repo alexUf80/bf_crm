@@ -3106,7 +3106,12 @@ class OrderController extends Controller
 
             // сохраняем количество дней просрочки
             $contract_expired_period = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d', strtotime($contract->return_date)))) / 86400);
+            $epl = date('Y-m-d') . ' - ' . date('Y-m-d', strtotime($contract->return_date)) . ' - ' . $contract_expired_period;
             if ($contract_expired_period < 0)
+                $contract_expired_period = 0;
+
+            $transaction = $this->transactions->get_transaction($operation->transaction_id);
+            if($transaction->prolongation == 1)
                 $contract_expired_period = 0;
 
             // $transaction_id = $this->transactions->add_transaction(array(
@@ -3136,7 +3141,8 @@ class OrderController extends Controller
                 'loan_percents_summ' => 0,
                 'loan_peni_summ' => 0,
                 'loan_charge_summ' => 0,
-                'expired_period' => $contract_expired_period
+                'expired_period' => $contract_expired_period,
+                'expired_period_log' => $epl
             ));
 
             $this->contracts->update_contract($contract->id, array(

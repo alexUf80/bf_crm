@@ -38,12 +38,6 @@ class Nbkiscore_scoring extends Core
             return $update;
         }
 
-        if (isset($nbki['json']['AccountReply']['paymtPat'])) {
-            $rezerv = $nbki['json']['AccountReply'];
-            unset($nbki['json']['AccountReply']);
-            $nbki['json']['AccountReply'][0] = $rezerv;
-        }
-
         $order = OrdersORM::find($scoring->order_id);
         if (in_array($order->client_status, ['nk', 'rep']))
             return $this->newClient($nbki, $scoring);
@@ -69,160 +63,110 @@ class Nbkiscore_scoring extends Core
         $consum_current_limit_max = 0;
         $consum_good_limit = 0;
 
+        $loanIndicator = false;
+        $countPayments = 0;
+
+
         $now = new DateTime(date('Y-m-d'));
 
-        foreach ($nbki['json']['AccountReply'] as $scor) {
+        foreach ($nbki['json']['AccountReplyRUTDF'] as $reply) {
+            $loanKindCode = 3;
+            $pasDue = 0;
 
-            if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] <= 30000) {
+            if (isset($reply['loanIndicator'])) {
+                $loanIndicator = $reply['loanIndicator'];
+            }
 
-                $pdlCreditLimit += $scor['creditLimit'];
+            if (isset($reply['payment'])) {
+                $keys = array_keys($reply['trade']);
+                if ($keys !== array_keys($keys)) {
+                    $countPayments = 1;
+                } else {
+                    $countPayments = count($reply['payment']);
+                }
+            }
 
-                if ($scor['amtPastDue'] > 0)
+            if (isset($reply['trade'])) {
+                $keys = array_keys($reply['trade']);
+                if ($keys !== array_keys($keys)) {
+                    $loanKindCode = $reply['trade']['loanKindCode'];
+
+                    if (isset($openedDt) && $openedDt < new DateTime(date('Y-m-d', strtotime($reply['trade']['openedDt']))))
+                        $Last_npl_opened = $reply['trade']['openedDt'];
+
+                    $openedDt = new DateTime(date('Y-m-d', strtotime($reply['trade']['openedDt'])));
+
+                    if (date_diff($now, $openedDt)->days <= 90)
+                        $pdl_last_3m_limit += floatval($reply['accountAmt']['creditLimit']);
+
+                } else {
+                    $loanKindCode = $reply['trade'][0]['loanKindCode'];
+
+                    if (isset($openedDt) && $openedDt < new DateTime(date('Y-m-d', strtotime($reply['trade'][0]['openedDt']))))
+                        $Last_npl_opened = $reply['trade'][0]['openedDt'];
+
+                    $openedDt = new DateTime(date('Y-m-d', strtotime($reply['trade'][0]['openedDt'])));
+
+                    if (date_diff($now, $openedDt)->days <= 90)
+                        $pdl_last_3m_limit += floatval($reply['accountAmt']['creditLimit']);
+                }
+            }
+
+            if (isset($reply['pastdueArrear'])) {
+                $keys = array_keys($reply['pastdueArrear']);
+                if ($keys !== array_keys($keys)) {
+                    $pastdueArrear = $reply['pastdueArrear'];
+                    $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
+                    if ($past !== '0.00') {
+                        $pasDue = floatval($past);
+                    }
+                } else {
+                    foreach ($reply['pastdueArrear'] as $pastdueArrear) {
+                        $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
+                        if ($past !== '0.00') {
+                            $pasDue = floatval($past);
+                        }
+                    }
+                }
+            }
+
+
+            if ($loanKindCode == 3) {
+                $pdlCreditLimit += floatval($reply['accountAmt']['creditLimit']);
+                if ($pasDue > 0) {
+
+                    if (isset($reply['trade'])) {
+                        $keys = array_keys($reply['trade']);
+                        if ($keys !== array_keys($keys)) {
+                            if (isset($openedDt) && $openedDt < new DateTime(date('Y-m-d', strtotime($reply['trade']['openedDt']))))
+                                $Last_npl_opened = $reply['trade']['openedDt'];
+                        } else {
+                            if (isset($openedDt) && $openedDt < new DateTime(date('Y-m-d', strtotime($reply['trade'][0]['openedDt']))))
+                                $Last_npl_opened = $reply['trade'][0]['openedDt'];
+                        }
+                    }
+                    $nplCreditLimit += floatval($reply['accountAmt']['creditLimit']);
+                    $pdl_last_good_max_limit += floatval($reply['accountAmt']['creditLimit']);
+
+                    $npl90CreditLimit += floatval($reply['accountAmt']['creditLimit']); //TODO: уточнить эту информацию
                     $pdl_overdue_count++;
-
-                $scor['paymtPat'] = preg_replace('/[^0-9]/', '', $scor['paymtPat']);
-
-                if (!empty($scor['paymtPat'])) {
-                    $scor['paymtPat'] = str_split($scor['paymtPat']);
-
-                    foreach ($scor['paymtPat'] as $value) {
-                        if ($value >= 2 || $scor['amtPastDue'] > 0) {
-                            $nplCreditLimit += $scor['creditLimit'];
-                            if (isset($openedDt) && $openedDt < new DateTime(date('Y-m-d', strtotime($scor['openedDt']))))
-                                $Last_npl_opened = $scor['openedDt'];
-
-                            break;
-                        }
-                    }
                 }
-
-                if (!empty($scor['accountRating'])) {
-                    if ($scor['accountRating'] != 13 && $scor['creditLimit'] > $pdl_current_limit_max)
-                        $pdl_current_limit_max = $scor['creditLimit'];
+                if ($pasDue == 0) {
+                    $consum_good_limit += floatval($reply['accountAmt']['creditLimit']);
+                    $pdl_good_limit += floatval($reply['accountAmt']['creditLimit']);
                 }
-
-                $openedDt = new DateTime(date('Y-m-d', strtotime($scor['openedDt'])));
-
-                if (date_diff($now, $openedDt)->days <= 90)
-                    $pdl_last_3m_limit += $scor['creditLimit'];
-            }
-        }
-
-        foreach ($nbki['json']['AccountReply'] as $scor) {
-
-            if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] <= 30000) {
-
-                $scor['paymtPat'] = preg_replace('/[^0-9]/', '', $scor['paymtPat']);
-
-                if (!empty($scor['paymtPat'])) {
-                    $scor['paymtPat'] = str_split($scor['paymtPat']);
-
-                    foreach ($scor['paymtPat'] as $value) {
-                        if ($value >= 4) {
-                            $npl90CreditLimit += $scor['creditLimit'];
-                            break;
-                        }
-                    }
+                if ($countPayments >= 3) {
+                    $pdl_prolong_3m_limit += floatval($reply['accountAmt']['creditLimit']);
+                }
+                if ($loanIndicator != 1) {
+                    $pdl_current_limit_max = floatval($reply['accountAmt']['creditLimit']);
                 }
             }
-        }
 
-        foreach ($nbki['json']['AccountReply'] as $scor) {
-
-            if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] <= 30000) {
-
-                $scor['paymtPat'] = preg_replace('/[^0-9]/', '', $scor['paymtPat']);
-
-                if (!empty($scor['paymtPat'])) {
-                    $scor['paymtPat'] = str_split($scor['paymtPat']);
-
-                    foreach ($scor['paymtPat'] as $value) {
-                        if ($value >= 2 || $scor['amtPastDue'] > 0) {
-                            $openedDt = new DateTime(date('Y-m-d', strtotime($scor['openedDt'])));
-                            if ($openedDt > $Last_npl_opened && $scor['creditLimit'] > $pdl_last_good_max_limit) {
-                                $pdl_last_good_max_limit = $scor['creditLimit'];
-                                break;
-                            }
-                        }
-                    }
-                }
+            if ($loanKindCode == 1 && $loanIndicator != 1 && $pasDue = 0) {
+                $consum_current_limit_max += floatval($reply['accountAmt']['creditLimit']);
             }
         }
-
-        foreach ($nbki['json']['AccountReply'] as $scor) {
-
-            if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] <= 30000) {
-
-                $scor['paymtPat'] = preg_replace('/[^0-9]/', '', $scor['paymtPat']);
-
-                if (!empty($scor['paymtPat'])) {
-                    $scor['paymtPat'] = str_split($scor['paymtPat']);
-
-                    foreach ($scor['paymtPat'] as $value) {
-                        if ($value >= 2 || $scor['amtPastDue'] != 0) {
-                            continue;
-                        } else {
-                            $pdl_good_limit += $scor['creditLimit'];
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        foreach ($nbki['json']['AccountReply'] as $scor) {
-
-            if (in_array($scor['acctType'], [16]) && $scor['creditLimit'] <= 30000 && isset($scor['fact_term_m']) && $scor['fact_term_m'] >= 3) {
-
-                $scor['paymtPat'] = preg_replace('/[^0-9]/', '', $scor['paymtPat']);
-
-                if (!empty($scor['paymtPat'])) {
-                    $scor['paymtPat'] = str_split($scor['paymtPat']);
-
-                    foreach ($scor['paymtPat'] as $value) {
-                        if ($value >= 2 || $scor['amtPastDue'] != 0) {
-                            continue;
-                        } else {
-                            $pdl_prolong_3m_limit += $scor['creditLimit'];
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        foreach ($nbki['json']['AccountReply'] as $scor) {
-
-            if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] > 30000) {
-
-                if ($scor['amtPastDue'] != 13 && $scor['amtPastDue'] == 0 && $scor['creditLimit'] > $consum_current_limit_max) {
-                    $consum_current_limit_max = $scor['creditLimit'];
-                    break;
-                }
-            }
-        }
-
-        foreach ($nbki['json']['AccountReply'] as $scor) {
-
-            if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] > 30000) {
-
-                $scor['paymtPat'] = preg_replace('/[^0-9]/', '', $scor['paymtPat']);
-
-                if (!empty($scor['paymtPat'])) {
-                    $scor['paymtPat'] = str_split($scor['paymtPat']);
-
-                    foreach ($scor['paymtPat'] as $value) {
-                        if ($value >= 2 || $scor['amtPastDue'] != 0) {
-                            continue;
-                        } else {
-                            $consum_good_limit += $scor['creditLimit'];
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
         if ($pdl_overdue_count < 1)
             $nbki_score += 100;
         elseif ($pdl_overdue_count == 1)
@@ -238,7 +182,6 @@ class Nbkiscore_scoring extends Core
             $pdl_npl_limit_share = $nplCreditLimit / $pdlCreditLimit;
             $pdl_npl_90_limit_share = $npl90CreditLimit / $pdlCreditLimit;
         }
-
         if ($pdl_npl_limit_share < (10 / 100))
             $nbki_score += 30;
         elseif ($pdl_npl_limit_share >= (10 / 100) && $pdl_npl_limit_share < (20 / 100))
@@ -347,7 +290,6 @@ class Nbkiscore_scoring extends Core
             $limit = 5000;
         elseif ($nbki_score >= 900)
             $limit = 7000;
-
         if ($nbki_score < 300)
             $update = [
                 'status' => 'completed',
