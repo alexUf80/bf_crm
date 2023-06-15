@@ -20,8 +20,7 @@ class test extends Core
         $scoring_result = $this->{$classname}->run_scoring(111708);*/
         //42223,42635,42222,42231,41978,41991
         $classname = "Nbkiscore_scoring";
-
-        $scoring_result = $this->{$classname}->run_scoring(123710);
+        $scoring_result = $this->{$classname}->run_scoring(139825);
     }
 
     public function create_document($document_type, $contract)

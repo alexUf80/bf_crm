@@ -26,11 +26,13 @@ class XMLSerializer extends Core
         $this->tagOpen = $tagOpen;
     }
 
-    public function serialize($obj)
+    public function serialize($obj, $tag = true)
     {
         ob_start();
-        echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-        echo self::NEWLINE;
+        if ($tag) {
+            echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+            echo self::NEWLINE;
+        }
 
         $attributes = null;
         if (isset($obj[self::ATTRIBUTES_KEY])) {
