@@ -25,6 +25,7 @@
     "illuminate/contracts": "^8.83",
     "illuminate/macroable": "^8.83",
     "illuminate/support": "^8.83",
-    "illuminate/pagination": "^8.83"
+    "illuminate/pagination": "^8.83",
+    "digitickets/lalit": "^3.3"
   }
 }

@@ -28,6 +28,14 @@ class ToolsController extends Controller
                     return $this->action_onec_download();
                     break;
 
+                case 'fedresurs':
+                    return $this->action_fedresurs();
+                    break;
+
+                case 'generate_fedresurs':
+                    return $this->action_generate_fedresurs();
+                    break;
+
             endswitch;
         }
     }
@@ -382,4 +390,126 @@ class ToolsController extends Controller
 
         return $this->design->fetch('tools/onec_downloads.tpl');
     }
+
+    private function action_fedresurs()
+    {
+        if ($daterange = $this->request->get('daterange')) {
+            list($from, $to) = explode('-', $daterange);
+
+            $this->design->assign('from', $from);
+            $this->design->assign('to', $to);
+
+            $from = date('Y-m-d 00:00:00', strtotime($from));
+            $to   = date('Y-m-d 23:59:59', strtotime($to));
+            $contracts = ContractsORM::query()
+                ->whereBetween('create_date', [$from, $to])
+                ->where('status', '=', '4')
+                ->where('return_date', '<=', date('Y-m-d 23:59:59', time() - (5 * 86400)))
+                ->get();
+            foreach ($contracts as $contract) {
+                $operations = OperationsORM::query()
+                    ->where('contract_id', '=', $contract->id)
+                    ->where('type', '=', 'PENI')
+                    ->get();
+                $contract->expired_days = count($operations);
+            }
+            $this->design->assign('contracts', $contracts);
+        }
+
+
+        return $this->design->fetch('tools/fedresurs.tpl');
+    }
+
+    public function action_generate_fedresurs() {
+        $ids = $this->request->get('contracts');
+
+        $contracts = ContractsORM::whereIn('id', $ids)->get();
+        $debtors = [];
+        foreach ($contracts as $contract) {
+            $debtors[]['Debtor'] = [
+                'IsRfCitizen' => 'true',
+                'LastName' => $contract->user->lastname,
+                'FirstName' => $contract->user->firstname,
+                'MiddleName' => $contract->user->patronymic,
+                'Inn' => !empty($contract->user->inn) ? $contract->user->inn : $contract->user->passport_serial,
+                'Document' => [
+                    'Type' => [
+                        'Code' => 'PassportRf',
+                        'Description' => 'Российский паспорт',
+                    ],
+                    'Series' => explode('-', $contract->user->passport_serial)[0],
+                    'Number' => explode('-', $contract->user->passport_serial)[1],
+                ],
+                'Contracts' => [
+                    'Contract' => [
+                        'Uic' => $contract->id,
+                        'Number' => $contract->number,
+                        'Date' => date('Y-m-d', strtotime($contract->create_date)),
+                        'ExclusionInfo' => [
+                            'Date' => date('Y-m-d'),
+                            'Reason' => 'проверка',
+                        ],
+                    ]
+                ],
+            ];
+        }
+
+        $data = [
+            'Message' => [
+                '@attributes' => [
+                    'Number' => '01',
+                    'Type' => 'ExclusionDebtorsFromDebtCollectorList',
+                    'Ver' => '1.0'
+                ],
+                'MessageContentBase' => [
+                    '@attributes' => [
+                        'xmlns:xsd' => 'http://www.w3.org/2001/XMLSchema',
+                        'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+                        'xsi:type' => 'ExclusionDebtorsFromDebtCollectorList'
+                    ],
+                    'PublisherInfo' => [
+                        '@attributes' => [
+                            'xsi:type' => 'PublisherInfoCompany'
+                        ],
+                        'FullName' => 'ООО МКК "Баренц Финанс"',
+                        'INN' => '9723120835',
+                        'Ogrn' => '1217700350812'
+                    ],
+                    'Creditor' => [
+                        '@attributes' => [
+                            'xsi:type' => 'DebtCollectors.Participants.Company'
+                        ],
+                        'FullName' => 'ООО МКК "Баренц Финанс"',
+                        'Inn' => '9723120835',
+                        'Ogrn' => '1217700350812',
+                        'LocationAddress' => '163045, Архангельск г., пр-д. К.С. Бадигина д.19, оф. 107',
+                        'PostAddress' => '163045, Архангельск г., пр-д. К.С. Бадигина д.19, оф. 107',
+                        'Email' => 'info@mkkbf.ru',
+                        'Phone' => '88001018283'
+                    ],
+                    'DebtCollector' => [
+                        '@attributes' => [
+                            'xsi:type' => 'DebtCollectors.Participants.Company'
+                        ],
+                        'FullName' => 'ООО «КОЛЛЕКТОРСКОЕ АГЕНТСТВО «ШАМИЛЬ И ПАРТНЕРЫ»',
+                        'Inn' => '6908019416',
+                        'Ogrn' => '1216900005805',
+                        'LocationAddress' => '171080, Тверская область, г. Бологое, ул. Кооперативная, д.4, кв. 38.',
+                        'PostAddress' => '171080, Тверская область, г. Бологое, ул. Кооперативная, д.4, кв. 38.',
+                        'Email' => 'shamil.collector@gmail.com',
+                        'Phone' => ' 88007005346'
+                    ],
+                    'Debtors' => $debtors,
+                ]
+            ],
+        ];
+
+        $xml = \LaLit\Array2XML::createXML('Messages', $data);
+
+        $path = $this->config->root_dir.'files/fedresurs.xml';
+        file_put_contents($path, $xml->saveXML());
+        echo json_encode(['status' => 'ok']);
+        exit;
+    }
+
 }
