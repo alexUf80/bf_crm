@@ -444,7 +444,8 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($query);echo '</pre><hr />';
 	
         return $result;
     }
-    
+
+
 	public function get_contract($id)
 	{
 		$query = $this->db->placehold("

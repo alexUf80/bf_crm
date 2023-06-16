@@ -259,7 +259,7 @@
                             <div class="row">
                                 <div class="col-4 col-md-3 col-lg-2">
                                     <h4 class="form-control-static">
-                                        {if $order->loan_history|count > 0}
+                                        {if $order->loan_history && $order->loan_history|count > 0}
                                             <span class="label label-success" title="Клиент уже имеет погашенные займы">ПК</span>
                                         {elseif $order->first_loan}
                                             <span class="label label-info" title="Новый клиент">Новая</span>

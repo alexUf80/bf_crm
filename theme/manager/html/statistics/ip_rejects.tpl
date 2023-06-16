@@ -1,9 +1,9 @@
-{$meta_title='Статистика выданных займов' scope=parent}
+{$meta_title='IP отказных заявок' scope=parent}
 
 {capture name='page_scripts'}
 
     <script src="theme/manager/assets/plugins/moment/moment.js"></script>
-
+    
     <script src="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
     <!-- Date range Plugin JavaScript -->
     <script src="theme/manager/assets/plugins/timepicker/bootstrap-timepicker.min.js"></script>
@@ -22,7 +22,7 @@
 {/capture}
 
 {capture name='page_styles'}
-
+    
     <link href="theme/manager/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
     <!-- Daterange picker plugins css -->
     <link href="theme/manager/assets/plugins/timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
@@ -46,13 +46,13 @@
         <div class="row page-titles">
             <div class="col-md-6 col-8 align-self-center">
                 <h3 class="text-themecolor mb-0 mt-0">
-                    <i class="mdi mdi-file-chart"></i>
-                    <span>Статистика выданных займов</span>
+                    <i class="mdi mdi-file-chart"></i> 
+                    <span>IP отказных заявок</span>
                 </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
                     <li class="breadcrumb-item"><a href="statistics">Статистика</a></li>
-                    <li class="breadcrumb-item active">Выданные займы</li>
+                    <li class="breadcrumb-item active">IP отказных заявок</li>
                 </ol>
             </div>
         </div>
@@ -67,10 +67,10 @@
                 <!-- Column -->
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title">Выданные займы за период {if $date_from}{$date_from|date} - {$date_to|date}{/if}</h4>
+                        <h4 class="card-title">IP отказов за период {if $date_from}{$date_from|date} - {$date_to|date}{/if}</h4>
                         <form>
                             <div class="row">
-                                <div class="col-6 col-md-4">
+                                <div class="col-6 col-md-3">
                                     <div class="input-group mb-3">
                                         <input type="text" name="daterange" class="form-control daterange" value="{if $from && $to}{$from}-{$to}{/if}">
                                         <div class="input-group-append">
@@ -80,7 +80,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-4">
+                                
+                                <div class="col-12 col-md-3">
                                     <button type="submit" class="btn btn-info">Сформировать</button>
                                 </div>
                                 {if $date_from || $date_to}
@@ -91,103 +92,43 @@
                                 </div>
                                 {/if}
                             </div>
-
-                        </form>
-
-                        {if $from}
-                        <table class="table table-hover" style="display: inline-block;vertical-align: top;max-width: 100%;
-                            overflow-x: auto;white-space: nowrap;-webkit-overflow-scrolling: touch;">
+                            
+                        </form>     
+                        
+                        {if $from}                   
+                        <table class="table table-hover">
+                            
                             <tr>
+                                <th>#</th>
                                 <th>Дата</th>
-                                <th>Договор</th>
-                                <th>ID клиента</th>
-                                <th>ID договора</th>
-                                <th>Дата возврата</th>
+                                <th>Заявка</th>
                                 <th>ФИО</th>
-                                <th>Дата рождения</th>
-                                <th>Телефон</th>
-                                <th>Email</th>
-                                <th>Сумма</th>
-                                <th>Источник</th>
-                                <th>Сумма оплачено</th>
-                                <th>ПК/НК</th>
-                                <th>Менеджер</th>
-                                <th>Статус</th>
-                                <th>Дата факт возврата</th>
-                                <th>ПДН</th>
-                                <th>Дней займа</th>
-                                <th>Промокод</th>
+                                <th>IP</th>
                             </tr>
-
-                            {foreach $contracts as $contract}
+                            
+                            {foreach $orders as $order}
                             <tr>
-                                <td>{$contract->date|date}</td>
+                                <td>{$order@iteration}</td>
+                                <td>{$order->date|date}</td>
+                                <td><a target="_blank" href="order/{$order->order_id}">{$order->order_id}</a></td>
                                 <td>
-                                    <a target="_blank" href="order/{$contract->order_id}">{$contract->number}</a>
-                                </td>
-                                <td>{$contract->user_id}</td>
-                                <td>{$contract->order_id}</td>
-                                <td>
-                                    {$contract->return_date|date}
-                                </td>
-                                <td>
-                                    <a href="client/{$contract->user_id}" target="_blank">
-                                        {$contract->lastname|escape}
-                                        {$contract->firstname|escape}
-                                        {$contract->patronymic|escape}
-                                        {$contract->birth|escape}
+                                    <a href="client/{$order->user_id}" target="_blank">
+                                        {$order->lastname|escape} {$order->firstname|escape} {$order->patronymic|escape}
                                     </a>
                                 </td>
-                                <td>{$contract->birth}</td>
-                                <td>{$contract->phone_mobile}</td>
-                                <td><small>{$contract->email}</small></td>
-                                <td>{$contract->amount*1}</td>
-                                <td>{$contract->utm_source}</td>
-                                <td>{$contract->sumPayed|number_format:2:',':''}</td>
                                 <td>
-                                    {if $contract->client_status == 'pk'}ПК{/if}
-                                    {if $contract->client_status == 'nk'}НК{/if}
-                                    {if $contract->client_status == 'crm'}ПК CRM{/if}
-                                    {if $contract->client_status == 'rep'}Повтор{/if}
-                                </td>
-                                <td>
-                                    {$managers[$contract->manager_id]->name|escape}
-                                </td>
-                                <td>
-
-                                    {if $contract->collection_status}
-                                    {if $contract->sold}
-                                        ЮК
-                                    {else}
-                                        МКК
-                                    {/if}
-                                        {$collection_statuses[$contract->collection_status]}
-                                    {else}
-                                        {$statuses[$contract->status]}
-                                    {/if}
-                                </td>
-                                <td>
-                                    {if !empty($contract->close_date)}{$contract->close_date|date}{else}-{/if}
-                                </td>
-                                <td>
-                                    {$contract->pdn}
-                                </td>
-                                <td>
-                                    {$contract->period}
-                                </td>
-                                <td>
-                                    {$contract->promocode}
+                                    {$order->ip}
                                 </td>
                             </tr>
                             {/foreach}
-
+                            
                         </table>
                         {else}
                             <div class="alert alert-info">
                                 <h4>Укажите даты для формирования отчета</h4>
                             </div>
                         {/if}
-
+                        
                     </div>
                 </div>
                 <!-- Column -->

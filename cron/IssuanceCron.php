@@ -20,6 +20,7 @@ require 'autoload.php';
  */
 class IssuanceCron extends Core
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -159,6 +160,14 @@ class IssuanceCron extends Core
 
                     if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
                         PostbacksCronORM::insert(['order_id' => $order->id, 'status' => 1, 'goal_id' => 3]);
+
+                    if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->click_hash)) {
+                        try {
+                            $this->leadgens->send_approved_postback_click2money($order->id, $order);
+                        } catch (\Throwable $th) {
+                            //throw $th;
+                        }
+                    }
 
                 }else {
                     $this->contracts->update_contract($contract->id, array('status' => 6));

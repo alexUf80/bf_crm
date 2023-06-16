@@ -272,6 +272,7 @@ class Onec implements ToolsInterface
                 unset($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты']);
             }
 
+
             $xml['Документы'][$i]['Сделка']['НомерДокументаРасхода'] = $issuanceOperation->id;
             $xml['Документы'][$i]['Сделка']['РасчетВоВнешнейСистеме'] = 'false';
 
@@ -319,11 +320,10 @@ class Onec implements ToolsInterface
 
                 if (!empty($transaction)) {
                     if ($transaction->prolongation == 1) {
-                        $xml['Документы'][$i]['Сделка']['ДатыПролонгации'][] =
-                            [
-                                'ДатаПролонгации' => date('Y-m-d', strtotime($operation->created)),
-                                'ДатаВозврата' => date('Y-m-d', strtotime($contract->return_date)),
-                            ];
+                        $xml['Документы'][$i]['Сделка'][]['ДатыПролонгации'] = [
+                            'ДатаПролонгации' => date('Y-m-d', strtotime($operation->created)),
+                            'ДатаВозврата' => date('Y-m-d', strtotime($operation->created) + (86400 * 30)),
+                        ];
                     }
                     $k++;
                 }

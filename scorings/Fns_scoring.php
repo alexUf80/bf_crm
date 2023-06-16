@@ -10,7 +10,7 @@ class Fns_scoring extends Core
     private $url = "https://service.nalog.ru/inn-proc.do";
     
 
-    
+
     public function run_scoring($scoring_id)
     {
         $update = array();
@@ -21,7 +21,7 @@ class Fns_scoring extends Core
         {
             if ($order = $this->orders->get_order((int)$scoring->order_id))
             {
-                if (!empty($order->inn))
+                if (!empty($order->inn) && $order->inn != '#NULL!')
                 {
                     $update = array(
                         'status' => 'completed',
@@ -42,18 +42,44 @@ class Fns_scoring extends Core
                     }
                     else
                     {
-                        $birthday = date('d.m.Y', strtotime($order->birth));
-                        $passportdate = date('d.m.Y', strtotime($order->passport_date));
-                        $fns = $this->get_inn($order->lastname, $order->firstname, $order->patronymic, $birthday, 21, $order->passport_serial, $passportdate);
-    
-                    
-                        $score = !empty($fns->inn);
-                    
-                        if (empty($score) && $scoring->repeat_count < 2)
+                        list($passportSerial, $passportNumber) = explode('-', $order->passport_serial);
+                        $params =
+                            [
+                                'UserID' => 'barents',
+                                'Password' => 'uW5q+jXE',
+                                'sources' => 'fns',
+                                'PersonReq' => [
+                                    'first' => $order->firstname,
+                                    'middle' => $order->patronymic,
+                                    'paternal' => $order->lastname,
+                                    'birthDt' => date('Y-m-d', strtotime($order->birth)),
+                                    'passport_series' => $passportSerial,
+                                    'passport_number' => $passportNumber,
+                                ]
+                            ];
+
+                        $request = $this->send_request($params);
+                        $inn = 0;
+
+                        if(isset($request['Source']['@attributes']['checktype']) && $request['Source']['@attributes']['checktype'] != 'fns_inn')
+                            return $inn;
+
+                        foreach ($request['Source'] as $sources) {
+                            if ($sources['@attributes']['checktype'] == 'fns_inn') {
+                                foreach ($sources['Record'] as $fields) {
+                                    foreach ($fields as $field) {
+                                        if ($field['FieldName'] == 'INN')
+                                            $inn = $field['FieldValue'];
+                                    }
+                                }
+                            }
+                        }
+
+                        if ($inn == 0 && $scoring->repeat_count < 2)
                         {
                             $update = array(
                                 'status' => 'repeat',
-                                'body' => serialize($fns),
+                                'body' => serialize($request),
                                 'string_result' => 'ПОВТОРНЫЙ ЗАПРОС',
                                 'repeat_count' => $scoring->repeat_count + 1,
                             );
@@ -63,14 +89,14 @@ class Fns_scoring extends Core
                         {
                             $update = array(
                                 'status' => 'completed',
-                                'body' => serialize($fns),
-                                'success' => $score,
-                                'string_result' => empty($fns->inn) ? 'ИНН не найден' : $fns->inn
+                                'body' => serialize($request),
+                                'success' => $inn ? 1 : 0,
+                                'string_result' => $inn == 0 ? 'ИНН не найден' : $inn
                             );
                             
-                            if (!empty($score))
+                            if ($inn != 0)
                             {
-                                $this->users->update_user($order->user_id, array('inn' => $fns->inn));
+                                $this->users->update_user($order->user_id, array('inn' => $inn));
                             }
                         }
                     }
@@ -110,22 +136,54 @@ class Fns_scoring extends Core
     {
         $birthday = date('d.m.Y', strtotime($user->birth));
         $passportdate = date('d.m.Y', strtotime($user->passport_date));
-        $fns = $this->get_inn($user->lastname, $user->firstname, $user->patronymic, $birthday, 21, $user->passport_serial, $passportdate);
 
-        if (!empty($fns->code))
+        list($passportSerial, $passportNumber) = explode('-', $user->passport_serial);
+        $params =
+            [
+                'UserID' => 'barents',
+                'Password' => 'uW5q+jXE',
+                'sources' => 'fns',
+                'PersonReq' => [
+                    'first' => $user->firstname,
+                    'middle' => $user->patronymic,
+                    'paternal' => $user->lastname,
+                    'birthDt' => date('Y-m-d', strtotime($user->birth)),
+                    'passport_series' => $passportSerial,
+                    'passport_number' => $passportNumber,
+                ]
+            ];
+
+        $request = $this->send_request($params);
+
+        $inn = 0;
+
+        if(isset($request['Source']['@attributes']['checktype']) && $request['Source']['@attributes']['checktype'] != 'fns_inn')
+            return $inn;
+
+        foreach ($request['Source'] as $sources) {
+            if ($sources['@attributes']['checktype'] == 'fns_inn') {
+                foreach ($sources['Record'] as $fields) {
+                    foreach ($fields as $field) {
+                        if ($field['FieldName'] == 'INN')
+                            $inn = $field['FieldValue'];
+                    }
+                }
+            }
+        }
+        if ($inn != 0)
         {
             $scoring = array(
                 'user_id' => $user->id,
                 'audit_id' => $this->audit_id,
                 'type' => 'fns',
-                'body' => $fns->inn,
+                'body' => $inn,
                 'success' => 1,
                 'scorista_id' => '',
                 'string_result' => 'ИНН найден'
             );
             $this->scorings->add_scoring($scoring);
-            
-            
+
+
         }
         else
         {
@@ -179,5 +237,24 @@ class Fns_scoring extends Core
         $resp = curl_exec($ch);
 echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($data, $resp);echo '</pre><hr />';
         return json_decode($resp);
+    }
+
+    private function send_request($params)
+    {
+        $request = $this->XMLSerializer->serialize($params);
+
+        $ch = curl_init('https://i-sphere.ru/2.00/');
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        $html = curl_exec($ch);
+        $html = simplexml_load_string($html);
+        $json = json_encode($html);
+        $array = json_decode($json, TRUE);
+        curl_close($ch);
+
+        return $array;
     }
 }

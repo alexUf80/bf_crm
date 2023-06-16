@@ -39,7 +39,9 @@ class Nbki_scoring extends Core
                     $user->passport_date,
                     $user->passport_issued,
                     $user->gender,
-                    $user->client_status
+                    $user->client_status,
+                    $user->inn,
+                    $user->subdivision_code
                 );
             } else {
                 $update = array(
@@ -64,7 +66,9 @@ class Nbki_scoring extends Core
         $passport_date,
         $passport_issued,
         $gender,
-        $client_status
+        $client_status,
+        $inn,
+        $subdivision_code
     )
     {
         $genderArr = [
@@ -79,7 +83,8 @@ class Nbki_scoring extends Core
             "number": "'. substr($passport_serial, 5) .'",
             "issued_date": "' . date('Y-m-d', strtotime($passport_date)) . '",
             "issued_by": "' . addslashes($passport_issued) . '",
-            "issued_city": "' . addslashes($Regcity) . '"
+            "issued_city": "' . addslashes($Regcity) . '",
+            "division_code": "' . addslashes($subdivision_code).'"
         },
         "person": {
             "last_name": "' . addslashes($lastname) . '",
@@ -92,6 +97,9 @@ class Nbki_scoring extends Core
         "registration_address": {
             "city": "' . addslashes($Regcity) . '",
             "street": "' . addslashes($Regstreet) . '"
+        },
+        "registration_numbers": {
+            "taxpayer_number": "'.$inn.'"
         }
     },
     "requisites": {
@@ -102,7 +110,7 @@ class Nbki_scoring extends Core
 }';
 
 //var_dump($json);
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($json);echo '</pre><hr />';
+        echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($json);echo '</pre><hr />';
 //exit;
         $curl = curl_init();
 
@@ -122,8 +130,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($json);echo '</pre><hr />';
         ));
 
         $response = curl_exec($curl);
-$error = curl_error($curl);
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response, $error);echo '</pre><hr />';
+        $error = curl_error($curl);
         curl_close($curl);
         $result = json_decode($response, true);
 
@@ -165,7 +172,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response, $error);echo '</pre
         }
 
         $scoring_type = $this->scorings->get_type('nbki');
-        
+
         switch ($client_status) {
             case 'nk':
             case 'rep':
@@ -244,9 +251,9 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($response, $error);echo '</pre
                     'success' => 0,
                     'string_result' => 'превышен порог соотношения открытых к закрытым за последние 30 дней'
                 );
-    
+
                 $this->scorings->update_scoring($this->scoring_id, $add_scoring);
-    
+
                 return $add_scoring;
             }
         }

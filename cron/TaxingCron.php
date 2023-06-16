@@ -298,9 +298,10 @@ class TaxingCron extends Core
 
     private function run()
     {
+
         /*$operations = OperationsORM::query()
             ->whereIn('type', ['PERCENTS', 'PENI'])
-            ->where('created', '>', '2023-05-14')
+            ->where('created', '>', '2023-06-06')
             ->get();
         foreach ($operations as $operation) {
             $contract = ContractsORM::query()->where('id', '=', $operation->contract_id)->first();
@@ -326,7 +327,7 @@ class TaxingCron extends Core
         $contracts = ContractsORM::query()
             ->whereIn('status', [2,4])
             ->where('type', '=', 'base')
-            ->where('stop_profit', '=', 0)
+            ->where('stop_profit', '=' , 0)
             ->where('is_restructed', '=', 0)
             ->get();
         //$current_date = '2023.05.03 00:00:01';
@@ -342,7 +343,16 @@ class TaxingCron extends Core
             }
             $amount = $contract->loan_body_summ;
             $taxing_limit = $amount * 2.5;
-            $current_summ = $contract->loan_body_summ + $contract->loan_percents_summ + $contract->loan_charge_summ + $contract->loan_peni_summ;
+
+            $this->db->query("
+                select sum(amount) as sum_taxing
+                from s_operations
+                where contract_id = ?
+                and `type` in ('PERCENTS', 'PENI')
+                ", $contract->id);
+            $sum_taxing = $this->db->result()->sum_taxing;
+
+            $current_summ = $contract->loan_body_summ + $sum_taxing;
             if ($current_summ >= $taxing_limit) {
                 $this->contracts->update_contract($contract->id, array(
                     'stop_profit' => 1

@@ -80,6 +80,10 @@ class StatisticsController extends Controller
                 return $this->action_leadgens();
                 break;
 
+            case 'ip_rejects':
+                return $this->action_ip_rejects();
+                break;
+
             case 'requests_contracts':
                 return $this->action_requests_contracts();
                 break;
@@ -647,8 +651,6 @@ class StatisticsController extends Controller
             $this->design->assign('from', $from);
             $this->design->assign('to', $to);
 
-// сделайте выгрузку в эксель, пожалуйста, по всем выданным займам:
-// дата - номер договора - ФИО+ДР - сумма - ПК/НК.
             $query = $this->db->placehold("
                 SELECT
                     c.id AS contract_id,
@@ -675,6 +677,7 @@ class StatisticsController extends Controller
                     u.birth,
                     u.pdn,
                     u.UID AS uid,
+                    u.regaddress_id,
                     o.promocode_id,
                     o.id as order_id
                 FROM __contracts AS c
@@ -705,7 +708,9 @@ class StatisticsController extends Controller
                     $promocode =  $this->db->result();
                     $contracts[$c->contract_id]->promocode = $promocode->code;
                 }
-        
+
+                $regAddress = AdressesORM::find($c->regaddress_id);
+                $c->RegAddr = $regAddress->adressfull;
             }
 
             foreach ($contracts as $c) {
@@ -768,10 +773,11 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('C')->setWidth(45);
                 $active_sheet->getColumnDimension('D')->setWidth(20);
                 $active_sheet->getColumnDimension('E')->setWidth(20);
-                $active_sheet->getColumnDimension('F')->setWidth(10);
-                $active_sheet->getColumnDimension('G')->setWidth(10);
-                $active_sheet->getColumnDimension('H')->setWidth(30);
+                $active_sheet->getColumnDimension('F')->setWidth(45);
+                $active_sheet->getColumnDimension('G')->setWidth(20);
+                $active_sheet->getColumnDimension('H')->setWidth(10);
                 $active_sheet->getColumnDimension('I')->setWidth(10);
+                $active_sheet->getColumnDimension('J')->setWidth(30);
                 $active_sheet->getColumnDimension('K')->setWidth(10);
                 $active_sheet->getColumnDimension('L')->setWidth(10);
                 $active_sheet->getColumnDimension('M')->setWidth(10);
@@ -780,25 +786,28 @@ class StatisticsController extends Controller
                 $active_sheet->getColumnDimension('P')->setWidth(10);
                 $active_sheet->getColumnDimension('Q')->setWidth(10);
                 $active_sheet->getColumnDimension('R')->setWidth(10);
+                $active_sheet->getColumnDimension('S')->setWidth(10);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Договор');
                 $active_sheet->setCellValue('C1', 'ФИО');
-                $active_sheet->setCellValue('D1', 'Телефон');
-                $active_sheet->setCellValue('E1', 'Почта');
-                $active_sheet->setCellValue('F1', 'Сумма');
-                $active_sheet->setCellValue('G1', 'ПК/НК');
-                $active_sheet->setCellValue('H1', 'Менеджер');
-                $active_sheet->setCellValue('I1', 'Статус');
-                $active_sheet->setCellValue('J1', 'Дата возврата');
-                $active_sheet->setCellValue('K1', 'ПДН');
-                $active_sheet->setCellValue('L1', 'Дней займа');
-                $active_sheet->setCellValue('M1', 'Дата факт возврата');
-                $active_sheet->setCellValue('N1', 'Сумма выплачено');
-                $active_sheet->setCellValue('O1', 'Источник');
-                $active_sheet->setCellValue('P1', 'ID заявки');
-                $active_sheet->setCellValue('Q1', 'ID клиента');
-                $active_sheet->setCellValue('R1', 'Промокод');
+                $active_sheet->setCellValue('D1', 'Дата рождения');
+                $active_sheet->setCellValue('E1', 'Телефон');
+                $active_sheet->setCellValue('F1', 'Адрес регистрации');
+                $active_sheet->setCellValue('G1', 'Почта');
+                $active_sheet->setCellValue('H1', 'Сумма');
+                $active_sheet->setCellValue('I1', 'ПК/НК');
+                $active_sheet->setCellValue('J1', 'Менеджер');
+                $active_sheet->setCellValue('K1', 'Статус');
+                $active_sheet->setCellValue('L1', 'Дата возврата');
+                $active_sheet->setCellValue('M1', 'ПДН');
+                $active_sheet->setCellValue('N1', 'Дней займа');
+                $active_sheet->setCellValue('O1', 'Дата факт возврата');
+                $active_sheet->setCellValue('P1', 'Сумма выплачено');
+                $active_sheet->setCellValue('Q1', 'Источник');
+                $active_sheet->setCellValue('R1', 'ID заявки');
+                $active_sheet->setCellValue('S1', 'ID клиента');
+                $active_sheet->setCellValue('T1', 'Промокод');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
@@ -824,23 +833,25 @@ class StatisticsController extends Controller
                     }
 
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
-                    $active_sheet->setCellValue('B' . $i, $contract->number);
+                    $active_sheet->setCellValue('B' . $i, $contract->number); 
                     $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
-                    $active_sheet->setCellValue('D' . $i, $contract->phone_mobile);
-                    $active_sheet->setCellValue('E' . $i, $contract->email);
-                    $active_sheet->setCellValue('F' . $i, $contract->amount * 1);
-                    $active_sheet->setCellValue('G' . $i, $client_status);
-                    $active_sheet->setCellValue('H' . $i, $managers[$contract->manager_id]->name);
-                    $active_sheet->setCellValue('I' . $i, $status);
-                    $active_sheet->setCellValue('J' . $i, date('d.m.Y', strtotime($contract->return_date)));
-                    $active_sheet->setCellValue('K' . $i, $contract->pdn);
-                    $active_sheet->setCellValue('L' . $i, $contract->period);
-                    $active_sheet->setCellValue('M' . $i, date('d.m.Y', strtotime($contract->close_date)));
-                    $active_sheet->setCellValue('N' . $i, $contract->sumPayed);
-                    $active_sheet->setCellValue('O' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('P' . $i, $contract->order_id);
-                    $active_sheet->setCellValue('Q' . $i, $contract->user_id);
-                    $active_sheet->setCellValue('R' . $i, $contract->promocode);
+                    $active_sheet->setCellValue('D' . $i, $contract->birth);
+                    $active_sheet->setCellValue('E' . $i, $contract->phone_mobile);
+                    $active_sheet->setCellValue('F' . $i, $contract->RegAddr);
+                    $active_sheet->setCellValue('G' . $i, $contract->email);
+                    $active_sheet->setCellValue('H' . $i, $contract->amount * 1);
+                    $active_sheet->setCellValue('I' . $i, $client_status);
+                    $active_sheet->setCellValue('J' . $i, $managers[$contract->manager_id]->name);
+                    $active_sheet->setCellValue('K' . $i, $status);
+                    $active_sheet->setCellValue('L' . $i, date('d.m.Y', strtotime($contract->return_date)));
+                    $active_sheet->setCellValue('M' . $i, $contract->pdn);
+                    $active_sheet->setCellValue('N' . $i, $contract->period);
+                    $active_sheet->setCellValue('O' . $i, date('d.m.Y', strtotime($contract->close_date)));
+                    $active_sheet->setCellValue('P' . $i, $contract->sumPayed);
+                    $active_sheet->setCellValue('Q' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('R' . $i, $contract->order_id);
+                    $active_sheet->setCellValue('S' . $i, $contract->user_id);
+                    $active_sheet->setCellValue('T' . $i, $contract->promocode);
 
                     $i++;
                 }
@@ -2753,6 +2764,117 @@ class StatisticsController extends Controller
         $this->design->assign('integrations', $integrations);
 
         return $this->design->fetch('statistics/leadgens.tpl');
+    }
+
+    private function action_ip_rejects()
+    {
+        // $reasons = array();
+        // foreach ($this->reasons->get_reasons() as $reason)
+        //     $reasons[$reason->id] = $reason;
+        // $this->design->assign('reasons', $reasons);
+
+
+        if ($daterange = $this->request->get('daterange')) {
+            list($from, $to) = explode('-', $daterange);
+
+            $date_from = date('Y-m-d', strtotime($from));
+            $date_to = date('Y-m-d', strtotime($to));
+
+            $this->design->assign('date_from', $date_from);
+            $this->design->assign('date_to', $date_to);
+            $this->design->assign('from', $from);
+            $this->design->assign('to', $to);
+
+                // $query_reason = '';
+                // if ($filter_reason = $this->request->get('reason_id')) {
+                //     if ($filter_reason != 'all') {
+                //         $query_reason = $this->db->placehold("AND o.reason_id = ?", (int)$filter_reason);
+                //     }
+
+                //     $this->design->assign('filter_reason', $filter_reason);
+                // }
+
+            $query = $this->db->placehold("
+                SELECT
+                    o.id AS order_id,
+                    o.ip,
+                    u.lastname,
+                    u.firstname,
+                    u.patronymic,
+                    u.id as user_id
+                    
+                FROM __orders AS o
+                LEFT JOIN __users AS u ON u.id = o.user_id
+                WHERE o.status IN (3, 8)
+                AND DATE(o.date) >= ?
+                AND DATE(o.date) <= ?
+                GROUP BY order_id
+            ", $date_from, $date_to);
+            // echo $query;
+            // die;
+            $this->db->query($query);
+
+            $orders = array();
+            foreach ($this->db->results() as $o){
+                $orders[$o->order_id] = $o;
+                $promocode = $this->promocodes->get($o->promocode_id);
+                $orders[$o->order_id]->promocode = $promocode->code;
+            }
+
+            if ($this->request->get('download') == 'excel') {
+                $managers = array();
+                foreach ($this->managers->get_managers() as $m)
+                    $managers[$m->id] = $m;
+
+                $filename = 'files/reports/ip_rejects.xls';
+                require $this->config->root_dir . 'PHPExcel/Classes/PHPExcel.php';
+
+                $excel = new PHPExcel();
+
+                $excel->setActiveSheetIndex(0);
+                $active_sheet = $excel->getActiveSheet();
+
+                $active_sheet->setTitle("Выдачи " . $from . "-" . $to);
+
+                $excel->getDefaultStyle()->getFont()->setName('Calibri')->setSize(12);
+                $excel->getDefaultStyle()->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+
+                $active_sheet->getColumnDimension('A')->setWidth(15);
+                $active_sheet->getColumnDimension('B')->setWidth(15);
+                $active_sheet->getColumnDimension('C')->setWidth(45);
+                $active_sheet->getColumnDimension('D')->setWidth(20);
+
+                $active_sheet->setCellValue('A1', 'Дата');
+                $active_sheet->setCellValue('B1', 'Заявка');
+                $active_sheet->setCellValue('C1', 'ФИО');
+                $active_sheet->setCellValue('D1', 'IP');
+
+                $i = 2;
+                foreach ($orders as $contract) {
+
+                    $successTransaction = empty($contract->checked) ? ' (провал)' : ' успех';
+
+                    $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
+                    $active_sheet->setCellValue('B' . $i, $contract->order_id);
+                    $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
+                    $active_sheet->setCellValue('D' . $i, $contract->ip);
+
+                    $i++;
+                }
+
+                $objWriter = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+
+                $objWriter->save($this->config->root_dir . $filename);
+
+                header('Location:' . $this->config->root_url . '/' . $filename);
+                exit;
+            }
+
+
+            $this->design->assign('orders', $orders);
+        }
+
+        return $this->design->fetch('statistics/ip_rejects.tpl');
     }
 
     private function action_requests_contracts()

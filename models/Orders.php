@@ -169,6 +169,8 @@ class Orders extends Core
                 o.quality_workout,
                 o.reject_reason_returned,
                 o.promocode_id,
+                o.lead_postback_date,
+                o.lead_postback_type,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,
