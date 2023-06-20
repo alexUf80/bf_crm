@@ -7,7 +7,7 @@ class PendingSegment extends SegmentsAbstract
     {
         $reminders = RemindersORM::where('segmentId', 2)->where('is_on', 1)->get();
 
-        foreach ($reminders as $reminder) {
+        foreach ($reminders as $reminder) { 
 
             switch ($reminder->timeType) {
                 case 'days':
