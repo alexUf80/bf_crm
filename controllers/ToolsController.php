@@ -403,8 +403,16 @@ class ToolsController extends Controller
             $to   = date('Y-m-d 23:59:59', strtotime($to));
             $contracts = ContractsORM::query()
                 ->whereBetween('create_date', [$from, $to])
+                ->where('status', '=', '4')
                 ->where('return_date', '<=', date('Y-m-d 23:59:59', time() - (5 * 86400)))
                 ->get();
+            foreach ($contracts as $contract) {
+                $operations = OperationsORM::query()
+                    ->where('contract_id', '=', $contract->id)
+                    ->where('type', '=', 'PENI')
+                    ->get();
+                $contract->expired_days = count($operations);
+            }
             $this->design->assign('contracts', $contracts);
         }
 
@@ -423,7 +431,7 @@ class ToolsController extends Controller
                 'LastName' => $contract->user->lastname,
                 'FirstName' => $contract->user->firstname,
                 'MiddleName' => $contract->user->patronymic,
-                'Inn' => $contract->user->inn,
+                'Inn' => !empty($contract->user->inn) ? $contract->user->inn : $contract->user->passport_serial,
                 'Document' => [
                     'Type' => [
                         'Code' => 'PassportRf',
@@ -437,10 +445,6 @@ class ToolsController extends Controller
                         'Uic' => $contract->id,
                         'Number' => $contract->number,
                         'Date' => date('Y-m-d', strtotime($contract->create_date)),
-                        'ExclusionInfo' => [
-                            'Date' => date('Y-m-d'),
-                            'Reason' => 'проверка',
-                        ],
                     ]
                 ],
             ];
@@ -450,14 +454,14 @@ class ToolsController extends Controller
             'Message' => [
                 '@attributes' => [
                     'Number' => '01',
-                    'Type' => 'ExclusionDebtorsFromDebtCollectorList',
+                    'Type' => 'InclusionDebtorsToDebtCollectorList',
                     'Ver' => '1.0'
                 ],
                 'MessageContentBase' => [
                     '@attributes' => [
                         'xmlns:xsd' => 'http://www.w3.org/2001/XMLSchema',
                         'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-                        'xsi:type' => 'ExclusionDebtorsFromDebtCollectorList'
+                        'xsi:type' => 'InclusionDebtorsToDebtCollectorList'
                     ],
                     'PublisherInfo' => [
                         '@attributes' => [

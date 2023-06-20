@@ -331,15 +331,17 @@ class TaxingCron extends Core
             ->where('is_restructed', '=', 0)
             ->get();
         //$current_date = '2023.05.03 00:00:01';
-        $current_date = date('Y.m.d 00:00:01');
+        $current_date = date('Y.m.d H:i:s');
         foreach ($contracts as $contract) {
-            $vid = OperationsORM::query()->where('contract_id', '=', $contract->id)->where('type', '=', 'P2P')->first();
-            if ($vid) {
-                $date = date('Y.m.d 00:00:01', strtotime($vid->created));
+            $p2p = OperationsORM::query()->where('contract_id', '=', $contract->id)->where('type', '=', 'P2P')->first();
+            if ($p2p) {
+                $date = date('Y.m.d H:i:s', strtotime($p2p->created));
                 if ($date >= $current_date) {
                     print_r('test');
                     continue;
                 }
+            } else {
+                continue;
             }
             $amount = $contract->loan_body_summ;
             $taxing_limit = $amount * 2.5;
@@ -382,7 +384,7 @@ class TaxingCron extends Core
                 'order_id' => $contract->order_id,
                 'type' => 'PERCENTS',
                 'amount' => $percents_summ,
-                'created' => $current_date,
+                'created' => date('Y-m-d 00:00:01'),
                 'loan_body_summ' => $contract->loan_body_summ,
                 'loan_percents_summ' => $contract->loan_percents_summ + $percents_summ,
                 'loan_charge_summ' => $contract->loan_charge_summ,
@@ -411,7 +413,7 @@ class TaxingCron extends Core
                     'order_id' => $contract->order_id,
                     'type' => 'PENI',
                     'amount' => $peni_summ,
-                    'created' => $current_date,
+                    'created' => date('Y-m-d 00:00:01'),
                     'loan_body_summ' => $contract->loan_body_summ,
                     'loan_percents_summ' => $contract->loan_percents_summ,
                     'loan_charge_summ' => $contract->loan_charge_summ,
