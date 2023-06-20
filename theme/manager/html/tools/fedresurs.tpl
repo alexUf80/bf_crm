@@ -40,6 +40,19 @@
             }
         });
 
+        $('.searchContract').keyup(function() {
+            let search = $(this).val();
+
+            $('#contracts tbody tr').each(function(key, item) {
+                let number = $(item).attr('data-number');
+                if (number.indexOf(search) !== -1) {
+                    $(item).css('display', 'table-row');
+                } else {
+                    $(item).css('display', 'none');
+                }
+            });
+        });
+
         $('#download_xml').click(function () {
             let contractsIds = [];
             $('#contracts input.contract_id:checked').each(function(key, contract_input) {
@@ -98,6 +111,9 @@
         .btn, button, select, input {
             font-size: 12px !important;
         }
+        .hidden_row {
+            display: none;
+        }
     </style>
 {/capture}
 
@@ -153,58 +169,73 @@
                     {if $from}
                         <table class="table table-hover" id="contracts" style="display: inline-block;vertical-align: top;max-width: 100%;
                             overflow-x: auto;white-space: nowrap;-webkit-overflow-scrolling: touch;">
-                            <tr>
-                                <th></th>
-                                <th>Дата</th>
-                                <th>Договор</th>
-                                <th>ID клиента</th>
-                                <th>ID договора</th>
-                                <th>Дата возврата</th>
-                                <th>Сумма</th>
-                                <th>Сумма оплачено</th>
-                                <th>Статус</th>
-                                <th>Дней займа</th>
-                                <th>Период просрочки</th>
-                            </tr>
-
-                            {foreach $contracts as $contract}
-                                <tr style="cursor: pointer" class="checkContract">
-                                    <td>
-                                        <input class="contract_id" type="checkbox" checked value="{$contract->id}">
-                                    </td>
-                                    <td>{$contract->date|date}</td>
-                                    <td>
-                                        <a target="_blank" href="order/{$contract->order_id}">{$contract->number}</a>
-                                    </td>
-                                    <td>{$contract->user_id}</td>
-                                    <td>{$contract->order_id}</td>
-                                    <td>
-                                        {$contract->return_date|date}
-                                    </td>
-                                    <td>{$contract->amount*1}</td>
-                                    <td>{$contract->sumPayed|number_format:2:',':''}</td>
-                                    <td>
-
-                                        {if $contract->collection_status}
-                                            {if $contract->sold}
-                                                ЮК
-                                            {else}
-                                                МКК
-                                            {/if}
-                                            {$collection_statuses[$contract->collection_status]}
-                                        {else}
-                                            {$statuses[$contract->status]}
-                                        {/if}
-                                    </td>
-                                    <td>
-                                        {$contract->period}
-                                    </td>
-                                    <td>
-                                        {$contract->expired_days} дн.
-                                    </td>
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Дата</th>
+                                    <th>ФИО</th>
+                                    <th>Договор</th>
+                                    <th>Дата возврата</th>
+                                    <th>Сумма</th>
+                                    <th>Статус</th>
+                                    <th>Дней займа</th>
+                                    <th>Период просрочки</th>
                                 </tr>
-                            {/foreach}
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th>
+                                        <input type="text" class="form-control searchContract" placeholder="Поиск по договору">
+                                    </th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {foreach $contracts as $contract}
+                                    <tr id="{$contract->id}" data-number="{$contract->number}" style="cursor: pointer" class="checkContract">
+                                        <td>
+                                            <input class="contract_id" type="checkbox" checked value="{$contract->id}">
+                                        </td>
+                                        <td>
+                                            {$contract->user->lastname}
+                                            {$contract->user->firstname}
+                                            {$contract->user->patronymic}
+                                        </td>
+                                        <td>{$contract->date|date}</td>
+                                        <td>
+                                            <a target="_blank" href="order/{$contract->order_id}">{$contract->number}</a>
+                                        </td>
+                                        <td>
+                                            {$contract->return_date|date}
+                                        </td>
+                                        <td>{$contract->amount*1}</td>
+                                        <td>
 
+                                            {if $contract->collection_status}
+                                                {if $contract->sold}
+                                                    ЮК
+                                                {else}
+                                                    МКК
+                                                {/if}
+                                                {$collection_statuses[$contract->collection_status]}
+                                            {else}
+                                                {$statuses[$contract->status]}
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            {$contract->period}
+                                        </td>
+                                        <td>
+                                            {$contract->expired_days} дн.
+                                        </td>
+                                    </tr>
+                                {/foreach}
+                            </tbody>
                         </table>
                     {else}
                         <div class="alert alert-info">

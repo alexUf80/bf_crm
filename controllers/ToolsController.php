@@ -445,10 +445,6 @@ class ToolsController extends Controller
                         'Uic' => $contract->id,
                         'Number' => $contract->number,
                         'Date' => date('Y-m-d', strtotime($contract->create_date)),
-                        'ExclusionInfo' => [
-                            'Date' => date('Y-m-d'),
-                            'Reason' => 'проверка',
-                        ],
                     ]
                 ],
             ];
@@ -458,14 +454,14 @@ class ToolsController extends Controller
             'Message' => [
                 '@attributes' => [
                     'Number' => '01',
-                    'Type' => 'ExclusionDebtorsFromDebtCollectorList',
+                    'Type' => 'InclusionDebtorsToDebtCollectorList',
                     'Ver' => '1.0'
                 ],
                 'MessageContentBase' => [
                     '@attributes' => [
                         'xmlns:xsd' => 'http://www.w3.org/2001/XMLSchema',
                         'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-                        'xsi:type' => 'ExclusionDebtorsFromDebtCollectorList'
+                        'xsi:type' => 'InclusionDebtorsToDebtCollectorList'
                     ],
                     'PublisherInfo' => [
                         '@attributes' => [
