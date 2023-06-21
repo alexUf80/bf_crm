@@ -3119,7 +3119,7 @@ class OrderController extends Controller
 
             // сохраняем количество дней просрочки
             $contract_expired_period = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d', strtotime($contract->return_date)))) / 86400);
-            $epl = date('Y-m-d') . ' - ' . date('Y-m-d', strtotime($contract->return_date)) . ' - ' . $contract_expired_period;
+            $epl = date('Y-m-d') . ' -- ' . date('Y-m-d', strtotime($contract->return_date)) . ' -- ' . $contract_expired_period;
             if ($contract_expired_period < 0)
                 $contract_expired_period = 0;
 
