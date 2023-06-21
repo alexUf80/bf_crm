@@ -917,6 +917,18 @@ class OrderController extends Controller
 
         CardsORM::where('user_id', $order->user_id)->delete();
 
+        // $file = $this->config->root_dir. 'logs/2.txt';
+        // $current .= $order->utm_source . " - " .  $order->lead_postback_type;
+        // file_put_contents($file, $current);
+        
+        if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->lead_postback_type)) {
+            try {
+                $this->leadgens->send_cancelled_postback_click2money($order_id, $order);
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
+        }
+
         return array('success' => 1, 'status' => $status);
     }
 
@@ -2207,6 +2219,7 @@ class OrderController extends Controller
         $this->design->assign('files', $files);
     }
 
+
     private function action_services()
     {
         $order_id = $this->request->post('order_id', 'integer');
@@ -3106,7 +3119,7 @@ class OrderController extends Controller
 
             // сохраняем количество дней просрочки
             $contract_expired_period = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d', strtotime($contract->return_date)))) / 86400);
-            $epl = date('Y-m-d') . ' - ' . date('Y-m-d', strtotime($contract->return_date)) . ' - ' . $contract_expired_period;
+            $epl = date('Y-m-d') . ' -- ' . date('Y-m-d', strtotime($contract->return_date)) . ' -- ' . $contract_expired_period;
             if ($contract_expired_period < 0)
                 $contract_expired_period = 0;
 
