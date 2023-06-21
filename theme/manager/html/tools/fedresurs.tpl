@@ -53,8 +53,14 @@
             });
         });
 
-        $('#download_xml').click(function () {
-            let contractsIds = [];
+        $('.download_xml_btn').click(function () {
+            let contractsIds = [],
+                type = $(this).attr('data-type'),
+                daterange = $('.daterange').val(),
+                names = {
+                    InclusionDebtorsToDebtCollectorList: 'Список на включение за период с ' + daterange.replace('-', 'по'),
+                    ExclusionDebtorsFromDebtCollectorList: 'Список на исключение запериод с ' + daterange.replace('-', 'по'),
+                };
             $('#contracts input.contract_id:checked').each(function(key, contract_input) {
                 contractsIds.push(contract_input.value)
             });
@@ -64,13 +70,14 @@
                     data: {
                         action: 'generate_fedresurs',
                         contracts: contractsIds,
+                        type: type,
                     },
                     dataType: 'json',
                     success: function(resp){
                         if (resp.status == 'ok') {
                             let link = document.createElement('a');
                             link.setAttribute('href','https://crm.barents-finans.ru/files/fedresurs.xml');
-                            link.setAttribute('download','report.xml');
+                            link.setAttribute('download', names[type] + '.xml');
                             link.click();
                         } else {
                             Swal.fire({
@@ -160,8 +167,9 @@
                                 <div class="col-2 col-md-1">
                                     <button type="submit" class="btn btn-info">Применить</button>
                                 </div>
-                                <div class="col-1 col-md-2">
-                                    <button style="margin-left: 20px;" id="download_xml" type="button" class="btn btn-success">Скачать отчёт</button>
+                                <div class="col-1 col-md-6">
+                                    <button style="margin-left: 20px;" type="button" data-type="InclusionDebtorsToDebtCollectorList" class="btn btn-success download_xml_btn">Скачать отчёт на включение</button>
+                                    <button style="margin-left: 20px;" data-type="ExclusionDebtorsFromDebtCollectorList" type="button" class="btn btn-success download_xml_btn">Скачать отчёт на исключение</button>
                                 </div>
                             </div>
                             <br/>
