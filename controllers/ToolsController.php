@@ -422,6 +422,7 @@ class ToolsController extends Controller
 
     public function action_generate_fedresurs() {
         $ids = $this->request->get('contracts');
+        $type = $this->request->get('type');
 
         $contracts = ContractsORM::whereIn('id', $ids)->get();
         $debtors = [];
@@ -454,14 +455,14 @@ class ToolsController extends Controller
             'Message' => [
                 '@attributes' => [
                     'Number' => '01',
-                    'Type' => 'InclusionDebtorsToDebtCollectorList',
+                    'Type' => $type,
                     'Ver' => '1.0'
                 ],
                 'MessageContentBase' => [
                     '@attributes' => [
                         'xmlns:xsd' => 'http://www.w3.org/2001/XMLSchema',
                         'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
-                        'xsi:type' => 'InclusionDebtorsToDebtCollectorList'
+                        'xsi:type' => $type
                     ],
                     'PublisherInfo' => [
                         '@attributes' => [
