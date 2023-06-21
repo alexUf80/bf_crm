@@ -2992,6 +2992,17 @@
                                                 <td>
                                                     {$operation->amount} руб
                                                 </td>
+                                                {if $manager->id==1}
+                                                    <td>
+                                                        {$operation->loan_body_summ} руб
+                                                    </td>
+                                                    <td>
+                                                        {$operation->loan_percents_summ} руб
+                                                    </td>
+                                                    <td>
+                                                        {$operation->loan_peni_summ} руб
+                                                    </td>
+                                                {/if}
                                             </tr>
                                         {/foreach}
                                         </tbody>
