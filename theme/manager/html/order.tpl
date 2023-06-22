@@ -193,28 +193,6 @@
                     $('#contacts_modal').modal('hide');
                 });
             });
-
-            $('.activate_cessia').on('click', function(e) {
-                e.preventDefault();
-                let id = $(this).attr('data-id');
-                $.ajax({
-                    method: 'POST',
-                    dataType: 'JSON',
-                    data: {
-                        action: 'activate_cessia',
-                        id: id
-                    },
-                    success: function (contact) {
-                        Swal.fire({
-                            timer: 5000,
-                            title: '',
-                            text: 'Уведомление отправлено в ЛК клиента',
-                            type: 'success',
-                        });
-                    }
-                });
-            });
-
             $('.edit_contact').on('click', function (e) {
                 e.preventDefault();
                 $('#contacts_form')[0].reset();
@@ -548,7 +526,7 @@
 
                         <div class="form-body">
                             <div class="row">
-                                <div class="col-4 col-md-3 col-lg-2">
+                                <div class="col-4 col-md-3 col-lg-1">
                                     <h4 class="form-control-static">
                                         {if $order->client_status}
                                             {if $order->client_status == 'pk'}
@@ -576,7 +554,7 @@
                                         {/if}
                                     </h4>
                                 </div>
-                                <div class="col-8 col-md-3 col-lg-4">
+                                <div class="col-8 col-md-3 col-lg-3">
                                     <h5 class="form-control-static float-left  text-center pr-2 pl-2">
                                         дата заявки: <br/>{$order->date|date} {$order->date|time}
                                     </h5>
@@ -595,11 +573,11 @@
                                         </h5>
                                     {/if}
                                 </div>
-                                <div class="col-12 col-md-6 col-lg-1">
+                                <div class="col-12 col-md-6 col-lg-3">
                                     <h5 class="form-control-static">
                                         Источник:
                                         {if $order->utm_source}
-                                            {$order->utm_source|escape}
+                                            {$order->utm_source|escape} - {$order->click_hash}
                                         {else}
                                             не определен
                                         {/if}
@@ -1188,9 +1166,6 @@
                                             </ul>
                                         </div>
                                         *}
-                                        <div data-id="{$order->contract_id}" class="btn btn-block btn-danger activate_cessia">
-                                            Продан по цессии
-                                        </div>
                                     </div>
                                 </div>
                             </div>

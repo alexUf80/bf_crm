@@ -401,17 +401,23 @@ class ToolsController extends Controller
 
             $from = date('Y-m-d 00:00:00', strtotime($from));
             $to   = date('Y-m-d 23:59:59', strtotime($to));
-            $contracts = ContractsORM::query()
-                ->whereBetween('create_date', [$from, $to])
-                ->where('status', '=', '4')
-                ->where('return_date', '<=', date('Y-m-d 23:59:59', time() - (5 * 86400)))
+            $operations = OperationsORM::query()
+                ->whereBetween('created', [$from, $to])
+                ->where('type', '=', 'PENI')
+                ->groupBy('contract_id')
                 ->get();
-            foreach ($contracts as $contract) {
-                $operations = OperationsORM::query()
-                    ->where('contract_id', '=', $contract->id)
-                    ->where('type', '=', 'PENI')
-                    ->get();
-                $contract->expired_days = count($operations);
+            $contracts = [];
+            foreach ($operations as $operation) {
+                $contract = $operation->contract;
+                if ($contract) {
+                    $operations = OperationsORM::query()
+                        ->where('contract_id', '=', $contract->id)
+                        ->where('type', '=', 'PENI')
+                        ->get();
+                    $contract->expired_days = count($operations);
+                    $contracts[] = $contract;
+                }
+
             }
             $this->design->assign('contracts', $contracts);
         }
