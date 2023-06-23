@@ -219,6 +219,10 @@ class OrderController extends Controller
                     return $this->actionAddPay();
                     break;
 
+                case 'activate_cessia':
+                    return $this->action_activate_cessia();
+                    break;
+
 
             endswitch;
 
@@ -2735,19 +2739,19 @@ class OrderController extends Controller
         }
         switch ($num) {
             case 1:
-                {
-                    return ($words[0]);
-                }
+            {
+                return ($words[0]);
+            }
             case 2:
             case 3:
             case 4:
-                {
-                    return ($words[1]);
-                }
+            {
+                return ($words[1]);
+            }
             default:
-                {
-                    return ($words[2]);
-                }
+            {
+                return ($words[2]);
+            }
         }
     }
 
@@ -3173,6 +3177,18 @@ class OrderController extends Controller
 
         }
 
+        exit;
+    }
+
+    private function action_activate_cessia() {
+        $id = $this->request->post('id');
+        $contract = ContractsORM::find($id);
+        if ($contract) {
+            $contract->update([
+                'active_cessia' => 1
+            ]);
+        }
+        echo json_encode(['status' => 'ok']);
         exit;
     }
 

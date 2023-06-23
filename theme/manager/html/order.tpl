@@ -193,6 +193,28 @@
                     $('#contacts_modal').modal('hide');
                 });
             });
+
+            $('.activate_cessia').on('click', function(e) {
+                e.preventDefault();
+                let id = $(this).attr('data-id');
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'activate_cessia',
+                        id: id
+                    },
+                    success: function (contact) {
+                        Swal.fire({
+                            timer: 5000,
+                            title: '',
+                            text: 'Уведомление отправлено в ЛК клиента',
+                            type: 'success',
+                        });
+                    }
+                });
+            });
+
             $('.edit_contact').on('click', function (e) {
                 e.preventDefault();
                 $('#contacts_form')[0].reset();
@@ -1166,6 +1188,9 @@
                                             </ul>
                                         </div>
                                         *}
+                                        <div data-id="{$order->contract_id}" class="btn btn-block btn-danger activate_cessia">
+                                            Продан по цессии
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -2278,7 +2303,7 @@
 
                                                                     {if $scoring_type->name == 'nbkiscore' && $scorings[$scoring_type->name]->status == 'completed'}
                                                                         <span class="mail-desc"
-                                                                            title="Скоринговый балл:">
+                                                                              title="Скоринговый балл:">
                                                                                 Скоринговый балл: <b>{$scorings['nbkiscore']->scorista_ball}</b>
                                                                         </span>
                                                                     {/if}
@@ -2953,9 +2978,9 @@
                                         <tbody>
                                         {foreach $contract_operations as $operation}
                                             <tr class="
-                                                    {if in_array($operation->type, ['PAY'])}table-success{/if} 
-                                                    {if in_array($operation->type, ['PERCENTS', 'CHARGE', 'PENI'])}table-danger{/if} 
-                                                    {if in_array($operation->type, ['P2P', 'IMPORT'])}table-info{/if} 
+                                                    {if in_array($operation->type, ['PAY'])}table-success{/if}
+                                                    {if in_array($operation->type, ['PERCENTS', 'CHARGE', 'PENI'])}table-danger{/if}
+                                                    {if in_array($operation->type, ['P2P', 'IMPORT'])}table-info{/if}
                                                     {if in_array($operation->type, ['INSURANCE', 'BUD_V_KURSE', 'REJECT_REASON', 'RETURN_INSURANCE', 'INSURANCE_BC'])}table-warning{/if}
                                                     {if in_array($operation->type, ['RETURN_INSURANCE', 'RETURN_REJECT_REASON'])}table-secondary{/if}
                                                 ">
