@@ -193,6 +193,28 @@
                     $('#contacts_modal').modal('hide');
                 });
             });
+
+            $('.activate_cessia').on('click', function(e) {
+                e.preventDefault();
+                let id = $(this).attr('data-id');
+                $.ajax({
+                    method: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        action: 'activate_cessia',
+                        id: id
+                    },
+                    success: function (contact) {
+                        Swal.fire({
+                            timer: 5000,
+                            title: '',
+                            text: 'Уведомление отправлено в ЛК клиента',
+                            type: 'success',
+                        });
+                    }
+                });
+            });
+
             $('.edit_contact').on('click', function (e) {
                 e.preventDefault();
                 $('#contacts_form')[0].reset();
@@ -1166,6 +1188,9 @@
                                             </ul>
                                         </div>
                                         *}
+                                        <div data-id="{$order->contract_id}" class="btn btn-block btn-danger activate_cessia">
+                                            Продан по цессии
+                                        </div>
                                     </div>
                                 </div>
                             </div>

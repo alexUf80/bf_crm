@@ -31,12 +31,14 @@
 
         });
 
-        $('.checkContract').click(function() {
-            let input = $(this).find('input');
-            if (input.prop('checked')) {
-                input.prop('checked', false);
-            } else {
-                input.prop('checked', true)
+        $('.checkContract').click(function(e) {
+            if (e.target.localName != 'input') {
+                let input = $(this).find('input');
+                if (input.prop('checked')) {
+                    input.prop('checked', false);
+                } else {
+                    input.prop('checked', true)
+                }
             }
         });
 
@@ -209,12 +211,12 @@
                                         <td>
                                             <input class="contract_id" type="checkbox" checked value="{$contract->id}">
                                         </td>
+                                        <td>{$contract->date|date}</td>
                                         <td>
                                             {$contract->user->lastname}
                                             {$contract->user->firstname}
                                             {$contract->user->patronymic}
                                         </td>
-                                        <td>{$contract->date|date}</td>
                                         <td>
                                             <a target="_blank" href="order/{$contract->order_id}">{$contract->number}</a>
                                         </td>
