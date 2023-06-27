@@ -16,12 +16,12 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
-        echo date('d-m-Y H:i:s');die();
         /*$classname = "Fns_scoring";
         $scoring_result = $this->{$classname}->run_scoring(111708);*/
         //42223,42635,42222,42231,41978,41991
-        $classname = "Nbki_scoring";
-        $scoring_result = $this->{$classname}->run_scoring(145368);
+        $classname = "Fns_scoring";
+        $scoring_result = $this->{$classname}->run_scoring(158631);
+        die();
     }
 
     public function create_document($document_type, $contract)

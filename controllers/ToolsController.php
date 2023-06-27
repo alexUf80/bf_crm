@@ -7,6 +7,11 @@ class ToolsController extends Controller
     public function fetch()
     {
         if (in_array('analitics', $this->manager->permissions)) {
+
+            if ($this->request->post('action') && $this->request->post('action') == 'generate_fedresurs') {
+                return $this->action_generate_fedresurs();
+            }
+
             switch ($this->request->get('action', 'string')):
                 case 'integrations':
                     return $this->action_integrations();
@@ -30,10 +35,6 @@ class ToolsController extends Controller
 
                 case 'fedresurs':
                     return $this->action_fedresurs();
-                    break;
-
-                case 'generate_fedresurs':
-                    return $this->action_generate_fedresurs();
                     break;
 
             endswitch;
@@ -427,8 +428,9 @@ class ToolsController extends Controller
     }
 
     public function action_generate_fedresurs() {
-        $ids = $this->request->get('contracts');
-        $type = $this->request->get('type');
+
+        $ids = $this->request->post('contracts');
+        $type = $this->request->post('type');
 
         $contracts = ContractsORM::whereIn('id', $ids)->get();
         $debtors = [];

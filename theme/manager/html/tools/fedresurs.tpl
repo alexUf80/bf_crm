@@ -68,7 +68,7 @@
             });
             if (contractsIds.length) {
                 $.ajax({
-                    type: 'GET',
+                    type: 'POST',
                     data: {
                         action: 'generate_fedresurs',
                         contracts: contractsIds,

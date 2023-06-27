@@ -169,7 +169,7 @@ class Documents extends Core
         $this->db->query($query);
         if ($results = $this->db->results()) {
             foreach ($results as $result) {
-                $result->params = unserialize($result->params);
+                $result->params = json_decode($result->params);
             }
         }
 

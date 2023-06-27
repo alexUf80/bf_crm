@@ -35,6 +35,8 @@ class CollectorContractController extends Controller
         $this->design->assign('scoring_types', $scoring_types);
 
         if ($contract = $this->contracts->get_contract($contract_id)) {
+            $files = $this->users->get_files(array('user_id' => $contract->user_id));
+            $this->design->assign('files', $files);
             if ($order = $this->orders->get_order($contract->order_id)) {
                 $this->design->assign('order', $order);
 
