@@ -62,23 +62,49 @@ class ConnexionsAjax extends Core
                 $result['card_number'] = new StdClass();
                 $result['card_number']->found = array_filter($this->find_card($user->id));
 
-                $result['regaddress'] = new StdClass();
-                $result['regaddress']->search = $user->Regregion . ' ' . $user->Regdistrict . ' ' . $user->Reglocality . ' ' . $user->Regcity . ' ' . $user->Regstreet . ' ' . $user->Reghousing . ' ' . $user->Regbuilding . ' ' . $user->Regroom;
-                $result['regaddress']->found = array_filter($this->find_address($user->id, $user->Regregion, $user->Regdistrict, $user->Reglocality, $user->Regcity, $user->Regstreet, $user->Reghousing, $user->Regbuilding, $user->Regroom));
+                if (isset($user->Regregion)) {
+                    $result['regaddress'] = new StdClass();
+                    $result['regaddress']->search = $user->Regregion . ' ' . $user->Regdistrict . ' ' . $user->Reglocality . ' ' . $user->Regcity . ' ' . $user->Regstreet . ' ' . $user->Reghousing . ' ' . $user->Regbuilding . ' ' . $user->Regroom;
+                    $result['regaddress']->found = array_filter($this->find_address($user->id, $user->Regregion, $user->Regdistrict, $user->Reglocality, $user->Regcity, $user->Regstreet, $user->Reghousing, $user->Regbuilding, $user->Regroom));
+                } else {
+                    $result['regaddress'] = new StdClass();
+                    $result['regaddress']->search = '';
+                    $result['regaddress']->found = '';
+                }
 
-                $result['faktaddress'] = new StdClass();
-                $result['faktaddress']->search = $user->Faktregion . ' ' . $user->Faktdistrict . ' ' . $user->Faktlocality . ' ' . $user->Faktcity . ' ' . $user->Faktstreet . ' ' . $user->Fakthousing . ' ' . $user->Faktbuilding . ' ' . $user->Faktroom;
-                $result['faktaddress']->found = array_filter($this->find_address($user->id, $user->Faktregion, $user->Faktdistrict, $user->Faktlocality, $user->Faktcity, $user->Faktstreet, $user->Fakthousing, $user->Faktbuilding, $user->Faktroom));
+                if (isset($user->Faktregion)) {
+                    $result['faktaddress'] = new StdClass();
+                    $result['faktaddress']->search = $user->Faktregion . ' ' . $user->Faktdistrict . ' ' . $user->Faktlocality . ' ' . $user->Faktcity . ' ' . $user->Faktstreet . ' ' . $user->Fakthousing . ' ' . $user->Faktbuilding . ' ' . $user->Faktroom;
+                    $result['faktaddress']->found = array_filter($this->find_address($user->id, $user->Faktregion, $user->Faktdistrict, $user->Faktlocality, $user->Faktcity, $user->Faktstreet, $user->Fakthousing, $user->Faktbuilding, $user->Faktroom));
+                } else {
+                    $result['faktaddress'] = new StdClass();
+                    $result['faktaddress']->search = '';
+                    $result['faktaddress']->found = '';
+                }
 
-                $result['contactperson1'] = new StdClass();
-                $result['contactperson1']->search = $user->contact_person_phone;
-                $result['contactperson1']->fio = $user->contact_person_name;
-                $result['contactperson1']->found = array_filter($this->find_phone($user->id, $user->contact_person_phone));
+                if (isset($user->contact_person_phone)) {
+                    $result['contactperson1'] = new StdClass();
+                    $result['contactperson1']->search = $user->contact_person_phone;
+                    $result['contactperson1']->fio = $user->contact_person_name;
+                    $result['contactperson1']->found = array_filter($this->find_phone($user->id, $user->contact_person_phone));
+                } else {
+                    $result['contactperson1'] = new StdClass();
+                    $result['contactperson1']->search = '';
+                    $result['contactperson1']->fio = '';
+                    $result['contactperson1']->found = '';
+                }
 
-                $result['contactperson2'] = new StdClass();
-                $result['contactperson2']->search = $user->contact_person2_phone;
-                $result['contactperson2']->fio = $user->contact_person2_name;
-                $result['contactperson2']->found = array_filter($this->find_phone($user->id, $user->contact_person2_phone));
+                if (isset($user->contact_person2_phone)) {
+                    $result['contactperson2'] = new StdClass();
+                    $result['contactperson2']->search = $user->contact_person2_phone;
+                    $result['contactperson2']->fio = $user->contact_person2_name;
+                    $result['contactperson2']->found = array_filter($this->find_phone($user->id, $user->contact_person2_phone));
+                } else {
+                    $result['contactperson2'] = new StdClass();
+                    $result['contactperson2']->search = '';
+                    $result['contactperson2']->fio = '';
+                    $result['contactperson2']->found = '';
+                }
 
                 $this->output($result);
 //echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($result);echo '</pre><hr />';
@@ -157,19 +183,8 @@ class ConnexionsAjax extends Core
         $this->db->query($query);
         $results['workphone'] = $this->db->results();
 
-        $query = $this->db->placehold("
-            SELECT 
-                id,
-                lastname,
-                firstname,
-                patronymic,
-                phone_mobile AS user_phone
-            FROM __users
-            WHERE id != ?
-            AND chief_phone in (?, ?)
-        ", $user_id, (string)$prepare_phone, (string)$another_number);
-        $this->db->query($query);
-        $results['chief_phone'] = $this->db->results();
+
+        $results['chief_phone'] = '';
 
 
         $results['contactpersons'] = array();
@@ -208,7 +223,7 @@ class ConnexionsAjax extends Core
             AND contact_person_phone in (?, ?)
         ", $user_id, (string)$prepare_phone, (string)$another_number);
         $this->db->query($query);
-        $results['contactpersons'] = array_merge($results['contactpersons'], $this->db->results());
+        $results['contactpersons'] = $results['contactpersons'] ? array_merge($results['contactpersons'], $this->db->results()) : [];
 
         $query = $this->db->placehold("
             SELECT 
@@ -225,7 +240,7 @@ class ConnexionsAjax extends Core
             AND contact_person2_phone in (?, ?)
         ", $user_id, (string)$prepare_phone, (string)$another_number);
         $this->db->query($query);
-        $results['contactpersons'] = array_merge($results['contactpersons'], $this->db->results());
+        $results['contactpersons'] = $results['contactpersons'] ? array_merge($results['contactpersons'], $this->db->results()) : [];
 
         return $results;
     }
