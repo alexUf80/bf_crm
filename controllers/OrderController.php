@@ -240,6 +240,12 @@ class OrderController extends Controller
                 if ($order = $this->orders->get_order($order_id)) {
                     $client = $this->users->get_user($order->user_id);
 
+                    if (!empty($order->utm_source) && $order->utm_source != ' ') {
+                        $order->source = $order->utm_source . ' - ' . $order->click_hash;
+                    } else {
+                        $order->source = 'не определён';
+                    }
+
                     $regaddress = $this->Addresses->get_address($client->regaddress_id);
                     $faktaddress = $this->Addresses->get_address($client->faktaddress_id);
                     $this->design->assign('regaddress', $regaddress->adressfull);

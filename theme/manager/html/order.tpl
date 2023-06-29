@@ -597,12 +597,7 @@
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-3">
                                     <h5 class="form-control-static">
-                                        Источник:
-                                        {if $order->utm_source}
-                                            {$order->utm_source|escape} - {$order->click_hash}
-                                        {else}
-                                            не определен
-                                        {/if}
+                                        Источник: {$order->source}
                                     </h5>
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-2">

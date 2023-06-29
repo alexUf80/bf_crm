@@ -278,7 +278,7 @@ class Onec implements ToolsInterface
 
             $promocodes = PromocodesORM::get();
 
-            $product = ['КредитныйПродукт' => 1];
+            $product = ['КредитныйПродукт' => 42];
 
             $order = OrdersORM::where('contract_id', $contract->id)->first();
 
