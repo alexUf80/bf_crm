@@ -193,7 +193,7 @@ class NeworderController extends Controller
                 'period' => $this->request->post('period'),
                 'create_date' => date('Y-m-d H:i:s'),
                 'status' => 0,
-                'base_percent' => 1,
+                'base_percent' => 0.80,
                 'charge_percent' => 0,
                 'peni_percent' => 0
             );
