@@ -410,7 +410,13 @@ class ToolsController extends Controller
             $contracts = [];
             foreach ($operations as $operation) {
                 $contract = $operation->contract;
-                if ($contract) {
+
+                $date_from = new DateTime();
+                $date_from->modify('-5 days');
+                $date_to = new DateTime();
+                $date_to->modify('-70 days');
+
+                if ($contract && $contract->return_date < $date_from->format('Y-m-d') && $contract->return_date > $date_to->format('Y-m-d')) {
                     $operations = OperationsORM::query()
                         ->where('contract_id', '=', $contract->id)
                         ->where('type', '=', 'PENI')
