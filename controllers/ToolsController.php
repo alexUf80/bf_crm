@@ -446,11 +446,12 @@ class ToolsController extends Controller
                 'LastName' => $contract->user->lastname,
                 'FirstName' => $contract->user->firstname,
                 'MiddleName' => $contract->user->patronymic,
-                'Inn' => !empty($contract->user->inn) ? $contract->user->inn : $contract->user->passport_serial,
+                // 'Inn' => !empty($contract->user->inn) ? $contract->user->inn : $contract->user->passport_serial,
+                'Inn' => '',
                 'Document' => [
                     'Type' => [
                         'Code' => 'PassportRf',
-                        'Description' => 'Российский паспорт',
+                        'Description' => 'Иной документ, удостоверяющий личность',
                     ],
                     'Series' => explode('-', $contract->user->passport_serial)[0],
                     'Number' => explode('-', $contract->user->passport_serial)[1],
