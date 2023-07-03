@@ -108,7 +108,7 @@ class Onec implements ToolsInterface
             [
                 'Наименование' => 'Стандартный',
                 'УИД' => 1,
-                'Процент' => 1
+                'Процент' => 0.8
             ];
 
         $i++;
@@ -223,7 +223,7 @@ class Onec implements ToolsInterface
 
         $xml['Справочники'][$i]['КредитныеПродукты'] =
             [
-                'Наименование' => 'Стандартный',
+                'Наименование' => 'Стандартный-1',
                 'УИД' => 1,
                 'Процент' => 1
             ];
@@ -233,7 +233,11 @@ class Onec implements ToolsInterface
         $promocodes = PromocodesORM::get();
 
         foreach ($promocodes as $promocode) {
-            $percent = 1 - ($promocode->discount / 100);
+            if ($promocode->id == 42) {
+                $percent = 0.8 - ($promocode->discount / 100);
+            } else {
+                $percent = 1 - ($promocode->discount / 100);
+            }
 
             $xml['Справочники'][$i]['КредитныеПродукты'] =
                 [
@@ -278,7 +282,15 @@ class Onec implements ToolsInterface
 
             $promocodes = PromocodesORM::get();
 
-            $product = ['КредитныйПродукт' => 42];
+            $product = ['КредитныйПродукт' => 1];
+
+            if (strtotime($contract->inssuance_date) >= strtotime('29.06.2023 15:20:00')) {
+                $product = ['КредитныйПродукт' => 42];
+            }
+
+            if (in_array($contract->number, ['0628-5113', '0628-5094', '0629-5157', '0629-5150', '0628-5121', '0628-5138'])) {
+                $product = ['КредитныйПродукт' => 1];
+            }
 
             $order = OrdersORM::where('contract_id', $contract->id)->first();
 
