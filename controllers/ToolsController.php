@@ -457,7 +457,7 @@ class ToolsController extends Controller
                 ],
                 'Contracts' => [
                     'Contract' => [
-                        'Uic' => $contract->id,
+                        // 'Uic' => $contract->id,
                         'Number' => $contract->number,
                         'Date' => date('Y-m-d', strtotime($contract->create_date)),
                     ]
