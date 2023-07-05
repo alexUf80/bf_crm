@@ -460,6 +460,10 @@ class ToolsController extends Controller
                         // 'Uic' => $contract->id,
                         'Number' => $contract->number,
                         'Date' => date('Y-m-d', strtotime($contract->create_date)),
+                        'InvolvementInfo' => [
+                            'DateBegin' => date('Y-m-d', strtotime($contract->return_date. ' +5 days')),
+                            'DateEnd' => date('Y-m-d', strtotime($contract->return_date. ' +45 days')),
+                        ]
                     ]
                 ],
             ];
