@@ -439,9 +439,9 @@ class ToolsController extends Controller
         $type = $this->request->post('type');
 
         $contracts = ContractsORM::whereIn('id', $ids)->get();
-        $debtors = [];
+        $debtor = [];
         foreach ($contracts as $contract) {
-            $debtors[]['Debtor'] = [
+            $debtor[] = [
                 'IsRfCitizen' => 'true',
                 'LastName' => $contract->user->lastname,
                 'FirstName' => $contract->user->firstname,
@@ -514,7 +514,9 @@ class ToolsController extends Controller
                         'Email' => 'shamil.collector@gmail.com',
                         'Phone' => ' 88007005346'
                     ],
-                    'Debtors' => $debtors,
+                    'Debtors' => [
+                        'Debtor' => $debtor,
+                    ],
                 ]
             ],
         ];
