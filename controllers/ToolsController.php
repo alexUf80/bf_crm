@@ -438,36 +438,89 @@ class ToolsController extends Controller
         $ids = $this->request->post('contracts');
         $type = $this->request->post('type');
 
-        $contracts = ContractsORM::whereIn('id', $ids)->get();
+        // $contracts = ContractsORM::whereIn('id', $ids)->get();
+
+        $filter = [];
+        $filter['id'] = $ids;
+        $filter['sort'] = 'phone_asc';
+        $contracts = $this->contracts->get_contracts($filter);
+
         $debtor = [];
+        $prew_debtor = 0;
+        $ctrs = [];
         foreach ($contracts as $contract) {
-            $debtor[] = [
-                'IsRfCitizen' => 'true',
-                'LastName' => $contract->user->lastname,
-                'FirstName' => $contract->user->firstname,
-                'MiddleName' => $contract->user->patronymic,
-                'Inn' => !empty($contract->user->inn) ? $contract->user->inn : $contract->user->passport_serial,
-                'Document' => [
-                    'Type' => [
-                        'Code' => 'PassportRf',
-                        'Description' => 'Российский паспорт',
-                    ],
-                    'Series' => explode('-', $contract->user->passport_serial)[0],
-                    'Number' => explode('-', $contract->user->passport_serial)[1],
-                ],
-                'Contracts' => [
-                    'Contract' => [
-                        // 'Uic' => $contract->id,
-                        'Number' => $contract->number,
-                        'Date' => date('Y-m-d', strtotime($contract->create_date)),
-                        'InvolvementInfo' => [
-                            'DateBegin' => date('Y-m-d', strtotime($contract->return_date. ' +5 days')),
-                            'DateEnd' => date('Y-m-d', strtotime($contract->return_date. ' +45 days')),
-                        ]
+            $user = $this->users->get_user($contract->user_id);
+
+            $user_lastname = $user->lastname;
+
+            if ($prew_debtor == $user->inn) {
+                $ctrs[] = [
+                    // 'Uic' => $contract->id,
+                    'Number' => $contract->number,
+                    'Date' => date('Y-m-d', strtotime($contract->create_date)),
+                    'InvolvementInfo' => [
+                        'DateBegin' => date('Y-m-d', strtotime($contract->return_date. ' +5 days')),
+                        'DateEnd' => date('Y-m-d', strtotime($contract->return_date. ' +45 days')),
                     ]
-                ],
-            ];
+                ];
+            }
+            else{
+            
+                if ($prew_debtor != 0) {
+                    $debtor[] = [
+                        'IsRfCitizen' => 'true',
+                        'LastName' => $user_lastname,
+                        'FirstName' => $user->firstname,
+                        'MiddleName' => $user->patronymic,
+                        'Inn' => !empty($user->inn) ? $user->inn : $user->passport_serial,
+                        'Document' => [
+                            'Type' => [
+                                'Code' => 'PassportRf',
+                                'Description' => 'Российский паспорт',
+                            ],
+                            'Series' => explode('-', $user->passport_serial)[0],
+                            'Number' => explode('-', $user->passport_serial)[1],
+                        ],
+                        'Contracts' => [
+                            'Contract' => $ctrs,
+                        ]
+                    ];   
+                }
+                
+                $ctrs = [];
+                $ctrs[] = [
+                    // 'Uic' => $contract->id,
+                    'Number' => $contract->number,
+                    'Date' => date('Y-m-d', strtotime($contract->create_date)),
+                    'InvolvementInfo' => [
+                        'DateBegin' => date('Y-m-d', strtotime($contract->return_date. ' +5 days')),
+                        'DateEnd' => date('Y-m-d', strtotime($contract->return_date. ' +45 days')),
+                    ]
+                ];
+            }
+
+            $prew_debtor = $user->inn;
+            
         }
+
+        $debtor[] = [
+            'IsRfCitizen' => 'true',
+            'LastName' => $user_lastname,
+            'FirstName' => $user->firstname,
+            'MiddleName' => $user->patronymic,
+            'Inn' => !empty($user->inn) ? $user->inn : $user->passport_serial,
+            'Document' => [
+                'Type' => [
+                    'Code' => 'PassportRf',
+                    'Description' => 'Российский паспорт',
+                ],
+                'Series' => explode('-', $user->passport_serial)[0],
+                'Number' => explode('-', $user->passport_serial)[1],
+            ],
+            'Contracts' => [
+                'Contract' => $ctrs,
+            ]
+        ];   
 
         $data = [
             'Message' => [
