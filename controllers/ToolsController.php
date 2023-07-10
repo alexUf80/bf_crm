@@ -463,30 +463,11 @@ class ToolsController extends Controller
                         'DateEnd' => date('Y-m-d', strtotime($contract->return_date. ' +45 days')),
                     ]
                 ];
+
+                $debtor[count($debtor)-1]['Contracts']['Contract'] = $ctrs;
             }
             else{
-            
-                if ($prew_debtor != 0) {
-                    $debtor[] = [
-                        'IsRfCitizen' => 'true',
-                        'LastName' => $user_lastname,
-                        'FirstName' => $user->firstname,
-                        'MiddleName' => $user->patronymic,
-                        'Inn' => !empty($user->inn) ? $user->inn : $user->passport_serial,
-                        'Document' => [
-                            'Type' => [
-                                'Code' => 'PassportRf',
-                                'Description' => 'Российский паспорт',
-                            ],
-                            'Series' => explode('-', $user->passport_serial)[0],
-                            'Number' => explode('-', $user->passport_serial)[1],
-                        ],
-                        'Contracts' => [
-                            'Contract' => $ctrs,
-                        ]
-                    ];   
-                }
-                
+
                 $ctrs = [];
                 $ctrs[] = [
                     // 'Uic' => $contract->id,
@@ -497,30 +478,49 @@ class ToolsController extends Controller
                         'DateEnd' => date('Y-m-d', strtotime($contract->return_date. ' +45 days')),
                     ]
                 ];
+
+                $debtor[] = [
+                    'IsRfCitizen' => 'true',
+                    'LastName' => $user_lastname,
+                    'FirstName' => $user->firstname,
+                    'MiddleName' => $user->patronymic,
+                    'Inn' => !empty($user->inn) ? $user->inn : $user->passport_serial,
+                    'Document' => [
+                        'Type' => [
+                            'Code' => 'PassportRf',
+                            'Description' => 'Российский паспорт',
+                        ],
+                        'Series' => explode('-', $user->passport_serial)[0],
+                        'Number' => explode('-', $user->passport_serial)[1],
+                    ],
+                    'Contracts' => [
+                        'Contract' => $ctrs,
+                    ]
+                ];
             }
 
             $prew_debtor = $user->inn;
             
         }
 
-        $debtor[] = [
-            'IsRfCitizen' => 'true',
-            'LastName' => $user_lastname,
-            'FirstName' => $user->firstname,
-            'MiddleName' => $user->patronymic,
-            'Inn' => !empty($user->inn) ? $user->inn : $user->passport_serial,
-            'Document' => [
-                'Type' => [
-                    'Code' => 'PassportRf',
-                    'Description' => 'Российский паспорт',
-                ],
-                'Series' => explode('-', $user->passport_serial)[0],
-                'Number' => explode('-', $user->passport_serial)[1],
-            ],
-            'Contracts' => [
-                'Contract' => $ctrs,
-            ]
-        ];   
+        // $debtor[] = [
+        //     'IsRfCitizen' => 'true',
+        //     'LastName' => $user_lastname,
+        //     'FirstName' => $user->firstname,
+        //     'MiddleName' => $user->patronymic,
+        //     'Inn' => !empty($user->inn) ? $user->inn : $user->passport_serial,
+        //     'Document' => [
+        //         'Type' => [
+        //             'Code' => 'PassportRf',
+        //             'Description' => 'Российский паспорт',
+        //         ],
+        //         'Series' => explode('-', $user->passport_serial)[0],
+        //         'Number' => explode('-', $user->passport_serial)[1],
+        //     ],
+        //     'Contracts' => [
+        //         'Contract' => $ctrs,
+        //     ]
+        // ];   
 
         $data = [
             'Message' => [
