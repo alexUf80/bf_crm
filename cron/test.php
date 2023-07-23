@@ -21,7 +21,6 @@ class test extends Core
         //42223,42635,42222,42231,41978,41991
         $classname = "Fns_scoring";
         $scoring_result = $this->{$classname}->run_scoring(158631);
-        die();
     }
 
     public function create_document($document_type, $contract)
