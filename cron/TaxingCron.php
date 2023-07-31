@@ -345,7 +345,7 @@ class TaxingCron extends Core
             }
             $amount = $contract->loan_body_summ;
             $taxing_limit = $amount * 2.3;
-            if (strtotime($contract->create_date) < strtotime('2023-01-07 00:00:00')) {
+            if (strtotime($contract->create_date) < strtotime('2023-07-01 00:00:00')) {
                 $taxing_limit = $amount * 2.5;
             }
 

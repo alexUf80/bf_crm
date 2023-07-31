@@ -1201,6 +1201,7 @@
                                     <span class="hidden-xs-down">Персональная информация</span>
                                 </a>
                             </li>
+                            {if !in_array('order_comment', $manager->permissions)}
                             <li class="nav-item">
                                 <a class="nav-link js-event-add-click" data-toggle="tab" href="#comments" role="tab"
                                    aria-selected="false" data-event="21" data-user="{$order->user_id}"
@@ -1212,6 +1213,7 @@
                                         </span>
                                 </a>
                             </li>
+                            {/if}
                             <li class="nav-item">
                                 <a class="nav-link js-event-add-click" data-toggle="tab" href="#documents" role="tab"
                                    aria-selected="true" data-event="22" data-user="{$order->user_id}"

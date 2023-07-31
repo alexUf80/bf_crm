@@ -115,7 +115,7 @@ class Nbki_scoring extends Core
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://51.250.101.109/api/nbki_test',
+            CURLOPT_URL => 'http://185.182.111.110:9009/api/v2/history/sign/',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -133,7 +133,6 @@ class Nbki_scoring extends Core
         $error = curl_error($curl);
         curl_close($curl);
         $result = json_decode($response, true);
-
 
         if (!$result) {
             $add_scoring = array(

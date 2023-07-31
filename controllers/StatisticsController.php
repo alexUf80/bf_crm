@@ -847,15 +847,7 @@ class StatisticsController extends Controller
                     else
                         $client_status = '';
 
-                    if (!empty($contract->collection_status)) {
-                        if (empty($contract->sold))
-                            $status = 'МКК ';
-                        else
-                            $status = 'ЮК ';
-                        $status .= $collection_statuses[$contract->collection_status];
-                    } else {
-                        $status = $statuses[$contract->status];
-                    }
+                    $status = $statuses[$contract->status] ?? "Не определён";
 
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
                     $active_sheet->setCellValue('B' . $i, $contract->number); 
