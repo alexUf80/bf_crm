@@ -3009,7 +3009,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h4 class="modal-title">Добавить комментарий1</h4>
+                <h4 class="modal-title">Добавить комментарий</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
@@ -3031,9 +3031,9 @@
                         <label for="official_2" class="custom-control-label">Официальный</label>
                     </div>
                     <div class="custom-control custom-checkbox mr-sm-2 mb-3">
-                        <input type="checkbox" class="custom-control-input" id="main" name="main" value="1"
+                        <input type="checkbox" class="custom-control-input" id="main_2" name="main" value="0"
                                placeholder="">
-                        <label for="main" class="custom-control-label">Важный</label>
+                        <label for="main_2" class="custom-control-label">Важный</label>
                     </div>
                     <div class="form-action">
                         <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Отмена</button>
