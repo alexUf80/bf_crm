@@ -220,6 +220,7 @@
                                     <span class="hidden-xs-down">Персональная информация</span>
                                 </a>
                             </li>
+                            {if !in_array('order_comment', $manager->permissions)}
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#comments" role="tab" aria-selected="false">
                                     <span class="hidden-sm-up"><i class="ti-user"></i></span>
@@ -229,6 +230,7 @@
                                         </span>
                                 </a>
                             </li>
+                            {/if}
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#documents" role="tab" aria-selected="true">
                                     <span class="hidden-sm-up"><i class="ti-email"></i></span>

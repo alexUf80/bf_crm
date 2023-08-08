@@ -344,7 +344,10 @@ class TaxingCron extends Core
                 continue;
             }
             $amount = $contract->loan_body_summ;
-            $taxing_limit = $amount * 2.5;
+            $taxing_limit = $amount * 2.3;
+            if (strtotime($contract->create_date) < strtotime('2023-07-01 00:00:00')) {
+                $taxing_limit = $amount * 2.5;
+            }
 
             $this->db->query("
                 select sum(amount) as sum_taxing

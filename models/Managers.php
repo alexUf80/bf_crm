@@ -185,21 +185,22 @@ class Managers extends Core
             throw new Exception('Неизвестная роль пользователя: ' . $role);
 
         $list_permissions = array(
-            'managers' => array('developer', 'admin', 'manager', 'senior manager'), // просмотр менеджеров
+            'managers' => array('developer', 'admin', 'manager', 'cessia', 'senior manager'), // просмотр менеджеров
             'block_manager' => array('developer', 'admin', 'senior collector', 'city_manager'), // блокирование менеджеров
             'create_managers' => array('developer', 'admin', 'senior collector', 'chief_exactor', 'chief_sudblock', 'city_manager'), // создание и редактирование менеджеров
-            'my_contracts' => array('developer', 'admin', 'collector', 'senior collector', 'team_collector', 'manager'),
+            'my_contracts' => array('developer', 'admin', 'collector', 'senior collector', 'team_collector', 'cessia', 'manager'),
             'collection_report' => array('developer', 'admin', 'senior collector', 'team_collector', 'collector'),
             'zvonobot' => array('developer', 'admin', 'senior collector'),
-            'orders' => array('developer', 'admin', 'contact_center', 'quality_control', 'senior collector', 'team_collector'),
-            'clients' => array('developer', 'admin', 'manager', 'contact_center', 'cs_pc'),
+            'orders' => array('developer', 'admin', 'cessia', 'contact_center', 'quality_control', 'senior collector', 'team_collector'),
+            'clients' => array('developer', 'admin', 'cessia', 'manager', 'contact_center', 'cs_pc'),
             'settings' => array('developer', 'admin'),
             'changelogs' => array('developer', 'admin'),
             'handbooks' => array('developer', 'admin'),
             'pages' => array('developer', 'admin'),
+            'order_comment' => array('cessia'),
             'approve_contract' => array('developer', 'admin', 'senior manager'),
             'analitics' => array('developer', 'admin', 'senior collector'),
-            'penalty_statistics' => array('developer', 'admin', 'manager'),
+            'penalty_statistics' => array('developer', 'admin', 'cessia', 'manager'),
             'collector_mailing' => array('developer', 'admin', 'senior collector', 'team_collector'),
             'tags' => array('developer', 'admin', 'senior collector', 'team_collector'),
             'sms_templates' => array('developer', 'admin', 'senior collector', 'team_collector'),
@@ -207,16 +208,16 @@ class Managers extends Core
             'tickets' => array('developer'),
             'ticket_handbooks' => array('developer'),
             'close_contract' => array('developer', 'admin', 'team_collector', 'senior collector'),
-            'repay_button' => array('developer', 'admin', 'manager'),
-            'looker_link' => array('developer', 'admin', 'exactor', 'collector', 'manager', 'senior collector', 'team_collector', 'chief_exactor', 'chief_sudblock'),
+            'repay_button' => array('developer', 'admin', 'cessia', 'manager'),
+            'looker_link' => array('developer', 'admin', 'exactor', 'collector', 'cessia', 'manager', 'senior collector', 'team_collector', 'chief_exactor', 'chief_sudblock'),
             'sudblock' => array('developer', 'admin', 'exactor', 'chief_exactor', 'sudblock', 'chief_sudblock'),
             'sudblock_settings' => array('developer', 'admin', 'chief_exactor', 'chief_sudblock'),
             'change_sudblock_manager' => array('developer', 'admin', 'chief_exactor', 'chief_sudblock'),
             'notifications' => array('developer', 'admin', 'exactor', 'chief_exactor', 'sudblock', 'chief_sudblock', 'collector', 'senior collector', 'team_collector'),
             'add_penalty' => array('developer', 'admin', 'quality_control'),
-            'penalties' => array('developer', 'admin', 'quality_control', 'manager', 'cs_pc'),
+            'penalties' => array('developer', 'admin', 'quality_control', 'cessia', 'manager', 'cs_pc'),
             'collection_moving' => array('developer', 'admin', 'senior collector', 'team_collector'),
-            'neworder' => array('developer', 'admin', 'senior manager', 'manager'),
+            'neworder' => array('developer', 'admin', 'senior manager', 'cessia', 'manager'),
             'offline' => array('developer', 'admin', 'cs_pc', 'city_manager'),
             'offline_settings' => array('developer', 'admin', 'city_manager'),
         );
