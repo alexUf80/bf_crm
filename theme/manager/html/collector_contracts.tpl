@@ -899,9 +899,13 @@
                                                 </div>
                                             </td>
 
-                                            <td style="line-height:1;max-width: 300px" class="jsgrid-cell">
+                                            {$comm = $contract->order->comments|first}
+                                            <td style="line-height:1;max-width: 300px;
+                                            {if $comm->main}
+                                                background : #ffd5d5;
+                                            {/if}
+                                            " class="jsgrid-cell">
                                                 <div style="max-height:120px; overflow: auto;">
-                                                    {$comm = $contract->order->comments|first}
 
                                                     {if $comm->official && !$settings->display_only_official_comments}
                                                         <span class="label label-success float-right">Официальный</span>

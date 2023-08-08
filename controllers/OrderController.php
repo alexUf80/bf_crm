@@ -2298,6 +2298,11 @@ class OrderController extends Controller
         $order_id = $this->request->post('order_id', 'integer');
         $text = $this->request->post('text');
         $official = $this->request->post('official', 'integer');
+        $main = $this->request->post('main', 'integer');
+
+        if ($main) {
+            $user_id = $this->orders->get_order($order_id)->user_id;
+        }
 
         if (empty($text)) {
             $this->json_output(array('error' => 'Напишите комментарий!'));
@@ -2310,6 +2315,7 @@ class OrderController extends Controller
                 'text' => $text,
                 'official' => $official,
                 'created' => date('Y-m-d H:i:s'),
+                'main' => $main,
             );
 
             if ($comment_id = $this->comments->add_comment($comment)) {
@@ -2319,6 +2325,7 @@ class OrderController extends Controller
                     'text' => $text,
                     'official' => $official,
                     'manager_name' => $this->manager->name,
+                    'main' => $main,
                 ));
             } else {
                 $this->json_output(array('error' => 'Не удалось добавить!'));

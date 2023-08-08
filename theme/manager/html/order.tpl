@@ -2803,7 +2803,11 @@
                                             <div class="message-box">
                                                 <div class="message-widget">
                                                     {foreach $comments as $comment}
-                                                        <a href="javascript:void(0);">
+                                                        <a href="javascript:void(0);"
+                                                        {if $comment->main}
+                                                            style="background : #ffd5d5;"
+                                                        {/if}
+                                                        >
                                                             <div class="user-img">
                                                                 <span class="round">{$comment->letter|escape}</span>
                                                             </div>
@@ -3308,6 +3312,11 @@
                         <input type="checkbox" name="official" class="custom-control-input" id="official_check"
                                value="1">
                         <label class="custom-control-label" for="official_check">Официальный</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                        <input type="checkbox" name="main" class="custom-control-input" id="main"
+                               value="1">
+                        <label class="custom-control-label" for="main">Важный</label>
                     </div>
                     <div class="form-action">
                         <button type="button" class="btn btn-danger waves-effect js-event-add-click" data-event="70"

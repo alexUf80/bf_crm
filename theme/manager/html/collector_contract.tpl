@@ -2167,6 +2167,12 @@
                                                         <label for="official"
                                                                class="custom-control-label">Официальный</label>
                                                     </div>
+                                                    <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                               id="main" name="main" value="1" placeholder="">
+                                                        <label for="main"
+                                                               class="custom-control-label">Важный</label>
+                                                    </div>
                                                     <div class="form-action">
                                                         <button type="button"
                                                                 class="btn float-left btn-danger waves-effect"
@@ -2181,7 +2187,12 @@
                                                 <div class="message-box comment-box">
                                                     <div class="message-widget">
                                                         {foreach $comments as $comment}
-                                                            <div class="a">
+                                                            <div class="a" 
+                                                            {if $comment->main}
+                                                                style="background : #ffd5d5;"
+                                                            {/if}
+                                                            >
+                                                            
 
                                                                 <div class="mail-contnet">
                                                                     <h5>
@@ -2560,7 +2571,11 @@
                                             <div class="message-box">
                                                 <div class="message-widget">
                                                     {foreach $comments as $comment}
-                                                        <div style="display: flex;">
+                                                        <div style="display: flex; padding: 5px;
+                                                        {if $comment->main}
+                                                            background : #ffd5d5;
+                                                        {/if}
+                                                        ">
                                                             <div class="user-img">
                                                                 <span class="round">{$comment->letter|escape}</span>
                                                             </div>
@@ -2994,7 +3009,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h4 class="modal-title">Добавить комментарий</h4>
+                <h4 class="modal-title">Добавить комментарий1</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
@@ -3014,6 +3029,11 @@
                         <input type="checkbox" class="custom-control-input" id="official_2" name="official" value="1"
                                placeholder="">
                         <label for="official_2" class="custom-control-label">Официальный</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mr-sm-2 mb-3">
+                        <input type="checkbox" class="custom-control-input" id="main" name="main" value="1"
+                               placeholder="">
+                        <label for="main" class="custom-control-label">Важный</label>
                     </div>
                     <div class="form-action">
                         <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Отмена</button>

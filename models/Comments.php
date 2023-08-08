@@ -83,7 +83,7 @@ class Comments extends Core
         		$manager_id_filter 
                 $not_sent_filter
                 $official_filter 
-            ORDER BY $sort 
+            ORDER BY main DESC, $sort 
             $sql_limit
         ");
         $this->db->query($query);
