@@ -24,7 +24,6 @@ class IssuanceCron extends Core
     public function __construct()
     {
         parent::__construct();
-
         $i = 0;
         while ($i < 10) {
             $this->run();
@@ -167,6 +166,11 @@ class IssuanceCron extends Core
                         } catch (\Throwable $th) {
                             //throw $th;
                         }
+                    }
+
+                    if (!empty($order->utm_source) && $order->utm_source == 'guruleads' && !empty($order->click_hash)) {
+                        $this->gurulead->sendPendingPostback($contract->order_id, $contract->user_id, 1);
+                        $this->orders->update_order($contract->order_id, array('utm_source' => ''));
                     }
 
                 }else {
