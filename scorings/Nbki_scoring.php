@@ -204,7 +204,7 @@ class Nbki_scoring extends Core
         if ($result['number_of_active'] >= $number_of_active_max) {
             $add_scoring = array(
                 'status' => 'completed',
-                'body' => serialize($result['data']),
+                'body' => serialize($result),
                 'success' => 0,
                 'string_result' => 'превышен допустимый порог активных займов'
             );
@@ -218,7 +218,7 @@ class Nbki_scoring extends Core
             if ($result['share_of_overdue'] >= $share_of_overdue || $result['share_of_unknown'] >= $share_of_unknown) {
                 $add_scoring = array(
                     'status' => 'completed',
-                    'body' => serialize($result['data']),
+                    'body' => serialize($result),
                     'success' => 0,
                     'string_result' => 'превышен допустимый порог доли просроченных или неизвестных займов'
                 );
@@ -232,7 +232,7 @@ class Nbki_scoring extends Core
         if ($result['share_of_unknown'] > $share_of_unknown) {
             $add_scoring = array(
                 'status' => 'completed',
-                'body' => serialize($result['data']),
+                'body' => serialize($result),
                 'success' => 0,
                 'string_result' => 'превышен допустимый порог доли неизвестных займов'
             );
@@ -246,7 +246,7 @@ class Nbki_scoring extends Core
             if ($result['open_to_close_ratio'] > $open_to_close_ratio) {
                 $add_scoring = array(
                     'status' => 'completed',
-                    'body' => serialize($result['data']),
+                    'body' => serialize($result),
                     'success' => 0,
                     'string_result' => 'превышен порог соотношения открытых к закрытым за последние 30 дней'
                 );
@@ -256,10 +256,9 @@ class Nbki_scoring extends Core
                 return $add_scoring;
             }
         }
-
         $add_scoring = array(
             'status' => 'completed',
-            'body' => serialize($result['data']),
+            'body' => serialize($result),
             'success' => 1,
             'string_result' => 'Проверки пройдены'
         );

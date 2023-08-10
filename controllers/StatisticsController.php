@@ -1,6 +1,6 @@
 <?php
 
-ini_set('max_execution_time', 40);
+ini_set('max_execution_time', 100000);
 
 error_reporting(0);
 
@@ -888,6 +888,13 @@ class StatisticsController extends Controller
 
                     if ($nbkiScor) {
                         $nbkiParams = unserialize($nbkiScor->body);
+
+                        if (isset($nbkiParams['report_url'])) {
+                            $data = file_get_contents(str_replace('log_report','log_xml', $nbkiParams['report_url']));
+                            $xml = simplexml_load_string($data);
+                            $nbkiParams['json'] = json_decode(json_encode($xml), true)['preply']['report'];
+                        }
+
                         if (!empty($nbkiParams)) {
                             $activeProduct = 0;
                             $doneProduct = 0;
@@ -3240,6 +3247,16 @@ class StatisticsController extends Controller
                 $sheet->getColumnDimension('R')->setWidth(10);
                 $sheet->getColumnDimension('S')->setWidth(10);
 
+                $sheet->getColumnDimension('T')->setWidth(10);
+                $sheet->getColumnDimension('U')->setWidth(10);
+                $sheet->getColumnDimension('V')->setWidth(10);
+                $sheet->getColumnDimension('W')->setWidth(10);
+                $sheet->getColumnDimension('X')->setWidth(10);
+                $sheet->getColumnDimension('Y')->setWidth(10);
+                $sheet->getColumnDimension('Z')->setWidth(10);
+                $sheet->getColumnDimension('AA')->setWidth(10);
+                $sheet->getColumnDimension('AB')->setWidth(10);
+
                 $sheet->setCellValue('A1', 'Дата');
                 $sheet->setCellValue('B1', 'Договор');
                 $sheet->setCellValue('C1', 'ФИО');
@@ -3260,44 +3277,234 @@ class StatisticsController extends Controller
                 $sheet->setCellValue('R1', 'ID заявки');
                 $sheet->setCellValue('S1', 'ID клиента');
 
+                $sheet->setCellValue('T1', 'Всего активных кредитов количество');
+                $sheet->setCellValue('U1', 'Всего активных кредитов сумма');
+                $sheet->setCellValue('V1', 'Всего погашено кредитов количество');
+                $sheet->setCellValue('W1', 'Всего погашено кредитов сумма');
+                $sheet->setCellValue('Z1', 'Ежемесячный платеж по кредитам');
+                $sheet->setCellValue('Y1', 'Размер просроченной задолженности на сегодня');
+                $sheet->setCellValue('Z1', 'Максимальная просрочка за последний год');
+                $sheet->setCellValue('AA1', 'Количество микрозаймов за последние 3 месяца');
+                $sheet->setCellValue('AB1', 'Количество активных микрозаймов');
+
                 $i = 2;
 
                 foreach ($orders as $order) {
-                    $pk = '';
-                    if ($order->client_status) {
-                        if ($order->client_status == 'pk') {
-                            $pk = 'ПК';
-                        } elseif($order->client_status == 'crm') {
-                            $pk = 'ПК CRM';
-                        } elseif($order->client_status == 'rep') {
-                            $pk = 'Повтор';
-                        } elseif($order->client_status == 'nk') {
-                            $pk = 'Новая';
+                    try {
+                        $pk = '';
+                        if ($order->client_status) {
+                            if ($order->client_status == 'pk') {
+                                $pk = 'ПК';
+                            } elseif($order->client_status == 'crm') {
+                                $pk = 'ПК CRM';
+                            } elseif($order->client_status == 'rep') {
+                                $pk = 'Повтор';
+                            } elseif($order->client_status == 'nk') {
+                                $pk = 'Новая';
+                            }
                         }
+                        $sheet->setCellValue('A' . $i, $order->date);
+                        $sheet->setCellValue('B' . $i, $order->contract->number);
+                        $sheet->setCellValue('C' . $i, "{$order->client->lastname} {$order->client->firstname} {$order->client->patronymic}");
+                        $sheet->setCellValue('D' . $i, $order->client->phone_mobile);
+                        $sheet->setCellValue('E' . $i, $order->client->email);
+                        $sheet->setCellValue('F' . $i, $order->total_amt);
+                        $sheet->setCellValue('G' . $i, $pk);
+                        $sheet->setCellValue('H' . $i, $order->manager->name);
+                        $sheet->setCellValue('I' . $i, $order->status);
+                        $sheet->setCellValue('J' . $i, $order->reject_reason);
+                        $sheet->setCellValue('K' . $i, $order->promocode);
+                        $sheet->setCellValue('L' . $i, $order->contract->return_date);
+                        $sheet->setCellValue('M' . $i, $order->client->pdn);
+                        $sheet->setCellValue('N' . $i, $order->period);
+                        $sheet->setCellValue('O' . $i, $order->contract->close_date);
+                        $sheet->setCellValue('P' . $i, $order->payed_summ);
+                        $sheet->setCellValue('Q' . $i, $order->utm_source ?? 'Не оп');
+                        $sheet->setCellValue('R' . $i, $order->id);
+                        $sheet->setCellValue('S' . $i, $order->user_id);
+
+                        $nbkiScor = ScoringsORM::query()->where('order_id', '=', $order->id)->where('status', '=', 'completed')->where('type', '=', 'nbki')->first();
+                        if ($nbkiScor) {
+                            $nbkiParams = unserialize($nbkiScor->body);
+                            if (isset($nbkiParams['report_url'])) {
+                                $data = file_get_contents(str_replace('log_report','log_xml', $nbkiParams['report_url']));
+                                $xml = simplexml_load_string($data);
+                                $nbkiParams['json'] = json_decode(json_encode($xml), true)['preply']['report'];
+                            }
+                            if (!empty($nbkiParams)) {
+                                $activeProduct = 0;
+                                $doneProduct = 0;
+                                $summ = 0;
+                                $totalAmtOutstanding = 0;
+                                $totalAmtOutstandingDone = 0;
+                                $totalAverPaymtAmt = 0;
+                                $dolg = 0;
+                                $mkk = 0;
+                                $mkkSumm = 0;
+                                foreach ($nbkiParams['json']['AccountReplyRUTDF'] as $reply) {
+
+                                    $keys = array_keys($reply['pastdueArrear']);
+                                    // Если массив ассциативный
+                                    if ($keys !== array_keys($keys)) {
+                                        $pastdueArrear = $reply['pastdueArrear'];
+                                        $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
+                                        if ($past !== '0.00') {
+                                            $summ = floatval($past);
+                                        }
+                                    } else {
+                                        foreach ($reply['pastdueArrear'] as $pastdueArrear) {
+                                            $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
+                                            if ($past !== '0.00') {
+                                                $summ = floatval($past);
+                                            }
+                                        }
+                                    }
+
+
+                                    $curentDateDiff = isset($reply['reportingDt']) ? date_diff(new DateTime(), new DateTime($reply['reportingDt'])) : date_diff(new DateTime(), new DateTime());
+                                    $status = [
+                                        'name' => 'Активный',
+                                        'color' => 'black',
+                                    ];
+                                    if (
+                                        (isset($reply['holdCode']) && $reply['holdCode'] == 1) ||
+                                        $curentDateDiff->days > 33 ||
+                                        (isset($reply['loanIndicator']) && $reply['loanIndicator'] != 1)
+                                    ) {
+                                        $status = [
+                                            'name' => 'Не определен',
+                                            'color' => 'silver',
+                                        ];
+                                    }
+                                    if($curentDateDiff->days > 180) {
+                                        $status = [
+                                            'name' => 'Архив',
+                                            'color' => 'silver',
+                                        ];
+                                    }
+
+                                    if($summ > 0) {
+                                        $status = [
+                                            'name' => 'Просрочен',
+                                            'color' => 'red',
+                                        ];
+                                    }
+
+                                    if(isset($reply['loanIndicator']) && in_array($reply['loanIndicator'], [3,11])) {
+                                        $status = [
+                                            'name' => 'Прощение долга',
+                                            'color' => 'red',
+                                        ];
+                                    }
+
+                                    if(isset($reply['submitHold']['holdCode']) && $reply['submitHold']['holdCode'] == 3) {
+                                        $status = [
+                                            'name' => 'Списан',
+                                            'color' => 'red',
+                                        ];
+                                    }
+
+                                    if(
+                                        (isset($reply['loanIndicator']) && ($reply['loanIndicator'] == 2 || $reply['loanIndicator'] == 1)) ||
+                                        (isset($reply['sbLoanIndicator']) && $reply['sbLoanIndicator'] == 1) ||
+                                        (isset($reply['collatRepay']) && $reply['collatRepay'] == 1)
+                                    ) {
+                                        $status = [
+                                            'name' => 'Счет закрыт',
+                                            'color' => 'green',
+                                        ];
+                                    }
+                                    if (isset($reply['businessCategory']) && $reply['businessCategory'] == 'MKK') {
+                                        $openDt = false;
+                                        if (isset($reply['trade'])) {
+                                            $keys = array_keys($reply['trade']);
+                                            // Если массив ассциативный
+                                            if ($keys !== array_keys($keys)) {
+                                                $openDt = self::date_format($reply['trade']['openedDt']);
+                                            } else {
+                                                $openDt = self::date_format($reply['trade'][0]['openedDt']);
+                                            }
+                                        }
+                                        $time = time() - (86400 * 92);
+                                        $dateMonth = date('d.m.Y', $time);
+                                        if ($openDt > $dateMonth) {
+                                            $mkk++;
+                                        }
+                                        if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
+                                            $mkkSumm++;
+                                        }
+                                    }
+                                    if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
+                                        $activeProduct++;
+
+                                        if (isset($reply['paymtCondition'])) {
+                                            $keys = array_keys($reply['paymtCondition']);
+                                            if ($keys !== array_keys($reply['paymtCondition'])) {
+                                                if (isset($reply['paymtCondition']['principalTermsAmt']) && isset($reply['paymtCondition']['interestTermsAmt'])) {
+                                                    $totalAverPaymtAmt += floatval($reply['paymtCondition']['principalTermsAmt']) + floatval($reply['paymtCondition']['interestTermsAmt']);;
+                                                }
+                                            } else {
+                                                $condition = end($reply['paymtCondition']);
+                                                if (isset($condition['principalTermsAmt']) && isset($condition['interestTermsAmt'])) {
+                                                    $totalAverPaymtAmt += floatval($condition['principalTermsAmt']) + floatval($condition['interestTermsAmt']);
+                                                }
+                                            }
+                                        } else {
+                                            if (isset($reply['monthAverPaymt'])) {
+                                                $totalAverPaymtAmt += floatval($reply['monthAverPaymt']['averPaymtAmt'] ?? 0);
+                                            }
+                                        }
+
+                                        if (isset($reply['accountAmt'])) {
+                                            $keys = array_keys($reply['accountAmt']);
+                                            // Если массив ассциативный
+                                            if ($keys !== array_keys($keys)) {
+                                                if ($status['name'] != 'Активный') {
+                                                    $dolg += floatval($reply['accountAmt']['creditLimit'] ?? 0);
+                                                }
+                                                $totalAmtOutstanding += floatval($reply['accountAmt']['creditLimit'] ?? 0);
+                                            } else {
+                                                foreach ($reply['accountAmt'] as $arrear) {
+                                                    if ($status['name'] != 'Активный') {
+                                                        $dolg += floatval($arrear['creditLimit'] ?? 0);
+                                                    }
+                                                    $totalAmtOutstanding += floatval($arrear['creditLimit'] ?? 0);
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        $doneProduct++;
+                                        if (isset($reply['accountAmt'])) {
+                                            $keys = array_keys($reply['accountAmt']);
+                                            // Если массив ассциативный
+                                            if ($keys !== array_keys($keys)) {
+                                                $totalAmtOutstandingDone += floatval($reply['accountAmt']['creditLimit'] ?? 0);
+                                            } else {
+                                                foreach ($reply['accountAmt'] as $arrear) {
+                                                    $totalAmtOutstandingDone += floatval($arrear['creditLimit'] ?? 0);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                $sheet->setCellValue('T' . $i, $activeProduct);
+                                $sheet->setCellValue('U' . $i, $totalAmtOutstanding);
+                                $sheet->setCellValue('V' . $i, $doneProduct);
+                                $sheet->setCellValue('W' . $i, $totalAmtOutstandingDone);
+                                $sheet->setCellValue('X' . $i, $totalAverPaymtAmt);
+                                $sheet->setCellValue('Y' . $i, $dolg);
+                                $sheet->setCellValue('Z' . $i, $dolg);
+                                $sheet->setCellValue('AA' . $i, $mkk);
+                                $sheet->setCellValue('AB' . $i, $mkkSumm);
+                            }
+                        }
+
+                        $i++;
+                    } catch (Exception $exception) {
+                        continue;
                     }
-                    $sheet->setCellValue('A' . $i, $order->date);
-                    $sheet->setCellValue('B' . $i, $order->contract->number);
-                    $sheet->setCellValue('C' . $i, "{$order->client->lastname} {$order->client->firstname} {$order->client->patronymic}");
-                    $sheet->setCellValue('D' . $i, $order->client->phone_mobile);
-                    $sheet->setCellValue('E' . $i, $order->client->email);
-                    $sheet->setCellValue('F' . $i, $order->total_amt);
-                    $sheet->setCellValue('G' . $i, $pk);
-                    $sheet->setCellValue('H' . $i, $order->manager->name);
-                    $sheet->setCellValue('I' . $i, $order->status);
-                    $sheet->setCellValue('J' . $i, $order->reject_reason);
-                    $sheet->setCellValue('K' . $i, $order->promocode);
-                    $sheet->setCellValue('L' . $i, $order->contract->return_date);
-                    $sheet->setCellValue('M' . $i, $order->client->pdn);
-                    $sheet->setCellValue('N' . $i, $order->period);
-                    $sheet->setCellValue('O' . $i, $order->contract->close_date);
-                    $sheet->setCellValue('P' . $i, $order->payed_summ);
-                    $sheet->setCellValue('Q' . $i, $order->utm_source ?? 'Не оп');
-                    $sheet->setCellValue('R' . $i, $order->id);
-                    $sheet->setCellValue('S' . $i, $order->user_id);
-
-                    $i++;
                 }
-
                 $filename = 'Report.xlsx';
                 $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
                 $writer->save($this->config->root_dir . $filename);
@@ -3306,8 +3513,15 @@ class StatisticsController extends Controller
             }
         }
 
-
         return $this->design->fetch('statistics/requests_contracts.tpl');
+    }
+
+    public function xml2array ( $xmlObject, $out = array () )
+    {
+        foreach ( (array) $xmlObject as $index => $node )
+            $out[$index] = ( is_object ( $node ) ) ? $this->xml2array ( $node ) : $node;
+
+        return $out;
     }
 
 }

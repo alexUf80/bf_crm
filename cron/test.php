@@ -19,8 +19,25 @@ class test extends Core
         /*$classname = "Fns_scoring";
         $scoring_result = $this->{$classname}->run_scoring(111708);*/
         //42223,42635,42222,42231,41978,41991
-        $classname = "Nbki_scoring";
-        $scoring_result = $this->{$classname}->run_scoring(210713);
+        /*$content = file_get_contents('http://185.182.111.110:9009/log_report/9e14eb43c1e3b25ce3997d5cf9a42f41/');
+        print_r($content);*/
+        $orders = OrdersORM::query()
+            ->where('status', '=', 2)
+            ->where('date', '>=', '2023-07-01 00:00:01')
+            ->where('date', '<=', '2023-07-31 23:59:59')
+            ->get();
+        foreach ($orders as $order) {
+            $nbki = ScoringsORM::query()->where('type', '=', 'nbki')->where('order_id', '=', $order->id)->first();
+            if ($nbki) {
+                $classname = "Nbki_scoring";
+                $scoring_result = $this->{$classname}->run_scoring($nbki->id);
+            }
+            $nbkis = ScoringsORM::query()->where('type', '=', 'nbkiscore')->where('order_id', '=', $order->id)->first();
+            if ($nbkis) {
+                $classname = "Nbkiscore_scoring";
+                $scoring_result = $this->{$classname}->run_scoring($nbkis->id);
+            }
+        }
     }
 
     public function create_document($document_type, $contract)
