@@ -421,7 +421,12 @@ class ToolsController extends Controller
                         ->where('contract_id', '=', $contract->id)
                         ->where('type', '=', 'PENI')
                         ->get();
-                    $contract->expired_days = count($operations);
+                    
+                    // $contract->expired_days = count($operations);
+                    $date1 = new DateTime(date('Y-m-d', strtotime($contract->return_date)));
+                    $date2 = new DateTime(date('Y-m-d'));
+                    $contract->expired_days =  $date2->diff($date1)->days;
+
                     $contracts[] = $contract;
                 }
 
