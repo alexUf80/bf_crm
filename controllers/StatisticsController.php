@@ -507,6 +507,8 @@ class StatisticsController extends Controller
                     u.patronymic,
                     u.phone_mobile,
                     u.email,
+                    u.regaddress_id,
+                    u.faktaddress_id,
                     ts.operation, 
                     ts.checked,
                     o.promocode_id
@@ -593,14 +595,16 @@ class StatisticsController extends Controller
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Заявка');
                 $active_sheet->setCellValue('C1', 'ФИО');
-                $active_sheet->setCellValue('D1', 'Телефон');
-                $active_sheet->setCellValue('E1', 'Email');
-                $active_sheet->setCellValue('F1', 'Менеджер');//---
-                $active_sheet->setCellValue('G1', 'Причина');
-                $active_sheet->setCellValue('H1', 'Скориста');//---
-                $active_sheet->setCellValue('I1', 'Источник');//---
-                $active_sheet->setCellValue('J1', 'Операция');//---
-                $active_sheet->setCellValue('K1', 'Промокод');//---
+                $active_sheet->setCellValue('D1', 'Адрес регистрации');
+                $active_sheet->setCellValue('E1', 'Адрес проживания');
+                $active_sheet->setCellValue('F1', 'Телефон');
+                $active_sheet->setCellValue('G1', 'Email');
+                $active_sheet->setCellValue('H1', 'Менеджер');//---
+                $active_sheet->setCellValue('I1', 'Причина');
+                $active_sheet->setCellValue('J1', 'Скориста');//---
+                $active_sheet->setCellValue('K1', 'Источник');//---
+                $active_sheet->setCellValue('L1', 'Операция');//---
+                $active_sheet->setCellValue('M1', 'Промокод');//---
 
                 $i = 2;
                 foreach ($orders as $contract) {
@@ -610,14 +614,20 @@ class StatisticsController extends Controller
                     $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
                     $active_sheet->setCellValue('B' . $i, $contract->order_id);
                     $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic);
-                    $active_sheet->setCellValue('D' . $i, $contract->phone_mobile);
-                    $active_sheet->setCellValue('E' . $i, $contract->email);
-                    $active_sheet->setCellValue('F' . $i, $managers[$contract->manager_id]->name);
-                    $active_sheet->setCellValue('G' . $i, ($contract->reason_id ? $reasons[$contract->reason_id]->admin_name : $contract->reject_reason));
-                    $active_sheet->setCellValue('H' . $i, empty($contract->scoring) ? '' : $contract->scoring->scorista_ball);
-                    $active_sheet->setCellValue('I' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('J' . $i, $contract->operation . $successTransaction);
-                    $active_sheet->setCellValue('K' . $i, $contract->promocode);
+
+                    $regaddress = $this->addresses->get_address($contract->regaddress_id)->adressfull;
+                    $active_sheet->setCellValue('D' . $i, $regaddress);
+
+                    $faktaddress = $this->addresses->get_address($contract->faktaddress_id)->adressfull;
+                    $active_sheet->setCellValue('E' . $i, $faktaddress);
+                    $active_sheet->setCellValue('F' . $i, $contract->phone_mobile);
+                    $active_sheet->setCellValue('G' . $i, $contract->email);
+                    $active_sheet->setCellValue('H' . $i, $managers[$contract->manager_id]->name);
+                    $active_sheet->setCellValue('I' . $i, ($contract->reason_id ? $reasons[$contract->reason_id]->admin_name : $contract->reject_reason));
+                    $active_sheet->setCellValue('J' . $i, empty($contract->scoring) ? '' : $contract->scoring->scorista_ball);
+                    $active_sheet->setCellValue('K' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('L' . $i, $contract->operation . $successTransaction);
+                    $active_sheet->setCellValue('M' . $i, $contract->promocode);
 
 
                     $i++;
