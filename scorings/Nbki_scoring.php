@@ -75,7 +75,9 @@ class Nbki_scoring extends Core
             'male' => 1,
             'female' => 2
         ];
-
+        if (empty($inn)) {
+            $inn = '000000000000';
+        }
         $json = '{
     "user": {
         "passport": {
