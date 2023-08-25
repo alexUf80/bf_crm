@@ -116,6 +116,7 @@ class Nbki_scoring extends Core
 //exit;
         $curl = curl_init();
 
+
         curl_setopt_array($curl, array(
             CURLOPT_URL => 'http://185.182.111.110:9009/api/v2/history/sign/',
             CURLOPT_RETURNTRANSFER => true,
