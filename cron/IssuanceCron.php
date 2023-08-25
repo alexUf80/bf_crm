@@ -169,6 +169,11 @@ class IssuanceCron extends Core
                         }
                     }
 
+                    if (!empty($order->utm_source) && $order->utm_source == 'guruleads' && !empty($order->click_hash)) {
+                        $this->gurulead->sendPendingPostback($contract->order_id, $contract->user_id, 1);
+                        $this->orders->update_order($contract->order_id, array('utm_source' => ''));
+                    }
+
                 }else {
                     $this->contracts->update_contract($contract->id, array('status' => 6));
 
