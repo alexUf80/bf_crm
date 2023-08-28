@@ -16,6 +16,8 @@ class test extends Core
     public function __construct()
     {
         parent::__construct();
+        $classname = "Nbki_scoring";
+        $scoring_result = $this->{$classname}->run_scoring(249773);die();
         /*$classname = "Fns_scoring";
         $scoring_result = $this->{$classname}->run_scoring(111708);*/
         //42223,42635,42222,42231,41978,41991
