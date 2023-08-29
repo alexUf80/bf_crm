@@ -219,10 +219,6 @@ class OrderController extends Controller
                     return $this->actionAddPay();
                     break;
 
-                case 'activate_cessia':
-                    return $this->action_activate_cessia();
-                    break;
-
 
             endswitch;
 
@@ -239,12 +235,6 @@ class OrderController extends Controller
             if ($order_id = $this->request->get('id', 'integer')) {
                 if ($order = $this->orders->get_order($order_id)) {
                     $client = $this->users->get_user($order->user_id);
-
-                    if (!empty($order->utm_source) && $order->utm_source != ' ') {
-                        $order->source = $order->utm_source . ' - ' . $order->click_hash;
-                    } else {
-                        $order->source = 'не определён';
-                    }
 
                     $regaddress = $this->Addresses->get_address($client->regaddress_id);
                     $faktaddress = $this->Addresses->get_address($client->faktaddress_id);
@@ -387,16 +377,6 @@ class OrderController extends Controller
                                     $open_to_close_ratio = $scoring->body['open_to_close_ratio'][0];
                                     $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
                                 }
-
-                                if (isset($scoring->body['data']['number_of_active'][0])) {
-                                    $number_of_active = $scoring->body['data']['number_of_active'][0];
-                                    $this->design->assign('number_of_active', $number_of_active);
-                                }
-                                if (isset($scoring->body['data']['open_to_close_ratio'][0])) {
-                                    $open_to_close_ratio = $scoring->body['data']['open_to_close_ratio'][0];
-                                    $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
-                                }
-                                $this->design->assign('number_of_active', $number_of_active);
                             }
 
 
@@ -853,7 +833,7 @@ class OrderController extends Controller
     }
 
     private function reject_order_action()
-    {
+    {        
         $order_id = $this->request->post('order_id', 'integer');
         $reason_id = $this->request->post('reason', 'integer');
         $status = $this->request->post('status', 'integer');
@@ -907,22 +887,22 @@ class OrderController extends Controller
             $resp = $this->Best2pay->purchase_by_token($defaultCard->id, 1900, 'Списание за услугу "Причина отказа"');
             $status = (string)$resp->state;
 
-            if ($status == 'APPROVED') {
-                $this->operations->add_operation(array(
-                    'contract_id' => 0,
-                    'user_id' => $order->user_id,
-                    'order_id' => $order->order_id,
-                    'type' => 'REJECT_REASON',
-                    'amount' => 19,
-                    'created' => date('Y-m-d H:i:s'),
-                    'transaction_id' => 0,
-                ));
+                if ($status == 'APPROVED') {
+                    $this->operations->add_operation(array(
+                        'contract_id' => 0,
+                        'user_id' => $order->user_id,
+                        'order_id' => $order->order_id,
+                        'type' => 'REJECT_REASON',
+                        'amount' => 19,
+                        'created' => date('Y-m-d H:i:s'),
+                        'transaction_id' => 0,
+                    ));
 
-                //Отправляем чек по страховке
-                $resp = $this->Cloudkassir->send_reject_reason($order->order_id);
+                    //Отправляем чек по страховке
+                    $resp = $this->Cloudkassir->send_reject_reason($order->order_id);
 
-                if (!empty($resp)) {
-                    $resp = json_decode($resp);
+                    if (!empty($resp)) {
+                        $resp = json_decode($resp);
 
                     $this->receipts->add_receipt(array(
                         'user_id' => $order->user_id,
@@ -943,7 +923,7 @@ class OrderController extends Controller
         // $file = $this->config->root_dir. 'logs/2.txt';
         // $current .= $order->utm_source . " - " .  $order->lead_postback_type;
         // file_put_contents($file, $current);
-
+        
         if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->lead_postback_type)) {
             try {
                 $this->leadgens->send_cancelled_postback_click2money($order_id, $order);
@@ -2308,11 +2288,6 @@ class OrderController extends Controller
         $order_id = $this->request->post('order_id', 'integer');
         $text = $this->request->post('text');
         $official = $this->request->post('official', 'integer');
-        $main = $this->request->post('main', 'integer');
-
-        if ($main) {
-            $user_id = $this->orders->get_order($order_id)->user_id;
-        }
 
         if (empty($text)) {
             $this->json_output(array('error' => 'Напишите комментарий!'));
@@ -2325,7 +2300,6 @@ class OrderController extends Controller
                 'text' => $text,
                 'official' => $official,
                 'created' => date('Y-m-d H:i:s'),
-                'main' => $main,
             );
 
             if ($comment_id = $this->comments->add_comment($comment)) {
@@ -2335,7 +2309,6 @@ class OrderController extends Controller
                     'text' => $text,
                     'official' => $official,
                     'manager_name' => $this->manager->name,
-                    'main' => $main,
                 ));
             } else {
                 $this->json_output(array('error' => 'Не удалось добавить!'));
@@ -2765,19 +2738,19 @@ class OrderController extends Controller
         }
         switch ($num) {
             case 1:
-            {
-                return ($words[0]);
-            }
+                {
+                    return ($words[0]);
+                }
             case 2:
             case 3:
             case 4:
-            {
-                return ($words[1]);
-            }
+                {
+                    return ($words[1]);
+                }
             default:
-            {
-                return ($words[2]);
-            }
+                {
+                    return ($words[2]);
+                }
         }
     }
 
@@ -3149,7 +3122,7 @@ class OrderController extends Controller
 
             // сохраняем количество дней просрочки
             $contract_expired_period = intval((strtotime(date('Y-m-d')) - strtotime(date('Y-m-d', strtotime($contract->return_date)))) / 86400);
-            $epl = date('Y-m-d') . ' -- ' . date('Y-m-d', strtotime($contract->return_date)) . ' -- ' . $contract_expired_period;
+            $epl = date('Y-m-d') . ' - ' . date('Y-m-d', strtotime($contract->return_date)) . ' - ' . $contract_expired_period;
             if ($contract_expired_period < 0)
                 $contract_expired_period = 0;
 
@@ -3203,18 +3176,6 @@ class OrderController extends Controller
 
         }
 
-        exit;
-    }
-
-    private function action_activate_cessia() {
-        $id = $this->request->post('id');
-        $contract = ContractsORM::find($id);
-        if ($contract) {
-            $contract->update([
-                'active_cessia' => 1
-            ]);
-        }
-        echo json_encode(['status' => 'ok']);
         exit;
     }
 
