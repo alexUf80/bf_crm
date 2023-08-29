@@ -880,29 +880,28 @@ class OrderController extends Controller
         //if (!empty($order->utm_source) && $order->utm_source == 'leadstech')
         //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
-        $user = UsersORM::query()->where('id', '=', $order->user_id)->first();
-        if ($user && $user->service_reason == 1) {
-            $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
+        $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
 
+        if ($status != 8) {
             $resp = $this->Best2pay->purchase_by_token($defaultCard->id, 1900, 'Списание за услугу "Причина отказа"');
             $status = (string)$resp->state;
 
-                if ($status == 'APPROVED') {
-                    $this->operations->add_operation(array(
-                        'contract_id' => 0,
-                        'user_id' => $order->user_id,
-                        'order_id' => $order->order_id,
-                        'type' => 'REJECT_REASON',
-                        'amount' => 19,
-                        'created' => date('Y-m-d H:i:s'),
-                        'transaction_id' => 0,
-                    ));
+            if ($status == 'APPROVED') {
+                $this->operations->add_operation(array(
+                    'contract_id' => 0,
+                    'user_id' => $order->user_id,
+                    'order_id' => $order->order_id,
+                    'type' => 'REJECT_REASON',
+                    'amount' => 19,
+                    'created' => date('Y-m-d H:i:s'),
+                    'transaction_id' => 0,
+                ));
 
-                    //Отправляем чек по страховке
-                    $resp = $this->Cloudkassir->send_reject_reason($order->order_id);
+                //Отправляем чек по страховке
+                $resp = $this->Cloudkassir->send_reject_reason($order->order_id);
 
-                    if (!empty($resp)) {
-                        $resp = json_decode($resp);
+                if (!empty($resp)) {
+                    $resp = json_decode($resp);
 
                     $this->receipts->add_receipt(array(
                         'user_id' => $order->user_id,
@@ -916,9 +915,10 @@ class OrderController extends Controller
                     ));
                 }
             }
-
-            CardsORM::where('user_id', $order->user_id)->delete();
         }
+        
+
+        CardsORM::where('user_id', $order->user_id)->delete();
 
         // $file = $this->config->root_dir. 'logs/2.txt';
         // $current .= $order->utm_source . " - " .  $order->lead_postback_type;
