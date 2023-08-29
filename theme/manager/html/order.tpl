@@ -2321,7 +2321,7 @@
                                                                             {/foreach}
                                                                         {/if}
                                                                         {if $scoring_type->name == 'nbki'}
-                                                                            <a href="http://51.250.101.109/eco-nbki/{$scorings[$scoring_type->name]->id}?api=F1h1Hdf9g_h&site=eco"
+                                                                            <a href="{$scorings[$scoring_type->name]->body['report_url']}"
                                                                                target="_blank">Подробнее</a>
                                                                         {/if}
                                                                         </span>

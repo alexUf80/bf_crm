@@ -2735,33 +2735,6 @@ class StatisticsController extends Controller
             $orders = $this->orders->orders_for_risks($filter);
             $orders_statuses = $this->orders->get_statuses();
 
-            foreach ($orders as $key => $order) {
-                $order->scoreballs = $this->NbkiScoreballs->get($order->order_id);
-
-                if (empty($order->scoreballs)) {
-                    unset($orders[$key]);
-                    continue;
-                } else {
-                    $order->scoreballs->variables = json_decode($order->scoreballs->variables, true);
-                    $order->scoreballs->variables['ball'] = $order->scoreballs->ball;
-                    $order->scoreballs = $order->scoreballs->variables;
-                }
-
-                $order->idx = $this->scorings->get_idx_scoring($order->order_id);
-
-                if (empty($order->idx)) {
-                    unset($orders[$key]);
-                    continue;
-                } else
-                    $order->idx = $order->idx->body;
-
-                $order->status = $orders_statuses[$order->status];
-
-                $nbki = $this->scorings->get_type_scoring($order->order_id, 'nbki');
-                $nbki = unserialize($nbki->body);
-                $order->number_of_active = $nbki['number_of_active'][0];
-            }
-
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
             $spreadsheet->getDefaultStyle()->getFont()->setName('Times New Roman')->setSize(11);
 
@@ -2822,8 +2795,34 @@ class StatisticsController extends Controller
             $sheet->setCellValue('AC1', 'pdl_npl_90_limit_share');
 
             $i = 2;
+            foreach ($orders as $key => $order) {
+                $order->scoreballs = $this->NbkiScoreballs->get($order->order_id);
 
-            foreach ($orders as $order) {
+                if (empty($order->scoreballs)) {
+                    continue;
+                } else {
+                    $order->scoreballs->variables = json_decode($order->scoreballs->variables, true);
+                    $order->scoreballs->variables['ball'] = $order->scoreballs->ball;
+                    $order->scoreballs = $order->scoreballs->variables;
+                }
+
+                $order->idx = $this->scorings->get_idx_scoring($order->order_id);
+
+                if (empty($order->idx)) {
+                    continue;
+                } else
+                    $order->idx = $order->idx->body;
+
+                $order->status = $orders_statuses[$order->status];
+
+                $nbki = $this->scorings->get_type_scoring($order->order_id, 'nbki');
+                if (empty($nbki)) {
+                    continue;
+                }
+                $nbki = unserialize($nbki->body);
+                if (empty($nbki)) {
+                    continue;
+                }
 
                 $sheet->setCellValue('A' . $i, $order->order_id);
                 $sheet->setCellValue('B' . $i, $order->user_id);
@@ -2834,7 +2833,7 @@ class StatisticsController extends Controller
                 $sheet->setCellValue('G' . $i, $order->scoreballs['ball']);
                 $sheet->setCellValue('H' . $i, $order->idx);
                 $sheet->setCellValue('I' . $i, $order->scoreballs['limit']);
-                $sheet->setCellValue('J' . $i, $order->number_of_active);
+                $sheet->setCellValue('J' . $i, $nbki['number_of_active'][0]);
 
                 if ($order->client_status == 'new') {
                     $sheet->setCellValue('K' . $i, $order->scoreballs['pdl_overdue_count']);
