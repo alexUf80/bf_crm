@@ -377,6 +377,14 @@ class OrderController extends Controller
                                     $open_to_close_ratio = $scoring->body['open_to_close_ratio'][0];
                                     $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
                                 }
+                                if (isset($scoring->body['number_of_active'])) {
+                                    $number_of_active = $scoring->body['number_of_active'];
+                                    $this->design->assign('number_of_active', $number_of_active);
+                                }
+                                if (isset($scoring->body['open_to_close_ratio'])) {
+                                    $open_to_close_ratio = $scoring->body['open_to_close_ratio'];
+                                    $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
+                                }
                             }
 
 
