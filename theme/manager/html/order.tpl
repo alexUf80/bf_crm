@@ -2977,6 +2977,14 @@
                                 {if $contract_operations}
                                     <table class="table table-hover ">
                                         <tbody>
+                                        <tr style="border-bottom-width: 2px; border-bottom-style: solid; border-bottom-color: white;">
+                                            <td>Дата</td>
+                                            <td>Операция</td>
+                                            <td>Сумма</td>
+                                            <td>ОД</td>
+                                            <td>Проценты</td>
+                                            <td>Пени</td>
+                                        </tr>
                                         {foreach $contract_operations as $operation}
                                             <tr class="
                                                     {if in_array($operation->type, ['PAY'])}table-success{/if}
@@ -3020,13 +3028,13 @@
                                                 </td>
                                                 {if $manager->id==1}
                                                     <td>
-                                                        {$operation->loan_body_summ} руб
+                                                        {$operation->loan_body_summ|number_format:2:".":""} руб
                                                     </td>
                                                     <td>
-                                                        {$operation->loan_percents_summ} руб
+                                                        {$operation->loan_percents_summ|number_format:2:".":""} руб
                                                     </td>
                                                     <td>
-                                                        {$operation->loan_peni_summ} руб
+                                                        {$operation->loan_peni_summ|number_format:2:".":""} руб
                                                     </td>
                                                 {/if}
                                             </tr>
