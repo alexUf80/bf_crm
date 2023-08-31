@@ -940,7 +940,9 @@ class StatisticsController extends Controller
                                 }
 
 
-                                $curentDateDiff = date_diff(new DateTime(), new DateTime($reply['reportingDt']));
+                                if (isset($reply['reportingDt'])) {
+                                    $curentDateDiff = date_diff(new DateTime(), new DateTime($reply['reportingDt']));
+                                }
                                 $status = [
                                     'name' => 'Активный',
                                     'color' => 'black',
