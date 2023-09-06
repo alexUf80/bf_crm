@@ -17,6 +17,18 @@
             },
             default:''
         });
+
+        var excel_url = "{url download='excel'}";
+        $(document).on('change', '.nbki', function (e) {
+
+            var oldUrl = excel_url;
+            var newUrl = oldUrl;
+
+            if ($('.nbki').is(':checked')){
+                newUrl = oldUrl+"&nbki=1";
+            }
+            $('.download_excel').attr("href", newUrl);
+        });
     })
     </script>
 {/capture}
@@ -85,7 +97,11 @@
                                 </div>
                                 {if $date_from || $date_to}
                                 <div class="col-12 col-md-4 text-right">
-                                    <a href="{url download='excel'}" class="btn btn-success ">
+                                    <div class="custom-checkbox" style="display: inline-block; padding-right: 15px;">
+                                        <input type="checkbox" class="input-custom nbki" name="nbki" id="nbki" checked/>
+                                        <label for="nbki">Включить данные НБКИ</label>
+                                    </div>
+                                    <a href="{url download='excel' nbki=1}" class="btn btn-success download_excel">
                                         <i class="fas fa-file-excel"></i> Скачать
                                     </a>
                                 </div>
