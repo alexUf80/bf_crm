@@ -214,8 +214,16 @@
                                 {elseif $type->name == 'location'}
                                 <div class="col-md-6">
                                     <div class="form-group ">
-                                        <label class="control-label">Список регионов</label>
+                                        <label class="control-label">Список стоп-регионов</label>
                                         <textarea name="settings[{$type->id}][params][regions]" class="form-control">{$type->params['regions']}</textarea>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label class="control-label">Список красных регионов</label>
+                                        <textarea name="settings[{$type->id}][params][red-regions]" class="form-control">{$type->params['red-regions']}</textarea>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label class="control-label">Список желтых регионов</label>
+                                        <textarea name="settings[{$type->id}][params][yellow-regions]" class="form-control">{$type->params['yellow-regions']}</textarea>
                                     </div>
                                 </div>
                 

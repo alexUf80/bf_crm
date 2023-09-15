@@ -18,6 +18,9 @@ class Location_scoring extends Core
         {
             if ($order = $this->orders->get_order((int)$scoring->order_id))
             {
+                $regaddress = $this->Addresses->get_address($order->regaddress_id);
+                $order->Regregion = $regaddress->region;
+
                 if (empty($order->Regregion))
                 {
                     $update = array(
@@ -30,14 +33,35 @@ class Location_scoring extends Core
                     $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
                 
                     $score = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $exception_regions);
+                    
+                    $red_regions = array_map('trim', explode(',', $scoring_type->params['red-regions']));
+                    $red = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $red_regions);
+
+                    $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
+                    $yellow = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $yellow_regions);
+
+                    var_dump($order->Regregion);
+                    var_dump($red_regions);
+                    var_dump($yellow_regions);
                 
                     $update = array(
                         'status' => 'completed',
                         'body' => serialize(array('region' => $order->Regregion)),
                         'success' => $score
                     );
-                    if ($score)
+                    if ($score){
                         $update['string_result'] = 'Допустимый регион: '.$order->Regregion;
+                        if($yellow){
+                            $update['string_result'] .= ". ЖЕЛТАЯ ЗОНА";
+                        }
+                        elseif ($red) {
+                            $update['string_result'] .= ". КРАСНАЯ ЗОНА";
+                        }
+                        else {
+                            $update['string_result'] .= ". ЗЕЛЕНАЯ ЗОНА";
+                        }
+
+                    }
                     else
                         $update['string_result'] = 'Недопустимый регион: '.$order->Regregion;
 
