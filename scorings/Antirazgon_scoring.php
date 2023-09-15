@@ -28,32 +28,60 @@ class Antirazgon_scoring extends Core
                     $close_credits = array();
                     
                     
+                    $orders = $this->orders->get_orders(array('user_id' => $user->id, 'sort' => 'date_desc'));
                     
-                    if (!empty($user->loan_history))
-                    {
-                        foreach ($user->loan_history as $item)
-                        {
-                            if (empty($close_credits[$item->number]))
-                            {
-                                $item_credit = (object)array(
-                                    'date' => $item->date,
-                                    'close_date' => $item->close_date,
-                                    'amount' => $item->amount,
-                                    'total_paid' => $item->total_paid,
-                                    'number' => $item->number,
-                                    'type' => 'onec',
-                                );
-                                
-                                
-                                if (empty($last_credit) || strtotime($last_credit->close_date) < strtotime($item_credit->close_date))
-                                    $last_credit = $item_credit;
-                                
-                                $total_paid += $item->total_paid;
-                                
-                                $close_credits[$item->number] = $item_credit;
-                            }
+                    foreach ($orders as $o) {
+                        if ($o->order_id == $order->order_id) {
+                            continue;
                         }
+                        $contract = $this->contracts->get_contract($o->contract_id);
+                        $operations = $this->operations->get_operations(array('order_id'=>$o->order_id, 'type'=>'PAY'));
+                        $total_paid = 0;
+                        foreach ($operations as $operation) {
+                            $total_paid += $operation->amount;
+                        }
+                        
+                        $item_credit = (object)array(
+                            'date' => $contract->inssuance_date,
+                            'close_date' => $contract->close_date,
+                            'amount' => $o->amount,
+                            'total_paid' => $total_paid,
+                            'number' => $contract->number,
+                        );
+
+                        $last_credit = $item_credit;
+                        $close_credits[$item_credit->number] = $item_credit;
+
+                        break;
                     }
+
+                    
+                    // if (!empty($user->loan_history))
+                    // {
+                    //     foreach ($user->loan_history as $item)
+                    //     {
+                    //         if (empty($close_credits[$item->number]))
+                    //         {
+                    //             $item_credit = (object)array(
+                    //                 'date' => $item->date,
+                    //                 'close_date' => $item->close_date,
+                    //                 'amount' => $item->amount,
+                    //                 'total_paid' => $item->total_paid,
+                    //                 'number' => $item->number,
+                    //                 'type' => 'onec',
+                    //             );
+                                
+                                
+                    //             if (empty($last_credit) || strtotime($last_credit->close_date) < strtotime($item_credit->close_date))
+                    //                 $last_credit = $item_credit;
+                                
+                    //             $total_paid += $item->total_paid;
+                                
+                    //             $close_credits[$item->number] = $item_credit;
+                    //         }
+                    //     }
+                    // }
+
                     if (!empty($last_credit))
                     {
                         $date1 = new DateTime(date('Y-m-d', strtotime($last_credit->date)));
@@ -69,7 +97,8 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($date1, $date2, $credit_period
                             $max_credit = 8000;
                         elseif ($total_paid >= 6000)
                             $max_credit = 4000;
-                        
+                        else
+                            $max_credit = 2000;
                         
                         if ($credit_period <= 2) // 0-2 дня
                         {
@@ -133,7 +162,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($date1, $date2, $credit_period
                                 }
                                 else
                                 {
-                                    $update['string_result'] = 'Антиразгон 3-5. Максимальная сумма '.$max_credit.'руб';
+                                    $update['string_result'] = 'Антиразгон 3-5. Максимальная сумма '.$max_credit.' руб';
     
                                     $this->orders->update_order($scoring->order_id, array(
                                         'antirazgon' => 2, 
