@@ -34,6 +34,9 @@ class Antirazgon_scoring extends Core
                         if ($o->order_id == $order->order_id) {
                             continue;
                         }
+                        if($o->status != 7){
+                            continue;
+                        }
                         $contract = $this->contracts->get_contract($o->contract_id);
                         $operations = $this->operations->get_operations(array('order_id'=>$o->order_id, 'type'=>'PAY'));
                         $total_paid = 0;
@@ -201,7 +204,7 @@ echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($date1, $date2, $credit_period
                         
                     }
                     
-echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($update, $credit_period, $user->loan_history, $last_credit, $total_paid);echo '</pre><hr />';
+// echo __FILE__.' '.__LINE__.'<br /><pre>';var_dump($update, $credit_period, $user->loan_history, $last_credit, $total_paid);echo '</pre><hr />';
                 }
                 else
                 {
