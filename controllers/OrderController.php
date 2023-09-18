@@ -848,6 +848,17 @@ class OrderController extends Controller
 
     }
 
+    private function reject_amount($region='')
+    {
+        $contract_operations = $this->ServicesCost->gets(array('region' => $region));
+        if (isset($contract_operations[0]->reject_reason_cost)) {
+            return (float)$contract_operations[0]->reject_reason_cost;
+        }
+        else{
+            return 19;
+        }
+    }
+
     private function reject_order_action()
     {        
         $order_id = $this->request->post('order_id', 'integer');

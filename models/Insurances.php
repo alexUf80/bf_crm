@@ -30,6 +30,22 @@ class Insurances extends Core
             return 990;
     }
 
+    // public function get_insurance_cost($amount, $region='')
+    // {
+    //     $contract_operations = $this->ServicesCost->gets(array('region' => $region));
+    //     if (isset($contract_operations[0]->insurance_cost)) {
+    //         return (float)$contract_operations[0]->insurance_cost;
+    //     }
+    //     else {
+    //         if ($amount <= 4999)
+    //             return 590;
+    //         elseif ($amount >= 5000 && $amount <= 8999)
+    //             return 890;
+    //         elseif ($amount >= 9000)
+    //             return 990;
+    //     }
+    // }
+
 
     /**
      * Insurances::create_number()

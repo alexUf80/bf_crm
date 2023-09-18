@@ -29,13 +29,18 @@ class ServicesCost extends Core
 
     public function gets($filter = array())
     {
-        $sort = $filter['sort'];
+        $region_filter = '';
+
+        if (isset($filter['region']))
+            $region_filter = $this->db->placehold("AND region = ?", $this->db->escape(trim($filter['region'])));
+        
 
         $query = $this->db->placehold("
         SELECT * 
         FROM s_services_cost
         where 1
-        ORDER BY $sort
+        $region_filter
+        ORDER BY region
         ");
 
         $this->db->query($query);
