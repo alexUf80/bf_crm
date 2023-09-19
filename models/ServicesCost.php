@@ -8,7 +8,6 @@ class ServicesCost extends Core
         INSERT INTO s_services_cost 
         SET ?%
         ", $services_cost);
-        file_put_contents($this->config->root_dir.'files/sas.txt',$query);
 
         $this->db->query($query);
 
@@ -54,8 +53,6 @@ class ServicesCost extends Core
         SET ?%
         where id = ?
         ", (array)$services_cost, (int)$id);
-
-        file_put_contents($this->config->root_dir.'files/sas.txt',$query);
 
         $this->db->query($query);
     }

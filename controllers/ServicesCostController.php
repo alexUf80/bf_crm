@@ -57,7 +57,6 @@ class ServicesCostController extends Controller
         // $region = $this->request->post('region');
         $reject_reason_cost = $this->request->post('reject_reason_cost');
         $insurance_cost = $this->request->post('insurance_cost');
-        file_put_contents($this->config->root_dir.'files/sas.txt',$reject_reason_cost);
 
         $services_cost =
             [

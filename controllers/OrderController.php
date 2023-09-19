@@ -891,7 +891,7 @@ class OrderController extends Controller
 
         $contract = $this->contracts->get_contract($order->contract_id);
 
-        $user = $this->users->get_user($contract->user_id);
+        $user = $this->users->get_user($order->user_id);
         $address = $this->Addresses->get_address($user->regaddress_id);
         $reject_cost = $this->reject_amount($address->id);
         // $reject_cost = 19;
