@@ -50,7 +50,10 @@ class IssuanceCron extends Core
                     // Снимаем страховку если есть
                     if (!empty($contract->service_insurance)) 
                     {
-                        $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
+                        $user = $this->users->get_user($contract->user_id);
+                        $address = $this->Addresses->get_address($user->regaddress_id);
+                        $insurance_cost = $this->insurances->get_insurance_cost($contract->amount,$address->id);
+                        // $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
 
                         if ($insurance_cost > 0)
                         {
@@ -130,7 +133,10 @@ class IssuanceCron extends Core
                     }
 
                     if (!empty($contract->service_insurance)) {
-                        $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
+                        $user = $this->users->get_user($contract->user_id);
+                        $address = $this->Addresses->get_address($user->regaddress_id);
+                        $insurance_cost = $this->insurances->get_insurance_cost($contract->amount,$address->id);
+                        // $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
                         $contract->amount += $insurance_cost;
                     }
 
@@ -194,7 +200,10 @@ class IssuanceCron extends Core
 
         $contract_order = $this->orders->get_order((int)$contract->order_id);
 
-        $insurance_cost = $this->insurances->get_insurance_cost($contract_order);
+        $user = $this->users->get_user($contract->user_id);
+        $address = $this->Addresses->get_address($user->regaddress_id);
+        $insurance_cost = $this->insurances->get_insurance_cost($contract->amount,$address->id);
+        // $insurance_cost = $this->insurances->get_insurance_cost($contract_order);
 
         $params = array(
             'lastname' => $contract_order->lastname,

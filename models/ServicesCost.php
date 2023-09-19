@@ -40,20 +40,22 @@ class ServicesCost extends Core
         FROM s_services_cost
         where 1
         $region_filter
-        ORDER BY region
+        ORDER BY id
         ");
 
         $this->db->query($query);
         return $this->db->results();
     }
 
-    public function update($id)
+    public function update($id, $services_cost)
     {
         $query = $this->db->placehold("
         UPDATE s_services_cost 
         SET ?%
         where id = ?
-        ", $id);
+        ", (array)$services_cost, (int)$id);
+
+        file_put_contents($this->config->root_dir.'files/sas.txt',$query);
 
         $this->db->query($query);
     }

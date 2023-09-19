@@ -36,13 +36,13 @@ class ServicesCostController extends Controller
 
     private function action_add()
     {
-        $region = $this->request->post('region');
+        // $region = $this->request->post('region');
         $reject_reason_cost = $this->request->post('reject_reason_cost');
         $insurance_cost = $this->request->post('insurance_cost');
 
         $services_cost =
             [
-                'region' => $region,
+                // 'region' => $region,
                 'reject_reason_cost' => $reject_reason_cost,
                 'insurance_cost' => $insurance_cost,
             ];
@@ -54,13 +54,14 @@ class ServicesCostController extends Controller
     private function action_edit()
     {
         $id = $this->request->post('id');
-        $region = $this->request->post('region');
+        // $region = $this->request->post('region');
         $reject_reason_cost = $this->request->post('reject_reason_cost');
         $insurance_cost = $this->request->post('insurance_cost');
+        file_put_contents($this->config->root_dir.'files/sas.txt',$reject_reason_cost);
 
         $services_cost =
             [
-                'region' => $region,
+                // 'region' => '$region',
                 'reject_reason_cost' => $reject_reason_cost,
                 'insurance_cost' => $insurance_cost,
             ];

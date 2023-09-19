@@ -848,9 +848,28 @@ class OrderController extends Controller
 
     }
 
-    private function reject_amount($region='')
+    private function reject_amount($address_id)
     {
-        $contract_operations = $this->ServicesCost->gets(array('region' => $region));
+
+        $address = $this->Addresses->get_address($address_id);
+        
+        $scoring_type = $this->scorings->get_type('location');
+        
+        $reg='green-regions';
+        $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
+        if(in_array(mb_strtolower(trim($address->region), 'utf8'), $yellow_regions)){
+            $reg = 'yellow-regions';
+        }
+        $red_regions = array_map('trim', explode(',', $scoring_type->params['red-regions']));
+        if(in_array(mb_strtolower(trim($address->region), 'utf8'), $red_regions)){
+            $reg = 'red-regions';
+        }
+        $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+        if(in_array(mb_strtolower(trim($address->region), 'utf8'), $exception_regions)){
+            $reg = 'regions';
+        }
+
+        $contract_operations = $this->ServicesCost->gets(array('region' => $reg));
         if (isset($contract_operations[0]->reject_reason_cost)) {
             return (float)$contract_operations[0]->reject_reason_cost;
         }
@@ -871,6 +890,11 @@ class OrderController extends Controller
         $reason = $this->reasons->get_reason($reason_id);
 
         $contract = $this->contracts->get_contract($order->contract_id);
+
+        $user = $this->users->get_user($contract->user_id);
+        $address = $this->Addresses->get_address($user->regaddress_id);
+        $reject_cost = $this->reject_amount($address->id);
+        // $reject_cost = 19;
 
         $update = array(
             'status' => $status,
@@ -919,7 +943,7 @@ class OrderController extends Controller
                     'user_id' => $order->user_id,
                     'order_id' => $order->order_id,
                     'type' => 'REJECT_REASON',
-                    'amount' => 19,
+                    'amount' => $reject_cost,
                     'created' => date('Y-m-d H:i:s'),
                     'transaction_id' => 0,
                 ));

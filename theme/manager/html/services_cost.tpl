@@ -17,7 +17,16 @@
     <script src="theme/manager/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/suggestions-jquery@21.12.0/dist/js/jquery.suggestions.min.js"></script>
     <script>
+
+        function delString($this){
+            $this.parent().parent().remove();
+        }
         $(function () {
+
+            $('.add-services-issuance').on('click', function () {
+                $('.insurance_cost_limit').append('<tr class="js-issuanse-string"><td><div style="display: flex; align-items: center;">до<input type="text" class=" form-control js-issuanse-limit" value="" /></div></td><td><div style="display: flex; align-items: center; ">- <input type="text" class="form-control js-issuanse-amount" value="" /></div></td><td><div class="btn btn-outline-danger" onclick="delString($(this))"><i class=" fas fa-trash"></i></div></td></tr>');
+            });
+
 
             $('.add-services_cost-modal, .edit-services_cost-modal').on('click', function () {
                 $('#add_services_cost_form')[0].reset();
@@ -33,9 +42,29 @@
                             action: 'get_services_cost'
                         },
                         success: function (services_cost) {
-                            $('#region').val(services_cost['region']);
+                            //$('#region').val(services_cost['region']);
+                            if (services_cost['region'] == 'regions'){
+                                $('.region').text('Стоп-регионы');
+                            }
+                            else if (services_cost['region'] == 'red-regions'){
+                                $('.region').text('Красные регионы');
+                            }
+                            else if (services_cost['region'] == 'yellow-regions'){
+                                $('.region').text('Желтые регионы');
+                            }
+                            else{
+                                $('.region').text('Зеленые регионы');
+                            }
+                            
                             $('#reject_reason_cost').val(services_cost['reject_reason_cost']);
                             $('#insurance_cost').val(services_cost['insurance_cost']);
+
+                            $('.insurance_cost_limit').text('');
+                            
+                            JSON.parse(services_cost['insurance_cost']).forEach(insurance_cost => {
+                                $('.insurance_cost_limit').append('<tr class="js-issuanse-string"><td><div style="display: flex; align-items: center;">до<input type="text" class=" form-control js-issuanse-limit" value="' + insurance_cost[0] + '" /></div></td><td><div style="display: flex; align-items: center; ">- <input type="text" class="form-control js-issuanse-amount" value="' + insurance_cost[1] + '" /></div></td><td><div class="btn btn-outline-danger" onclick="delString($(this))"><i class=" fas fa-trash"></i></div></td></tr>');
+                            });
+
                             $('input[name="action"]').val('edit');
                             $('input[name="id"]').val(id);
                         }
@@ -48,7 +77,15 @@
                 $('#add-services_cost-modal').modal();
             });
 
-            $('.formSubmit').on('click', function () {
+            $('.formSubmit').on('click', function (e) {
+
+                var limits_array = [];
+                $( ".js-issuanse-string" ).each(function( index ) {
+                    limits_array[index] = [$(this).children().children().children(".js-issuanse-limit").val(), $(this).children().children().children(".js-issuanse-amount").val()];
+                });
+
+                $("#insurance_cost").val(JSON.stringify(limits_array))
+
                 let form = $('#add_services_cost_form').serialize();
 
                 $.ajax({
@@ -97,11 +134,13 @@
                     <li class="breadcrumb-item active"><a href="/services_cost">Стоимость услуг</a></li>
                 </ol>
             </div>
+            {*}
             <div class="col-md-6 col-4 align-self-center">
                 <button class="btn float-right hidden-sm-down btn-success add-services_cost-modal">
                     Добавить
                 </button>
             </div>
+            {*}
         </div>
 
         <div class="row">
@@ -146,9 +185,26 @@
                                         {foreach $services_cost as $cost}
                                             <tr>
                                                 <td class="jsgrid-header-cell" style="width: 10%">{$cost->id}</td>
-                                                <td class="jsgrid-header-cell" style="width: 30%">{$cost->region}</td>
+                                                <td class="jsgrid-header-cell" style="width: 30%">
+                                                {if $cost->region == 'regions'}
+                                                    Стоп-регионы
+                                                {elseif $cost->region == 'red-regions'}
+                                                    Красные регионы
+                                                {elseif $cost->region == 'yellow-regions'}
+                                                    Желтые регионы
+                                                {else}
+                                                    Зеленые регионы
+                                                {/if}
+                                                </td>
                                                 <td class="jsgrid-header-cell" style="width: 25%">{$cost->reject_reason_cost}</td>
-                                                <td class="jsgrid-header-cell" style="width: 25%">{$cost->insurance_cost}</td>
+                                                <td class="jsgrid-header-cell" style="width: 25%">
+                                                    {$insurance_costs = json_decode($cost->insurance_cost)}
+                                                    {if isset($insurance_costs)}
+                                                        {foreach $insurance_costs as $insurance_cost}
+                                                            до {$insurance_cost[0]} - {$insurance_cost[1]} руб;<br>
+                                                        {/foreach}
+                                                    {/if}
+                                                </td>
                                                 <td class="jsgrid-header-cell" style="width: 10%">
                                                     <div data-id="{$cost->id}"
                                                          class="btn btn-outline-warning edit-services_cost-modal"><i
@@ -189,16 +245,28 @@
                     <input type="hidden" name="action">
                     <input type="hidden" name="id">
                     <div class="form-group">
-                        <label for="region" class="control-label">Регион</label>
+                        <div><label for="region" class="control-label">Регион</label></div>
+                        {*}
                         <input type="text" class="form-control" name="region" id="region" value=""/>
+                        {*}
+                        <div class="region"></div>
                     </div>
                     <div class="form-group">
-                        <label for="reject_reason_cost" class="control-label">Стоимость причины отказа</label>
+                        <label for="reject_reason_cost" class="control-label">Стоимость причины отказа</label>                          
                         <input type="text" class="form-control" name="reject_reason_cost" id="reject_reason_cost" value=""/>
                     </div>
                     <div class="form-group">
                         <label for="insurance_cost" class="control-label">Стоимость страховки при выдаче</label>
-                        <input type="text" class="form-control" name="insurance_cost" id="insurance_cost" value=""/>
+                        <input type="hidden" class="form-control" name="insurance_cost" id="insurance_cost" value=""/>
+                        <table class="insurance_cost_limit" width="100%">
+                            <tr>
+                                <td>Лимит суммы</td>
+                                <td>Страховка</td>
+                            </tr>
+                        </table>
+                        <div style="" class="btn btn-outline-success add-services-issuance">
+                            +
+                        </div> 
                     </div>
                     <div>
                         <input type="button" class="btn btn-danger" data-dismiss="modal" value="Отмена">
