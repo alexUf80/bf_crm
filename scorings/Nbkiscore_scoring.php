@@ -300,14 +300,16 @@ class Nbkiscore_scoring extends Core
                 'status' => 'completed',
                 'body' => 'Проверка не пройдена',
                 'success' => 0,
-                'string_result' => 'Отказ'
+                'string_result' => 'Отказ',
+                'scorista_ball' => $nbki_score
             ];
         else
             $update = [
                 'status' => 'completed',
                 'body' => 'Проверка пройдена',
                 'success' => 1,
-                'string_result' => 'Лимит: ' . $limit
+                'string_result' => 'Лимит: ' . $limit,
+                'scorista_ball' => $nbki_score
             ];
 
         // $variables =
@@ -547,14 +549,16 @@ class Nbkiscore_scoring extends Core
                 'status' => 'completed',
                 'body' => 'Проверка не пройдена',
                 'success' => 0,
-                'string_result' => 'Отказ'
+                'string_result' => 'Отказ',
+                'scorista_ball' => $nbki_score
             ];
         else
             $update = [
                 'status' => 'completed',
                 'body' => 'Проверка пройдена',
                 'success' => 1,
-                'string_result' => 'Лимит: ' . $limit
+                'string_result' => 'Лимит: ' . $limit,
+                'scorista_ball' => $nbki_score
             ];
 
         // $variables =
