@@ -307,6 +307,7 @@
                                 </div>*}
                 
                                 {elseif $type->name == 'nbkiscore'}
+                                {*}
                                 <div class="col-md-6">
                                     <div class="form-group ">
                                         <label class="control-label">Порог новые клиенты</label>
@@ -317,6 +318,7 @@
                                         <input type="text" name="nbkiscore[pk]" value="{$settings->nbkiscore['pk']}" class="form-control" placeholder="" />
                                     </div>
                                 </div>
+                                {*}
                                 {/if}
                                 
                             </div>
