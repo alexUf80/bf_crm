@@ -30,7 +30,7 @@ class Nbkiscore_scoring extends Core
             $update = [
                 'status' => 'completed',
                 'body' => 'Скоринг НБКИ пуст',
-                'success' => 0,
+                'success' => 1,
                 'string_result' => 'Скоринг НБКИ пуст'
             ];
 
