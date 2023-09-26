@@ -845,6 +845,7 @@ class Best2pay extends Core
         echo 'START ' . __METHOD__ . '<br />';
         $sector = $this->sectors['PAY_CREDIT'];
         $password = $this->passwords[$sector];
+        var_dump($contract_id);
 
 
         if (!($contract = $this->contracts->get_contract($contract_id)))
