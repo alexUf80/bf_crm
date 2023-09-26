@@ -39,10 +39,6 @@ class Location_scoring extends Core
 
                     $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
                     $yellow = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $yellow_regions);
-
-                    var_dump($order->Regregion);
-                    var_dump($red_regions);
-                    var_dump($yellow_regions);
                 
                     $update = array(
                         'status' => 'completed',

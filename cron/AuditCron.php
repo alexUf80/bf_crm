@@ -77,6 +77,36 @@ class AuditCron extends Core
 
     }
 
+    private function reject_amount($address_id)
+    {
+
+        $address = $this->Addresses->get_address($address_id);
+        
+        $scoring_type = $this->scorings->get_type('location');
+        
+        $reg='green-regions';
+        $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
+        if(in_array(mb_strtolower(trim($address->region), 'utf8'), $yellow_regions)){
+            $reg = 'yellow-regions';
+        }
+        $red_regions = array_map('trim', explode(',', $scoring_type->params['red-regions']));
+        if(in_array(mb_strtolower(trim($address->region), 'utf8'), $red_regions)){
+            $reg = 'red-regions';
+        }
+        $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+        if(in_array(mb_strtolower(trim($address->region), 'utf8'), $exception_regions)){
+            $reg = 'regions';
+        }
+
+        $contract_operations = $this->ServicesCost->gets(array('region' => $reg));
+        if (isset($contract_operations[0]->reject_reason_cost)) {
+            return (float)$contract_operations[0]->reject_reason_cost;
+        }
+        else{
+            return 19;
+        }
+    }
+
     private function handling_result($scoring, $result)
     {
         $scoring_type = $this->scorings->get_type($scoring->type);
@@ -121,13 +151,22 @@ class AuditCron extends Core
                     ));
                 }
 
+                var_dump('sas');
+
                 //отказной трафик
                 //LeadFinances::sendRequest($order->user_id);
 
                 //if(!empty($order->utm_source) && $order->utm_source == 'leadstech')
                 //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
+                $order = $this->orders->get_order($scoring->order_id);
+
                 $user = UsersORM::query()->where('id', '=', $order->user_id)->first();
+
+                $address = $this->Addresses->get_address($user->regaddress_id);
+                $reject_cost = $this->reject_amount($address->id);
+                // $reject_cost = 19;
+
                 if ($user && $user->service_reason == 1) {
                     $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
 
@@ -140,7 +179,7 @@ class AuditCron extends Core
                             'user_id' => $order->user_id,
                             'order_id' => $order->order_id,
                             'type' => 'REJECT_REASON',
-                            'amount' => 19,
+                            'amount' => $reject_cost,
                             'created' => date('Y-m-d H:i:s'),
                             'transaction_id' => 0,
                         ));

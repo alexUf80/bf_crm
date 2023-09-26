@@ -10,9 +10,47 @@ class TestController extends Controller
     public function fetch()
     {
 
+        $contract = $this->contracts->get_contract(3713);
+        $user = $this->users->get_user($contract->user_id);
+        $address = $this->Addresses->get_address($user->regaddress_id);
 
+        $sas = $this->insurances->get_insurance_cost(7000,$address->id);
+        var_dump($sas);
+
+        $sas = $this->reject_amount($address->id);
+        var_dump($sas);
         
         exit;
+    }
+
+    private function reject_amount($address_id)
+    {
+
+        $address = $this->Addresses->get_address($address_id);
+        
+        $scoring_type = $this->scorings->get_type('location');
+        
+        $reg='green-regions';
+        $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
+        if(in_array(mb_strtolower(trim($address->region), 'utf8'), $yellow_regions)){
+            $reg = 'yellow-regions';
+        }
+        $red_regions = array_map('trim', explode(',', $scoring_type->params['red-regions']));
+        if(in_array(mb_strtolower(trim($address->region), 'utf8'), $red_regions)){
+            $reg = 'red-regions';
+        }
+        $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+        if(in_array(mb_strtolower(trim($address->region), 'utf8'), $exception_regions)){
+            $reg = 'regions';
+        }
+
+        $contract_operations = $this->ServicesCost->gets(array('region' => $reg));
+        if (isset($contract_operations[0]->reject_reason_cost)) {
+            return (float)$contract_operations[0]->reject_reason_cost;
+        }
+        else{
+            return 19;
+        }
     }
 
     // Сжать изображение 

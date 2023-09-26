@@ -79,6 +79,7 @@ RewriteRule ^penalty_types/?$           index.php?module=PenaltyTypesController 
 RewriteRule ^penalties/?$               index.php?module=PenaltiesController  [L,QSA]
 
 RewriteRule ^promocodes/?$              index.php?module=PromocodesController  [L,QSA]
+RewriteRule ^services_cost/?$           index.php?module=ServicesCostController  [L,QSA]
 
 RewriteRule ^statistics/?$              index.php?module=StatisticsController&action=main  [L,QSA]
 RewriteRule ^statistics/([^/]*)/?$      index.php?module=StatisticsController&action=$1  [L,QSA]

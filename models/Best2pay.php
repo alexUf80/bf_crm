@@ -845,6 +845,7 @@ class Best2pay extends Core
         echo 'START ' . __METHOD__ . '<br />';
         $sector = $this->sectors['PAY_CREDIT'];
         $password = $this->passwords[$sector];
+        var_dump($contract_id);
 
 
         if (!($contract = $this->contracts->get_contract($contract_id)))
@@ -863,7 +864,10 @@ class Best2pay extends Core
             return false;
 
         if (!empty($insurance)) {
-            $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
+            $user = $this->users->get_user($contract->user_id);
+            $address = $this->Addresses->get_address($user->regaddress_id);
+            $insurance_cost = $this->insurances->get_insurance_cost($contract->amount,$address->id);
+            // $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
             $contract->amount += $insurance_cost;
         }
 
