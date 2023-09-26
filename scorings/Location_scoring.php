@@ -39,13 +39,12 @@ class Location_scoring extends Core
 
                     $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
                     $yellow = in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $yellow_regions);
-                
+                    
                     $update = array(
                         'status' => 'completed',
                         'body' => serialize(array('region' => $order->Regregion)),
                         'success' => $score
                     );
-                    var_dump($score, $red, $yellow);
                     if ($score){
                         $update['string_result'] = 'Допустимый регион: '.$order->Regregion;
                         if($yellow){
