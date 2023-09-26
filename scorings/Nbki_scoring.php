@@ -176,6 +176,7 @@ class Nbki_scoring extends Core
         $scoring_type = $this->scorings->get_type('nbki');
         $max_number_of_active = $scoring_type->params['nk']['nbki_number_of_active'];
         $max_share_of_overdue_by_closed = $scoring_type->params['nk']['open_to_close_ratio'];
+        $max_share_of_overdue_by_active = $scoring_type->params['nk']['open_to_active_ratio'];
 
         if ($result['number_of_active'] >= $max_number_of_active) {
             $add_scoring = array(
@@ -183,6 +184,20 @@ class Nbki_scoring extends Core
                 'body' => serialize($result['data'] + ['report_url' => $result['report_url']]),
                 'success' => 0,
                 'string_result' => 'превышен допустимый порог активных займов'
+            );
+
+            $this->scorings->update_scoring($this->scoring_id, $add_scoring);
+
+            return $add_scoring;
+        }
+
+        var_dump((int)$result['share_of_overdue_by_active'], $max_share_of_overdue_by_active);
+        if ($result['share_of_overdue_by_active'] >= $max_share_of_overdue_by_active) {
+            $add_scoring = array(
+                'status' => 'completed',
+                'body' => serialize($result['data'] + ['report_url' => $result['report_url']]),
+                'success' => 0,
+                'string_result' => 'превышен допустимый порог доли просроченных к активным'
             );
 
             $this->scorings->update_scoring($this->scoring_id, $add_scoring);
