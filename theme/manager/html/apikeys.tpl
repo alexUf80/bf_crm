@@ -158,6 +158,34 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-12">
+                            <h3 class="box-title">
+                                Cloudkassir для страховок
+                            </h3>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class=" col-form-label">ck_API</label>
+                                <div class="">
+                                    <input type="text" class="form-control" name="apikeys[cloudkassir][ck_API_insurance]" value="{$apikeys['cloudkassir']['ck_API_insurance']}" placeholder="">
+                                </div>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label class=" col-form-label">ck_PublicId</label>
+                                <div class="">
+                                    <input type="text" class="form-control" name="apikeys[cloudkassir][ck_PublicId_insurance]" value="{$apikeys['cloudkassir']['ck_PublicId_insurance']}" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class=" col-form-label">INN</label>
+                                <div class="">
+                                    <input type="text" class="form-control" name="apikeys[cloudkassir][ck_INN_insurance]" value="{$apikeys['cloudkassir']['ck_INN_insurance']}" placeholder="">
+                                </div>
+                            </div>
+                        </div>
                         
                     </div>
                     
