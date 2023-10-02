@@ -597,7 +597,7 @@
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-3">
                                     <h5 class="form-control-static">
-                                        Источник: {$order->source}
+                                        Источник: {$order->utm_source} - {$order->webmaster_id}
                                     </h5>
                                 </div>
                                 <div class="col-12 col-md-6 col-lg-2">
