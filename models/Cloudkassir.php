@@ -109,15 +109,15 @@ class Cloudkassir extends Core
 
     }
 
-    public function send_reject_reason($order_id)
+    public function send_reject_reason($order_id, $amount)
     {
         $order = $this->orders->get_order($order_id);
         $items = array();
         $item = array(
             'label' => 'Информирование о причине отказа',
-            'price' => 19,
+            'price' => $amount,
             'quantity' => 1,
-            'amount' => 19,
+            'amount' => $amount,
             'vat' => 20,
             'method' => 4,
             'object' => 4,
@@ -261,15 +261,15 @@ class Cloudkassir extends Core
         return $res;
     }
 
-    public function return_reject_reason($order_id)
+    public function return_reject_reason($order_id, $amount)
     {
         $order = $this->orders->get_order($order_id);
         $items = array();
         $item = array(
             'label' => 'Информирование о причине отказа',
-            'price' => 19,
+            'price' => $amount,
             'quantity' => 1,
-            'amount' => 19,
+            'amount' => $amount,
             'vat' => 20,
             'method' => 4,
             'object' => 4,
