@@ -41,6 +41,7 @@ class Best2pay extends Core
                 'RECURRENT' => $this->config->ecomSector,
                 'ADD_CARD' => $this->config->tokenSector,
                 'PAYMENT' => $this->config->paySector,
+                'RECURRENT_INSURANCE' => $this->config->ecomInsuranceSector,
             ];
 
         $this->passwords =
@@ -49,6 +50,7 @@ class Best2pay extends Core
                 $this->config->ecomSector => $this->config->ecomSectorPassword,
                 $this->config->tokenSector => $this->config->tokenPassword,
                 $this->config->paySector => $this->config->payPassword,
+                $this->config->ecomInsuranceSector => $this->config->ecomInsuranceSectorPassword,
             ];
 
         $this->url = $this->config->b2phref;
@@ -942,9 +944,14 @@ class Best2pay extends Core
 
     }
 
-    public function purchase_by_token($card_id, $amount, $description)
+    public function purchase_by_token($card_id, $amount, $description, $is_insurance = 0)
     {
-        $sector = $this->sectors['RECURRENT'];
+        if ($is_insurance == 1)
+            $sector = $this->sectors['RECURRENT_INSURANCE'];
+        else
+            $sector = $this->sectors['RECURRENT'];
+
+        
         $password = $this->passwords[$sector];
 
         if (!($card = $this->cards->get_card($card_id)))

@@ -58,11 +58,13 @@ class IssuanceCron extends Core
                         if ($insurance_cost > 0)
                         {
                             $insurance_amount = $insurance_cost * 100;
+                            $is_insurance = 1;
     
                             $description = 'Страховой полис';
     
-                            $xml = $this->best2pay->purchase_by_token($contract->card_id, $insurance_amount, $description);
+                            $xml = $this->best2pay->purchase_by_token($contract->card_id, $insurance_amount, $description, $is_insurance);
                             $status = (string)$xml->state;
+                            // !!!!!!!!!!! Поменять файл конфигурации !!!!!!!!!!!!!!
     
                             if ($status == 'APPROVED') {
                                 $transaction = $this->transactions->get_register_id_transaction($xml->order_id);

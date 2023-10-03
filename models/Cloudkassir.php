@@ -11,9 +11,17 @@ class Cloudkassir extends Core
     {
         parent::__construct();
 
-        $this->ck_API = 'cb51bba846fd92dfd7e8da3d5ecf179b';
-        $this->ck_PublicId = 'pk_21b561c2059dff5a4e5be335a1e4d';
-        $this->ck_INN = '9723120835';
+        // $this->ck_API = 'cb51bba846fd92dfd7e8da3d5ecf179b';
+        // $this->ck_PublicId = 'pk_21b561c2059dff5a4e5be335a1e4d';
+        // $this->ck_INN = '9723120835';
+
+        $this->ck_API = $this->settings->apikeys['cloudkassir']['ck_API'];
+        $this->ck_PublicId = $this->settings->apikeys['cloudkassir']['ck_PublicId'];
+        $this->ck_INN = $this->settings->apikeys['cloudkassir']['ck_INN'];
+        // для страховки
+        $this->ck_API_insurance = $this->settings->apikeys['cloudkassir']['ck_API_insurance'];
+        $this->ck_PublicId_insurance = $this->settings->apikeys['cloudkassir']['ck_PublicId_insurance'];
+        $this->ck_INN_insurance = $this->settings->apikeys['cloudkassir']['ck_INN_insurance'];
     }
 
     public function send_insurance($operation_id)
@@ -66,7 +74,7 @@ class Cloudkassir extends Core
                 $receipt['phone'] = $user->phone_mobile;
 
             $data = array(
-                'Inn' => $this->ck_INN, //ИНН
+                'Inn' => $this->ck_INN_insurance, //ИНН
                 'InvoiceId' => $contract->number, //номер заказа, необязательный
                 'AccountId' => $user->id, //идентификатор пользователя, необязательный
                 'Type' => 'Income', //признак расчета
@@ -79,7 +87,7 @@ class Cloudkassir extends Core
             curl_setopt($ch, CURLOPT_TIMEOUT, 30);
             curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
             curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-            curl_setopt($ch, CURLOPT_USERPWD, $this->ck_PublicId . ':' . $this->ck_API);
+            curl_setopt($ch, CURLOPT_USERPWD, $this->ck_PublicId_insurance . ':' . $this->ck_API_insurance);
             curl_setopt($ch, CURLOPT_URL, 'https://api.cloudpayments.ru/kkt/receipt');
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                     'content-type: application/json',
@@ -225,7 +233,7 @@ class Cloudkassir extends Core
             $receipt['phone'] = $user->phone_mobile;
 
         $data = array(
-            'Inn' => $this->ck_INN, //ИНН
+            'Inn' => $this->ck_INN_insurance, //ИНН
             'InvoiceId' => $contract->number, //номер заказа, необязательный
             'AccountId' => $user->id, //идентификатор пользователя, необязательный
             'Type' => 'IncomeReturn', //признак расчета
@@ -238,7 +246,7 @@ class Cloudkassir extends Core
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($ch, CURLOPT_USERPWD, $this->ck_PublicId . ':' . $this->ck_API);
+        curl_setopt($ch, CURLOPT_USERPWD, $this->ck_PublicId_insurance . ':' . $this->ck_API_insurance);
         curl_setopt($ch, CURLOPT_URL, 'https://api.cloudpayments.ru/kkt/receipt');
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
                 'content-type: application/json',
