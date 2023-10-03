@@ -2814,6 +2814,9 @@ class OrderController extends Controller
 
 
         $order = $this->orders->get_order($order_id);
+        $user = $this->users->get_user($order->user_id);
+        $address = $this->Addresses->get_address($user->regaddress_id);
+        $reject_cost = $this->reject_amount($address->id);
 
         switch ($type):
             case 'reject_reason':
@@ -2822,7 +2825,7 @@ class OrderController extends Controller
                 $operation_amount = $operations[0]->amount;
                 $title = 'Возврат услуги "Узнай причину отказа"';
 
-                $res = $this->Cloudkassir->return_reject_reason($order_id);
+                $res = $this->Cloudkassir->return_reject_reason($order_id, $reject_cost);
                 break;
 
             default:
