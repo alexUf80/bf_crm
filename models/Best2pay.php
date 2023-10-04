@@ -975,6 +975,10 @@ class Best2pay extends Core
         );
         $data['signature'] = $this->get_signature(array($data['sector'], $data['amount'], $data['currency'], $password));
 
+        if ($is_insurance == 1){
+            $data['fiscal_positions']='1;'.$amount.';1;Страховой полис';
+        }
+        
         $b2p_order = $this->send('Register', $data);
         $xml = simplexml_load_string($b2p_order);
         $b2p_order_id = (string)$xml->id;
