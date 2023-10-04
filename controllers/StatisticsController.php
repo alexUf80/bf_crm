@@ -2769,8 +2769,10 @@ class StatisticsController extends Controller
             $sheet->getColumnDimension('E')->setWidth(15);
             $sheet->getColumnDimension('F')->setWidth(30);
             $sheet->getColumnDimension('G')->setWidth(15);
-            $sheet->getColumnDimension('H')->setWidth(15);
-            $sheet->getColumnDimension('I')->setWidth(20);
+            $sheet->getColumnDimension('H')->setWidth(20);
+            $sheet->getColumnDimension('I')->setWidth(15);
+            $sheet->getColumnDimension('J')->setWidth(15);
+            $sheet->getColumnDimension('K')->setWidth(20);
 
             $styles_cells =
                 [
@@ -2789,32 +2791,34 @@ class StatisticsController extends Controller
             $sheet->setCellValue('D1', 'Дата заявки');
             $sheet->setCellValue('E1', 'Решение');
             $sheet->setCellValue('F1', 'Причина отказа');
-            $sheet->setCellValue('G1', 'Скоринговый бал');
-            $sheet->setCellValue('H1', 'Балл Idx');
-            $sheet->setCellValue('I1', 'Одобренный лимит');
-            $sheet->setCellValue('J1', 'Количество активных займов');
+            $sheet->setCellValue('G1', 'ИНН клиента');
+            $sheet->setCellValue('H1', 'Запрашиваемая сумма займа');
+            $sheet->setCellValue('I1', 'Скоринговый бал');
+            $sheet->setCellValue('J1', 'Балл Idx');
+            $sheet->setCellValue('K1', 'Одобренный лимит');
+            $sheet->setCellValue('L1', 'Количество активных займов');
 
 
-            $sheet->setCellValue('K1', 'pdl_overdue_count');
-            $sheet->setCellValue('L1', 'pdl_npl_limit_share');
-            $sheet->setCellValue('M1', 'pdl_npl_90_limit_share');
-            $sheet->setCellValue('N1', 'pdl_current_limit_max');
-            $sheet->setCellValue('O1', 'pdl_last_3m_limit');
-            $sheet->setCellValue('P1', 'pdl_last_good_max_limit');
-            $sheet->setCellValue('Q1', 'pdl_good_limit');
-            $sheet->setCellValue('R1', 'pdl_prolong_3m_limit');
-            $sheet->setCellValue('S1', 'consum_current_limit_max');
-            $sheet->setCellValue('T1', 'consum_good_limit');
+            $sheet->setCellValue('M1', 'pdl_overdue_count');
+            $sheet->setCellValue('N1', 'pdl_npl_limit_share');
+            $sheet->setCellValue('O1', 'pdl_npl_90_limit_share');
+            $sheet->setCellValue('P1', 'pdl_current_limit_max');
+            $sheet->setCellValue('Q1', 'pdl_last_3m_limit');
+            $sheet->setCellValue('R1', 'pdl_last_good_max_limit');
+            $sheet->setCellValue('S1', 'pdl_good_limit');
+            $sheet->setCellValue('T1', 'pdl_prolong_3m_limit');
+            $sheet->setCellValue('U1', 'consum_current_limit_max');
+            $sheet->setCellValue('V1', 'consum_good_limit');
 
-            $sheet->setCellValue('U1', 'days_from_last_closed');
-            $sheet->setCellValue('V1', 'prev_3000_500_paid_count_wo_del');
-            $sheet->setCellValue('W1', 'sumPayedPercents');
-            $sheet->setCellValue('X1', 'prev_max_delay');
-            $sheet->setCellValue('Y1', 'last_credit_delay');
-            $sheet->setCellValue('Z1', 'current_overdue_sum');
-            $sheet->setCellValue('AA1', 'closed_to_total_credits_count_share');
-            $sheet->setCellValue('AB1', 'pdl_overdue_count');
-            $sheet->setCellValue('AC1', 'pdl_npl_90_limit_share');
+            $sheet->setCellValue('W1', 'days_from_last_closed');
+            $sheet->setCellValue('X1', 'prev_3000_500_paid_count_wo_del');
+            $sheet->setCellValue('Y1', 'sumPayedPercents');
+            $sheet->setCellValue('Z1', 'prev_max_delay');
+            $sheet->setCellValue('AA1', 'last_credit_delay');
+            $sheet->setCellValue('AB1', 'current_overdue_sum');
+            $sheet->setCellValue('AC1', 'closed_to_total_credits_count_share');
+            $sheet->setCellValue('AD1', 'pdl_overdue_count');
+            $sheet->setCellValue('AE1', 'pdl_npl_90_limit_share');
 
             $i = 2;
             foreach ($orders as $key => $order) {
@@ -2846,38 +2850,42 @@ class StatisticsController extends Controller
                     continue;
                 }
 
+                $user = $this->users->get_user($order->user_id);
+
                 $sheet->setCellValue('A' . $i, $order->order_id);
                 $sheet->setCellValue('B' . $i, $order->user_id);
                 $sheet->setCellValue('C' . $i, $order->client_status);
                 $sheet->setCellValue('D' . $i, $order->date);
                 $sheet->setCellValue('E' . $i, $order->status);
                 $sheet->setCellValue('F' . $i, $order->reject_reason);
-                $sheet->setCellValue('G' . $i, $order->scoreballs['ball']);
-                $sheet->setCellValue('H' . $i, $order->idx);
-                $sheet->setCellValue('I' . $i, $order->scoreballs['limit']);
-                $sheet->setCellValue('J' . $i, $nbki['number_of_active'][0]);
+                $sheet->setCellValue('G' . $i, ' '.(string)$user->inn);
+                $sheet->setCellValue('H' . $i, $order->amount);
+                $sheet->setCellValue('I' . $i, $order->scoreballs['ball']);
+                $sheet->setCellValue('J' . $i, $order->idx);
+                $sheet->setCellValue('K' . $i, $order->scoreballs['limit']);
+                $sheet->setCellValue('L' . $i, $nbki['number_of_active'][0]);
 
                 if ($order->client_status == 'new') {
-                    $sheet->setCellValue('K' . $i, $order->scoreballs['pdl_overdue_count']);
-                    $sheet->setCellValue('L' . $i, $order->scoreballs['pdl_npl_limit_share']);
-                    $sheet->setCellValue('M' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
-                    $sheet->setCellValue('N' . $i, $order->scoreballs['pdl_current_limit_max']);
-                    $sheet->setCellValue('O' . $i, $order->scoreballs['pdl_last_3m_limit']);
-                    $sheet->setCellValue('P' . $i, $order->scoreballs['pdl_last_good_max_limit']);
-                    $sheet->setCellValue('Q' . $i, $order->scoreballs['pdl_good_limit']);
-                    $sheet->setCellValue('R' . $i, $order->scoreballs['pdl_prolong_3m_limit']);
-                    $sheet->setCellValue('S' . $i, $order->scoreballs['consum_current_limit_max']);
-                    $sheet->setCellValue('T' . $i, $order->scoreballs['consum_good_limit']);
+                    $sheet->setCellValue('M' . $i, $order->scoreballs['pdl_overdue_count']);
+                    $sheet->setCellValue('N' . $i, $order->scoreballs['pdl_npl_limit_share']);
+                    $sheet->setCellValue('O' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
+                    $sheet->setCellValue('P' . $i, $order->scoreballs['pdl_current_limit_max']);
+                    $sheet->setCellValue('Q' . $i, $order->scoreballs['pdl_last_3m_limit']);
+                    $sheet->setCellValue('R' . $i, $order->scoreballs['pdl_last_good_max_limit']);
+                    $sheet->setCellValue('S' . $i, $order->scoreballs['pdl_good_limit']);
+                    $sheet->setCellValue('T' . $i, $order->scoreballs['pdl_prolong_3m_limit']);
+                    $sheet->setCellValue('U' . $i, $order->scoreballs['consum_current_limit_max']);
+                    $sheet->setCellValue('V' . $i, $order->scoreballs['consum_good_limit']);
                 } else {
-                    $sheet->setCellValue('U' . $i, $order->scoreballs['days_from_last_closed']);
-                    $sheet->setCellValue('V' . $i, $order->scoreballs['prev_3000_500_paid_count_wo_del']);
-                    $sheet->setCellValue('W' . $i, $order->scoreballs['sumPayedPercents']);
-                    $sheet->setCellValue('X' . $i, $order->scoreballs['prev_max_delay']);
-                    $sheet->setCellValue('Y' . $i, $order->scoreballs['last_credit_delay']);
-                    $sheet->setCellValue('Z' . $i, $order->scoreballs['current_overdue_sum']);
-                    $sheet->setCellValue('AA' . $i, $order->scoreballs['closed_to_total_credits_count_share']);
-                    $sheet->setCellValue('AB' . $i, $order->scoreballs['pdl_overdue_count']);
-                    $sheet->setCellValue('AC' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
+                    $sheet->setCellValue('W' . $i, $order->scoreballs['days_from_last_closed']);
+                    $sheet->setCellValue('X' . $i, $order->scoreballs['prev_3000_500_paid_count_wo_del']);
+                    $sheet->setCellValue('Y' . $i, $order->scoreballs['sumPayedPercents']);
+                    $sheet->setCellValue('Z' . $i, $order->scoreballs['prev_max_delay']);
+                    $sheet->setCellValue('AA' . $i, $order->scoreballs['last_credit_delay']);
+                    $sheet->setCellValue('AB' . $i, $order->scoreballs['current_overdue_sum']);
+                    $sheet->setCellValue('AC' . $i, $order->scoreballs['closed_to_total_credits_count_share']);
+                    $sheet->setCellValue('AD' . $i, $order->scoreballs['pdl_overdue_count']);
+                    $sheet->setCellValue('AE' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
                 }
 
                 $i++;
