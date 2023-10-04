@@ -110,7 +110,8 @@ class Orders extends Core
         case when os.`client_status` IN ('pk', 'crm') then 'old' ELSE 'new' END as client_status,
         os.`date`,
         os.`status`,
-        os.reject_reason
+        os.reject_reason,
+        os.amount
         FROM s_orders os
         JOIN s_users us on us.id = os.user_id
         WHERE os.date between ? and ?
