@@ -314,6 +314,9 @@ class Onec implements ToolsInterface
             foreach ($operations as $operation) {
                 $transaction = TransactionsORM::find($operation->transaction_id);
 
+                if (in_array($transaction->id, [211976, 206587])) 
+                    continue;
+
                 if (!empty($transaction)) {
                     $xml['Документы'][$i]['Сделка'][$k]['Оплаты'] =
                         [
