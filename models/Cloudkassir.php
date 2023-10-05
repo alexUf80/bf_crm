@@ -35,7 +35,7 @@ class Cloudkassir extends Core
             $total_amount = 0;
 
             $item = array(
-                'label' => 'Страховая премия - страхование от несчастных случаев.',
+                'label' => 'Страховая премия - страхование от несчастных случаев',
                 'price' => $operation->amount,
                 'quantity' => 1,
                 'amount' => $operation->amount,
@@ -101,8 +101,6 @@ class Cloudkassir extends Core
 
             //        $this->logging(__METHOD__, 'https://api.cloudpayments.ru/kkt/receipt', (array)$data, (array)$res, 'service.log');
 
-            file_get_contents($this->config->root_dir.'files/sas.txt');
-            file_put_contents($this->config->root_dir.'files/sas.txt',date('d.m.Y H:i:s'));
             return $res;
 
         } else {

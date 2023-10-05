@@ -949,7 +949,7 @@ class OrderController extends Controller
                 ));
 
                 //Отправляем чек по страховке
-                $resp = $this->Cloudkassir->send_reject_reason($order->order_id, $reject_cost);
+                // $resp = $this->Cloudkassir->send_reject_reason($order->order_id, $reject_cost);
 
                 if (!empty($resp)) {
                     $resp = json_decode($resp);
