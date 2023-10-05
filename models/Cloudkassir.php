@@ -35,7 +35,7 @@ class Cloudkassir extends Core
             $total_amount = 0;
 
             $item = array(
-                'label' => 'Страховая премия - страхование от несчастных случаев',
+                'label' => 'Страховая премия - страхование от несчастных случаев.',
                 'price' => $operation->amount,
                 'quantity' => 1,
                 'amount' => $operation->amount,
