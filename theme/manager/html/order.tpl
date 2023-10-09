@@ -2289,6 +2289,10 @@
                                                                                   title="{$number_of_active}">
                                                                                         Количество активных займов: <b>{$number_of_active}</b>
                                                                                 </span>
+                                                                            <span class="mail-desc"
+                                                                                  title="{$score}">
+                                                                                        Скоринговый балл НБКИ: <b>{$score}</b>
+                                                                                </span>
                                                                         {/if}
                                                                         {if isset($open_to_close_ratio)}
                                                                             <span class="mail-desc"
