@@ -119,7 +119,8 @@ class Nbki_scoring extends Core
 
         curl_setopt_array($curl, array(
             // CURLOPT_URL => 'http://185.182.111.110:9009/api/v2/history/sign/',
-            CURLOPT_URL => 'http://185.182.111.110:9009/api/v2/history/sign/barents/',
+            // CURLOPT_URL => 'http://185.182.111.110:9009/api/v2/history/sign/barents/',
+            CURLOPT_URL => 'http://185.182.111.110:9009/api/v2/scoring/sign/barents/',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
