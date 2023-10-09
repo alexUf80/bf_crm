@@ -393,6 +393,16 @@ class OrderController extends Controller
                                         $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
                                     }
                                 }
+                                if (isset($scoring->body['score'][0])) {
+                                    $score = $scoring->body['score'][0];
+                                    $this->design->assign('score', $score);
+                                }
+                                else{
+                                    if (isset($scoring->body['score'])) {
+                                        $score = $scoring->body['score'];
+                                        $this->design->assign('score', $score);
+                                    }
+                                }
                             }
 
 
