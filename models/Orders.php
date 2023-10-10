@@ -106,6 +106,10 @@ class Orders extends Core
         $this->db->query("
         SELECT 
         us.id as user_id,
+        us.lastname,
+        us.firstname,
+        us.patronymic,
+        us.birth,
         os.id as order_id,
         case when os.`client_status` IN ('pk', 'crm') then 'old' ELSE 'new' END as client_status,
         os.`date`,
