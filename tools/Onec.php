@@ -237,7 +237,7 @@ class Onec implements ToolsInterface
         $promocodes = PromocodesORM::get();
 
         foreach ($promocodes as $promocode) {
-            if (in_array($promocode->id, [42,41,43])) {
+            if ($promocode->id >= 41) {
                 $percent = 0.8 - ($promocode->discount / 100);
             } else {
                 $percent = 1 - ($promocode->discount / 100);
