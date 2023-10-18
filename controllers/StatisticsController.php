@@ -2833,8 +2833,8 @@ class StatisticsController extends Controller
             $sheet->setCellValue('AO1', 'Количество займов открытых за последний месяц');
             $sheet->setCellValue('AP1', 'Количество займов открытых за последний 3 месяца');
             $sheet->setCellValue('AQ1', 'Отношение кол-ва займов в текущей просрочке к кол-ву всех актинвх займов');
-            $sheet->setCellValue('AR1', 'Наличие текущей просрочки 5 ме.с и более');
-            $sheet->setCellValue('AS1', 'Наличие текущей просрочки 2 ме.с и более');
+            // $sheet->setCellValue('AR1', 'Наличие текущей просрочки 5 ме.с и более');
+            // $sheet->setCellValue('AS1', 'Наличие текущей просрочки 2 ме.с и более');
 
             $i = 2;
             foreach ($orders as $key => $order) {
@@ -3132,9 +3132,9 @@ class StatisticsController extends Controller
                     
                     $sheet->setCellValue('AO' . $i, $beginDateDiffCount1Month);
                     $sheet->setCellValue('AP' . $i, $beginDateDiffCount3Month);
-                    $sheet->setCellValue('AR' . $i, $delay5Month);
-                    $sheet->setCellValue('AS' . $i, $delay2Month);
-                    $sheet->setCellValue('AT' . $i, $dolg);
+                    // $sheet->setCellValue('AR' . $i, $delay5Month);
+                    // $sheet->setCellValue('AS' . $i, $delay2Month);
+                    // $sheet->setCellValue('AT' . $i, $dolg); 
                 }
 
 
