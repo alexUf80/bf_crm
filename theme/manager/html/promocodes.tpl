@@ -226,7 +226,7 @@
             <div class="modal-body">
                 <div class="alert" style="display:none"></div>
                 <form method="POST" id="add_promocode_form">
-                    <input type="text" name="action">
+                    <input type="hidden" name="action">
                     <input type="hidden" name="id">
                     <div class="form-group">
                         <label for="code" class="control-label">Код</label>

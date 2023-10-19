@@ -380,10 +380,113 @@ class TestController extends Controller
 
 
 
-        $user = $this->users->get_user(16990);
+        $contracts = $this->contracts->get_contracts(array('user_id' => 20465, 'status' => 3));
+        // $contracts = $this->contracts->get_contracts(array('user_id' => 16990, 'status' => 3));
+        
+        $contract_close_date = '';
+        $count_contracts_3000_500_0 = 0;
+        $all_percents_summ = 0;
+        $all_peni_summ = 0;
+        $period_peni_biggest = 0;
+        $period_peni_last = 0;
 
-        $contracts = $this->contracts->get_contracts(get_contracts(array('user_id' => 16990)));
-        var_dump(count($contracts));
+        foreach ($contracts as $contract) {
+
+            // Кол-во дней с даты погашения последнего займа 
+            // во внутренней кредитной истории для данного клиента
+            if (!is_null($contract->close_date)) {
+                if ($contract_close_date < $contract->close_date) 
+                    $contract_close_date = $contract->close_date;
+            }
+            else{
+                if ($contract_close_date < $contract->close_date) 
+                    $contract_close_date = $contract->return_date;
+            }
+
+            // Кол-во займов во внутренней кредитной истории для данного клиента, 
+            // у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб
+            // И срок просрочки по займу=0
+            if ($contract->amount >= 3000) {
+                $operations = $this->operations->get_operations(array('type' => 'PAY', 'contract_id' => $contract->id));
+
+                foreach ($operations as $operation) {
+                    $contract_loan_percents_summ = 0;
+
+                    $transaction = $this->transactions->get_transaction($operation->transaction_id);
+                    $contract_loan_percents_summ += $transaction->loan_percents_summ;
+                }
+                if ($contract_loan_percents_summ > 500) {
+                    $contract_count_peni = 0;
+
+                    $operations = $this->operations->get_operations(array('type' => 'PENI', 'contract_id' => $contract->id));
+                    foreach ($operations as $operation) {
+                        $contract_count_peni++;
+                    }
+                    if ($contract_count_peni == 0) {
+                        $count_contracts_3000_500_0++;
+                    }
+                }
+            }
+
+            // Сумма погашенных процентов по всем займам 
+            // во внутренней кредитной истории для данного клиента
+            $operations = $this->operations->get_operations(array('type' => 'PAY', 'contract_id' => $contract->id));
+
+            foreach ($operations as $operation) {
+                $transaction = $this->transactions->get_transaction($operation->transaction_id);
+                $all_percents_summ += $transaction->loan_percents_summ;
+            }
+
+            // Максимальный срок просрочки по всем займам 
+            // во внутренней кредитной истории для данного клиента
+            $operations = $this->operations->get_operations(array('type' => 'PENI', 'contract_id' => $contract->id));
+            $prew_date_peni = '';
+            $period_peni = 0;
+            $period_peni_last = 0;
+
+            foreach ($operations as $operation) {
+                $date1 = new DateTime(date('Y-m-d', strtotime($prew_date_peni)));
+                $date2 = new DateTime(date('Y-m-d', strtotime($operation->created)));
+
+                $prew_date_peni = $operation->created;
+                $diff = $date2->diff($date1)->days;
+
+                if ($diff == 1) {
+                    $period_peni++;
+                    $period_peni_last++;
+                    if ($period_peni_biggest < $period_peni) 
+                        $period_peni_biggest = $period_peni;
+                }
+                else{
+                    $period_peni = 1;
+                    $period_peni_last = 1;
+                    if ($period_peni_biggest < $period_peni) 
+                        $period_peni_biggest = $period_peni;
+                }
+
+                $transaction = $this->transactions->get_transaction($operation->transaction_id);
+                $all_peni_summ += $transaction->loan_peni_summ;
+            }
+
+        }
+        
+        $date1 = new DateTime(date('Y-m-d', strtotime($contract_close_date)));
+        $date2 = new DateTime(date('Y-m-d'));
+
+        $diff = $date2->diff($date1);
+        $delay_last_contract = $diff->days;
+        var_dump($delay_last_contract);
+        echo '<hr>';
+        var_dump($count_contracts_3000_500_0);
+        echo '<hr>';
+        var_dump($all_percents_summ);
+        echo '<hr>';
+        var_dump($all_peni_summ);
+        echo '<hr>';
+        var_dump($period_peni_biggest);
+        echo '<hr>';
+        var_dump($period_peni_last);
+        echo '<hr>';
 
 
         exit;
