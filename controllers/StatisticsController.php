@@ -2832,7 +2832,7 @@ class StatisticsController extends Controller
             $sheet->setCellValue('AN1', 'Количество просроченных займов');
             $sheet->setCellValue('AO1', 'Количество займов открытых за последний месяц');
             $sheet->setCellValue('AP1', 'Количество займов открытых за последний 3 месяца');
-            $sheet->setCellValue('AQ1', 'Отношение кол-ва займов в текущей просрочке к кол-ву всех актинвх займов');
+            // $sheet->setCellValue('AQ1', 'Отношение кол-ва займов в текущей просрочке к кол-ву всех актинвх займов');
             // $sheet->setCellValue('AR1', 'Наличие текущей просрочки 5 ме.с и более');
             // $sheet->setCellValue('AS1', 'Наличие текущей просрочки 2 ме.с и более');
 
@@ -2949,6 +2949,8 @@ class StatisticsController extends Controller
                         $beginDateDiffCount3Month = 0;
                         $delay2Month = 0;
                         $delay5Month = 0;
+                        $delay2MonthS = 0;
+                        $delay5MonthS = 0;
                         // !!!!!!!!!!!!!!!!!!!!
                         
                         $activeProduct = 0; // Всего активных кредитов количество
@@ -2970,11 +2972,11 @@ class StatisticsController extends Controller
                                 if ($past !== '0.00') {
                                     $summ = floatval($past);
 
-                                    $dateDiff = date_diff(new DateTime(), new DateTime($pastdueArrear['pastDueDt']));
-                                    if ($beginDateDiff->days > 150)
-                                        $delay5Month++;
-                                    if ($beginDateDiff->days > 60)
-                                        $delay2Month++;
+                                    // $dateDiff = date_diff(new DateTime(), new DateTime($pastdueArrear['pastDueDt']));
+                                    // if ($beginDateDiff->days > 150)
+                                    //     $delay5Month++;
+                                    // if ($beginDateDiff->days > 60)
+                                    //     $delay2Month++;
                                 }
                             } else {
                                 foreach ($reply['pastdueArrear'] as $pastdueArrear) {
@@ -2982,11 +2984,11 @@ class StatisticsController extends Controller
                                     if ($past !== '0.00') {
                                         $summ = floatval($past);
 
-                                        $dateDiff = date_diff(new DateTime(), new DateTime($pastdueArrear['pastDueDt']));
-                                        if ($beginDateDiff->days > 150)
-                                            $delay5Month++;
-                                        if ($beginDateDiff->days > 60)
-                                            $delay2Month++;
+                                        // $dateDiff = date_diff(new DateTime(), new DateTime($pastdueArrear['pastDueDt']));
+                                        // if ($beginDateDiff->days > 150)
+                                        //     $delay5Month++;
+                                        // if ($beginDateDiff->days > 60)
+                                        //     $delay2Month++;
                                     }
                                 }
                             }
@@ -3029,6 +3031,15 @@ class StatisticsController extends Controller
                                     'name' => 'Просрочен',
                                     'color' => 'red',
                                 ];
+                                $dateDiff = date_diff(new DateTime(), new DateTime($pastdueArrear['pastDueDt']));
+                                if ($beginDateDiff->days > 150){
+                                    $delay5Month++;
+                                    $delay5MonthS+=$summ;
+                                }
+                                if ($beginDateDiff->days > 60){
+                                    $delay2Month++;
+                                    $delay2MonthS+=$summ;
+                                }
                             }
         
                             if(isset($reply['loanIndicator']) && in_array($reply['loanIndicator'], [3,11])) {
@@ -3134,7 +3145,9 @@ class StatisticsController extends Controller
                     $sheet->setCellValue('AP' . $i, $beginDateDiffCount3Month);
                     // $sheet->setCellValue('AR' . $i, $delay5Month);
                     // $sheet->setCellValue('AS' . $i, $delay2Month);
-                    // $sheet->setCellValue('AT' . $i, $dolg); 
+                    // $sheet->setCellValue('AT' . $i, $summ);
+                    // $sheet->setCellValue('AU' . $i, $delay5MonthS);
+                    // $sheet->setCellValue('AV' . $i, $delay2MonthS);
                 }
 
 
