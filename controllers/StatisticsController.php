@@ -2830,11 +2830,30 @@ class StatisticsController extends Controller
             $sheet->setCellValue('AL1', 'Всего активных займов');
             $sheet->setCellValue('AM1', 'Количество закрытых займов');
             $sheet->setCellValue('AN1', 'Количество просроченных займов');
-            $sheet->setCellValue('AO1', 'Количество займов открытых за последний месяц');
-            $sheet->setCellValue('AP1', 'Количество займов открытых за последний 3 месяца');
-            // $sheet->setCellValue('AQ1', 'Отношение кол-ва займов в текущей просрочке к кол-ву всех актинвх займов');
-            // $sheet->setCellValue('AR1', 'Наличие текущей просрочки 5 ме.с и более');
-            // $sheet->setCellValue('AS1', 'Наличие текущей просрочки 2 ме.с и более');
+            $sheet->setCellValue('AO1', 'Отношение кол-ва займов в текущей просрочке к кол-ву всех актинвх займов');
+            
+            $sheet->setCellValue('AP1', 'Сумма обязательств по активным займам');
+            $sheet->setCellValue('AQ1', 'Сумма обязательств по закрытым займам');
+            $sheet->setCellValue('AR1', 'Ежемесячный платеж по обязательствам всех активных займов');
+            $sheet->setCellValue('AS1', 'Размер просроченной задолженности на дату запроса');
+            $sheet->setCellValue('AT1', 'Максимальная просроченная задолженность за текущий год');
+            $sheet->setCellValue('AU1', 'Количество микрозаймов за последние 90 дней');
+            $sheet->setCellValue('AV1', 'Количество активных микрозаймов');
+
+            $sheet->setCellValue('AW1', 'Количество активных PDL займов');
+            $sheet->setCellValue('AX1', 'Количество активных PDL займов с пролонгацией');
+            $sheet->setCellValue('AY1', 'Количество активных микрозаймов КЛ');
+            $sheet->setCellValue('AZ1', 'Количество активных микрозаймов с ошибочным сроком');
+
+            $sheet->setCellValue('BA1', 'Количество активных кредитных карт');
+            $sheet->setCellValue('BB1', 'Количество других активных видов займов');
+
+            $sheet->setCellValue('BC1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BD1', 'Кол-во займов во внутренней кредитной истории для данного клиента, у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб И срок просрочки по займу=0');
+            $sheet->setCellValue('BE1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BF1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BG1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
+            
 
             $i = 2;
             foreach ($orders as $key => $order) {
@@ -2923,233 +2942,182 @@ class StatisticsController extends Controller
                     
                     if (isset($nbkiParams['score'])) 
                         $sheet->setCellValue('AJ' . $i, $nbkiParams['score']);
-                    if (isset($nbkiParams['number_of_active']) && isset($nbkiParams['count_of_closed'])) 
-                        $sheet->setCellValue('AK' . $i, ($nbkiParams['number_of_active'][0] + $nbkiParams['count_of_closed'][0]));
-                    if (isset($nbkiParams['number_of_active'])) 
-                        $sheet->setCellValue('AL' . $i, $nbkiParams['number_of_active'][0]);
-                    if (isset($nbkiParams['count_of_closed'])) 
-                        $sheet->setCellValue('AM' . $i, $nbkiParams['count_of_closed'][0]);
-                    if (isset($nbkiParams['count_of_overdue'])) 
-                        $sheet->setCellValue('AN' . $i, $nbkiParams['count_of_overdue'][0]);
-                    if (isset($nbkiParams['count_of_overdue']) && isset($nbkiParams['number_of_active']) && ($nbkiParams['number_of_active'] > 0)
-                    && !is_null($nbkiParams['count_of_overdue'][0]) && !is_null($nbkiParams['number_of_active'][0])) 
-                        $sheet->setCellValue('AQ' . $i, $nbkiParams['count_of_overdue'][0]/$nbkiParams['number_of_active'][0]);
+                    if (isset($nbkiParams['number_of_active']) && isset($nbkiParams['count_of_closed'])) {
+                        if (is_array($nbkiParams['number_of_active'])) 
+                            $var_number_of_active = $nbkiParams['number_of_active'][0];
+                        else
+                            $var_number_of_active = $nbkiParams['number_of_active'];
+                        
+                        if (is_array($nbkiParams['count_of_closed'])) 
+                            $var_count_of_closed = $nbkiParams['count_of_closed'][0];
+                        else
+                            $var_count_of_closed = $nbkiParams['count_of_closed'];
+                        
+                        $sheet->setCellValue('AK' . $i, ($var_number_of_active + $var_count_of_closed));
+                    }
+                    if (isset($nbkiParams['number_of_active'])) {
+                        if (is_array($nbkiParams['number_of_active'])) 
+                            $sheet->setCellValue('AL' . $i, $nbkiParams['number_of_active'][0]);
+                        else
+                            $sheet->setCellValue('AL' . $i, $nbkiParams['number_of_active']);
+                    }
+                    if (isset($nbkiParams['count_of_closed'])) {
+                        if (is_array($nbkiParams['count_of_closed'])) 
+                            $sheet->setCellValue('AM' . $i, $nbkiParams['count_of_closed'][0]);
+                        else
+                            $sheet->setCellValue('AM' . $i, $nbkiParams['count_of_closed']);
+                    }
+                    if (isset($nbkiParams['count_of_overdue'])) {
+                        if (is_array($nbkiParams['count_of_overdue'])) 
+                            $sheet->setCellValue('AN' . $i, $nbkiParams['count_of_overdue'][0]);
+                        else
+                            $sheet->setCellValue('AN' . $i, $nbkiParams['count_of_overdue']);
+                    }
+                    if (isset($nbkiParams['share_of_overdue_by_active']) && !is_null($nbkiParams['share_of_overdue_by_active'])){
+                        if (is_array($nbkiParams['share_of_overdue_by_active'])) 
+                            $sheet->setCellValue('AO' . $i, $nbkiParams['share_of_overdue_by_active'][0]);
+                        else
+                            $sheet->setCellValue('AO' . $i, $nbkiParams['share_of_overdue_by_active']);
+                    }
                     
-                    $nbkiParams = unserialize($nbkiScor->body);
+                    if (isset($nbkiParams['extra_scoring']['active_loans_credit_limit_sum'])) 
+                        $sheet->setCellValue('AP' . $i, $nbkiParams['extra_scoring']['active_loans_credit_limit_sum']);
+                    if (isset($nbkiParams['extra_scoring']['closed_loans_credit_limit_sum'])) 
+                        $sheet->setCellValue('AQ' . $i, $nbkiParams['extra_scoring']['closed_loans_credit_limit_sum']);
+                    if (isset($nbkiParams['extra_scoring']['monthly_active_loans_payment_sum'])) 
+                        $sheet->setCellValue('AR' . $i, $nbkiParams['extra_scoring']['monthly_active_loans_payment_sum']);
+                    if (isset($nbkiParams['extra_scoring']['overdue_amount_sum'])) 
+                        $sheet->setCellValue('AS' . $i, $nbkiParams['extra_scoring']['overdue_amount_sum']);
+                    if (isset($nbkiParams['extra_scoring']['current_year_max_overdue_amount'])) 
+                        $sheet->setCellValue('AT' . $i, $nbkiParams['extra_scoring']['current_year_max_overdue_amount']);
+                    if (isset($nbkiParams['extra_scoring']['microloans_over_last_90_days_count'])) 
+                        $sheet->setCellValue('AU' . $i, $nbkiParams['extra_scoring']['microloans_over_last_90_days_count']);
+                    if (isset($nbkiParams['extra_scoring']['active_microloan_count'])) 
+                        $sheet->setCellValue('AV' . $i, $nbkiParams['extra_scoring']['active_microloan_count']);
+                    
+                    if (isset($nbkiParams['extra_scoring']['active_pay_day_loans_count'])) 
+                        $sheet->setCellValue('AW' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_count']);
+                    if (isset($nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count'])) 
+                        $sheet->setCellValue('AX' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count']);
+                    if (isset($nbkiParams['extra_scoring']['active_credit_lines_count'])) 
+                        $sheet->setCellValue('AY' . $i, $nbkiParams['extra_scoring']['active_credit_lines_count']);
+                    if (isset($nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count'])) 
+                        $sheet->setCellValue('AZ' . $i, $nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count']);
 
-                    if (isset($nbkiParams['report_url'])) {
-                        $data = file_get_contents(str_replace('log_report','log_xml', $nbkiParams['report_url']));
-                        $xml = simplexml_load_string($data);
-                        $nbkiParams['json'] = json_decode(json_encode($xml), true)['preply']['report'];
+                    if (isset($nbkiParams['extra_scoring']['active_credit_cards_count'])) 
+                        $sheet->setCellValue('BA' . $i, $nbkiParams['extra_scoring']['active_credit_cards_count']);
+                    if (isset($nbkiParams['extra_scoring']['active_other_loans_count'])) 
+                        $sheet->setCellValue('BB' . $i, $nbkiParams['extra_scoring']['active_other_loans_count']);
+                                        
+                }
+
+                $contracts = $this->contracts->get_contracts(array('user_id' => $order->user_id, 'status' => 3));
+                    
+                $contract_close_date = '';
+                $count_contracts_3000_500_0 = 0;
+                $all_percents_summ = 0;
+                $all_peni_summ = 0;
+                $period_peni_biggest = 0;
+                $period_peni_last = 0;
+
+                foreach ($contracts as $contract) {
+                    if (date('Y-m-d', strtotime($contract->inssuance_date)) > date('Y-m-d', strtotime($from)))
+                        continue;
+                    // Кол-во дней с даты погашения последнего займа 
+                    // во внутренней кредитной истории для данного клиента
+                    if (!is_null($contract->close_date)) {
+                        if ($contract_close_date < $contract->close_date) 
+                            $contract_close_date = $contract->close_date;
+                    }
+                    else{
+                        if ($contract_close_date < $contract->close_date) 
+                            $contract_close_date = $contract->return_date;
                     }
 
-                    if (!empty($nbkiParams)) {
-                        $summ = 0;
-                        $beginDateDiffCount1Month = 0;
-                        $beginDateDiffCount3Month = 0;
-                        $delay2Month = 0;
-                        $delay5Month = 0;
-                        $delay2MonthS = 0;
-                        $delay5MonthS = 0;
-                        // !!!!!!!!!!!!!!!!!!!!
-                        
-                        $activeProduct = 0; // Всего активных кредитов количество
-                        $doneProduct = 0; //Всего погашено кредитов количество
-                        
-                        $totalAmtOutstanding = 0; //Всего активных кредитов сумма
-                        $totalAmtOutstandingDone = 0; //Всего погашено кредитов сумма
-                        $totalAverPaymtAmt = 0; //Ежемесячный платеж по кредитам
-                        $dolg = 0; //Размер просроченной задолженности на сегодня // Максимальная просрочка за последний год
-                        $mkk = 0; //Количество микрозаймов за последние 3 месяца
-                        $mkkSumm = 0; // Количество активных микрозаймов
-        
-                        foreach ($nbkiParams['json']['AccountReplyRUTDF'] as $reply) {
-                            $keys = array_keys($reply['pastdueArrear']);
-                            // Если массив ассциативный
-                            if ($keys !== array_keys($keys)) {
-                                $pastdueArrear = $reply['pastdueArrear'];
-                                $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-                                if ($past !== '0.00') {
-                                    $summ = floatval($past);
+                    // Кол-во займов во внутренней кредитной истории для данного клиента, 
+                    // у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб
+                    // И срок просрочки по займу=0
+                    if ($contract->amount >= 3000) {
+                        $operations = $this->operations->get_operations(array('type' => 'PAY', 'contract_id' => $contract->id));
 
-                                    // $dateDiff = date_diff(new DateTime(), new DateTime($pastdueArrear['pastDueDt']));
-                                    // if ($beginDateDiff->days > 150)
-                                    //     $delay5Month++;
-                                    // if ($beginDateDiff->days > 60)
-                                    //     $delay2Month++;
-                                }
-                            } else {
-                                foreach ($reply['pastdueArrear'] as $pastdueArrear) {
-                                    $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-                                    if ($past !== '0.00') {
-                                        $summ = floatval($past);
+                        foreach ($operations as $operation) {
+                            $contract_loan_percents_summ = 0;
 
-                                        // $dateDiff = date_diff(new DateTime(), new DateTime($pastdueArrear['pastDueDt']));
-                                        // if ($beginDateDiff->days > 150)
-                                        //     $delay5Month++;
-                                        // if ($beginDateDiff->days > 60)
-                                        //     $delay2Month++;
-                                    }
-                                }
+                            $transaction = $this->transactions->get_transaction($operation->transaction_id);
+                            $contract_loan_percents_summ += $transaction->loan_percents_summ;
+                        }
+                        if ($contract_loan_percents_summ > 500) {
+                            $contract_count_peni = 0;
+
+                            $operations = $this->operations->get_operations(array('type' => 'PENI', 'contract_id' => $contract->id));
+                            foreach ($operations as $operation) {
+                                $contract_count_peni++;
                             }
-        
-                            if (isset($reply['reportingDt'])) {
-                                $curentDateDiff = date_diff(new DateTime(), new DateTime($reply['reportingDt']));
-                            }
-                            if (isset($reply['trade']['openedDt'])) {
-                                $beginDateDiff = date_diff(new DateTime(), new DateTime($reply['trade']['openedDt']));
-                                if ($beginDateDiff->days <= 30) 
-                                    $beginDateDiffCount1Month++;
-                                if ($beginDateDiff->days <= 91) 
-                                    $beginDateDiffCount3Month++;
-                            }
-                            $status = [
-                                'name' => 'Активный',
-                                'color' => 'black',
-                            ];
-        
-        
-                            if (
-                                (isset($reply['holdCode']) && $reply['holdCode'] == 1) ||
-                                $curentDateDiff->days > 33 ||
-                                (isset($reply['loanIndicator']) && $reply['loanIndicator'] != 1)
-                            ) {
-                                $status = [
-                                    'name' => 'Не определен',
-                                    'color' => 'silver',
-                                ];
-                            }
-                            if($curentDateDiff->days > 180) {
-                                $status = [
-                                    'name' => 'Архив',
-                                    'color' => 'silver',
-                                ];
-                            }
-        
-                            if($summ > 0) {
-                                $status = [
-                                    'name' => 'Просрочен',
-                                    'color' => 'red',
-                                ];
-                                $dateDiff = date_diff(new DateTime(), new DateTime($pastdueArrear['pastDueDt']));
-                                if ($beginDateDiff->days > 150){
-                                    $delay5Month++;
-                                    $delay5MonthS+=$summ;
-                                }
-                                if ($beginDateDiff->days > 60){
-                                    $delay2Month++;
-                                    $delay2MonthS+=$summ;
-                                }
-                            }
-        
-                            if(isset($reply['loanIndicator']) && in_array($reply['loanIndicator'], [3,11])) {
-                                $status = [
-                                    'name' => 'Прощение долга',
-                                    'color' => 'red',
-                                ];
-                            }
-        
-                            if(isset($reply['submitHold']['holdCode']) && $reply['submitHold']['holdCode'] == 3) {
-                                $status = [
-                                    'name' => 'Списан',
-                                    'color' => 'red',
-                                ];
-                            }
-        
-                            if(
-                                (isset($reply['loanIndicator']) && ($reply['loanIndicator'] == 2 || $reply['loanIndicator'] == 1)) ||
-                                (isset($reply['sbLoanIndicator']) && $reply['sbLoanIndicator'] == 1) ||
-                                (isset($reply['collatRepay']) && $reply['collatRepay'] == 1)
-                            ) {
-                                $status = [
-                                    'name' => 'Счет закрыт',
-                                    'color' => 'green',
-                                ];
-                            }
-                            if (isset($reply['businessCategory']) && $reply['businessCategory'] == 'MKK') {
-                                $openDt = false;
-                                if (isset($reply['trade'])) {
-                                    $keys = array_keys($reply['trade']);
-                                    // Если массив ассциативный
-                                    if ($keys !== array_keys($keys)) {
-                                        $openDt = self::date_format($reply['trade']['openedDt']);
-                                    } else {
-                                        $openDt = self::date_format($reply['trade'][0]['openedDt']);
-                                    }
-                                }
-                                $time = time() - (86400 * 92);
-                                $dateMonth = date('d.m.Y', $time);
-                                if ($openDt > $dateMonth) {
-                                    $mkk++;
-                                }
-                                if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
-                                    $mkkSumm++;
-                                }
-                            }
-                            if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
-                                $activeProduct++;
-        
-                                if (isset($reply['paymtCondition'])) {
-                                    $keys = array_keys($reply['paymtCondition']);
-                                    if ($keys !== array_keys($reply['paymtCondition'])) {
-                                        if (isset($reply['paymtCondition']['principalTermsAmt']) && isset($reply['paymtCondition']['interestTermsAmt'])) {
-                                            $totalAverPaymtAmt += floatval($reply['paymtCondition']['principalTermsAmt']) + floatval($reply['paymtCondition']['interestTermsAmt']);;
-                                        }
-                                    } else {
-                                        $condition = end($reply['paymtCondition']);
-                                        if (isset($condition['principalTermsAmt']) && isset($condition['interestTermsAmt'])) {
-                                            $totalAverPaymtAmt += floatval($condition['principalTermsAmt']) + floatval($condition['interestTermsAmt']);
-                                        }
-                                    }
-                                } else {
-                                    if (isset($reply['monthAverPaymt'])) {
-                                        $totalAverPaymtAmt += floatval($reply['monthAverPaymt']['averPaymtAmt'] ?? 0);
-                                    }
-                                }
-        
-                                if (isset($reply['accountAmt'])) {
-                                    $keys = array_keys($reply['accountAmt']);
-                                    // Если массив ассциативный
-                                    if ($keys !== array_keys($keys)) {
-                                        if ($status['name'] != 'Активный') {
-                                            $dolg += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-                                        }
-                                        $totalAmtOutstanding += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-                                    } else {
-                                        foreach ($reply['accountAmt'] as $arrear) {
-                                            if ($status['name'] != 'Активный') {
-                                                $dolg += floatval($arrear['creditLimit'] ?? 0);
-                                            }
-                                            $totalAmtOutstanding += floatval($arrear['creditLimit'] ?? 0);
-                                        }
-                                    }
-                                }
-                            } else {
-                                $doneProduct++;
-                                if (isset($reply['accountAmt'])) {
-                                    $keys = array_keys($reply['accountAmt']);
-                                    // Если массив ассциативный
-                                    if ($keys !== array_keys($keys)) {
-                                        $totalAmtOutstandingDone += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-                                    } else {
-                                        foreach ($reply['accountAmt'] as $arrear) {
-                                            $totalAmtOutstandingDone += floatval($arrear['creditLimit'] ?? 0);
-                                        }
-                                    }
-                                }
+                            if ($contract_count_peni == 0) {
+                                $count_contracts_3000_500_0++;
                             }
                         }
                     }
-                    
-                    $sheet->setCellValue('AO' . $i, $beginDateDiffCount1Month);
-                    $sheet->setCellValue('AP' . $i, $beginDateDiffCount3Month);
-                    // $sheet->setCellValue('AR' . $i, $delay5Month);
-                    // $sheet->setCellValue('AS' . $i, $delay2Month);
-                    // $sheet->setCellValue('AT' . $i, $summ);
-                    // $sheet->setCellValue('AU' . $i, $delay5MonthS);
-                    // $sheet->setCellValue('AV' . $i, $delay2MonthS);
+
+                    // Сумма погашенных процентов по всем займам 
+                    // во внутренней кредитной истории для данного клиента
+                    $operations = $this->operations->get_operations(array('type' => 'PAY', 'contract_id' => $contract->id));
+
+                    foreach ($operations as $operation) {
+                        $transaction = $this->transactions->get_transaction($operation->transaction_id);
+                        $all_percents_summ += $transaction->loan_percents_summ;
+                    }
+
+                    // Максимальный срок просрочки по всем займам 
+                    // во внутренней кредитной истории для данного клиента
+                    $operations = $this->operations->get_operations(array('type' => 'PENI', 'contract_id' => $contract->id));
+                    $prew_date_peni = '';
+                    $period_peni = 0;
+                    $period_peni_last = 0;
+
+                    foreach ($operations as $operation) {
+                        $date1 = new DateTime(date('Y-m-d', strtotime($prew_date_peni)));
+                        $date2 = new DateTime(date('Y-m-d', strtotime($operation->created)));
+
+                        $prew_date_peni = $operation->created;
+                        $diff = $date2->diff($date1)->days;
+
+                        if ($diff == 1) {
+                            $period_peni++;
+                            $period_peni_last++;
+                            if ($period_peni_biggest < $period_peni) 
+                                $period_peni_biggest = $period_peni;
+                        }
+                        else{
+                            $period_peni = 1;
+                            $period_peni_last = 1;
+                            if ($period_peni_biggest < $period_peni) 
+                                $period_peni_biggest = $period_peni;
+                        }
+
+                        $transaction = $this->transactions->get_transaction($operation->transaction_id);
+                        $all_peni_summ += $transaction->loan_peni_summ;
+                    }
+
+                }
+                
+                if ($contract_close_date != '') {
+                    $date1 = new DateTime(date('Y-m-d', strtotime($contract_close_date)));
+                    $date2 = new DateTime(date('Y-m-d'));
+    
+                    $diff = $date2->diff($date1);
+                    $delay_last_contract = $diff->days;
+                }
+                else{
+                    $delay_last_contract = 0;
                 }
 
+
+                $sheet->setCellValue('BC' . $i, $delay_last_contract);
+                $sheet->setCellValue('BD' . $i, $count_contracts_3000_500_0);
+                $sheet->setCellValue('BE' . $i, $all_percents_summ);
+                $sheet->setCellValue('BF' . $i, $period_peni_biggest);
+                $sheet->setCellValue('BG' . $i, $period_peni_last);
 
                 $i++;
             }
