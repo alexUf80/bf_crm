@@ -22,12 +22,16 @@ class Insurances extends Core
     */
     // public function get_insurance_cost($amount)
     // {
-    //     if ($amount <= 4999)
+    //     if ($amount <= 3999)
     //         return 590;
-    //     elseif ($amount >= 5000 && $amount <= 8999)
+    //     elseif ($amount >= 4000 && $amount <= 4999)
+    //         return 690;
+    //     elseif ($amount >= 5000 && $amount <= 6999)
     //         return 890;
-    //     elseif ($amount >= 9000)
-    //         return 990;
+    //     elseif ($amount >= 7000 && $amount <= 10999)
+    //         return 1490;
+    //     elseif ($amount >= 11000)
+    //         return 2190;
     // }
 
     public function get_insurance_cost($amount, $address_id)
@@ -71,12 +75,16 @@ class Insurances extends Core
             return (float)$insurance_cost_amount;
         }
         else {
-            if ($amount <= 4999)
+            if ($amount <= 3999)
                 return 590;
-            elseif ($amount >= 5000 && $amount <= 8999)
+            elseif ($amount >= 4000 && $amount <= 4999)
+                return 690;
+            elseif ($amount >= 5000 && $amount <= 6999)
                 return 890;
-            elseif ($amount >= 9000)
-                return 990;
+            elseif ($amount >= 7000 && $amount <= 10999)
+                return 1490;
+            elseif ($amount >= 11000)
+                return 2190;
         }
     }
 
