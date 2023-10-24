@@ -53,6 +53,12 @@ class ConnexionsAjax extends Core
                     $result['reg_ip']->found = array_filter($this->find_reg_ip($user->id, $user->reg_ip));
                 }
 
+                if ($user->reg_user_agent) {
+                    $result['reg_user_agent'] = new StdClass();
+                    $result['reg_user_agent']->search = $user->reg_user_agent;
+                    $result['reg_user_agent']->found = array_filter($this->find_reg_user_agent($user->id, $user->reg_user_agent));
+                }
+
                 if ($user->last_ip) {
                     $result['last_ip'] = new StdClass();
                     $result['last_ip']->search = $user->last_ip;
@@ -373,6 +379,26 @@ class ConnexionsAjax extends Core
         $this->db->query($query);
 
         $results['reg_ip'] = $this->db->results();
+
+        return $results;
+    }
+
+    private function find_reg_user_agent($user_id, $reg_user_agent)
+    {
+        $query = $this->db->placehold("
+            SELECT 
+                id, 
+                lastname,
+                firstname,
+                patronymic,
+                phone_mobile
+            FROM __users
+            WHERE id != ?
+            AND reg_user_agent = '$reg_user_agent'
+        ", $user_id);
+        $this->db->query($query);
+
+        $results['reg_user_agent'] = $this->db->results();
 
         return $results;
     }
