@@ -2847,12 +2847,31 @@ class StatisticsController extends Controller
 
             $sheet->setCellValue('BA1', 'Количество активных кредитных карт');
             $sheet->setCellValue('BB1', 'Количество других активных видов займов');
+            
+            $sheet->setCellValue('BC1', 'Количество PDL займов с текущей просрочкой');
+            $sheet->setCellValue('BD1', 'Lоля PDL займов с просрочкой 30+');
+            $sheet->setCellValue('BE1', 'Доля PDL займов с просрочкой 90+');
+            $sheet->setCellValue('BF1', 'Максимальный лимит по активным PDL займам');
+            $sheet->setCellValue('BG1', 'Сумма открытых за последние 3 месяца PDL займов');
+            $sheet->setCellValue('BH1', 'Максимальный лимит по последним погашенным без просрочки PDL займам');
+            $sheet->setCellValue('BI1', 'Сумма лимитов по погашенным без просрочки PDL займам');
+            $sheet->setCellValue('BJ1', 'Сумма лимитов по продленным без просрочки PDL займам');
+            $sheet->setCellValue('BK1', 'Максимальный лимит по активным потреб кредитам');
+            $sheet->setCellValue('BL1', 'Сумма лимитов по погашенным без просрочки потреб кредитам');
+            $sheet->setCellValue('BM1', 'Количество дней с даты погашения последнего займа');
+            $sheet->setCellValue('BN1', 'Количество займов во внутренней кредитной истории для данного клиента, у которых сумма займа от 3000 руб, сумма погашенных процентов от 500 руб и нет просрочки по займу');
+            $sheet->setCellValue('BO1', 'Сумма погашенных процентов по всем займам');
+            $sheet->setCellValue('BP1', 'Максимальный срок просрочки по всем займам');
+            $sheet->setCellValue('BQ1', 'Срок просрочки по предыдущему займу');
+            $sheet->setCellValue('BR1', 'Сумма просроченной задолженности по всем кредитам');
+            $sheet->setCellValue('BS1', 'Доля суммы обязательств закрытых кредитов');
 
-            $sheet->setCellValue('BC1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BD1', 'Кол-во займов во внутренней кредитной истории для данного клиента, у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб И срок просрочки по займу=0');
-            $sheet->setCellValue('BE1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BF1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BG1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
+
+            $sheet->setCellValue('BT1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BU1', 'Кол-во займов во внутренней кредитной истории для данного клиента, у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб И срок просрочки по займу=0');
+            $sheet->setCellValue('BV1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BW1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BX1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
             
 
             $i = 2;
@@ -3008,6 +3027,41 @@ class StatisticsController extends Controller
                         $sheet->setCellValue('BA' . $i, $nbkiParams['extra_scoring']['active_credit_cards_count']);
                     if (isset($nbkiParams['extra_scoring']['active_other_loans_count'])) 
                         $sheet->setCellValue('BB' . $i, $nbkiParams['extra_scoring']['active_other_loans_count']);
+                    
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count'])) 
+                        $sheet->setCellValue('BC' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share'])) 
+                        $sheet->setCellValue('BD' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share'])) 
+                        $sheet->setCellValue('BE' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max'])) 
+                        $sheet->setCellValue('BF' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit'])) 
+                        $sheet->setCellValue('BG' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit'])) 
+                        $sheet->setCellValue('BH' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit'])) 
+                        $sheet->setCellValue('BI' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit'])) 
+                        $sheet->setCellValue('BJ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max'])) 
+                        $sheet->setCellValue('BK' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit'])) 
+                        $sheet->setCellValue('BL' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed'])) 
+                        $sheet->setCellValue('BM' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del'])) 
+                        $sheet->setCellValue('BN' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum'])) 
+                        $sheet->setCellValue('BO' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay'])) 
+                        $sheet->setCellValue('BP' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay'])) 
+                        $sheet->setCellValue('BQ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum'])) 
+                        $sheet->setCellValue('BR' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum']);
+                    if (isset($nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share'])) 
+                        $sheet->setCellValue('BS' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share']);
                                         
                 }
 
@@ -3113,11 +3167,11 @@ class StatisticsController extends Controller
                 }
 
 
-                $sheet->setCellValue('BC' . $i, $delay_last_contract);
-                $sheet->setCellValue('BD' . $i, $count_contracts_3000_500_0);
-                $sheet->setCellValue('BE' . $i, $all_percents_summ);
-                $sheet->setCellValue('BF' . $i, $period_peni_biggest);
-                $sheet->setCellValue('BG' . $i, $period_peni_last);
+                $sheet->setCellValue('BT' . $i, $delay_last_contract);
+                $sheet->setCellValue('BU' . $i, $count_contracts_3000_500_0);
+                $sheet->setCellValue('BV' . $i, $all_percents_summ);
+                $sheet->setCellValue('BW' . $i, $period_peni_biggest);
+                $sheet->setCellValue('BX' . $i, $period_peni_last);
 
                 $i++;
             }
