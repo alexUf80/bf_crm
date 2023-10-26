@@ -69,7 +69,14 @@ class Nbkiscore_scoring extends Core
 
         $now = new DateTime(date('Y-m-d'));
 
-        var_dump($nbki['barents_scoring']);
+        $data = file_get_contents(str_replace('log_report','log_xml', $nbki['report_url']));
+        $xml = simplexml_load_string($data);
+        if (isset(json_decode(json_encode($xml), true)['product'])) {
+            $nbki['json'] = json_decode(json_encode($xml), true)['product']['preply']['report'];
+        }
+        else{
+            $nbki['json'] = json_decode(json_encode($xml), true)['preply']['report'];
+        }
 
         foreach ($nbki['json']['AccountReplyRUTDF'] as $reply) {
             $loanKindCode = 3;
@@ -283,7 +290,9 @@ class Nbkiscore_scoring extends Core
         elseif ($consum_good_limit >= 400000)
             $nbki_score += 88;
 
-        $nbki_score = $nbki['barents_scoring']['new_client_result'];
+        if (isset($nbki['barents_scoring'])) {
+            $nbki_score = $nbki['barents_scoring']['new_client_result'];
+        }
 
         if ($nbki_score < 300)
             $limit = 0;
@@ -384,6 +393,15 @@ class Nbkiscore_scoring extends Core
 
             if ($contract->count_expired_days > $prev_max_delay)
                 $prev_max_delay = $contract->count_expired_days;
+        }
+
+        $data = file_get_contents(str_replace('log_report','log_xml', $nbki['report_url']));
+        $xml = simplexml_load_string($data);
+        if (isset(json_decode(json_encode($xml), true)['product'])) {
+            $nbki['json'] = json_decode(json_encode($xml), true)['product']['preply']['report'];
+        }
+        else{
+            $nbki['json'] = json_decode(json_encode($xml), true)['preply']['report'];
         }
 
         foreach ($nbki['json']['AccountReply'] as $scor) {
@@ -528,7 +546,9 @@ class Nbkiscore_scoring extends Core
         elseif ($pdl_npl_90_limit_share >= 20)
             $nbki_score -= 47;
 
-        $nbki_score = $nbki['barents_scoring']['old_client_result'];
+        if (isset($nbki['barents_scoring'])) {
+            $nbki_score = $nbki['barents_scoring']['old_client_result'];
+        }
 
         $limit = 0;
 

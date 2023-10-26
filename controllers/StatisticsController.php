@@ -913,6 +913,20 @@ class StatisticsController extends Controller
                     }
                     
                     if ($nbki == 1) {
+                        // $reoprt_contracts_nbkis = $this->ReoprtContractsNbki->get_reoprt_nbkis(array('order_id' => $contract->order_id));
+                        // $variables_arr = json_decode($reoprt_contracts_nbkis[0]->variables);
+
+                        // $active_sheet->setCellValue('Z' . $i, $variables_arr->activeProduct);
+                        // $active_sheet->setCellValue('AA' . $i, $variables_arr->totalAmtOutstanding);
+                        // $active_sheet->setCellValue('AB' . $i, $variables_arr->doneProduct);
+                        // $active_sheet->setCellValue('AC' . $i, $variables_arr->totalAmtOutstandingDone);
+                        // $active_sheet->setCellValue('AD' . $i, $variables_arr->totalAverPaymtAmt);
+                        // $active_sheet->setCellValue('AE' . $i, $variables_arr->dolg);
+                        // $active_sheet->setCellValue('AF' . $i, $variables_arr->dolg);
+                        // $active_sheet->setCellValue('AG' . $i, $variables_arr->mkk);
+                        // $active_sheet->setCellValue('AH' . $i, $variables_arr->mkkSumm);
+
+
                         $nbkiScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'nbki')->first();
                         
                         if ($nbkiScor) {
@@ -2848,23 +2862,23 @@ class StatisticsController extends Controller
             $sheet->setCellValue('BA1', 'Количество активных кредитных карт');
             $sheet->setCellValue('BB1', 'Количество других активных видов займов');
             
-            $sheet->setCellValue('BC1', 'Количество PDL займов с текущей просрочкой');
-            $sheet->setCellValue('BD1', 'Lоля PDL займов с просрочкой 30+');
-            $sheet->setCellValue('BE1', 'Доля PDL займов с просрочкой 90+');
-            $sheet->setCellValue('BF1', 'Максимальный лимит по активным PDL займам');
-            $sheet->setCellValue('BG1', 'Сумма открытых за последние 3 месяца PDL займов');
-            $sheet->setCellValue('BH1', 'Максимальный лимит по последним погашенным без просрочки PDL займам');
-            $sheet->setCellValue('BI1', 'Сумма лимитов по погашенным без просрочки PDL займам');
-            $sheet->setCellValue('BJ1', 'Сумма лимитов по продленным без просрочки PDL займам');
+            $sheet->setCellValue('BC1', 'Количество ЗДЗ займов с текущей просрочкой');
+            $sheet->setCellValue('BD1', 'Сумма лимитов ЗДЗ займов находящихся в просрочке');
+            $sheet->setCellValue('BE1', 'Доля ЗДЗ займов с просрочкой 90+');
+            $sheet->setCellValue('BF1', 'Максимальный лимит по ЗДЗ займам');
+            $sheet->setCellValue('BG1', 'Сумма открытых за последние 3 месяца ЗДЗ займов');
+            $sheet->setCellValue('BH1', 'Максимальный лимит по последним погашенным без просрочки ЗДЗ займам');
+            $sheet->setCellValue('BI1', 'Сумма лимитов по погашенным без просрочки ЗДЗ займам');
+            $sheet->setCellValue('BJ1', 'Сумма лимитов по продленным без просрочки ЗДЗ займам');
             $sheet->setCellValue('BK1', 'Максимальный лимит по активным потреб кредитам');
             $sheet->setCellValue('BL1', 'Сумма лимитов по погашенным без просрочки потреб кредитам');
-            $sheet->setCellValue('BM1', 'Количество дней с даты погашения последнего займа');
+            $sheet->setCellValue('BM1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента (т.е. дата подачи новой заявки – дата погашения предыдущего займа)');
             $sheet->setCellValue('BN1', 'Количество займов во внутренней кредитной истории для данного клиента, у которых сумма займа от 3000 руб, сумма погашенных процентов от 500 руб и нет просрочки по займу');
-            $sheet->setCellValue('BO1', 'Сумма погашенных процентов по всем займам');
-            $sheet->setCellValue('BP1', 'Максимальный срок просрочки по всем займам');
-            $sheet->setCellValue('BQ1', 'Срок просрочки по предыдущему займу');
-            $sheet->setCellValue('BR1', 'Сумма просроченной задолженности по всем кредитам');
-            $sheet->setCellValue('BS1', 'Доля суммы обязательств закрытых кредитов');
+            $sheet->setCellValue('BO1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BP1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BQ1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BR1', 'Сумма по полю amtPastDue по всем кредитам из отчета НБКИ');
+            $sheet->setCellValue('BS1', 'Сумма полю creditLimit по всем closed кредитам / сумма полю creditLimit по всем кредитам');
 
 
             $sheet->setCellValue('BT1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента');

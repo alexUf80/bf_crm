@@ -32,4 +32,17 @@ class NbkiScoreballs extends Core
 
         return $result;
     }
+
+    public function update_by_scoring($id, $data)
+    {
+        $query = $this->db->placehold("
+            UPDATE s_nbki_scoreballs  SET ?% WHERE score_id = ?
+        ", (array)$data, (int)$id);
+        var_dump($query);
+        echo '<hr><hr>';
+        $this->db->query($query);
+
+        return $id;
+    }
+
 }
