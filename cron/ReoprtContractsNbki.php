@@ -27,6 +27,12 @@ class ReoprtContractsNbki extends Core
         $i = 0;
         $contracts = ContractsORM::whereIn('status', [2, 3, 4, 7])->get();
         foreach ($contracts as $contract) {
+
+            $reoprt_contracts_nbkis = ReoprtContractsNbkiORM::whereIn('order_id', [$contract->order_id])->get();
+            if(count($reoprt_contracts_nbkis) >0){
+                continue;
+            }
+
             $nbkiScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'nbki')->first();
             
             if ($nbkiScor) {
@@ -41,7 +47,6 @@ class ReoprtContractsNbki extends Core
                     }
                 }
                 
-                
                 if (!empty($nbkiParams)) {
                     $reoprt_contracts_nbkis = ReoprtContractsNbkiORM::where('order_id', '=', $contract->order_id)->first();
                     // $reoprt_contracts_nbkis = $this->ReoprtContractsNbki->get_reoprt_nbkis(array('order_id' => $contract->order_id));
@@ -49,8 +54,6 @@ class ReoprtContractsNbki extends Core
                     if (!is_null($reoprt_contracts_nbkis)) {
                         continue;
                     }
-
-                    $i++;
 
                     $activeProduct = 0;
                     $doneProduct = 0;
@@ -227,22 +230,38 @@ class ReoprtContractsNbki extends Core
                         'mkk' => $mkk,
                         'mkkSumm' => $mkkSumm
                     );
-                    $json = json_encode($nbki_arr);
-
-                    $add = array(
-                        'order_id' => $contract->order_id,
-                        'variables' => $json,
-                    );
-
-                    // $reoprt_contracts_nbki_id = $this->ReoprtContractsNbki->add_reoprt_nbki($add);
-                    ReoprtContractsNbkiORM::insert($add);
-
-                    echo $contract->id.'<hr>';
-                    if ($i > 10) {
-                        return;
-                    }
 
                 }
+                else{
+                    $nbki_arr = array(
+                        'activeProduct' => 0,
+                        'totalAmtOutstanding' => 0,
+                        'doneProduct' => 0,
+                        'totalAmtOutstandingDone' => 0,
+                        'totalAverPaymtAmt' => 0,
+                        'dolg' => 0,
+                        'mkk' => 0,
+                        'mkkSumm' => 0
+                    );
+                    
+                }
+
+                $json = json_encode($nbki_arr);
+
+                $add = array(
+                    'order_id' => $contract->order_id,
+                    'variables' => $json,
+                );
+
+                // $reoprt_contracts_nbki_id = $this->ReoprtContractsNbki->add_reoprt_nbki($add);
+                ReoprtContractsNbkiORM::insert($add);
+                echo $contract->id.'<hr>';
+
+                $i++;
+                if ($i > 5) {
+                    return;
+                }
+
             }
         }
     }

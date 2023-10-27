@@ -913,201 +913,201 @@ class StatisticsController extends Controller
                     }
                     
                     if ($nbki == 1) {
-                        // $reoprt_contracts_nbkis = $this->ReoprtContractsNbki->get_reoprt_nbkis(array('order_id' => $contract->order_id));
-                        // $variables_arr = json_decode($reoprt_contracts_nbkis[0]->variables);
+                        $reoprt_contracts_nbkis = $this->ReoprtContractsNbki->get_reoprt_nbkis(array('order_id' => $contract->order_id));
+                        $variables_arr = json_decode($reoprt_contracts_nbkis[0]->variables);
 
-                        // $active_sheet->setCellValue('Z' . $i, $variables_arr->activeProduct);
-                        // $active_sheet->setCellValue('AA' . $i, $variables_arr->totalAmtOutstanding);
-                        // $active_sheet->setCellValue('AB' . $i, $variables_arr->doneProduct);
-                        // $active_sheet->setCellValue('AC' . $i, $variables_arr->totalAmtOutstandingDone);
-                        // $active_sheet->setCellValue('AD' . $i, $variables_arr->totalAverPaymtAmt);
-                        // $active_sheet->setCellValue('AE' . $i, $variables_arr->dolg);
-                        // $active_sheet->setCellValue('AF' . $i, $variables_arr->dolg);
-                        // $active_sheet->setCellValue('AG' . $i, $variables_arr->mkk);
-                        // $active_sheet->setCellValue('AH' . $i, $variables_arr->mkkSumm);
+                        $active_sheet->setCellValue('Z' . $i, $variables_arr->activeProduct);
+                        $active_sheet->setCellValue('AA' . $i, $variables_arr->totalAmtOutstanding);
+                        $active_sheet->setCellValue('AB' . $i, $variables_arr->doneProduct);
+                        $active_sheet->setCellValue('AC' . $i, $variables_arr->totalAmtOutstandingDone);
+                        $active_sheet->setCellValue('AD' . $i, $variables_arr->totalAverPaymtAmt);
+                        $active_sheet->setCellValue('AE' . $i, $variables_arr->dolg);
+                        $active_sheet->setCellValue('AF' . $i, $variables_arr->dolg);
+                        $active_sheet->setCellValue('AG' . $i, $variables_arr->mkk);
+                        $active_sheet->setCellValue('AH' . $i, $variables_arr->mkkSumm);
 
 
-                        $nbkiScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'nbki')->first();
+                        // $nbkiScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'nbki')->first();
                         
-                        if ($nbkiScor) {
-                            $nbkiParams = unserialize($nbkiScor->body);
+                        // if ($nbkiScor) {
+                        //     $nbkiParams = unserialize($nbkiScor->body);
     
-                            if (isset($nbkiParams['report_url'])) {
-                                $data = file_get_contents(str_replace('log_report','log_xml', $nbkiParams['report_url']));
-                                $xml = simplexml_load_string($data);
-                                $nbkiParams['json'] = json_decode(json_encode($xml), true)['preply']['report'];
-                            }
+                        //     if (isset($nbkiParams['report_url'])) {
+                        //         $data = file_get_contents(str_replace('log_report','log_xml', $nbkiParams['report_url']));
+                        //         $xml = simplexml_load_string($data);
+                        //         $nbkiParams['json'] = json_decode(json_encode($xml), true)['preply']['report'];
+                        //     }
     
-                            if (!empty($nbkiParams)) {
-                                $activeProduct = 0;
-                                $doneProduct = 0;
-                                $summ = 0;
-                                $totalAmtOutstanding = 0;
-                                $totalAmtOutstandingDone = 0;
-                                $totalAverPaymtAmt = 0;
-                                $dolg = 0;
-                                $mkk = 0;
-                                $mkkSumm = 0;
-                                foreach ($nbkiParams['json']['AccountReplyRUTDF'] as $reply) {
+                        //     if (!empty($nbkiParams)) {
+                        //         $activeProduct = 0;
+                        //         $doneProduct = 0;
+                        //         $summ = 0;
+                        //         $totalAmtOutstanding = 0;
+                        //         $totalAmtOutstandingDone = 0;
+                        //         $totalAverPaymtAmt = 0;
+                        //         $dolg = 0;
+                        //         $mkk = 0;
+                        //         $mkkSumm = 0;
+                        //         foreach ($nbkiParams['json']['AccountReplyRUTDF'] as $reply) {
     
-                                    $keys = array_keys($reply['pastdueArrear']);
-                                    // Если массив ассциативный
-                                    if ($keys !== array_keys($keys)) {
-                                        $pastdueArrear = $reply['pastdueArrear'];
-                                        $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-                                        if ($past !== '0.00') {
-                                            $summ = floatval($past);
-                                        }
-                                    } else {
-                                        foreach ($reply['pastdueArrear'] as $pastdueArrear) {
-                                            $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-                                            if ($past !== '0.00') {
-                                                $summ = floatval($past);
-                                            }
-                                        }
-                                    }
+                        //             $keys = array_keys($reply['pastdueArrear']);
+                        //             // Если массив ассциативный
+                        //             if ($keys !== array_keys($keys)) {
+                        //                 $pastdueArrear = $reply['pastdueArrear'];
+                        //                 $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
+                        //                 if ($past !== '0.00') {
+                        //                     $summ = floatval($past);
+                        //                 }
+                        //             } else {
+                        //                 foreach ($reply['pastdueArrear'] as $pastdueArrear) {
+                        //                     $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
+                        //                     if ($past !== '0.00') {
+                        //                         $summ = floatval($past);
+                        //                     }
+                        //                 }
+                        //             }
     
     
-                                    if (isset($reply['reportingDt'])) {
-                                        $curentDateDiff = date_diff(new DateTime(), new DateTime($reply['reportingDt']));
-                                    }
-                                    $status = [
-                                        'name' => 'Активный',
-                                        'color' => 'black',
-                                    ];
-                                    if (
-                                        (isset($reply['holdCode']) && $reply['holdCode'] == 1) ||
-                                        $curentDateDiff->days > 33 ||
-                                        (isset($reply['loanIndicator']) && $reply['loanIndicator'] != 1)
-                                    ) {
-                                        $status = [
-                                            'name' => 'Не определен',
-                                            'color' => 'silver',
-                                        ];
-                                    }
-                                    if($curentDateDiff->days > 180) {
-                                        $status = [
-                                            'name' => 'Архив',
-                                            'color' => 'silver',
-                                        ];
-                                    }
+                        //             if (isset($reply['reportingDt'])) {
+                        //                 $curentDateDiff = date_diff(new DateTime(), new DateTime($reply['reportingDt']));
+                        //             }
+                        //             $status = [
+                        //                 'name' => 'Активный',
+                        //                 'color' => 'black',
+                        //             ];
+                        //             if (
+                        //                 (isset($reply['holdCode']) && $reply['holdCode'] == 1) ||
+                        //                 $curentDateDiff->days > 33 ||
+                        //                 (isset($reply['loanIndicator']) && $reply['loanIndicator'] != 1)
+                        //             ) {
+                        //                 $status = [
+                        //                     'name' => 'Не определен',
+                        //                     'color' => 'silver',
+                        //                 ];
+                        //             }
+                        //             if($curentDateDiff->days > 180) {
+                        //                 $status = [
+                        //                     'name' => 'Архив',
+                        //                     'color' => 'silver',
+                        //                 ];
+                        //             }
     
-                                    if($summ > 0) {
-                                        $status = [
-                                            'name' => 'Просрочен',
-                                            'color' => 'red',
-                                        ];
-                                    }
+                        //             if($summ > 0) {
+                        //                 $status = [
+                        //                     'name' => 'Просрочен',
+                        //                     'color' => 'red',
+                        //                 ];
+                        //             }
     
-                                    if(isset($reply['loanIndicator']) && in_array($reply['loanIndicator'], [3,11])) {
-                                        $status = [
-                                            'name' => 'Прощение долга',
-                                            'color' => 'red',
-                                        ];
-                                    }
+                        //             if(isset($reply['loanIndicator']) && in_array($reply['loanIndicator'], [3,11])) {
+                        //                 $status = [
+                        //                     'name' => 'Прощение долга',
+                        //                     'color' => 'red',
+                        //                 ];
+                        //             }
     
-                                    if(isset($reply['submitHold']['holdCode']) && $reply['submitHold']['holdCode'] == 3) {
-                                        $status = [
-                                            'name' => 'Списан',
-                                            'color' => 'red',
-                                        ];
-                                    }
+                        //             if(isset($reply['submitHold']['holdCode']) && $reply['submitHold']['holdCode'] == 3) {
+                        //                 $status = [
+                        //                     'name' => 'Списан',
+                        //                     'color' => 'red',
+                        //                 ];
+                        //             }
     
-                                    if(
-                                        (isset($reply['loanIndicator']) && ($reply['loanIndicator'] == 2 || $reply['loanIndicator'] == 1)) ||
-                                        (isset($reply['sbLoanIndicator']) && $reply['sbLoanIndicator'] == 1) ||
-                                        (isset($reply['collatRepay']) && $reply['collatRepay'] == 1)
-                                    ) {
-                                        $status = [
-                                            'name' => 'Счет закрыт',
-                                            'color' => 'green',
-                                        ];
-                                    }
-                                    if (isset($reply['businessCategory']) && $reply['businessCategory'] == 'MKK') {
-                                        $openDt = false;
-                                        if (isset($reply['trade'])) {
-                                            $keys = array_keys($reply['trade']);
-                                            // Если массив ассциативный
-                                            if ($keys !== array_keys($keys)) {
-                                                $openDt = self::date_format($reply['trade']['openedDt']);
-                                            } else {
-                                                $openDt = self::date_format($reply['trade'][0]['openedDt']);
-                                            }
-                                        }
-                                        $time = time() - (86400 * 92);
-                                        $dateMonth = date('d.m.Y', $time);
-                                        if ($openDt > $dateMonth) {
-                                            $mkk++;
-                                        }
-                                        if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
-                                            $mkkSumm++;
-                                        }
-                                    }
-                                    if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
-                                        $activeProduct++;
+                        //             if(
+                        //                 (isset($reply['loanIndicator']) && ($reply['loanIndicator'] == 2 || $reply['loanIndicator'] == 1)) ||
+                        //                 (isset($reply['sbLoanIndicator']) && $reply['sbLoanIndicator'] == 1) ||
+                        //                 (isset($reply['collatRepay']) && $reply['collatRepay'] == 1)
+                        //             ) {
+                        //                 $status = [
+                        //                     'name' => 'Счет закрыт',
+                        //                     'color' => 'green',
+                        //                 ];
+                        //             }
+                        //             if (isset($reply['businessCategory']) && $reply['businessCategory'] == 'MKK') {
+                        //                 $openDt = false;
+                        //                 if (isset($reply['trade'])) {
+                        //                     $keys = array_keys($reply['trade']);
+                        //                     // Если массив ассциативный
+                        //                     if ($keys !== array_keys($keys)) {
+                        //                         $openDt = self::date_format($reply['trade']['openedDt']);
+                        //                     } else {
+                        //                         $openDt = self::date_format($reply['trade'][0]['openedDt']);
+                        //                     }
+                        //                 }
+                        //                 $time = time() - (86400 * 92);
+                        //                 $dateMonth = date('d.m.Y', $time);
+                        //                 if ($openDt > $dateMonth) {
+                        //                     $mkk++;
+                        //                 }
+                        //                 if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
+                        //                     $mkkSumm++;
+                        //                 }
+                        //             }
+                        //             if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
+                        //                 $activeProduct++;
     
-                                        if (isset($reply['paymtCondition'])) {
-                                            $keys = array_keys($reply['paymtCondition']);
-                                            if ($keys !== array_keys($reply['paymtCondition'])) {
-                                                if (isset($reply['paymtCondition']['principalTermsAmt']) && isset($reply['paymtCondition']['interestTermsAmt'])) {
-                                                    $totalAverPaymtAmt += floatval($reply['paymtCondition']['principalTermsAmt']) + floatval($reply['paymtCondition']['interestTermsAmt']);;
-                                                }
-                                            } else {
-                                                $condition = end($reply['paymtCondition']);
-                                                if (isset($condition['principalTermsAmt']) && isset($condition['interestTermsAmt'])) {
-                                                    $totalAverPaymtAmt += floatval($condition['principalTermsAmt']) + floatval($condition['interestTermsAmt']);
-                                                }
-                                            }
-                                        } else {
-                                            if (isset($reply['monthAverPaymt'])) {
-                                                $totalAverPaymtAmt += floatval($reply['monthAverPaymt']['averPaymtAmt'] ?? 0);
-                                            }
-                                        }
+                        //                 if (isset($reply['paymtCondition'])) {
+                        //                     $keys = array_keys($reply['paymtCondition']);
+                        //                     if ($keys !== array_keys($reply['paymtCondition'])) {
+                        //                         if (isset($reply['paymtCondition']['principalTermsAmt']) && isset($reply['paymtCondition']['interestTermsAmt'])) {
+                        //                             $totalAverPaymtAmt += floatval($reply['paymtCondition']['principalTermsAmt']) + floatval($reply['paymtCondition']['interestTermsAmt']);;
+                        //                         }
+                        //                     } else {
+                        //                         $condition = end($reply['paymtCondition']);
+                        //                         if (isset($condition['principalTermsAmt']) && isset($condition['interestTermsAmt'])) {
+                        //                             $totalAverPaymtAmt += floatval($condition['principalTermsAmt']) + floatval($condition['interestTermsAmt']);
+                        //                         }
+                        //                     }
+                        //                 } else {
+                        //                     if (isset($reply['monthAverPaymt'])) {
+                        //                         $totalAverPaymtAmt += floatval($reply['monthAverPaymt']['averPaymtAmt'] ?? 0);
+                        //                     }
+                        //                 }
     
-                                        if (isset($reply['accountAmt'])) {
-                                            $keys = array_keys($reply['accountAmt']);
-                                            // Если массив ассциативный
-                                            if ($keys !== array_keys($keys)) {
-                                                if ($status['name'] != 'Активный') {
-                                                    $dolg += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-                                                }
-                                                $totalAmtOutstanding += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-                                            } else {
-                                                foreach ($reply['accountAmt'] as $arrear) {
-                                                    if ($status['name'] != 'Активный') {
-                                                        $dolg += floatval($arrear['creditLimit'] ?? 0);
-                                                    }
-                                                    $totalAmtOutstanding += floatval($arrear['creditLimit'] ?? 0);
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        $doneProduct++;
-                                        if (isset($reply['accountAmt'])) {
-                                            $keys = array_keys($reply['accountAmt']);
-                                            // Если массив ассциативный
-                                            if ($keys !== array_keys($keys)) {
-                                                $totalAmtOutstandingDone += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-                                            } else {
-                                                foreach ($reply['accountAmt'] as $arrear) {
-                                                    $totalAmtOutstandingDone += floatval($arrear['creditLimit'] ?? 0);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                        //                 if (isset($reply['accountAmt'])) {
+                        //                     $keys = array_keys($reply['accountAmt']);
+                        //                     // Если массив ассциативный
+                        //                     if ($keys !== array_keys($keys)) {
+                        //                         if ($status['name'] != 'Активный') {
+                        //                             $dolg += floatval($reply['accountAmt']['creditLimit'] ?? 0);
+                        //                         }
+                        //                         $totalAmtOutstanding += floatval($reply['accountAmt']['creditLimit'] ?? 0);
+                        //                     } else {
+                        //                         foreach ($reply['accountAmt'] as $arrear) {
+                        //                             if ($status['name'] != 'Активный') {
+                        //                                 $dolg += floatval($arrear['creditLimit'] ?? 0);
+                        //                             }
+                        //                             $totalAmtOutstanding += floatval($arrear['creditLimit'] ?? 0);
+                        //                         }
+                        //                     }
+                        //                 }
+                        //             } else {
+                        //                 $doneProduct++;
+                        //                 if (isset($reply['accountAmt'])) {
+                        //                     $keys = array_keys($reply['accountAmt']);
+                        //                     // Если массив ассциативный
+                        //                     if ($keys !== array_keys($keys)) {
+                        //                         $totalAmtOutstandingDone += floatval($reply['accountAmt']['creditLimit'] ?? 0);
+                        //                     } else {
+                        //                         foreach ($reply['accountAmt'] as $arrear) {
+                        //                             $totalAmtOutstandingDone += floatval($arrear['creditLimit'] ?? 0);
+                        //                         }
+                        //                     }
+                        //                 }
+                        //             }
+                        //         }
     
-                                $active_sheet->setCellValue('Z' . $i, $activeProduct);
-                                $active_sheet->setCellValue('AA' . $i, $totalAmtOutstanding);
-                                $active_sheet->setCellValue('AB' . $i, $doneProduct);
-                                $active_sheet->setCellValue('AC' . $i, $totalAmtOutstandingDone);
-                                $active_sheet->setCellValue('AD' . $i, $totalAverPaymtAmt);
-                                $active_sheet->setCellValue('AE' . $i, $dolg);
-                                $active_sheet->setCellValue('AF' . $i, $dolg);
-                                $active_sheet->setCellValue('AG' . $i, $mkk);
-                                $active_sheet->setCellValue('AH' . $i, $mkkSumm);
-                            }
-                        }
+                        //         $active_sheet->setCellValue('Z' . $i, $activeProduct);
+                        //         $active_sheet->setCellValue('AA' . $i, $totalAmtOutstanding);
+                        //         $active_sheet->setCellValue('AB' . $i, $doneProduct);
+                        //         $active_sheet->setCellValue('AC' . $i, $totalAmtOutstandingDone);
+                        //         $active_sheet->setCellValue('AD' . $i, $totalAverPaymtAmt);
+                        //         $active_sheet->setCellValue('AE' . $i, $dolg);
+                        //         $active_sheet->setCellValue('AF' . $i, $dolg);
+                        //         $active_sheet->setCellValue('AG' . $i, $mkk);
+                        //         $active_sheet->setCellValue('AH' . $i, $mkkSumm);
+                        //     }
+                        // }
                     }
 
                     $i++;
@@ -2817,75 +2817,78 @@ class StatisticsController extends Controller
             $sheet->setCellValue('N1', 'Количество активных займов');
 
 
-            $sheet->setCellValue('O1', 'pdl_overdue_count');
-            $sheet->setCellValue('P1', 'pdl_npl_limit_share');
-            $sheet->setCellValue('Q1', 'pdl_npl_90_limit_share');
-            $sheet->setCellValue('R1', 'pdl_current_limit_max');
-            $sheet->setCellValue('S1', 'pdl_last_3m_limit');
-            $sheet->setCellValue('T1', 'pdl_last_good_max_limit');
-            $sheet->setCellValue('U1', 'pdl_good_limit');
-            $sheet->setCellValue('V1', 'pdl_prolong_3m_limit');
-            $sheet->setCellValue('W1', 'consum_current_limit_max');
-            $sheet->setCellValue('X1', 'consum_good_limit');
+            // $sheet->setCellValue('O1', 'pdl_overdue_count');
+            // $sheet->setCellValue('P1', 'pdl_npl_limit_share');
+            // $sheet->setCellValue('Q1', 'pdl_npl_90_limit_share');
+            // $sheet->setCellValue('R1', 'pdl_current_limit_max');
+            // $sheet->setCellValue('S1', 'pdl_last_3m_limit');
+            // $sheet->setCellValue('T1', 'pdl_last_good_max_limit');
+            // $sheet->setCellValue('U1', 'pdl_good_limit');
+            // $sheet->setCellValue('V1', 'pdl_prolong_3m_limit');
+            // $sheet->setCellValue('W1', 'consum_current_limit_max');
+            // $sheet->setCellValue('X1', 'consum_good_limit');
 
-            $sheet->setCellValue('Y1', 'days_from_last_closed');
-            $sheet->setCellValue('Z1', 'prev_3000_500_paid_count_wo_del');
-            $sheet->setCellValue('AA1', 'sumPayedPercents');
-            $sheet->setCellValue('AB1', 'prev_max_delay');
-            $sheet->setCellValue('AC1', 'last_credit_delay');
-            $sheet->setCellValue('AD1', 'current_overdue_sum');
-            $sheet->setCellValue('AE1', 'closed_to_total_credits_count_share');
-            $sheet->setCellValue('AF1', 'pdl_overdue_count');
-            $sheet->setCellValue('AG1', 'pdl_npl_90_limit_share');
-            $sheet->setCellValue('AH1', 'Общаяя сумма долгов ФССП');
-            $sheet->setCellValue('AI1', 'Количество исполнительных листов');
-            $sheet->setCellValue('AJ1', 'Скорбалл МФО2НБКИ');
-            $sheet->setCellValue('AK1', 'Всего займов');
-            $sheet->setCellValue('AL1', 'Всего активных займов');
-            $sheet->setCellValue('AM1', 'Количество закрытых займов');
-            $sheet->setCellValue('AN1', 'Количество просроченных займов');
-            $sheet->setCellValue('AO1', 'Отношение кол-ва займов в текущей просрочке к кол-ву всех актинвх займов');
+            // $sheet->setCellValue('Y1', 'days_from_last_closed');
+            // $sheet->setCellValue('Z1', 'prev_3000_500_paid_count_wo_del');
+            // $sheet->setCellValue('AA1', 'sumPayedPercents');
+            // $sheet->setCellValue('AB1', 'prev_max_delay');
+            // $sheet->setCellValue('AC1', 'last_credit_delay');
+            // $sheet->setCellValue('AD1', 'current_overdue_sum');
+            // $sheet->setCellValue('AE1', 'closed_to_total_credits_count_share');
+            // $sheet->setCellValue('AF1', 'pdl_overdue_count');
+            // $sheet->setCellValue('AG1', 'pdl_npl_90_limit_share');
+
+            // $sheet->setCellValue('AH1', 'Общаяя сумма долгов ФССП');
+            $sheet->setCellValue('O1', 'Общаяя сумма долгов ФССП');
+            $sheet->setCellValue('P1', 'Количество исполнительных листов');
+            $sheet->setCellValue('Q1', 'Скорбалл МФО2НБКИ');
+
+            $sheet->setCellValue('R1', 'Всего займов');
+            $sheet->setCellValue('S1', 'Всего активных займов');
+            $sheet->setCellValue('T1', 'Количество закрытых займов');
+            $sheet->setCellValue('U1', 'Количество просроченных займов');
+            $sheet->setCellValue('V1', 'Отношение кол-ва займов в текущей просрочке к кол-ву всех актинвх займов');
             
-            $sheet->setCellValue('AP1', 'Сумма обязательств по активным займам');
-            $sheet->setCellValue('AQ1', 'Сумма обязательств по закрытым займам');
-            $sheet->setCellValue('AR1', 'Ежемесячный платеж по обязательствам всех активных займов');
-            $sheet->setCellValue('AS1', 'Размер просроченной задолженности на дату запроса');
-            $sheet->setCellValue('AT1', 'Максимальная просроченная задолженность за текущий год');
-            $sheet->setCellValue('AU1', 'Количество микрозаймов за последние 90 дней');
-            $sheet->setCellValue('AV1', 'Количество активных микрозаймов');
+            $sheet->setCellValue('W1', 'Сумма обязательств по активным займам');
+            $sheet->setCellValue('X1', 'Сумма обязательств по закрытым займам');
+            $sheet->setCellValue('Y1', 'Ежемесячный платеж по обязательствам всех активных займов');
+            $sheet->setCellValue('Z1', 'Размер просроченной задолженности на дату запроса');
+            $sheet->setCellValue('AA1', 'Максимальная просроченная задолженность за текущий год');
+            $sheet->setCellValue('AB1', 'Количество микрозаймов за последние 90 дней');
+            $sheet->setCellValue('AC1', 'Количество активных микрозаймов');
 
-            $sheet->setCellValue('AW1', 'Количество активных PDL займов');
-            $sheet->setCellValue('AX1', 'Количество активных PDL займов с пролонгацией');
-            $sheet->setCellValue('AY1', 'Количество активных микрозаймов КЛ');
-            $sheet->setCellValue('AZ1', 'Количество активных микрозаймов с ошибочным сроком');
+            $sheet->setCellValue('AD1', 'Количество активных PDL займов');
+            $sheet->setCellValue('AE1', 'Количество активных PDL займов с пролонгацией');
+            $sheet->setCellValue('AF1', 'Количество активных микрозаймов КЛ');
+            $sheet->setCellValue('AG1', 'Количество активных микрозаймов с ошибочным сроком');
 
-            $sheet->setCellValue('BA1', 'Количество активных кредитных карт');
-            $sheet->setCellValue('BB1', 'Количество других активных видов займов');
+            $sheet->setCellValue('AH1', 'Количество активных кредитных карт');
+            $sheet->setCellValue('AI1', 'Количество других активных видов займов');
             
-            $sheet->setCellValue('BC1', 'Количество ЗДЗ займов с текущей просрочкой');
-            $sheet->setCellValue('BD1', 'Сумма лимитов ЗДЗ займов находящихся в просрочке');
-            $sheet->setCellValue('BE1', 'Доля ЗДЗ займов с просрочкой 90+');
-            $sheet->setCellValue('BF1', 'Максимальный лимит по ЗДЗ займам');
-            $sheet->setCellValue('BG1', 'Сумма открытых за последние 3 месяца ЗДЗ займов');
-            $sheet->setCellValue('BH1', 'Максимальный лимит по последним погашенным без просрочки ЗДЗ займам');
-            $sheet->setCellValue('BI1', 'Сумма лимитов по погашенным без просрочки ЗДЗ займам');
-            $sheet->setCellValue('BJ1', 'Сумма лимитов по продленным без просрочки ЗДЗ займам');
-            $sheet->setCellValue('BK1', 'Максимальный лимит по активным потреб кредитам');
-            $sheet->setCellValue('BL1', 'Сумма лимитов по погашенным без просрочки потреб кредитам');
-            $sheet->setCellValue('BM1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента (т.е. дата подачи новой заявки – дата погашения предыдущего займа)');
-            $sheet->setCellValue('BN1', 'Количество займов во внутренней кредитной истории для данного клиента, у которых сумма займа от 3000 руб, сумма погашенных процентов от 500 руб и нет просрочки по займу');
-            $sheet->setCellValue('BO1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BP1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BQ1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BR1', 'Сумма по полю amtPastDue по всем кредитам из отчета НБКИ');
-            $sheet->setCellValue('BS1', 'Сумма полю creditLimit по всем closed кредитам / сумма полю creditLimit по всем кредитам');
+            $sheet->setCellValue('AJ1', 'Количество ЗДЗ займов с текущей просрочкой');
+            $sheet->setCellValue('AK1', 'Сумма лимитов ЗДЗ займов находящихся в просрочке');
+            $sheet->setCellValue('AL1', 'Доля ЗДЗ займов с просрочкой 90+');
+            $sheet->setCellValue('AM1', 'Максимальный лимит по ЗДЗ займам');
+            $sheet->setCellValue('AN1', 'Сумма открытых за последние 3 месяца ЗДЗ займов');
+            $sheet->setCellValue('AO1', 'Максимальный лимит по последним погашенным без просрочки ЗДЗ займам');
+            $sheet->setCellValue('AP1', 'Сумма лимитов по погашенным без просрочки ЗДЗ займам');
+            $sheet->setCellValue('AQ1', 'Сумма лимитов по продленным без просрочки ЗДЗ займам');
+            $sheet->setCellValue('AR1', 'Максимальный лимит по активным потреб кредитам');
+            $sheet->setCellValue('AS1', 'Сумма лимитов по погашенным без просрочки потреб кредитам');
+            $sheet->setCellValue('AT1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента (т.е. дата подачи новой заявки – дата погашения предыдущего займа)');
+            $sheet->setCellValue('AU1', 'Количество займов во внутренней кредитной истории для данного клиента, у которых сумма займа от 3000 руб, сумма погашенных процентов от 500 руб и нет просрочки по займу');
+            $sheet->setCellValue('AV1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('AW1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('AX1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('AY1', 'Сумма по полю amtPastDue по всем кредитам из отчета НБКИ');
+            $sheet->setCellValue('AZ1', 'Сумма полю creditLimit по всем closed кредитам / сумма полю creditLimit по всем кредитам');
 
 
-            $sheet->setCellValue('BT1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BU1', 'Кол-во займов во внутренней кредитной истории для данного клиента, у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб И срок просрочки по займу=0');
-            $sheet->setCellValue('BV1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BW1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BX1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BA1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BC1', 'Кол-во займов во внутренней кредитной истории для данного клиента, у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб И срок просрочки по займу=0');
+            $sheet->setCellValue('BD1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BE1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BF1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
             
 
             $i = 2;
@@ -2963,9 +2966,9 @@ class StatisticsController extends Controller
                     $fsspParams = unserialize($fsspScor->body);
 
                     if (isset($fsspParams['expSum'])) 
-                        $sheet->setCellValue('AH' . $i, $fsspParams['expSum']);
+                        $sheet->setCellValue('O' . $i, $fsspParams['expSum']);
                     if (isset($fsspParams['expCount'])) 
-                        $sheet->setCellValue('AI' . $i, $fsspParams['expCount']);
+                        $sheet->setCellValue('P' . $i, $fsspParams['expCount']);
                 }
 
                 $nbkiScor = ScoringsORM::query()->where('order_id', '=', $order->order_id)->where('type', '=', 'nbki')->first();
@@ -2974,7 +2977,7 @@ class StatisticsController extends Controller
                     $nbkiParams = unserialize($nbkiScor->body);
                     
                     if (isset($nbkiParams['score'])) 
-                        $sheet->setCellValue('AJ' . $i, $nbkiParams['score']);
+                        $sheet->setCellValue('Q' . $i, $nbkiParams['score']);
                     if (isset($nbkiParams['number_of_active']) && isset($nbkiParams['count_of_closed'])) {
                         if (is_array($nbkiParams['number_of_active'])) 
                             $var_number_of_active = $nbkiParams['number_of_active'][0];
@@ -2986,96 +2989,96 @@ class StatisticsController extends Controller
                         else
                             $var_count_of_closed = $nbkiParams['count_of_closed'];
                         
-                        $sheet->setCellValue('AK' . $i, ($var_number_of_active + $var_count_of_closed));
+                        $sheet->setCellValue('R' . $i, ($var_number_of_active + $var_count_of_closed));
                     }
                     if (isset($nbkiParams['number_of_active'])) {
                         if (is_array($nbkiParams['number_of_active'])) 
-                            $sheet->setCellValue('AL' . $i, $nbkiParams['number_of_active'][0]);
+                            $sheet->setCellValue('S' . $i, $nbkiParams['number_of_active'][0]);
                         else
-                            $sheet->setCellValue('AL' . $i, $nbkiParams['number_of_active']);
+                            $sheet->setCellValue('S' . $i, $nbkiParams['number_of_active']);
                     }
                     if (isset($nbkiParams['count_of_closed'])) {
                         if (is_array($nbkiParams['count_of_closed'])) 
-                            $sheet->setCellValue('AM' . $i, $nbkiParams['count_of_closed'][0]);
+                            $sheet->setCellValue('T' . $i, $nbkiParams['count_of_closed'][0]);
                         else
-                            $sheet->setCellValue('AM' . $i, $nbkiParams['count_of_closed']);
+                            $sheet->setCellValue('T' . $i, $nbkiParams['count_of_closed']);
                     }
                     if (isset($nbkiParams['count_of_overdue'])) {
                         if (is_array($nbkiParams['count_of_overdue'])) 
-                            $sheet->setCellValue('AN' . $i, $nbkiParams['count_of_overdue'][0]);
+                            $sheet->setCellValue('U' . $i, $nbkiParams['count_of_overdue'][0]);
                         else
-                            $sheet->setCellValue('AN' . $i, $nbkiParams['count_of_overdue']);
+                            $sheet->setCellValue('U' . $i, $nbkiParams['count_of_overdue']);
                     }
                     if (isset($nbkiParams['share_of_overdue_by_active']) && !is_null($nbkiParams['share_of_overdue_by_active'])){
                         if (is_array($nbkiParams['share_of_overdue_by_active'])) 
-                            $sheet->setCellValue('AO' . $i, $nbkiParams['share_of_overdue_by_active'][0]);
+                            $sheet->setCellValue('V' . $i, $nbkiParams['share_of_overdue_by_active'][0]);
                         else
-                            $sheet->setCellValue('AO' . $i, $nbkiParams['share_of_overdue_by_active']);
+                            $sheet->setCellValue('V' . $i, $nbkiParams['share_of_overdue_by_active']);
                     }
                     
                     if (isset($nbkiParams['extra_scoring']['active_loans_credit_limit_sum'])) 
-                        $sheet->setCellValue('AP' . $i, $nbkiParams['extra_scoring']['active_loans_credit_limit_sum']);
+                        $sheet->setCellValue('W' . $i, $nbkiParams['extra_scoring']['active_loans_credit_limit_sum']);
                     if (isset($nbkiParams['extra_scoring']['closed_loans_credit_limit_sum'])) 
-                        $sheet->setCellValue('AQ' . $i, $nbkiParams['extra_scoring']['closed_loans_credit_limit_sum']);
+                        $sheet->setCellValue('X' . $i, $nbkiParams['extra_scoring']['closed_loans_credit_limit_sum']);
                     if (isset($nbkiParams['extra_scoring']['monthly_active_loans_payment_sum'])) 
-                        $sheet->setCellValue('AR' . $i, $nbkiParams['extra_scoring']['monthly_active_loans_payment_sum']);
+                        $sheet->setCellValue('Y' . $i, $nbkiParams['extra_scoring']['monthly_active_loans_payment_sum']);
                     if (isset($nbkiParams['extra_scoring']['overdue_amount_sum'])) 
-                        $sheet->setCellValue('AS' . $i, $nbkiParams['extra_scoring']['overdue_amount_sum']);
+                        $sheet->setCellValue('Z' . $i, $nbkiParams['extra_scoring']['overdue_amount_sum']);
                     if (isset($nbkiParams['extra_scoring']['current_year_max_overdue_amount'])) 
-                        $sheet->setCellValue('AT' . $i, $nbkiParams['extra_scoring']['current_year_max_overdue_amount']);
+                        $sheet->setCellValue('AA' . $i, $nbkiParams['extra_scoring']['current_year_max_overdue_amount']);
                     if (isset($nbkiParams['extra_scoring']['microloans_over_last_90_days_count'])) 
-                        $sheet->setCellValue('AU' . $i, $nbkiParams['extra_scoring']['microloans_over_last_90_days_count']);
+                        $sheet->setCellValue('AB' . $i, $nbkiParams['extra_scoring']['microloans_over_last_90_days_count']);
                     if (isset($nbkiParams['extra_scoring']['active_microloan_count'])) 
-                        $sheet->setCellValue('AV' . $i, $nbkiParams['extra_scoring']['active_microloan_count']);
+                        $sheet->setCellValue('AC' . $i, $nbkiParams['extra_scoring']['active_microloan_count']);
                     
                     if (isset($nbkiParams['extra_scoring']['active_pay_day_loans_count'])) 
-                        $sheet->setCellValue('AW' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_count']);
+                        $sheet->setCellValue('AD' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_count']);
                     if (isset($nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count'])) 
-                        $sheet->setCellValue('AX' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count']);
+                        $sheet->setCellValue('AE' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count']);
                     if (isset($nbkiParams['extra_scoring']['active_credit_lines_count'])) 
-                        $sheet->setCellValue('AY' . $i, $nbkiParams['extra_scoring']['active_credit_lines_count']);
+                        $sheet->setCellValue('AF' . $i, $nbkiParams['extra_scoring']['active_credit_lines_count']);
                     if (isset($nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count'])) 
-                        $sheet->setCellValue('AZ' . $i, $nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count']);
+                        $sheet->setCellValue('AG' . $i, $nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count']);
 
                     if (isset($nbkiParams['extra_scoring']['active_credit_cards_count'])) 
-                        $sheet->setCellValue('BA' . $i, $nbkiParams['extra_scoring']['active_credit_cards_count']);
+                        $sheet->setCellValue('AH' . $i, $nbkiParams['extra_scoring']['active_credit_cards_count']);
                     if (isset($nbkiParams['extra_scoring']['active_other_loans_count'])) 
-                        $sheet->setCellValue('BB' . $i, $nbkiParams['extra_scoring']['active_other_loans_count']);
+                        $sheet->setCellValue('AI' . $i, $nbkiParams['extra_scoring']['active_other_loans_count']);
                     
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count'])) 
-                        $sheet->setCellValue('BC' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count']);
+                        $sheet->setCellValue('AJ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share'])) 
-                        $sheet->setCellValue('BD' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share']);
+                        $sheet->setCellValue('AK' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share'])) 
-                        $sheet->setCellValue('BE' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share']);
+                        $sheet->setCellValue('AL' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max'])) 
-                        $sheet->setCellValue('BF' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max']);
+                        $sheet->setCellValue('AM' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit'])) 
-                        $sheet->setCellValue('BG' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit']);
+                        $sheet->setCellValue('AN' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit'])) 
-                        $sheet->setCellValue('BH' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit']);
+                        $sheet->setCellValue('AO' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit'])) 
-                        $sheet->setCellValue('BI' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit']);
+                        $sheet->setCellValue('AP' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit'])) 
-                        $sheet->setCellValue('BJ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit']);
+                        $sheet->setCellValue('AQ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max'])) 
-                        $sheet->setCellValue('BK' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max']);
+                        $sheet->setCellValue('AR' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit'])) 
-                        $sheet->setCellValue('BL' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit']);
+                        $sheet->setCellValue('AS' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed'])) 
-                        $sheet->setCellValue('BM' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed']);
+                        $sheet->setCellValue('AT' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del'])) 
-                        $sheet->setCellValue('BN' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del']);
+                        $sheet->setCellValue('AU' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum'])) 
-                        $sheet->setCellValue('BO' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum']);
+                        $sheet->setCellValue('AV' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay'])) 
-                        $sheet->setCellValue('BP' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay']);
+                        $sheet->setCellValue('AW' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay'])) 
-                        $sheet->setCellValue('BQ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay']);
+                        $sheet->setCellValue('AX' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum'])) 
-                        $sheet->setCellValue('BR' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum']);
+                        $sheet->setCellValue('AY' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share'])) 
-                        $sheet->setCellValue('BS' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share']);
+                        $sheet->setCellValue('AZ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share']);
                                         
                 }
 
@@ -3181,11 +3184,11 @@ class StatisticsController extends Controller
                 }
 
 
-                $sheet->setCellValue('BT' . $i, $delay_last_contract);
-                $sheet->setCellValue('BU' . $i, $count_contracts_3000_500_0);
-                $sheet->setCellValue('BV' . $i, $all_percents_summ);
-                $sheet->setCellValue('BW' . $i, $period_peni_biggest);
-                $sheet->setCellValue('BX' . $i, $period_peni_last);
+                $sheet->setCellValue('BA' . $i, $delay_last_contract);
+                $sheet->setCellValue('BB' . $i, $count_contracts_3000_500_0);
+                $sheet->setCellValue('BC' . $i, $all_percents_summ);
+                $sheet->setCellValue('BD' . $i, $period_peni_biggest);
+                $sheet->setCellValue('BE' . $i, $period_peni_last);
 
                 $i++;
             }
