@@ -237,7 +237,7 @@ class ReoprtContractsNbki extends Core
                     // $reoprt_contracts_nbki_id = $this->ReoprtContractsNbki->add_reoprt_nbki($add);
                     ReoprtContractsNbkiORM::insert($add);
 
-                    var_dump($contract->id);
+                    echo $contract->id.'<hr>';
                     if ($i > 10) {
                         return;
                     }
