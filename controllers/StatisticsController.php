@@ -2807,14 +2807,16 @@ class StatisticsController extends Controller
             $sheet->setCellValue('D1', 'Дата заявки');
             $sheet->setCellValue('E1', 'ФИО клиента');
             $sheet->setCellValue('F1', 'Дата рождения');
-            $sheet->setCellValue('G1', 'Решение');
-            $sheet->setCellValue('H1', 'Причина отказа');
-            $sheet->setCellValue('I1', 'ИНН клиента');
-            $sheet->setCellValue('J1', 'Запрашиваемая сумма займа');
-            $sheet->setCellValue('K1', 'Скоринговый бал');
-            $sheet->setCellValue('L1', 'Балл Idx');
-            $sheet->setCellValue('M1', 'Одобренный лимит');
-            $sheet->setCellValue('N1', 'Количество активных займов');
+            $sheet->setCellValue('G1', 'Паспорт');
+            $sheet->setCellValue('H1', 'Регион');
+            $sheet->setCellValue('I1', 'Решение');
+            $sheet->setCellValue('J1', 'Причина отказа');
+            $sheet->setCellValue('K1', 'ИНН клиента');
+            $sheet->setCellValue('L1', 'Запрашиваемая сумма займа');
+            $sheet->setCellValue('M1', 'Скоринговый бал');
+            $sheet->setCellValue('N1', 'Балл Idx');
+            $sheet->setCellValue('O1', 'Одобренный лимит');
+            $sheet->setCellValue('P1', 'Количество активных займов');
 
 
             // $sheet->setCellValue('O1', 'pdl_overdue_count');
@@ -2839,56 +2841,56 @@ class StatisticsController extends Controller
             // $sheet->setCellValue('AG1', 'pdl_npl_90_limit_share');
 
             // $sheet->setCellValue('AH1', 'Общаяя сумма долгов ФССП');
-            $sheet->setCellValue('O1', 'Общаяя сумма долгов ФССП');
-            $sheet->setCellValue('P1', 'Количество исполнительных листов');
-            $sheet->setCellValue('Q1', 'Скорбалл МФО2НБКИ');
+            $sheet->setCellValue('Q1', 'Общаяя сумма долгов ФССП');
+            $sheet->setCellValue('R1', 'Количество исполнительных листов');
+            $sheet->setCellValue('S1', 'Скорбалл МФО2НБКИ');
 
-            $sheet->setCellValue('R1', 'Всего займов');
-            $sheet->setCellValue('S1', 'Всего активных займов');
-            $sheet->setCellValue('T1', 'Количество закрытых займов');
-            $sheet->setCellValue('U1', 'Количество просроченных займов');
-            $sheet->setCellValue('V1', 'Отношение кол-ва займов в текущей просрочке к кол-ву всех актинвх займов');
+            $sheet->setCellValue('T1', 'Всего займов');
+            $sheet->setCellValue('U1', 'Всего активных займов');
+            $sheet->setCellValue('V1', 'Количество закрытых займов');
+            $sheet->setCellValue('W1', 'Количество просроченных займов');
+            $sheet->setCellValue('X1', 'Отношение кол-ва займов в текущей просрочке к кол-ву всех актинвх займов');
             
-            $sheet->setCellValue('W1', 'Сумма обязательств по активным займам');
-            $sheet->setCellValue('X1', 'Сумма обязательств по закрытым займам');
-            $sheet->setCellValue('Y1', 'Ежемесячный платеж по обязательствам всех активных займов');
-            $sheet->setCellValue('Z1', 'Размер просроченной задолженности на дату запроса');
-            $sheet->setCellValue('AA1', 'Максимальная просроченная задолженность за текущий год');
-            $sheet->setCellValue('AB1', 'Количество микрозаймов за последние 90 дней');
-            $sheet->setCellValue('AC1', 'Количество активных микрозаймов');
+            $sheet->setCellValue('Y1', 'Сумма обязательств по активным займам');
+            $sheet->setCellValue('Z1', 'Сумма обязательств по закрытым займам');
+            $sheet->setCellValue('AA1', 'Ежемесячный платеж по обязательствам всех активных займов');
+            $sheet->setCellValue('AB1', 'Размер просроченной задолженности на дату запроса');
+            $sheet->setCellValue('AC1', 'Максимальная просроченная задолженность за текущий год');
+            $sheet->setCellValue('AD1', 'Количество микрозаймов за последние 90 дней');
+            $sheet->setCellValue('AE1', 'Количество активных микрозаймов');
 
-            $sheet->setCellValue('AD1', 'Количество активных PDL займов');
-            $sheet->setCellValue('AE1', 'Количество активных PDL займов с пролонгацией');
-            $sheet->setCellValue('AF1', 'Количество активных микрозаймов КЛ');
-            $sheet->setCellValue('AG1', 'Количество активных микрозаймов с ошибочным сроком');
+            $sheet->setCellValue('AF1', 'Количество активных PDL займов');
+            $sheet->setCellValue('AG1', 'Количество активных PDL займов с пролонгацией');
+            $sheet->setCellValue('AH1', 'Количество активных микрозаймов КЛ');
+            $sheet->setCellValue('AI1', 'Количество активных микрозаймов с ошибочным сроком');
 
-            $sheet->setCellValue('AH1', 'Количество активных кредитных карт');
-            $sheet->setCellValue('AI1', 'Количество других активных видов займов');
+            $sheet->setCellValue('AJ1', 'Количество активных кредитных карт');
+            $sheet->setCellValue('AK1', 'Количество других активных видов займов');
             
-            $sheet->setCellValue('AJ1', 'Количество ЗДЗ займов с текущей просрочкой');
-            $sheet->setCellValue('AK1', 'Сумма лимитов ЗДЗ займов находящихся в просрочке');
-            $sheet->setCellValue('AL1', 'Доля ЗДЗ займов с просрочкой 90+');
-            $sheet->setCellValue('AM1', 'Максимальный лимит по ЗДЗ займам');
-            $sheet->setCellValue('AN1', 'Сумма открытых за последние 3 месяца ЗДЗ займов');
-            $sheet->setCellValue('AO1', 'Максимальный лимит по последним погашенным без просрочки ЗДЗ займам');
-            $sheet->setCellValue('AP1', 'Сумма лимитов по погашенным без просрочки ЗДЗ займам');
-            $sheet->setCellValue('AQ1', 'Сумма лимитов по продленным без просрочки ЗДЗ займам');
-            $sheet->setCellValue('AR1', 'Максимальный лимит по активным потреб кредитам');
-            $sheet->setCellValue('AS1', 'Сумма лимитов по погашенным без просрочки потреб кредитам');
-            $sheet->setCellValue('AT1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента (т.е. дата подачи новой заявки – дата погашения предыдущего займа)');
-            $sheet->setCellValue('AU1', 'Количество займов во внутренней кредитной истории для данного клиента, у которых сумма займа от 3000 руб, сумма погашенных процентов от 500 руб и нет просрочки по займу');
-            $sheet->setCellValue('AV1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('AW1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('AL1', 'Количество ЗДЗ займов с текущей просрочкой');
+            $sheet->setCellValue('AM1', 'Сумма лимитов ЗДЗ займов находящихся в просрочке');
+            $sheet->setCellValue('AN1', 'Доля ЗДЗ займов с просрочкой 90+');
+            $sheet->setCellValue('AO1', 'Максимальный лимит по ЗДЗ займам');
+            $sheet->setCellValue('AP1', 'Сумма открытых за последние 3 месяца ЗДЗ займов');
+            $sheet->setCellValue('AQ1', 'Максимальный лимит по последним погашенным без просрочки ЗДЗ займам');
+            $sheet->setCellValue('AR1', 'Сумма лимитов по погашенным без просрочки ЗДЗ займам');
+            $sheet->setCellValue('AS1', 'Сумма лимитов по продленным без просрочки ЗДЗ займам');
+            $sheet->setCellValue('AT1', 'Максимальный лимит по активным потреб кредитам');
+            $sheet->setCellValue('AU1', 'Сумма лимитов по погашенным без просрочки потреб кредитам');
+            $sheet->setCellValue('AV1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента (т.е. дата подачи новой заявки – дата погашения предыдущего займа)');
+            $sheet->setCellValue('AW1', 'Количество займов во внутренней кредитной истории для данного клиента, у которых сумма займа от 3000 руб, сумма погашенных процентов от 500 руб и нет просрочки по займу');
+            $sheet->setCellValue('AX1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('AY1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
             $sheet->setCellValue('AX1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('AY1', 'Сумма по полю amtPastDue по всем кредитам из отчета НБКИ');
-            $sheet->setCellValue('AZ1', 'Сумма полю creditLimit по всем closed кредитам / сумма полю creditLimit по всем кредитам');
+            $sheet->setCellValue('BA1', 'Сумма по полю amtPastDue по всем кредитам из отчета НБКИ');
+            $sheet->setCellValue('BB1', 'Сумма полю creditLimit по всем closed кредитам / сумма полю creditLimit по всем кредитам');
 
 
-            $sheet->setCellValue('BA1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BC1', 'Кол-во займов во внутренней кредитной истории для данного клиента, у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб И срок просрочки по займу=0');
-            $sheet->setCellValue('BD1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BE1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
-            $sheet->setCellValue('BF1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BC1', 'Кол-во дней с даты погашения последнего займа во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BD1', 'Кол-во займов во внутренней кредитной истории для данного клиента, у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб И срок просрочки по займу=0');
+            $sheet->setCellValue('BE1', 'Сумма погашенных процентов по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BF1', 'Максимальный срок просрочки по всем займам во внутренней кредитной истории для данного клиента');
+            $sheet->setCellValue('BG1', 'Срок просрочки по предыдущему займу во внутренней кредитной истории для данного клиента');
             
 
             $i = 2;
@@ -2929,46 +2931,48 @@ class StatisticsController extends Controller
                 $sheet->setCellValue('D' . $i, $order->date);
                 $sheet->setCellValue('E' . $i, $order->lastname . ' ' . $order->firstname . ' ' . $order->patronymic);
                 $sheet->setCellValue('F' . $i, $order->birth);
-                $sheet->setCellValue('G' . $i, $order->status);
-                $sheet->setCellValue('H' . $i, $order->reject_reason);
-                $sheet->setCellValue('I' . $i, ' '.(string)$user->inn);
-                $sheet->setCellValue('J' . $i, $order->amount);
-                $sheet->setCellValue('K' . $i, $order->scoreballs['ball']);
-                $sheet->setCellValue('L' . $i, $order->idx);
-                $sheet->setCellValue('M' . $i, $order->scoreballs['limit']);
-                $sheet->setCellValue('N' . $i, $nbki['number_of_active'][0]);
+                $sheet->setCellValue('G' . $i, $order->passport_serial);
+                $sheet->setCellValue('H' . $i, $order->region);
+                $sheet->setCellValue('I' . $i, $order->status);
+                $sheet->setCellValue('J' . $i, $order->reject_reason);
+                $sheet->setCellValue('K' . $i, ' '.(string)$user->inn);
+                $sheet->setCellValue('L' . $i, $order->amount);
+                $sheet->setCellValue('M' . $i, $order->scoreballs['ball']);
+                $sheet->setCellValue('N' . $i, $order->idx);
+                $sheet->setCellValue('O' . $i, $order->scoreballs['limit']);
+                $sheet->setCellValue('P' . $i, $nbki['number_of_active'][0]);
 
-                if ($order->client_status == 'new') {
-                    $sheet->setCellValue('O' . $i, $order->scoreballs['pdl_overdue_count']);
-                    $sheet->setCellValue('P' . $i, $order->scoreballs['pdl_npl_limit_share']);
-                    $sheet->setCellValue('Q' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
-                    $sheet->setCellValue('R' . $i, $order->scoreballs['pdl_current_limit_max']);
-                    $sheet->setCellValue('S' . $i, $order->scoreballs['pdl_last_3m_limit']);
-                    $sheet->setCellValue('T' . $i, $order->scoreballs['pdl_last_good_max_limit']);
-                    $sheet->setCellValue('U' . $i, $order->scoreballs['pdl_good_limit']);
-                    $sheet->setCellValue('V' . $i, $order->scoreballs['pdl_prolong_3m_limit']);
-                    $sheet->setCellValue('W' . $i, $order->scoreballs['consum_current_limit_max']);
-                    $sheet->setCellValue('X' . $i, $order->scoreballs['consum_good_limit']);
-                } else {
-                    $sheet->setCellValue('Y' . $i, $order->scoreballs['days_from_last_closed']);
-                    $sheet->setCellValue('Z' . $i, $order->scoreballs['prev_3000_500_paid_count_wo_del']);
-                    $sheet->setCellValue('AA' . $i, $order->scoreballs['sumPayedPercents']);
-                    $sheet->setCellValue('AB' . $i, $order->scoreballs['prev_max_delay']);
-                    $sheet->setCellValue('AC' . $i, $order->scoreballs['last_credit_delay']);
-                    $sheet->setCellValue('AD' . $i, $order->scoreballs['current_overdue_sum']);
-                    $sheet->setCellValue('AE' . $i, $order->scoreballs['closed_to_total_credits_count_share']);
-                    $sheet->setCellValue('AF' . $i, $order->scoreballs['pdl_overdue_count']);
-                    $sheet->setCellValue('AG' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
-                }
+                // if ($order->client_status == 'new') {
+                //     $sheet->setCellValue('O' . $i, $order->scoreballs['pdl_overdue_count']);
+                //     $sheet->setCellValue('P' . $i, $order->scoreballs['pdl_npl_limit_share']);
+                //     $sheet->setCellValue('Q' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
+                //     $sheet->setCellValue('R' . $i, $order->scoreballs['pdl_current_limit_max']);
+                //     $sheet->setCellValue('S' . $i, $order->scoreballs['pdl_last_3m_limit']);
+                //     $sheet->setCellValue('T' . $i, $order->scoreballs['pdl_last_good_max_limit']);
+                //     $sheet->setCellValue('U' . $i, $order->scoreballs['pdl_good_limit']);
+                //     $sheet->setCellValue('V' . $i, $order->scoreballs['pdl_prolong_3m_limit']);
+                //     $sheet->setCellValue('W' . $i, $order->scoreballs['consum_current_limit_max']);
+                //     $sheet->setCellValue('X' . $i, $order->scoreballs['consum_good_limit']);
+                // } else {
+                //     $sheet->setCellValue('Y' . $i, $order->scoreballs['days_from_last_closed']);
+                //     $sheet->setCellValue('Z' . $i, $order->scoreballs['prev_3000_500_paid_count_wo_del']);
+                //     $sheet->setCellValue('AA' . $i, $order->scoreballs['sumPayedPercents']);
+                //     $sheet->setCellValue('AB' . $i, $order->scoreballs['prev_max_delay']);
+                //     $sheet->setCellValue('AC' . $i, $order->scoreballs['last_credit_delay']);
+                //     $sheet->setCellValue('AD' . $i, $order->scoreballs['current_overdue_sum']);
+                //     $sheet->setCellValue('AE' . $i, $order->scoreballs['closed_to_total_credits_count_share']);
+                //     $sheet->setCellValue('AF' . $i, $order->scoreballs['pdl_overdue_count']);
+                //     $sheet->setCellValue('AG' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
+                // }
 
                 $fsspScor = ScoringsORM::query()->where('order_id', '=', $order->order_id)->where('type', '=', 'fssp')->first();
                 if ($fsspScor) {
                     $fsspParams = unserialize($fsspScor->body);
 
                     if (isset($fsspParams['expSum'])) 
-                        $sheet->setCellValue('O' . $i, $fsspParams['expSum']);
+                        $sheet->setCellValue('Q' . $i, $fsspParams['expSum']);
                     if (isset($fsspParams['expCount'])) 
-                        $sheet->setCellValue('P' . $i, $fsspParams['expCount']);
+                        $sheet->setCellValue('R' . $i, $fsspParams['expCount']);
                 }
 
                 $nbkiScor = ScoringsORM::query()->where('order_id', '=', $order->order_id)->where('type', '=', 'nbki')->first();
@@ -2977,7 +2981,7 @@ class StatisticsController extends Controller
                     $nbkiParams = unserialize($nbkiScor->body);
                     
                     if (isset($nbkiParams['score'])) 
-                        $sheet->setCellValue('Q' . $i, $nbkiParams['score']);
+                        $sheet->setCellValue('S' . $i, $nbkiParams['score']);
                     if (isset($nbkiParams['number_of_active']) && isset($nbkiParams['count_of_closed'])) {
                         if (is_array($nbkiParams['number_of_active'])) 
                             $var_number_of_active = $nbkiParams['number_of_active'][0];
@@ -2989,96 +2993,96 @@ class StatisticsController extends Controller
                         else
                             $var_count_of_closed = $nbkiParams['count_of_closed'];
                         
-                        $sheet->setCellValue('R' . $i, ($var_number_of_active + $var_count_of_closed));
+                        $sheet->setCellValue('T' . $i, ($var_number_of_active + $var_count_of_closed));
                     }
                     if (isset($nbkiParams['number_of_active'])) {
                         if (is_array($nbkiParams['number_of_active'])) 
-                            $sheet->setCellValue('S' . $i, $nbkiParams['number_of_active'][0]);
+                            $sheet->setCellValue('U' . $i, $nbkiParams['number_of_active'][0]);
                         else
-                            $sheet->setCellValue('S' . $i, $nbkiParams['number_of_active']);
+                            $sheet->setCellValue('U' . $i, $nbkiParams['number_of_active']);
                     }
                     if (isset($nbkiParams['count_of_closed'])) {
                         if (is_array($nbkiParams['count_of_closed'])) 
-                            $sheet->setCellValue('T' . $i, $nbkiParams['count_of_closed'][0]);
+                            $sheet->setCellValue('V' . $i, $nbkiParams['count_of_closed'][0]);
                         else
-                            $sheet->setCellValue('T' . $i, $nbkiParams['count_of_closed']);
+                            $sheet->setCellValue('V' . $i, $nbkiParams['count_of_closed']);
                     }
                     if (isset($nbkiParams['count_of_overdue'])) {
                         if (is_array($nbkiParams['count_of_overdue'])) 
-                            $sheet->setCellValue('U' . $i, $nbkiParams['count_of_overdue'][0]);
+                            $sheet->setCellValue('W' . $i, $nbkiParams['count_of_overdue'][0]);
                         else
-                            $sheet->setCellValue('U' . $i, $nbkiParams['count_of_overdue']);
+                            $sheet->setCellValue('W' . $i, $nbkiParams['count_of_overdue']);
                     }
                     if (isset($nbkiParams['share_of_overdue_by_active']) && !is_null($nbkiParams['share_of_overdue_by_active'])){
                         if (is_array($nbkiParams['share_of_overdue_by_active'])) 
-                            $sheet->setCellValue('V' . $i, $nbkiParams['share_of_overdue_by_active'][0]);
+                            $sheet->setCellValue('X' . $i, $nbkiParams['share_of_overdue_by_active'][0]);
                         else
-                            $sheet->setCellValue('V' . $i, $nbkiParams['share_of_overdue_by_active']);
+                            $sheet->setCellValue('X' . $i, $nbkiParams['share_of_overdue_by_active']);
                     }
                     
                     if (isset($nbkiParams['extra_scoring']['active_loans_credit_limit_sum'])) 
-                        $sheet->setCellValue('W' . $i, $nbkiParams['extra_scoring']['active_loans_credit_limit_sum']);
+                        $sheet->setCellValue('Y' . $i, $nbkiParams['extra_scoring']['active_loans_credit_limit_sum']);
                     if (isset($nbkiParams['extra_scoring']['closed_loans_credit_limit_sum'])) 
-                        $sheet->setCellValue('X' . $i, $nbkiParams['extra_scoring']['closed_loans_credit_limit_sum']);
+                        $sheet->setCellValue('Z' . $i, $nbkiParams['extra_scoring']['closed_loans_credit_limit_sum']);
                     if (isset($nbkiParams['extra_scoring']['monthly_active_loans_payment_sum'])) 
-                        $sheet->setCellValue('Y' . $i, $nbkiParams['extra_scoring']['monthly_active_loans_payment_sum']);
+                        $sheet->setCellValue('AA' . $i, $nbkiParams['extra_scoring']['monthly_active_loans_payment_sum']);
                     if (isset($nbkiParams['extra_scoring']['overdue_amount_sum'])) 
-                        $sheet->setCellValue('Z' . $i, $nbkiParams['extra_scoring']['overdue_amount_sum']);
+                        $sheet->setCellValue('AB' . $i, $nbkiParams['extra_scoring']['overdue_amount_sum']);
                     if (isset($nbkiParams['extra_scoring']['current_year_max_overdue_amount'])) 
-                        $sheet->setCellValue('AA' . $i, $nbkiParams['extra_scoring']['current_year_max_overdue_amount']);
+                        $sheet->setCellValue('AC' . $i, $nbkiParams['extra_scoring']['current_year_max_overdue_amount']);
                     if (isset($nbkiParams['extra_scoring']['microloans_over_last_90_days_count'])) 
-                        $sheet->setCellValue('AB' . $i, $nbkiParams['extra_scoring']['microloans_over_last_90_days_count']);
+                        $sheet->setCellValue('AD' . $i, $nbkiParams['extra_scoring']['microloans_over_last_90_days_count']);
                     if (isset($nbkiParams['extra_scoring']['active_microloan_count'])) 
-                        $sheet->setCellValue('AC' . $i, $nbkiParams['extra_scoring']['active_microloan_count']);
+                        $sheet->setCellValue('AE' . $i, $nbkiParams['extra_scoring']['active_microloan_count']);
                     
                     if (isset($nbkiParams['extra_scoring']['active_pay_day_loans_count'])) 
-                        $sheet->setCellValue('AD' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_count']);
+                        $sheet->setCellValue('AF' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_count']);
                     if (isset($nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count'])) 
-                        $sheet->setCellValue('AE' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count']);
+                        $sheet->setCellValue('AG' . $i, $nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count']);
                     if (isset($nbkiParams['extra_scoring']['active_credit_lines_count'])) 
-                        $sheet->setCellValue('AF' . $i, $nbkiParams['extra_scoring']['active_credit_lines_count']);
+                        $sheet->setCellValue('AH' . $i, $nbkiParams['extra_scoring']['active_credit_lines_count']);
                     if (isset($nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count'])) 
-                        $sheet->setCellValue('AG' . $i, $nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count']);
+                        $sheet->setCellValue('AI' . $i, $nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count']);
 
                     if (isset($nbkiParams['extra_scoring']['active_credit_cards_count'])) 
-                        $sheet->setCellValue('AH' . $i, $nbkiParams['extra_scoring']['active_credit_cards_count']);
+                        $sheet->setCellValue('AJ' . $i, $nbkiParams['extra_scoring']['active_credit_cards_count']);
                     if (isset($nbkiParams['extra_scoring']['active_other_loans_count'])) 
-                        $sheet->setCellValue('AI' . $i, $nbkiParams['extra_scoring']['active_other_loans_count']);
+                        $sheet->setCellValue('AK' . $i, $nbkiParams['extra_scoring']['active_other_loans_count']);
                     
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count'])) 
-                        $sheet->setCellValue('AJ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count']);
+                        $sheet->setCellValue('AL' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share'])) 
-                        $sheet->setCellValue('AK' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share']);
+                        $sheet->setCellValue('AM' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share'])) 
-                        $sheet->setCellValue('AL' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share']);
+                        $sheet->setCellValue('AN' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max'])) 
-                        $sheet->setCellValue('AM' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max']);
+                        $sheet->setCellValue('AO' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit'])) 
-                        $sheet->setCellValue('AN' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit']);
+                        $sheet->setCellValue('AP' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit'])) 
-                        $sheet->setCellValue('AO' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit']);
+                        $sheet->setCellValue('AQ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit'])) 
-                        $sheet->setCellValue('AP' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit']);
+                        $sheet->setCellValue('AR' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit'])) 
-                        $sheet->setCellValue('AQ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit']);
+                        $sheet->setCellValue('AS' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max'])) 
-                        $sheet->setCellValue('AR' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max']);
+                        $sheet->setCellValue('AT' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit'])) 
-                        $sheet->setCellValue('AS' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit']);
+                        $sheet->setCellValue('AU' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed'])) 
-                        $sheet->setCellValue('AT' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed']);
+                        $sheet->setCellValue('AV' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del'])) 
-                        $sheet->setCellValue('AU' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del']);
+                        $sheet->setCellValue('AW' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum'])) 
-                        $sheet->setCellValue('AV' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum']);
+                        $sheet->setCellValue('AX' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay'])) 
-                        $sheet->setCellValue('AW' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay']);
+                        $sheet->setCellValue('AY' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay'])) 
-                        $sheet->setCellValue('AX' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay']);
+                        $sheet->setCellValue('AZ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum'])) 
-                        $sheet->setCellValue('AY' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum']);
+                        $sheet->setCellValue('BA' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum']);
                     if (isset($nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share'])) 
-                        $sheet->setCellValue('AZ' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share']);
+                        $sheet->setCellValue('BB' . $i, $nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share']);
                                         
                 }
 
@@ -3184,11 +3188,11 @@ class StatisticsController extends Controller
                 }
 
 
-                $sheet->setCellValue('BA' . $i, $delay_last_contract);
-                $sheet->setCellValue('BB' . $i, $count_contracts_3000_500_0);
-                $sheet->setCellValue('BC' . $i, $all_percents_summ);
-                $sheet->setCellValue('BD' . $i, $period_peni_biggest);
-                $sheet->setCellValue('BE' . $i, $period_peni_last);
+                $sheet->setCellValue('BC' . $i, $delay_last_contract);
+                $sheet->setCellValue('BD' . $i, $count_contracts_3000_500_0);
+                $sheet->setCellValue('BE' . $i, $all_percents_summ);
+                $sheet->setCellValue('BF' . $i, $period_peni_biggest);
+                $sheet->setCellValue('BG' . $i, $period_peni_last);
 
                 $i++;
             }
