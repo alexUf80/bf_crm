@@ -110,6 +110,8 @@ class Orders extends Core
         us.firstname,
         us.patronymic,
         us.birth,
+        us.passport_serial,
+        us.faktaddress_id,
         os.id as order_id,
         case when os.`client_status` IN ('pk', 'crm') then 'old' ELSE 'new' END as client_status,
         os.`date`,
@@ -123,6 +125,11 @@ class Orders extends Core
 
         $orders = $this->db->results();
 
+        foreach ($orders as $order) {
+            $faktaddress = $this->Addresses->get_address($order->faktaddress_id);
+            $order->region = $faktaddress->region.' '.$faktaddress->region_type;
+        }
+       
         return $orders;
     }
     
