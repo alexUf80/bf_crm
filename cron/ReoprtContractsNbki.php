@@ -42,9 +42,22 @@ class ReoprtContractsNbki extends Core
                     $data = file_get_contents(str_replace('log_report','log_xml', $nbkiParams['report_url']));
                     $xml = simplexml_load_string($data);
                     $temp = json_decode(json_encode($xml), true);
-                    if (isset($temp['preply']['report'])) {
-                        $nbkiParams['json'] = $temp['preply']['report'];
+                    // if (isset($temp['preply']['report'])) {
+                    //     $nbkiParams['json'] = $temp['preply']['report'];
+                    // }
+
+                    if (isset(json_decode(json_encode($xml), true)['product'])) {
+                        if (isset(json_decode(json_encode($xml), true)['product']['preply']['report'])) {
+                            var_dump('1');
+                            $nbkiParams['json'] = json_decode(json_encode($xml), true)['product']['preply']['report'];
+                        }
                     }
+                    else{
+                        if (isset(json_decode(json_encode($xml), true)['preply']['report'])) {
+                            $nbkiParams['json'] = json_decode(json_encode($xml), true)['preply']['report'];
+                        }
+                    }
+            
                 }
                 
                 if (!empty($nbkiParams)) {
@@ -255,10 +268,11 @@ class ReoprtContractsNbki extends Core
 
                 // $reoprt_contracts_nbki_id = $this->ReoprtContractsNbki->add_reoprt_nbki($add);
                 ReoprtContractsNbkiORM::insert($add);
-                echo $contract->id.'<hr>';
+                echo $contract->order_id.'<hr>';
+
 
                 $i++;
-                if ($i > 5) {
+                if ($i > 100) {
                     return;
                 }
 
