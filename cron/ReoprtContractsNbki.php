@@ -234,13 +234,13 @@ class ReoprtContractsNbki extends Core
                         'variables' => $json,
                     );
 
-                    $reoprt_contracts_nbki_id = $this->ReoprtContractsNbki->add_reoprt_nbki($add);
+                    // $reoprt_contracts_nbki_id = $this->ReoprtContractsNbki->add_reoprt_nbki($add);
+                    ReoprtContractsNbkiORM::insert($add);
 
-                    if ($i > 0) {
+                    echo $contract->id.'<hr>';
+                    if ($i > 10) {
                         return;
                     }
-
-                    die;
 
                 }
             }
