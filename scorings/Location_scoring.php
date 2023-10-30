@@ -30,7 +30,11 @@ class Location_scoring extends Core
                 }
                 else
                 {
+                    $order_Regregion = $order->Regregion;
                     $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+                    if(isset(explode(' ', $order->Regregion)[1]) && mb_strtolower(explode(' ', $order->Regregion)[1]) == 'обл'){
+                        $order->Regregion = explode(' ', $order->Regregion)[0];
+                    }
                 
                     $score = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $exception_regions);
                     
