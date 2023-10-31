@@ -2933,7 +2933,7 @@ class StatisticsController extends Controller
                 $sheet->setCellValue('E' . $i, $order->lastname . ' ' . $order->firstname . ' ' . $order->patronymic);
                 $sheet->setCellValue('F' . $i, $order->birth);
                 $sheet->setCellValue('G' . $i, $order->passport_serial);
-                $sheet->setCellValue('H' . $i, $order_region);
+                $sheet->setCellValue('H' . $i, $order->region);
 
                 $result_scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id, 'type' => 'location'));
                 $result_scorings_end = end($result_scorings);
@@ -2941,7 +2941,7 @@ class StatisticsController extends Controller
                 $region_type_arr_sliced = array_slice($result_scorings_end_arr, -2);
                 $region_type = implode(" ", $region_type_arr_sliced);
 
-                $sheet->setCellValue('I' . $i, $region_typ);
+                $sheet->setCellValue('I' . $i, $region_type);
                 $sheet->setCellValue('J' . $i, $order->status);
                 $sheet->setCellValue('K' . $i, $order->reject_reason);
                 $sheet->setCellValue('L' . $i, ' '.(string)$user->inn);
