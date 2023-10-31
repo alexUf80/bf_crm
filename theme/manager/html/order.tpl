@@ -2239,7 +2239,7 @@
                                         <div class="col-md-4 ">
                                             <div class="mb-3 border  {if $penalties['scorings'] && $penalties['scorings']->status!=3}card-outline-danger{/if}">
                                                 <h5 class=" card-header">
-                                                    <span class="text-white ">Скоринги11</span>
+                                                    <span class="text-white ">Скоринги</span>
                                                     <span class="float-right">
                                                             {penalty_button penalty_block='scorings'}
                                                         {if ($order->status == 1 && ($manager->id == $order->manager_id)) || $is_developer}
