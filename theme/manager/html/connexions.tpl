@@ -251,6 +251,15 @@
         <td>
             <h4>IP при последнем входе</h4>
             <h6>{$results['last_ip']->search}</h6>
+            <hr>
+            <h4>Браузер при последнем входе</h4>
+            <h6>
+                {if isset($results['last_user_agent']->search)}
+                    {$results['last_user_agent']->search}
+                {else}
+                    <span style="color:red">Нет информации</span>
+                {/if}
+            </h6>
         </td>
         <td class="p-0">
             {if empty($results['last_ip']->found)}
@@ -262,16 +271,37 @@
                         <td class="jsgrid-cell bg-info text-white" width="60%">Клиент</td>
                     </tr>
                     {foreach $results['last_ip']->found['last_ip'] as $item}
-                        <tr>
-                            <td class="jsgrid-cell">
-                                IP при последнем входе
-                            </td>
-                            <td class="jsgrid-cell">
-                                <a href="client/{$item->id}" target="_blank">
-                                    {$item->lastname} {$item->firstname} {$item->patronymic}
-                                </a>
-                            </td>
-                        </tr>
+                        {if isset($results['last_user_agent']->search)}
+                            {foreach $results['last_user_agent']->found['last_user_agent'] as $item1}
+                                {if $item->id == $item1->id}
+                                    <tr>
+                                        <td class="jsgrid-cell">
+                                            IP и браузер при последнем входе
+                                        </td>
+                                        <td class="jsgrid-cell">
+                                            <a href="client/{$item->id}" target="_blank">
+                                                {$item->lastname} {$item->firstname} {$item->patronymic}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {/if}
+                            {/foreach}
+                        {else}
+                            <tr>
+                                <td class="jsgrid-cell">
+                                    IP 
+                                    {if !isset($results['last_user_agent']->search)}
+                                        <span style="color:red">(без браузера)</span>
+                                    {/if}
+                                    при регистрации
+                                </td>
+                                <td class="jsgrid-cell">
+                                    <a href="client/{$item->id}" target="_blank">
+                                        {$item->lastname} {$item->firstname} {$item->patronymic}
+                                    </a>
+                                </td>
+                            </tr>
+                        {/if}
                     {/foreach}
                 </table>
             {/if}
