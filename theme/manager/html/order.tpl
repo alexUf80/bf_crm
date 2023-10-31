@@ -2239,7 +2239,7 @@
                                         <div class="col-md-4 ">
                                             <div class="mb-3 border  {if $penalties['scorings'] && $penalties['scorings']->status!=3}card-outline-danger{/if}">
                                                 <h5 class=" card-header">
-                                                    <span class="text-white ">Скоринги</span>
+                                                    <span class="text-white ">Скоринги11</span>
                                                     <span class="float-right">
                                                             {penalty_button penalty_block='scorings'}
                                                         {if ($order->status == 1 && ($manager->id == $order->manager_id)) || $is_developer}
@@ -2283,6 +2283,11 @@
                                                                               title="{$scorings[$scoring_type->name]->string_result}">
                                                                             {$scorings[$scoring_type->name]->string_result}
                                                                         </span>
+                                                                    {if $scoring_type->name == 'fns'}
+                                                                        {if $scorings[$scoring_type->name]->body == 'ИНН уже указан у клиента'}
+                                                                            <div style="color: green;">Без запроса в ФНС</div >
+                                                                        {/if}
+                                                                    {/if}
                                                                     {if $scoring_type->name == 'nbki'}
                                                                         {if isset($number_of_active)}
                                                                             <span class="mail-desc"
