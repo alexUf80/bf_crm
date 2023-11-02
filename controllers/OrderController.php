@@ -720,6 +720,15 @@ class OrderController extends Controller
         if ($order->status != 1)
             return array('error' => 'Неверный статус заявки, возможно Заявка уже одобрена или получен отказ');
 
+
+        $contract = $this->contracts->get_contract($order->contract_id);
+        if (!isset($contract)) 
+            $contract = $this->contracts->get_order_contract($order->order_id);
+        
+        if (isset($contract)) 
+            return array('error' => 'По этой заявке уже есть контракт!');
+
+            
         $update = array(
             'status' => 2,
             'manager_id' => $this->manager->id,
