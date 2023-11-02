@@ -81,8 +81,8 @@ RewriteRule ^penalties/?$               index.php?module=PenaltiesController  [L
 RewriteRule ^promocodes/?$              index.php?module=PromocodesController  [L,QSA]
 RewriteRule ^services_cost/?$           index.php?module=ServicesCostController  [L,QSA]
 
-RewriteRule ^statistics/?$              index.php?module=StatisticsController&action=main  [L,QSA]
-RewriteRule ^statistics/([^/]*)/?$      index.php?module=StatisticsController&action=$1  [L,QSA]
+RewriteRule ^statistics/?$              index.php?module=StatisticsController1&action=main  [L,QSA]
+RewriteRule ^statistics/([^/]*)/?$      index.php?module=StatisticsController1&action=$1  [L,QSA]
 RewriteRule ^dashboard/?$               index.php?module=DashboardController  [L,QSA]
 
 RewriteRule ^sms_templates/?$           index.php?module=SmsTemplatesController  [L,QSA]

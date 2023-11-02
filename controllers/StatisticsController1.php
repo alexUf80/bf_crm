@@ -6,7 +6,7 @@ error_reporting(0);
 
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-class StatisticsController extends Controller
+class StatisticsController1 extends Controller
 {
     public function fetch()
     {
