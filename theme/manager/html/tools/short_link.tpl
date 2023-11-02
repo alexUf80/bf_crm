@@ -30,11 +30,9 @@
                     "id_link": iditem 
                     },
                     success: function (ok) {
-
-                        
+                        location.reload();
                     }
                 });
-                location.reload();
             });
 
             $('#form_add_item').on('submit', function (e) {
