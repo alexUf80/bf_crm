@@ -225,6 +225,10 @@
                                         <label class="control-label">Список желтых регионов</label>
                                         <textarea name="settings[{$type->id}][params][yellow-regions]" class="form-control">{$type->params['yellow-regions']}</textarea>
                                     </div>
+                                    <div class="form-group ">
+                                        <label class="control-label">Список серых регионов</label>
+                                        <textarea name="settings[{$type->id}][params][gray-regions]" class="form-control">{$type->params['gray-regions']}</textarea>
+                                    </div>
                                 </div>
                 
                                 {elseif $type->name == 'fssp' || $type->name == 'fssp2'}
