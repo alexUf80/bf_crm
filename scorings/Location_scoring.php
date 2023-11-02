@@ -44,6 +44,9 @@ class Location_scoring extends Core
                     $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
                     $yellow = in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $yellow_regions);
                     
+                    $gray_regions = array_map('trim', explode(',', $scoring_type->params['gray-regions']));
+                    $gray = in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $gray_regions);
+                    
                     $update = array(
                         'status' => 'completed',
                         'body' => serialize(array('region' => $order->Regregion)),
@@ -56,6 +59,9 @@ class Location_scoring extends Core
                         }
                         elseif ($red) {
                             $update['string_result'] .= ". КРАСНАЯ ЗОНА";
+                        }
+                        elseif ($gray) {
+                            $update['string_result'] .= ". СЕРАЯ ЗОНА";
                         }
                         else {
                             $update['string_result'] .= ". ЗЕЛЕНАЯ ЗОНА";
