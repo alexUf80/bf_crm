@@ -252,7 +252,12 @@ class ToolsController extends Controller
     {
         $id = $this->request->post('id_link');
 
-        $this->shortlink->del_link($id);
+        if ($this->shortlink->del_link($id)) {
+            echo json_encode(['resp' => 'success']);
+        } else {
+            echo json_encode(['resp' => 'error']);
+        }
+        exit;
     }
 
     private function action_reminders()

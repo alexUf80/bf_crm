@@ -47,7 +47,7 @@ class ShortLink extends Core
 		$query = $this->db->placehold("
             DELETE FROM __short_link WHERE id = ?
         ", (int)$id);
-        $this->db->query($query);
+        return $this->db->query($query);
 	}
 
 	public function update_link($id, $data)
