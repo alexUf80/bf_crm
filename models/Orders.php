@@ -127,7 +127,9 @@ class Orders extends Core
 
         foreach ($orders as $order) {
             $faktaddress = $this->Addresses->get_address($order->faktaddress_id);
-            $order->region = $faktaddress->region.' '.$faktaddress->region_type;
+            $order->region = $faktaddress->region;
+            $order->region_id = $faktaddress->id;
+            $order->zone = $faktaddress->zone;
         }
        
         return $orders;

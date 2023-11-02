@@ -18,8 +18,8 @@ class Location_scoring extends Core
         {
             if ($order = $this->orders->get_order((int)$scoring->order_id))
             {
-                $regaddress = $this->Addresses->get_address($order->regaddress_id);
-                $order->Regregion = $regaddress->region;
+                $faktaddress = $this->Addresses->get_address($order->faktaddress_id);
+                $order->Regregion = $faktaddress->region;
 
                 if (empty($order->Regregion))
                 {
@@ -30,11 +30,28 @@ class Location_scoring extends Core
                 }
                 else
                 {
+                    $order->Regregion = trim($order->Regregion);
                     $order_Regregion = $order->Regregion;
-                    $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
-                    if(isset(explode(' ', $order->Regregion)[1]) && mb_strtolower(explode(' ', $order->Regregion)[1]) == 'обл'){
-                        $order->Regregion = explode(' ', $order->Regregion)[0];
+                    if(mb_substr($order->Regregion, -2) == " г" ||
+                    mb_substr($order->Regregion, 0, 2) == "г " ||
+                    mb_substr($order->Regregion, -4) == " обл" ||
+                    mb_substr($order->Regregion, -5) == " обл." ||
+                    mb_substr($order->Regregion, -8) == " область" ||
+                    mb_substr($order->Regregion, -8) == " ОБЛАСТЬ" ||
+                    mb_substr($order->Regregion, -5) == " край" ||
+                    mb_substr($order->Regregion, -5) == " Край" ||
+                    mb_substr($order->Regregion, -11) == " республика" ||
+                    mb_substr($order->Regregion, -11) == " Республика" ||
+                    mb_substr($order->Regregion, -5) == " Респ" ||
+                    mb_substr($order->Regregion, 0, 5) == "Респ " ||
+                    mb_substr($order->Regregion, 0, 11) == "Республика " ){
+                        $order_Regregion = str_replace(["г ", " г", " область", " ОБЛАСТЬ", " обл.", " обл", " край", " Край", " республика", " Республика", " Респ", "Респ ", "Республика "], "", $order->Regregion);
                     }
+                    $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+                    $order->Regregion = $order_Regregion;
+                    // if(isset(explode(' ', $order->Regregion)[1]) && mb_strtolower(explode(' ', $order->Regregion)[1]) == 'обл'){
+                    //     $order->Regregion = explode(' ', $order->Regregion)[0];
+                    // }
                 
                     $score = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $exception_regions);
                     
@@ -52,24 +69,31 @@ class Location_scoring extends Core
                         'body' => serialize(array('region' => $order->Regregion)),
                         'success' => $score
                     );
+                    $zone_result = '';
                     if ($score){
                         $update['string_result'] = 'Допустимый регион: '.$order->Regregion;
                         if($yellow){
                             $update['string_result'] .= ". ЖЕЛТАЯ ЗОНА";
+                            $zone_result = "ЖЕЛТАЯ ЗОНА";
                         }
                         elseif ($red) {
                             $update['string_result'] .= ". КРАСНАЯ ЗОНА";
+                            $zone_result = "КРАСНАЯ ЗОНА";
                         }
                         elseif ($gray) {
                             $update['string_result'] .= ". СЕРАЯ ЗОНА";
+                            $zone_result = "СЕРАЯ ЗОНА";
                         }
                         else {
-                            $update['string_result'] .= ". ЗЕЛЕНАЯ ЗОНА";
+                            $update['string_result'] .= ". ЗЕЛЕНАЯ ЗОНА ";
+                            $zone_result = "ЗЕЛЕНАЯ ЗОНА";
                         }
 
                     }
-                    else
+                    else{
                         $update['string_result'] = 'Недопустимый регион: '.$order->Regregion;
+                        $zone_result = "ОЧЕНЬ КРАСНАЯ ЗОНА";
+                    }
 
                 }
                 
@@ -82,8 +106,12 @@ class Location_scoring extends Core
                 );
             }
             
-            if (!empty($update))
+            if (!empty($update)){
                 $this->scorings->update_scoring($scoring_id, $update);
+
+                $address['zone'] = $zone_result;
+                $this->Addresses->update_address($faktaddress->id, $address);
+            }
             
             return $update;
 
