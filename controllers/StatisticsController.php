@@ -2941,6 +2941,85 @@ class StatisticsController extends Controller
                 $region_type_arr_sliced = array_slice($result_scorings_end_arr, -2);
                 $region_type = implode(" ", $region_type_arr_sliced);
 
+                // // Добавление в таблицу адресов зон
+                // if(!$region_type){
+                //     $scoring_type = $this->scorings->get_type('location');
+
+                //     $order->region = trim($order->region);
+                //     $order_Regregion = $order->region;
+                //     if(mb_substr($order->region, -2) == " г" ||
+                //     mb_substr($order->region, 0, 2) == "г " ||
+                //     mb_substr($order->region, -4) == " обл" ||
+                //     mb_substr($order->region, -5) == " обл." ||
+                //     mb_substr($order->region, -8) == " область" ||
+                //     mb_substr($order->region, -8) == " ОБЛАСТЬ" ||
+                //     mb_substr($order->region, -5) == " край" ||
+                //     mb_substr($order->region, -5) == " Край" ||
+                //     mb_substr($order->region, -11) == " республика" ||
+                //     mb_substr($order->region, -11) == " Республика" ||
+                //     mb_substr($order->region, -5) == " Респ" ||
+                //     mb_substr($order->region, 0, 5) == "Респ " ||
+                //     mb_substr($order->region, 0, 11) == "Республика " ){
+                //         // var_dump($order->user_id);
+                //         $order_Regregion = str_replace(["г ", " г", " область", " ОБЛАСТЬ", " обл.", " обл", " край", " Край", " республика", " Республика", " Респ", "Респ ", "Республика "], "", $order->region);
+                //     }
+                //     $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+                //     if(isset(explode(' ', $order_Regregion)[1]) && mb_strtolower(explode(' ', $order_Regregion)[1]) == 'обл'){
+                //         $order_Regregion = explode(' ', $order_Regregion)[0];
+                //     }
+
+                //     $green = 0;
+                //     $red = 0;
+                //     $yellow = 0;
+                //     $gray = 0;
+                //     $stop = 0;
+
+                //     $geen_regions = ['москва', 'удмуртская', 'мордовия', 'ярославская', 'архангельская', 'московская', 'башкортостан', 'новосибирская', 'орловская', 'хабаровский', 'костромская', 'новгородская', 'тверская', 'астраханская', 'рязанская', 'нижегородская', 'владимирская', 'томская', 'пензенская', 'камчатский', 'белгордская'];
+                //     $green = in_array(mb_strtolower(trim($order_Regregion), 'utf8'), $geen_regions);
+
+                //     $red_regions = array_map('trim', explode(',', $scoring_type->params['red-regions']));
+                //     $red = in_array(mb_strtolower(trim($order_Regregion), 'utf8'), $red_regions);
+
+                //     $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
+                //     $yellow = in_array(mb_strtolower(trim($order_Regregion), 'utf8'), $yellow_regions);
+                    
+                //     $gray_regions = array_map('trim', explode(',', $scoring_type->params['gray-regions']));
+                //     $gray = in_array(mb_strtolower(trim($order_Regregion), 'utf8'), $gray_regions);
+
+                //     $stop_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+                //     $stop = in_array(mb_strtolower(trim($order_Regregion), 'utf8'), $stop_regions);
+
+                //     if($yellow){
+                //         $region_type = "ЖЕЛТАЯ ЗОНА";
+                //     }
+                //     elseif ($red) {
+                //         $region_type = "КРАСНАЯ ЗОНА";
+                //     }
+                //     elseif ($gray) {
+                //         $region_type = "СЕРАЯ ЗОНА";
+                //     }
+                //     elseif ($green) {
+                //         $region_type = "ЗЕЛЕНАЯ ЗОНА";
+                //     }
+                //     elseif ($stop) {
+                //         $region_type = "ОЧЕНЬ КРАСНАЯ ЗОНА";
+                //     }
+                //     else{
+                //         $region_type = "---";
+                //     }
+                // }
+
+                // $regaddress['zone'] = $region_type;
+                // $this->Addresses->update_address($order->region_id, $regaddress);
+
+                // // if ($region_type == "---") {
+                // //     echo "<hr>";
+                // //     echo "<hr>";
+                // //     echo $order->date." - ".$order->user_id." - ".$order->region_id." - ".$order->region;
+                // //     echo "<hr>";
+                // // }
+
+                // $region_type = $order->zone;
                 $sheet->setCellValue('I' . $i, $region_type);
                 $sheet->setCellValue('J' . $i, $order->status);
                 $sheet->setCellValue('K' . $i, $order->reject_reason);
