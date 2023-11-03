@@ -2933,7 +2933,7 @@ class StatisticsController1 extends Controller
                 $sheet->setCellValue('E' . $i, $order->lastname . ' ' . $order->firstname . ' ' . $order->patronymic);
                 $sheet->setCellValue('F' . $i, $order->birth);
                 $sheet->setCellValue('G' . $i, $order->passport_serial);
-                $sheet->setCellValue('H' . $i, $order->region);
+                // $sheet->setCellValue('H' . $i, $order->region);
 
                 // $result_scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id, 'type' => 'location'));
                 // $result_scorings_end = end($result_scorings);
@@ -2943,30 +2943,29 @@ class StatisticsController1 extends Controller
 
                 // // Добавление в таблицу адресов зон<
                 // if(!$region_type){
-                //     $scoring_type = $this->scorings->get_type('location');
+                    $scoring_type = $this->scorings->get_type('location');
 
-                //     $order->region = trim($order->region);
-                //     $order_Regregion = $order->region;
-                //     if(mb_substr($order->region, -2) == " г" ||
-                //     mb_substr($order->region, 0, 2) == "г " ||
-                //     mb_substr($order->region, -4) == " обл" ||
-                //     mb_substr($order->region, -5) == " обл." ||
-                //     mb_substr($order->region, -8) == " область" ||
-                //     mb_substr($order->region, -8) == " ОБЛАСТЬ" ||
-                //     mb_substr($order->region, -5) == " край" ||
-                //     mb_substr($order->region, -5) == " Край" ||
-                //     mb_substr($order->region, -11) == " республика" ||
-                //     mb_substr($order->region, -11) == " Республика" ||
-                //     mb_substr($order->region, -5) == " Респ" ||
-                //     mb_substr($order->region, 0, 5) == "Респ " ||
-                //     mb_substr($order->region, 0, 11) == "Республика " ){
-                //         // var_dump($order->user_id);
-                //         $order_Regregion = str_replace(["г ", " г", " область", " ОБЛАСТЬ", " обл.", " обл", " край", " Край", " республика", " Республика", " Респ", "Респ ", "Республика "], "", $order->region);
-                //     }
-                //     $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
-                //     if(isset(explode(' ', $order_Regregion)[1]) && mb_strtolower(explode(' ', $order_Regregion)[1]) == 'обл'){
-                //         $order_Regregion = explode(' ', $order_Regregion)[0];
-                //     }
+                    $order->region = trim($order->region);
+                    $order_Regregion = $order->region;
+                    if(mb_substr($order->region, -2) == " г" ||
+                    mb_substr($order->region, 0, 2) == "г " ||
+                    mb_substr($order->region, -4) == " обл" ||
+                    mb_substr($order->region, -5) == " обл." ||
+                    mb_substr($order->region, -8) == " область" ||
+                    mb_substr($order->region, -8) == " ОБЛАСТЬ" ||
+                    mb_substr($order->region, -5) == " край" ||
+                    mb_substr($order->region, -5) == " Край" ||
+                    mb_substr($order->region, -11) == " республика" ||
+                    mb_substr($order->region, -11) == " Республика" ||
+                    mb_substr($order->region, -5) == " Респ" ||
+                    mb_substr($order->region, 0, 5) == "Респ " ||
+                    mb_substr($order->region, 0, 11) == "Республика " ){
+                        $order_Regregion = str_replace(["г ", " г", " область", " ОБЛАСТЬ", " обл.", " обл", " край", " Край", " республика", " Республика", " Респ", "Респ ", "Республика "], "", $order->region);
+                    }
+                    // $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+                    // if(isset(explode(' ', $order_Regregion)[1]) && mb_strtolower(explode(' ', $order_Regregion)[1]) == 'обл'){
+                    //     $order_Regregion = explode(' ', $order_Regregion)[0];
+                    // }
 
                 //     $green = 0;
                 //     $red = 0;
@@ -3020,6 +3019,7 @@ class StatisticsController1 extends Controller
                 // // }
                 // // Добавление в таблицу адресов зон>
 
+                $sheet->setCellValue('H' . $i, $order_Regregion);
                 $region_type = $order->zone;
                 $sheet->setCellValue('I' . $i, $region_type);
                 $sheet->setCellValue('J' . $i, $order->status);
