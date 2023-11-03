@@ -2935,13 +2935,13 @@ class StatisticsController1 extends Controller
                 $sheet->setCellValue('G' . $i, $order->passport_serial);
                 $sheet->setCellValue('H' . $i, $order->region);
 
-                $result_scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id, 'type' => 'location'));
-                $result_scorings_end = end($result_scorings);
-                $result_scorings_end_arr = explode(" ", $result_scorings_end->string_result);
-                $region_type_arr_sliced = array_slice($result_scorings_end_arr, -2);
-                $region_type = implode(" ", $region_type_arr_sliced);
+                // $result_scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id, 'type' => 'location'));
+                // $result_scorings_end = end($result_scorings);
+                // $result_scorings_end_arr = explode(" ", $result_scorings_end->string_result);
+                // $region_type_arr_sliced = array_slice($result_scorings_end_arr, -2);
+                // $region_type = implode(" ", $region_type_arr_sliced);
 
-                // // Добавление в таблицу адресов зон
+                // // Добавление в таблицу адресов зон<
                 // if(!$region_type){
                 //     $scoring_type = $this->scorings->get_type('location');
 
@@ -3018,8 +3018,9 @@ class StatisticsController1 extends Controller
                 // //     echo $order->date." - ".$order->user_id." - ".$order->region_id." - ".$order->region;
                 // //     echo "<hr>";
                 // // }
+                // // Добавление в таблицу адресов зон>
 
-                // $region_type = $order->zone;
+                $region_type = $order->zone;
                 $sheet->setCellValue('I' . $i, $region_type);
                 $sheet->setCellValue('J' . $i, $order->status);
                 $sheet->setCellValue('K' . $i, $order->reject_reason);
