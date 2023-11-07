@@ -124,6 +124,11 @@
                                 <th>ФИО</th>
                                 <th>Телефон</th>
                                 <th>Email</th>
+                                <th>Дата рождения</th>
+                                <th>ИНН</th>
+                                <th>Паспорт</th>
+                                <th>Регион выдачи</th>
+                                <th>Зона качества</th>
                                 <th>Менеджер</th>
                                 <th>Причина</th>
                                 <th>Номер операции</th>
@@ -147,6 +152,21 @@
                                 </td>
                                 <td>
                                     {$order->email}
+                                </td>
+                                <td>
+                                    {$order->birth}
+                                </td>
+                                <td>
+                                    {$order->inn}
+                                </td>
+                                <td>
+                                    {$order->passport_serial}
+                                </td>
+                                <td>
+                                    {$order->region}
+                                </td>
+                                <td>
+                                   {$order->zone}
                                 </td>
                                 <td>{$managers[$order->manager_id]->name|escape}</td>
                                 <td>

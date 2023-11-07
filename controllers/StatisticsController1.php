@@ -509,6 +509,9 @@ class StatisticsController1 extends Controller
                     u.email,
                     u.regaddress_id,
                     u.faktaddress_id,
+                    u.birth,
+                    u.inn,
+                    u.passport_serial,
                     ts.operation, 
                     ts.checked,
                     o.promocode_id
@@ -530,6 +533,12 @@ class StatisticsController1 extends Controller
                 $orders[$o->order_id] = $o;
                 $promocode = $this->promocodes->get($o->promocode_id);
                 $orders[$o->order_id]->promocode = $promocode->code;
+            }
+
+            foreach ($orders as $order) {
+                $faktaddress = $this->Addresses->get_address($order->faktaddress_id);
+                $order->region = $faktaddress->region;
+                $order->zone = $faktaddress->zone;
             }
 
             if (!empty($orders))
@@ -585,12 +594,17 @@ class StatisticsController1 extends Controller
                 $active_sheet->getColumnDimension('C')->setWidth(45);
                 $active_sheet->getColumnDimension('D')->setWidth(20);
                 $active_sheet->getColumnDimension('E')->setWidth(20);
-                $active_sheet->getColumnDimension('F')->setWidth(10);
+                $active_sheet->getColumnDimension('F')->setWidth(15);
                 $active_sheet->getColumnDimension('G')->setWidth(10);
-                $active_sheet->getColumnDimension('H')->setWidth(30);
+                $active_sheet->getColumnDimension('H')->setWidth(10);
                 $active_sheet->getColumnDimension('I')->setWidth(15);
-                $active_sheet->getColumnDimension('J')->setWidth(15);
-                $active_sheet->getColumnDimension('K')->setWidth(15);
+                $active_sheet->getColumnDimension('J')->setWidth(10);
+                $active_sheet->getColumnDimension('K')->setWidth(20);
+                $active_sheet->getColumnDimension('L')->setWidth(20);
+                $active_sheet->getColumnDimension('M')->setWidth(30);
+                $active_sheet->getColumnDimension('N')->setWidth(15);
+                $active_sheet->getColumnDimension('O')->setWidth(15);
+                $active_sheet->getColumnDimension('P')->setWidth(15);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Заявка');
@@ -599,12 +613,17 @@ class StatisticsController1 extends Controller
                 $active_sheet->setCellValue('E1', 'Адрес проживания');
                 $active_sheet->setCellValue('F1', 'Телефон');
                 $active_sheet->setCellValue('G1', 'Email');
-                $active_sheet->setCellValue('H1', 'Менеджер');//---
-                $active_sheet->setCellValue('I1', 'Причина');
-                $active_sheet->setCellValue('J1', 'Скориста');//---
-                $active_sheet->setCellValue('K1', 'Источник');//---
-                $active_sheet->setCellValue('L1', 'Операция');//---
-                $active_sheet->setCellValue('M1', 'Промокод');//---
+                $active_sheet->setCellValue('H1', 'Дата рождения');
+                $active_sheet->setCellValue('I1', 'ИНН');
+                $active_sheet->setCellValue('J1', 'Паспорт');
+                $active_sheet->setCellValue('K1', 'Регион выдачи');
+                $active_sheet->setCellValue('L1', 'Зона качества');
+                $active_sheet->setCellValue('M1', 'Менеджер');//---
+                $active_sheet->setCellValue('N1', 'Причина');
+                $active_sheet->setCellValue('O1', 'Скориста');//---
+                $active_sheet->setCellValue('P1', 'Источник');//---
+                $active_sheet->setCellValue('Q1', 'Операция');//---
+                $active_sheet->setCellValue('R1', 'Промокод');//---
 
                 $i = 2;
                 foreach ($orders as $contract) {
@@ -622,12 +641,18 @@ class StatisticsController1 extends Controller
                     $active_sheet->setCellValue('E' . $i, $faktaddress);
                     $active_sheet->setCellValue('F' . $i, $contract->phone_mobile);
                     $active_sheet->setCellValue('G' . $i, $contract->email);
-                    $active_sheet->setCellValue('H' . $i, $managers[$contract->manager_id]->name);
-                    $active_sheet->setCellValue('I' . $i, ($contract->reason_id ? $reasons[$contract->reason_id]->admin_name : $contract->reject_reason));
-                    $active_sheet->setCellValue('J' . $i, empty($contract->scoring) ? '' : $contract->scoring->scorista_ball);
-                    $active_sheet->setCellValue('K' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('L' . $i, $contract->operation . $successTransaction);
-                    $active_sheet->setCellValue('M' . $i, $contract->promocode);
+                    $active_sheet->setCellValue('H' . $i, $contract->birth);
+                    $active_sheet->setCellValue('I' . $i, $contract->inn);
+                    $active_sheet->setCellValue('J' . $i, $contract->passport_serial);
+                    $active_sheet->setCellValue('K' . $i, $contract->region);
+                    $active_sheet->setCellValue('L' . $i, $contract->zone);
+
+                    $active_sheet->setCellValue('M' . $i, $managers[$contract->manager_id]->name);
+                    $active_sheet->setCellValue('N' . $i, ($contract->reason_id ? $reasons[$contract->reason_id]->admin_name : $contract->reject_reason));
+                    $active_sheet->setCellValue('O' . $i, empty($contract->scoring) ? '' : $contract->scoring->scorista_ball);
+                    $active_sheet->setCellValue('P' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('Q' . $i, $contract->operation . $successTransaction);
+                    $active_sheet->setCellValue('R' . $i, $contract->promocode);
 
 
                     $i++;
