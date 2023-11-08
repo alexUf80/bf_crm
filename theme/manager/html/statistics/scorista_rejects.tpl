@@ -172,6 +172,13 @@
                                 <td>
                                     {if $order->reason_id}
                                         {$reasons[$order->reason_id]->admin_name|escape}
+                                        {*}
+                                        {*}
+                                        {if isset($order->fssp_summ)}
+                                            {$order->fssp_summ}
+                                        {/if}
+                                        {*}
+                                        {*}
                                     {else}
                                         {$order->reject_reason|escape}
                                     {/if}

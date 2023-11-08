@@ -539,6 +539,11 @@ class StatisticsController1 extends Controller
                 $faktaddress = $this->Addresses->get_address($order->faktaddress_id);
                 $order->region = $faktaddress->region;
                 $order->zone = $faktaddress->zone;
+                if($order->reason_id == 36){
+                    $scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id, 'type' => 'fssp'))[0];
+                    $body = unserialize($scorings->body)['expSum'];
+                    $order->fssp_summ = $body;
+                }
             }
 
             if (!empty($orders))
