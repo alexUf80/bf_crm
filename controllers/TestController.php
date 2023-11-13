@@ -12,298 +12,374 @@ class TestController extends Controller
     public function fetch()
     {
 
+        // $query = $this->db->placehold("
+        //     SELECT *
+        //     FROM __orders
+        //     WHERE id > 69000
+        //     ORDER BY id
+        // ");
+        // $this->db->query($query);
+        // $orders = $this->db->results();
+
+        
         // $i = 0;
-        // $contracts = ContractsORM::whereIn('status', [2, 3, 4, 7])->get();
-        // foreach ($contracts as $contract) {
-        //     $nbkiScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'nbki')->first();
+        // foreach ($orders as $order) {
+
+        //     $query = $this->db->placehold("
+        //         SELECT *
+        //         FROM __scorings
+        //         WHERE order_id = ?
+        //         AND type = 'nbki'
+        //     ", $order->id);
+        //     $this->db->query($query);
+        //     $nbkiScor = $this->db->results()[0];
+
+        //     $nbki_extra_scoring = $this->NbkiExtraScorings->get($order->id);
+            
+        //     // var_dump($nbki_extra_scoring);
+        //     if ($nbki_extra_scoring != 0) 
+        //         continue;
+                
+        //     $i++;
+        //     if ($i > 10) {
+        //         break;
+        //     }
+
+        //     $add_nbki = [];
+
+        //     $add_nbki['order_id'] = $order->id;
+
+        //     $add_nbki['score_id'] = 0;
+        //     if (!is_null($nbkiScor->id)) {
+        //         $add_nbki['score_id'] = $nbkiScor->id;
+        //     }
             
         //     if ($nbkiScor) {
         //         $nbkiParams = unserialize($nbkiScor->body);
-
-        //         if (isset($nbkiParams['report_url'])) {
-        //             $data = file_get_contents(str_replace('log_report','log_xml', $nbkiParams['report_url']));
-        //             $xml = simplexml_load_string($data);
-        //             $nbkiParams['json'] = json_decode(json_encode($xml), true)['preply']['report'];
+                
+        //         if (isset($nbkiParams['number_of_active'])) {
+        //             if (is_array($nbkiParams['number_of_active'])) 
+        //                 $add_nbki['number_of_active'] = $nbkiParams['number_of_active'][0];
+        //             else
+        //                 $add_nbki['number_of_active'] = $nbkiParams['number_of_active'];
+        //         }
+        //         if (is_null($add_nbki['number_of_active'])){
+        //             $add_nbki['number_of_active'] = 0;
         //         }
 
-
-        //         if (!empty($nbkiParams)) {
-        //             $reoprt_contracts_nbkis = $this->ReoprtContractsNbki->get_reoprt_nbkis(array('order_id' => $contract->order_id));
-
-        //             if (count($reoprt_contracts_nbkis) != 0) {
-        //                 continue;
-        //             }
-
-        //             $i++;
-
-        //             $activeProduct = 0;
-        //             $doneProduct = 0;
-        //             $summ = 0;
-        //             $totalAmtOutstanding = 0;
-        //             $totalAmtOutstandingDone = 0;
-        //             $totalAverPaymtAmt = 0;
-        //             $dolg = 0;
-        //             $mkk = 0;
-        //             $mkkSumm = 0;
-        //             foreach ($nbkiParams['json']['AccountReplyRUTDF'] as $reply) {
-
-        //                 $keys = array_keys($reply['pastdueArrear']);
-        //                 // Если массив ассциативный
-        //                 if ($keys !== array_keys($keys)) {
-        //                     $pastdueArrear = $reply['pastdueArrear'];
-        //                     $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-        //                     if ($past !== '0.00') {
-        //                         $summ = floatval($past);
-        //                     }
-        //                 } else {
-        //                     foreach ($reply['pastdueArrear'] as $pastdueArrear) {
-        //                         $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-        //                         if ($past !== '0.00') {
-        //                             $summ = floatval($past);
-        //                         }
-        //                     }
-        //                 }
-
-
-        //                 if (isset($reply['reportingDt'])) {
-        //                     $curentDateDiff = date_diff(new DateTime(), new DateTime($reply['reportingDt']));
-        //                 }
-        //                 $status = [
-        //                     'name' => 'Активный',
-        //                     'color' => 'black',
-        //                 ];
-        //                 if (
-        //                     (isset($reply['holdCode']) && $reply['holdCode'] == 1) ||
-        //                     $curentDateDiff->days > 33 ||
-        //                     (isset($reply['loanIndicator']) && $reply['loanIndicator'] != 1)
-        //                 ) {
-        //                     $status = [
-        //                         'name' => 'Не определен',
-        //                         'color' => 'silver',
-        //                     ];
-        //                 }
-        //                 if($curentDateDiff->days > 180) {
-        //                     $status = [
-        //                         'name' => 'Архив',
-        //                         'color' => 'silver',
-        //                     ];
-        //                 }
-
-        //                 if($summ > 0) {
-        //                     $status = [
-        //                         'name' => 'Просрочен',
-        //                         'color' => 'red',
-        //                     ];
-        //                 }
-
-        //                 if(isset($reply['loanIndicator']) && in_array($reply['loanIndicator'], [3,11])) {
-        //                     $status = [
-        //                         'name' => 'Прощение долга',
-        //                         'color' => 'red',
-        //                     ];
-        //                 }
-
-        //                 if(isset($reply['submitHold']['holdCode']) && $reply['submitHold']['holdCode'] == 3) {
-        //                     $status = [
-        //                         'name' => 'Списан',
-        //                         'color' => 'red',
-        //                     ];
-        //                 }
-
-        //                 if(
-        //                     (isset($reply['loanIndicator']) && ($reply['loanIndicator'] == 2 || $reply['loanIndicator'] == 1)) ||
-        //                     (isset($reply['sbLoanIndicator']) && $reply['sbLoanIndicator'] == 1) ||
-        //                     (isset($reply['collatRepay']) && $reply['collatRepay'] == 1)
-        //                 ) {
-        //                     $status = [
-        //                         'name' => 'Счет закрыт',
-        //                         'color' => 'green',
-        //                     ];
-        //                 }
-        //                 if (isset($reply['businessCategory']) && $reply['businessCategory'] == 'MKK') {
-        //                     $openDt = false;
-        //                     if (isset($reply['trade'])) {
-        //                         $keys = array_keys($reply['trade']);
-        //                         // Если массив ассциативный
-        //                         if ($keys !== array_keys($keys)) {
-        //                             $openDt = self::date_format($reply['trade']['openedDt']);
-        //                         } else {
-        //                             $openDt = self::date_format($reply['trade'][0]['openedDt']);
-        //                         }
-        //                     }
-        //                     $time = time() - (86400 * 92);
-        //                     $dateMonth = date('d.m.Y', $time);
-        //                     if ($openDt > $dateMonth) {
-        //                         $mkk++;
-        //                     }
-        //                     if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
-        //                         $mkkSumm++;
-        //                     }
-        //                 }
-        //                 if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
-        //                     $activeProduct++;
-
-        //                     if (isset($reply['paymtCondition'])) {
-        //                         $keys = array_keys($reply['paymtCondition']);
-        //                         if ($keys !== array_keys($reply['paymtCondition'])) {
-        //                             if (isset($reply['paymtCondition']['principalTermsAmt']) && isset($reply['paymtCondition']['interestTermsAmt'])) {
-        //                                 $totalAverPaymtAmt += floatval($reply['paymtCondition']['principalTermsAmt']) + floatval($reply['paymtCondition']['interestTermsAmt']);;
-        //                             }
-        //                         } else {
-        //                             $condition = end($reply['paymtCondition']);
-        //                             if (isset($condition['principalTermsAmt']) && isset($condition['interestTermsAmt'])) {
-        //                                 $totalAverPaymtAmt += floatval($condition['principalTermsAmt']) + floatval($condition['interestTermsAmt']);
-        //                             }
-        //                         }
-        //                     } else {
-        //                         if (isset($reply['monthAverPaymt'])) {
-        //                             $totalAverPaymtAmt += floatval($reply['monthAverPaymt']['averPaymtAmt'] ?? 0);
-        //                         }
-        //                     }
-
-        //                     if (isset($reply['accountAmt'])) {
-        //                         $keys = array_keys($reply['accountAmt']);
-        //                         // Если массив ассциативный
-        //                         if ($keys !== array_keys($keys)) {
-        //                             if ($status['name'] != 'Активный') {
-        //                                 $dolg += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-        //                             }
-        //                             $totalAmtOutstanding += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-        //                         } else {
-        //                             foreach ($reply['accountAmt'] as $arrear) {
-        //                                 if ($status['name'] != 'Активный') {
-        //                                     $dolg += floatval($arrear['creditLimit'] ?? 0);
-        //                                 }
-        //                                 $totalAmtOutstanding += floatval($arrear['creditLimit'] ?? 0);
-        //                             }
-        //                         }
-        //                     }
-        //                 } else {
-        //                     $doneProduct++;
-        //                     if (isset($reply['accountAmt'])) {
-        //                         $keys = array_keys($reply['accountAmt']);
-        //                         // Если массив ассциативный
-        //                         if ($keys !== array_keys($keys)) {
-        //                             $totalAmtOutstandingDone += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-        //                         } else {
-        //                             foreach ($reply['accountAmt'] as $arrear) {
-        //                                 $totalAmtOutstandingDone += floatval($arrear['creditLimit'] ?? 0);
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             }
-
-        //             $nbki_arr = array(
-        //                 'activeProduct' => $activeProduct,
-        //                 'totalAmtOutstanding' => $totalAmtOutstanding,
-        //                 'doneProduct' => $doneProduct,
-        //                 'totalAmtOutstandingDone' => $totalAmtOutstandingDone,
-        //                 'totalAverPaymtAmt' => $totalAverPaymtAmt,
-        //                 'dolg' => $dolg,
-        //                 'mkk' => $mkk,
-        //                 'mkkSumm' => $mkkSumm
-        //             );
-        //             $json = json_encode($nbki_arr);
-
-        //             $add = array(
-        //                 'order_id' => $contract->order_id,
-        //                 'variables' => $json,
-        //             );
-
-        //             $reoprt_contracts_nbki_id = $this->ReoprtContractsNbki->add_reoprt_nbki($add);
-
-        //             if ($i > 0) {
-        //                 return;
-        //             }
-
+        //         if (isset($nbkiParams['count_of_closed'])) {
+        //             if (is_array($nbkiParams['count_of_closed'])) 
+        //                 $add_nbki['count_of_closed'] = $nbkiParams['count_of_closed'][0];
+        //             else
+        //                 $add_nbki['count_of_closed'] = $nbkiParams['count_of_closed'];
         //         }
+        //         if (is_null($add_nbki['count_of_closed'])){
+        //             $add_nbki['count_of_closed'] = 0;
+        //         }
+                
+        //         if (isset($nbkiParams['count_of_overdue'])) {
+        //             if (is_array($nbkiParams['count_of_overdue'])) 
+        //                 $add_nbki['count_of_overdue'] = $nbkiParams['count_of_overdue'][0];
+        //             else
+        //                 $add_nbki['count_of_overdue'] = $nbkiParams['count_of_overdue'];
+        //         }
+        //         if (is_null($add_nbki['count_of_overdue'])){
+        //             $add_nbki['count_of_overdue'] = 0;
+        //         }
+
+        //         if (isset($nbkiParams['share_of_overdue_by_active']) && !is_null($nbkiParams['share_of_overdue_by_active'])){
+        //             if (is_array($nbkiParams['share_of_overdue_by_active'])) 
+        //                 $add_nbki['share_of_overdue_by_active'] = $nbkiParams['share_of_overdue_by_active'][0];
+        //             else
+        //                 $add_nbki['share_of_overdue_by_active'] = $nbkiParams['share_of_overdue_by_active'];
+        //         }
+        //         if (is_null($add_nbki['share_of_overdue_by_active'])){
+        //             $add_nbki['share_of_overdue_by_active'] = 0;
+        //         }
+                
+        //         if (isset($nbkiParams['extra_scoring']['active_loans_credit_limit_sum'])) 
+        //             $add_nbki['active_loans_credit_limit_sum'] = $nbkiParams['extra_scoring']['active_loans_credit_limit_sum'];
+        //         if (isset($nbkiParams['extra_scoring']['closed_loans_credit_limit_sum'])) 
+        //             $add_nbki['closed_loans_credit_limit_sum'] = $nbkiParams['extra_scoring']['closed_loans_credit_limit_sum'];
+        //         if (isset($nbkiParams['extra_scoring']['monthly_active_loans_payment_sum'])) 
+        //             $add_nbki['monthly_active_loans_payment_sum'] = $nbkiParams['extra_scoring']['monthly_active_loans_payment_sum'];
+        //         if (isset($nbkiParams['extra_scoring']['overdue_amount_sum'])) 
+        //             $add_nbki['overdue_amount_sum'] = $nbkiParams['extra_scoring']['overdue_amount_sum'];
+        //         if (isset($nbkiParams['extra_scoring']['current_year_max_overdue_amount'])) 
+        //             $add_nbki['current_year_max_overdue_amount'] = $nbkiParams['extra_scoring']['current_year_max_overdue_amount'];
+        //         if (isset($nbkiParams['extra_scoring']['microloans_over_last_90_days_count'])) 
+        //             $add_nbki['microloans_over_last_90_days_count'] = $nbkiParams['extra_scoring']['microloans_over_last_90_days_count'];
+        //         if (isset($nbkiParams['extra_scoring']['active_microloan_count'])) 
+        //             $add_nbki['active_microloan_count'] = $nbkiParams['extra_scoring']['active_microloan_count'];
+                
+        //         if (isset($nbkiParams['extra_scoring']['active_pay_day_loans_count'])) 
+        //             $add_nbki['active_pay_day_loans_count'] = $nbkiParams['extra_scoring']['active_pay_day_loans_count'];
+        //         if (isset($nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count'])) 
+        //             $add_nbki['active_pay_day_loans_with_extension_count'] = $nbkiParams['extra_scoring']['active_pay_day_loans_with_extension_count'];
+        //         if (isset($nbkiParams['extra_scoring']['active_credit_lines_count'])) 
+        //             $add_nbki['active_credit_lines_count'] = $nbkiParams['extra_scoring']['active_credit_lines_count'];
+        //         if (isset($nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count'])) 
+        //             $add_nbki['active_microloans_with_wrong_term_days_count'] = $nbkiParams['extra_scoring']['active_microloans_with_wrong_term_days_count'];
+
+        //         if (isset($nbkiParams['extra_scoring']['active_credit_cards_count'])) 
+        //             $add_nbki['active_credit_cards_count'] = $nbkiParams['extra_scoring']['active_credit_cards_count'];
+        //         if (isset($nbkiParams['extra_scoring']['active_other_loans_count'])) 
+        //             $add_nbki['active_other_loans_count'] = $nbkiParams['extra_scoring']['active_other_loans_count'];
+                
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count'])) 
+        //             $add_nbki['pdl_overdue_count'] = $nbkiParams['barents_scoring']['client_scoring_data']['pdl_overdue_count'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share'])) 
+        //             $add_nbki['pdl_npl_limit_share'] = $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_limit_share'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share'])) 
+        //             $add_nbki['pdl_npl_90_limit_share'] = $nbkiParams['barents_scoring']['client_scoring_data']['pdl_npl_90_limit_share'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max'])) 
+        //             $add_nbki['pdl_current_limit_max'] = $nbkiParams['barents_scoring']['client_scoring_data']['pdl_current_limit_max'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit'])) 
+        //             $add_nbki['pdl_last_3m_limit'] = $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_3m_limit'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit'])) 
+        //             $add_nbki['pdl_last_good_max_limit'] = $nbkiParams['barents_scoring']['client_scoring_data']['pdl_last_good_max_limit'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit'])) 
+        //             $add_nbki['pdl_good_limit'] = $nbkiParams['barents_scoring']['client_scoring_data']['pdl_good_limit'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit'])) 
+        //             $add_nbki['pdl_prolong_3m_limit'] = $nbkiParams['barents_scoring']['client_scoring_data']['pdl_prolong_3m_limit'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max'])) 
+        //             $add_nbki['consum_current_limit_max'] = $nbkiParams['barents_scoring']['client_scoring_data']['consum_current_limit_max'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit'])) 
+        //             $add_nbki['consum_good_limit'] = $nbkiParams['barents_scoring']['client_scoring_data']['consum_good_limit'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed'])) 
+        //             $add_nbki['days_from_last_closed'] = $nbkiParams['barents_scoring']['client_scoring_data']['days_from_last_closed'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del'])) 
+        //             $add_nbki['prev_3000_500_paid_count_wo_del'] = $nbkiParams['barents_scoring']['client_scoring_data']['prev_3000_500_paid_count_wo_del'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum'])) 
+        //             $add_nbki['prev_paid_percent_sum'] = $nbkiParams['barents_scoring']['client_scoring_data']['prev_paid_percent_sum'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay'])) 
+        //             $add_nbki['prev_max_delay'] = $nbkiParams['barents_scoring']['client_scoring_data']['prev_max_delay'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay'])) 
+        //             $add_nbki['last_credit_delay'] = $nbkiParams['barents_scoring']['client_scoring_data']['last_credit_delay'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum'])) 
+        //             $add_nbki['current_overdue_sum'] = $nbkiParams['barents_scoring']['client_scoring_data']['current_overdue_sum'];
+        //         if (isset($nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share'])) 
+        //             $add_nbki['closed_to_total_credits_count_share'] = $nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share'];
+
+        //         // ------
+        //         if (is_null($add_nbki['active_loans_credit_limit_sum'])){
+        //             $add_nbki['active_loans_credit_limit_sum'] = 0;
+        //         }
+        //         if (is_null($add_nbki['closed_loans_credit_limit_sum'])){
+        //             $add_nbki['closed_loans_credit_limit_sum'] = 0;
+        //         }
+        //         if (is_null($add_nbki['monthly_active_loans_payment_sum'])){
+        //             $add_nbki['monthly_active_loans_payment_sum'] = 0;
+        //         }
+        //         if (is_null($add_nbki['overdue_amount_sum'])){
+        //             $add_nbki['overdue_amount_sum'] = 0;
+        //         }
+        //         if (is_null($add_nbki['current_year_max_overdue_amount'])){
+        //             $add_nbki['current_year_max_overdue_amount'] = 0;
+        //         }
+        //         if (is_null($add_nbki['microloans_over_last_90_days_count'])){
+        //             $add_nbki['microloans_over_last_90_days_count'] = 0;
+        //         }
+        //         if (is_null($add_nbki['active_microloan_count'])){
+        //             $add_nbki['active_microloan_count'] = 0;
+        //         }
+        //         if (is_null($add_nbki['active_pay_day_loans_count'])){
+        //             $add_nbki['active_pay_day_loans_count'] = 0;
+        //         }
+        //         if (is_null($add_nbki['active_loans_credit_limit_sum'])){
+        //             $add_nbki['active_loans_credit_limit_sum'] = 0;
+        //         }
+        //         if (is_null($add_nbki['active_credit_lines_count'])){
+        //             $add_nbki['active_credit_lines_count'] = 0;
+        //         }
+        //         if (is_null($add_nbki['active_microloans_with_wrong_term_days_count'])){
+        //             $add_nbki['active_microloans_with_wrong_term_days_count'] = 0;
+        //         }
+        //         if (is_null($add_nbki['active_credit_cards_count'])){
+        //             $add_nbki['active_credit_cards_count'] = 0;
+        //         }
+        //         if (is_null($add_nbki['active_other_loans_count'])){
+        //             $add_nbki['active_other_loans_count'] = 0;
+        //         }
+        //         if (is_null($add_nbki['pdl_overdue_count'])){
+        //             $add_nbki['pdl_overdue_count'] = 0;
+        //         }
+        //         if (is_null($add_nbki['pdl_npl_limit_share'])){
+        //             $add_nbki['pdl_npl_limit_share'] = 0;
+        //         }
+        //         if (is_null($add_nbki['pdl_npl_90_limit_share'])){
+        //             $add_nbki['pdl_npl_90_limit_share'] = 0;
+        //         }
+        //         if (is_null($add_nbki['pdl_current_limit_max'])){
+        //             $add_nbki['pdl_current_limit_max'] = 0;
+        //         }
+        //         if (is_null($add_nbki['pdl_last_3m_limit'])){
+        //             $add_nbki['pdl_last_3m_limit'] = 0;
+        //         }
+        //         if (is_null($add_nbki['pdl_last_good_max_limit'])){
+        //             $add_nbki['pdl_last_good_max_limit'] = 0;
+        //         }
+        //         if (is_null($add_nbki['pdl_good_limit'])){
+        //             $add_nbki['pdl_good_limit'] = 0;
+        //         }
+        //         if (is_null($add_nbki['pdl_prolong_3m_limit'])){
+        //             $add_nbki['pdl_prolong_3m_limit'] = 0;
+        //         }
+        //         if (is_null($add_nbki['consum_current_limit_max'])){
+        //             $add_nbki['consum_current_limit_max'] = 0;
+        //         }
+        //         if (is_null($add_nbki['consum_good_limit'])){
+        //             $add_nbki['consum_good_limit'] = 0;
+        //         }
+        //         if (is_null($add_nbki['days_from_last_closed'])){
+        //             $add_nbki['days_from_last_closed'] = 0;
+        //         }
+        //         if (is_null($add_nbki['prev_3000_500_paid_count_wo_del'])){
+        //             $add_nbki['prev_3000_500_paid_count_wo_del'] = 0;
+        //         }
+        //         if (is_null($add_nbki['prev_paid_percent_sum'])){
+        //             $add_nbki['prev_paid_percent_sum'] = 0;
+        //         }
+        //         if (is_null($add_nbki['prev_max_delay'])){
+        //             $add_nbki['prev_max_delay'] = 0;
+        //         }
+        //         if (is_null($add_nbki['last_credit_delay'])){
+        //             $add_nbki['last_credit_delay'] = 0;
+        //         }
+        //         if (is_null($add_nbki['current_overdue_sum'])){
+        //             $add_nbki['current_overdue_sum'] = 0;
+        //         }
+        //         if (is_null($add_nbki['closed_to_total_credits_count_share'])){
+        //             $add_nbki['closed_to_total_credits_count_share'] = 0;
+        //         }
+            
         //     }
+
+
+        //     $contracts = $this->contracts->get_contracts(array('user_id' => $order->user_id, 'status' => 3));
+                
+        //     $contract_close_date = '';
+        //     $count_contracts_3000_500_0 = 0;
+        //     $all_percents_summ = 0;
+        //     $all_peni_summ = 0;
+        //     $period_peni_biggest = 0;
+        //     $period_peni_last = 0;
+
+
+        //     foreach ($contracts as $contract) {
+        //         // if (date('Y-m-d', strtotime($contract->inssuance_date)) > date('Y-m-d', strtotime($from)))
+        //         //     continue;
+        //         // Кол-во дней с даты погашения последнего займа 
+        //         // во внутренней кредитной истории для данного клиента
+        //         if (!is_null($contract->close_date)) {
+        //             if ($contract_close_date < $contract->close_date) 
+        //                 $contract_close_date = $contract->close_date;
+        //         }
+        //         else{
+        //             if ($contract_close_date < $contract->close_date) 
+        //                 $contract_close_date = $contract->return_date;
+        //         }
+
+        //         // Кол-во займов во внутренней кредитной истории для данного клиента, 
+        //         // у которых сумма займа>=3000 руб И сумма погашенных процентов>=500 руб
+        //         // И срок просрочки по займу=0
+        //         if ($contract->amount >= 3000) {
+        //             $operations = $this->operations->get_operations(array('type' => 'PAY', 'contract_id' => $contract->id));
+
+        //             foreach ($operations as $operation) {
+        //                 $contract_loan_percents_summ = 0;
+
+        //                 $transaction = $this->transactions->get_transaction($operation->transaction_id);
+        //                 $contract_loan_percents_summ += $transaction->loan_percents_summ;
+        //             }
+        //             if ($contract_loan_percents_summ > 500) {
+        //                 $contract_count_peni = 0;
+
+        //                 $operations = $this->operations->get_operations(array('type' => 'PENI', 'contract_id' => $contract->id));
+        //                 foreach ($operations as $operation) {
+        //                     $contract_count_peni++;
+        //                 }
+        //                 if ($contract_count_peni == 0) {
+        //                     $count_contracts_3000_500_0++;
+        //                 }
+        //             }
+        //         }
+
+        //         // Сумма погашенных процентов по всем займам 
+        //         // во внутренней кредитной истории для данного клиента
+        //         $operations = $this->operations->get_operations(array('type' => 'PAY', 'contract_id' => $contract->id));
+
+        //         foreach ($operations as $operation) {
+        //             $transaction = $this->transactions->get_transaction($operation->transaction_id);
+        //             $all_percents_summ += $transaction->loan_percents_summ;
+        //         }
+
+        //         // Максимальный срок просрочки по всем займам 
+        //         // во внутренней кредитной истории для данного клиента
+        //         $operations = $this->operations->get_operations(array('type' => 'PENI', 'contract_id' => $contract->id));
+        //         $prew_date_peni = '';
+        //         $period_peni = 0;
+        //         $period_peni_last = 0;
+
+        //         foreach ($operations as $operation) {
+        //             $date1 = new DateTime(date('Y-m-d', strtotime($prew_date_peni)));
+        //             $date2 = new DateTime(date('Y-m-d', strtotime($operation->created)));
+
+        //             $prew_date_peni = $operation->created;
+        //             $diff = $date2->diff($date1)->days;
+
+        //             if ($diff == 1) {
+        //                 $period_peni++;
+        //                 $period_peni_last++;
+        //                 if ($period_peni_biggest < $period_peni) 
+        //                     $period_peni_biggest = $period_peni;
+        //             }
+        //             else{
+        //                 $period_peni = 1;
+        //                 $period_peni_last = 1;
+        //                 if ($period_peni_biggest < $period_peni) 
+        //                     $period_peni_biggest = $period_peni;
+        //             }
+
+        //             $transaction = $this->transactions->get_transaction($operation->transaction_id);
+        //             $all_peni_summ += $transaction->loan_peni_summ;
+        //         }
+
+        //     }
+            
+        //     if ($contract_close_date != '') {
+        //         $date1 = new DateTime(date('Y-m-d', strtotime($contract_close_date)));
+        //         $date2 = new DateTime(date('Y-m-d'));
+
+        //         $diff = $date2->diff($date1);
+        //         $delay_last_contract = $diff->days;
+        //     }
+        //     else{
+        //         $delay_last_contract = 0;
+        //     }
+
+
+        //     // var_dump($all_percents_summ);
+        //     // echo '<hr>';
+
+        //     $add_nbki['days_last_loan'] = $delay_last_contract;
+        //     $add_nbki['loans_3000_500_0'] = $count_contracts_3000_500_0;
+        //     $add_nbki['loans_percents_payd'] = $all_percents_summ;
+        //     $add_nbki['max_delay_days'] = $period_peni_biggest;
+        //     $add_nbki['last_delay_days'] = $period_peni_last;
+
+
+        //     // var_dump($add_nbki);
+        //     // echo '<br>';
+        //     var_dump($order->id);
+        //     echo '<hr>';
+        //     $nbki_extra_scoring_add = $this->NbkiExtraScorings->add($add_nbki);
+        //     // var_dump($nbki_extra_scoring_add);
+        //     // die;
+
         // }
 
-        $this->db->query('
-            SELECT * FROM `s_nbki_scoreballs` WHERE `variables` LIKE\'%{"pdl_overdue_count":0,"pdl_npl_limit_share":0,"pdl_npl_90_limit_share":0,"pdl_current_limit_max":0,"pdl_last_3m_limit":0,"pdl_last_good_max_limit":0,"pdl_good_limit":0,"pdl_prolong_3m_limit":0,"consum_current_limit_max":0,"consum_good_limit":0,"limit":%\' 
-            AND 
-            ball!=-558
-            ORDER BY id
-        ');
-        $wrongs = $this->db->results();
-        $i = 0;
-        foreach ($wrongs as $wrong) {
-            // $i++;
-            // var_dump($i,'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-            
-
-
-            $scoring = $this->scorings->get_scoring($wrong->score_id);
-            // $scoring = $this->scorings->get_scoring(3402/63);
-
-            var_dump($scoring->order_id);
-            echo '<hr>';
-
-            $this->db->query("
-            SELECT *
-            FROM s_scorings
-            WHERE order_id = ?
-            and `type` = 'nbki'
-            and `status` = 'completed'
-            LIMIT 1", $scoring->order_id);
-
-            $nbki = $this->db->result();
-            $error = 0;
-
-            if (empty($nbki)) {
-                $error = 1;
-            } else {
-                $nbki = unserialize($nbki->body);
-
-                if ($nbki == false)
-                    $error = 1;
-            }
-
-            // if ($error == 1) {
-            //     $update = [
-            //         'status' => 'completed',
-            //         'body' => 'Скоринг НБКИ пуст',
-            //         'success' => 1,
-            //         'string_result' => 'Скоринг НБКИ пуст'
-            //     ];
-
-            //     $this->scorings->update_scoring($scoring_id, $update);
-            //     return $update;
-            // }
-
-            $order = OrdersORM::find($scoring->order_id);
-            if (in_array($order->client_status, ['nk', 'rep'])){
-                var_dump('new');
-                echo '<hr>';
-                // return $this->newClient($nbki, $scoring);
-                $this->newClient($nbki, $scoring);
-            }
-            else{
-                var_dump('old');
-                echo '<hr>';
-                // return $this->oldClient($nbki, $scoring);
-                $this->oldClient($nbki, $scoring);
-
-                $i++;
-                var_dump($i,'!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-            }
-            
-
-
-                
-            var_dump($wrong->score_id);
-            if ($i > 20) {
-                break;
-            }
-        }
-        var_dump(count($wrong));
-        echo '<hr>';
-        var_dump('ok');
-        die;
-
-
+        
 
         
 
