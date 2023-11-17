@@ -127,6 +127,7 @@
                                 <th>Источник</th>
                                 <th>Сумма оплачено</th>
                                 <th>ПК/НК</th>
+                                <th>Тип ПК</th>
                                 <th>Менеджер</th>
                                 <th>Статус</th>
                                 <th>Дата факт возврата</th>
@@ -165,6 +166,9 @@
                                     {if $contract->client_status == 'nk'}НК{/if}
                                     {if $contract->client_status == 'crm'}ПК CRM{/if}
                                     {if $contract->client_status == 'rep'}Повтор{/if}
+                                </td>
+                                <td>
+                                    {$contract->type_pk}
                                 </td>
                                 <td>
                                     {$managers[$contract->manager_id]->name|escape}
