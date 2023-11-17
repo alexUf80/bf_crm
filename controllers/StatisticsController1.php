@@ -706,6 +706,7 @@ class StatisticsController1 extends Controller
                     c.sold,
                     c.return_date,
                     c.close_date,
+                    c.create_date,
                     o.client_status,
                     o.date AS order_date,
                     o.manager_id,
@@ -758,6 +759,67 @@ class StatisticsController1 extends Controller
                 $c->RegAddr = $regAddress->adressfull;
                 $faktAddress = AdressesORM::find($c->faktaddress_id);
                 $c->FaktAddr = $faktAddress->adressfull;
+
+                $query = $this->db->placehold("
+                SELECT * 
+                FROM __contracts 
+                WHERE user_id = ? 
+                AND create_date < ?
+                AND status = 3
+                ORDER BY id ASC
+                LIMIT 3", 
+                $c->user_id, $c->create_date);
+
+                $this->db->query($query);
+                $prev_contracts =  $this->db->results();
+
+                if(count($prev_contracts)>0){
+
+                    $prev_contract_type_pk = [0, 0, 0];
+                    $i = 0;
+                    $prolo = 0;
+
+                    $date1 = new DateTime(date('Y-m-d', strtotime($prev_contract->close_date)));
+                    $date2 = new DateTime(date('Y-m-d', strtotime($prev_contract->return_date)));
+                    $diff = $date2->diff($date1);
+
+                    foreach ($prev_contracts as $prev_contract) {
+                        if ($prev_contract->close_date < $prev_contract->return_date || $diff->days < 5) {
+                            $prev_contract_type_pk[$i] = 1;
+                        }
+
+                        // Если начислялись пени более 5 раз
+                        $contracts_peni = count($this->operations->get_operations((array('contract_id'=>$prev_contract->id, 'type'=>'PENI'))));
+                        if ($contracts_peni >= 5) {
+                            $prev_contract_type_pk[$i] = 0;
+                        }
+                        else{
+                            $contracts_payments = $this->operations->get_operations((array('contract_id'=>$prev_contract->id, 'type'=>'PAY')));
+                            
+                            foreach ($contracts_payments as $contracts_payment) {
+                                $transaction = $this->transactions->get_transaction($contracts_payment->transaction_id);
+                                $prolo += $transaction->prolongation;
+                            }
+                        }
+                        $i++;
+                    }
+    
+                    if ($prev_contract_type_pk[0] == 0) 
+                        $c->type_pk = 0;
+                    elseif($prev_contract_type_pk[1] == 0)
+                        $c->type_pk = 1;
+                    elseif($prev_contract_type_pk[2] == 0)
+                        $c->type_pk = 2;
+                    else
+                        $c->type_pk = 3;
+
+                    // $c->type_pk .= " - ".implode(",", $prev_contract_type_pk);
+                    // $c->type_pk .= ' --- '.$prolo;
+                    if ($prolo > 0 && $c->type_pk < 3) {
+                        $c->type_pk++;
+                    }
+                }
+                
             }
 
             foreach ($contracts as $c) {
@@ -826,8 +888,8 @@ class StatisticsController1 extends Controller
                 $active_sheet->getColumnDimension('I')->setWidth(20);
                 $active_sheet->getColumnDimension('J')->setWidth(10);
                 $active_sheet->getColumnDimension('K')->setWidth(10);
-                $active_sheet->getColumnDimension('L')->setWidth(30);
-                $active_sheet->getColumnDimension('M')->setWidth(10);
+                $active_sheet->getColumnDimension('L')->setWidth(10);
+                $active_sheet->getColumnDimension('M')->setWidth(30);
                 $active_sheet->getColumnDimension('N')->setWidth(10);
                 $active_sheet->getColumnDimension('O')->setWidth(10);
                 $active_sheet->getColumnDimension('P')->setWidth(10);
@@ -863,30 +925,31 @@ class StatisticsController1 extends Controller
                 $active_sheet->setCellValue('I1', 'Почта');
                 $active_sheet->setCellValue('J1', 'Сумма');
                 $active_sheet->setCellValue('K1', 'ПК/НК');
-                $active_sheet->setCellValue('L1', 'Менеджер');
-                $active_sheet->setCellValue('M1', 'Статус');
-                $active_sheet->setCellValue('N1', 'Дата возврата');
-                $active_sheet->setCellValue('O1', 'ПДН');
-                $active_sheet->setCellValue('P1', 'Дней займа');
-                $active_sheet->setCellValue('Q1', 'Дата факт возврата');
-                $active_sheet->setCellValue('R1', 'Сумма выплачено');
-                $active_sheet->setCellValue('S1', 'Источник');
-                $active_sheet->setCellValue('T1', 'ID заявки');
-                $active_sheet->setCellValue('U1', 'ID клиента');
-                $active_sheet->setCellValue('V1', 'Промокод');
-                $active_sheet->setCellValue('W1', 'Общая сумма активных долгов');
-                $active_sheet->setCellValue('X1', 'Количество активных долгов');
-                $active_sheet->setCellValue('Y1', 'Наличие 46ой статьи');
+                $active_sheet->setCellValue('L1', 'Тип ПК');
+                $active_sheet->setCellValue('M1', 'Менеджер');
+                $active_sheet->setCellValue('N1', 'Статус');
+                $active_sheet->setCellValue('O1', 'Дата возврата');
+                $active_sheet->setCellValue('P1', 'ПДН');
+                $active_sheet->setCellValue('Q1', 'Дней займа');
+                $active_sheet->setCellValue('R1', 'Дата факт возврата');
+                $active_sheet->setCellValue('S1', 'Сумма выплачено');
+                $active_sheet->setCellValue('T1', 'Источник');
+                $active_sheet->setCellValue('U1', 'ID заявки');
+                $active_sheet->setCellValue('V1', 'ID клиента');
+                $active_sheet->setCellValue('W1', 'Промокод');
+                $active_sheet->setCellValue('X1', 'Общая сумма активных долгов');
+                $active_sheet->setCellValue('Y1', 'Количество активных долгов');
+                $active_sheet->setCellValue('Z1', 'Наличие 46ой статьи');
                 if ($nbki == 1) {
-                    $active_sheet->setCellValue('Z1', 'Всего активных кредитов количество');
-                    $active_sheet->setCellValue('AA1', 'Всего активных кредитов сумма');
-                    $active_sheet->setCellValue('AB1', 'Всего погашено кредитов количество');
-                    $active_sheet->setCellValue('AC1', 'Всего погашено кредитов сумма');
-                    $active_sheet->setCellValue('AD1', 'Ежемесячный платеж по кредитам');
-                    $active_sheet->setCellValue('AE1', 'Размер просроченной задолженности на сегодня');
-                    $active_sheet->setCellValue('AF1', 'Максимальная просрочка за последний год');
-                    $active_sheet->setCellValue('AG1', 'Количество микрозаймов за последние 3 месяца');
-                    $active_sheet->setCellValue('AH1', 'Количество активных микрозаймов');
+                    $active_sheet->setCellValue('AA1', 'Всего активных кредитов количество');
+                    $active_sheet->setCellValue('AB1', 'Всего активных кредитов сумма');
+                    $active_sheet->setCellValue('AC1', 'Всего погашено кредитов количество');
+                    $active_sheet->setCellValue('AD1', 'Всего погашено кредитов сумма');
+                    $active_sheet->setCellValue('AE1', 'Ежемесячный платеж по кредитам');
+                    $active_sheet->setCellValue('AF1', 'Размер просроченной задолженности на сегодня');
+                    $active_sheet->setCellValue('AG1', 'Максимальная просрочка за последний год');
+                    $active_sheet->setCellValue('AH1', 'Количество микрозаймов за последние 3 месяца');
+                    $active_sheet->setCellValue('AI1', 'Количество активных микрозаймов');
                 }
 
                 $i = 2;
@@ -915,30 +978,31 @@ class StatisticsController1 extends Controller
                     $active_sheet->setCellValue('I' . $i, $contract->email);
                     $active_sheet->setCellValue('J' . $i, $contract->amount * 1);
                     $active_sheet->setCellValue('K' . $i, $client_status);
-                    $active_sheet->setCellValue('L' . $i, $managers[$contract->manager_id]->name);
-                    $active_sheet->setCellValue('M' . $i, $status);
-                    $active_sheet->setCellValue('N' . $i, date('d.m.Y', strtotime($contract->return_date)));
-                    $active_sheet->setCellValue('O' . $i, $contract->pdn);
-                    $active_sheet->setCellValue('P' . $i, $contract->period);
-                    $active_sheet->setCellValue('Q' . $i, date('d.m.Y', strtotime($contract->close_date)));
-                    $active_sheet->setCellValue('R' . $i, $contract->sumPayed);
-                    $active_sheet->setCellValue('S' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('T' . $i, $contract->order_id);
-                    $active_sheet->setCellValue('U' . $i, $contract->user_id);
-                    $active_sheet->setCellValue('V' . $i, $contract->promocode);
+                    $active_sheet->setCellValue('L' . $i, $contract->type_pk);
+                    $active_sheet->setCellValue('M' . $i, $managers[$contract->manager_id]->name);
+                    $active_sheet->setCellValue('N' . $i, $status);
+                    $active_sheet->setCellValue('O' . $i, date('d.m.Y', strtotime($contract->return_date)));
+                    $active_sheet->setCellValue('P' . $i, $contract->pdn);
+                    $active_sheet->setCellValue('Q' . $i, $contract->period);
+                    $active_sheet->setCellValue('R' . $i, date('d.m.Y', strtotime($contract->close_date)));
+                    $active_sheet->setCellValue('S' . $i, $contract->sumPayed);
+                    $active_sheet->setCellValue('T' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('U' . $i, $contract->order_id);
+                    $active_sheet->setCellValue('V' . $i, $contract->user_id);
+                    $active_sheet->setCellValue('W' . $i, $contract->promocode);
 
                     $fsspScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'fssp')->first();
                     
                     if ($fsspScor) {
                         $body = unserialize($fsspScor->body);
                         if (isset($body['expSum'])) {
-                            $active_sheet->setCellValue('W' . $i, $body['expSum']);
-                            $active_sheet->setCellValue('X' . $i, $body['expCount']);
-                            $active_sheet->setCellValue('Y' . $i, $body['article'] ? 'Да' : 'Нет');
+                            $active_sheet->setCellValue('X' . $i, $body['expSum']);
+                            $active_sheet->setCellValue('Y' . $i, $body['expCount']);
+                            $active_sheet->setCellValue('Z' . $i, $body['article'] ? 'Да' : 'Нет');
                         } else {
-                            $active_sheet->setCellValue('W' . $i, "0");
                             $active_sheet->setCellValue('X' . $i, "0");
-                            $active_sheet->setCellValue('Y' . $i, "Нет");
+                            $active_sheet->setCellValue('Y' . $i, "0");
+                            $active_sheet->setCellValue('Z' . $i, "Нет");
                         }
                     }
                     
@@ -946,15 +1010,15 @@ class StatisticsController1 extends Controller
                         $reoprt_contracts_nbkis = $this->ReoprtContractsNbki->get_reoprt_nbkis(array('order_id' => $contract->order_id));
                         $variables_arr = json_decode($reoprt_contracts_nbkis[0]->variables);
 
-                        $active_sheet->setCellValue('Z' . $i, $variables_arr->activeProduct);
-                        $active_sheet->setCellValue('AA' . $i, $variables_arr->totalAmtOutstanding);
-                        $active_sheet->setCellValue('AB' . $i, $variables_arr->doneProduct);
-                        $active_sheet->setCellValue('AC' . $i, $variables_arr->totalAmtOutstandingDone);
-                        $active_sheet->setCellValue('AD' . $i, $variables_arr->totalAverPaymtAmt);
-                        $active_sheet->setCellValue('AE' . $i, $variables_arr->dolg);
+                        $active_sheet->setCellValue('AA' . $i, $variables_arr->activeProduct);
+                        $active_sheet->setCellValue('AB' . $i, $variables_arr->totalAmtOutstanding);
+                        $active_sheet->setCellValue('AC' . $i, $variables_arr->doneProduct);
+                        $active_sheet->setCellValue('AD' . $i, $variables_arr->totalAmtOutstandingDone);
+                        $active_sheet->setCellValue('AE' . $i, $variables_arr->totalAverPaymtAmt);
                         $active_sheet->setCellValue('AF' . $i, $variables_arr->dolg);
-                        $active_sheet->setCellValue('AG' . $i, $variables_arr->mkk);
-                        $active_sheet->setCellValue('AH' . $i, $variables_arr->mkkSumm);
+                        $active_sheet->setCellValue('AG' . $i, $variables_arr->dolg);
+                        $active_sheet->setCellValue('AH' . $i, $variables_arr->mkk);
+                        $active_sheet->setCellValue('AI' . $i, $variables_arr->mkkSumm);
 
 
                         // $nbkiScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'nbki')->first();
