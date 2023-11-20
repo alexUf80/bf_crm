@@ -760,65 +760,7 @@ class StatisticsController1 extends Controller
                 $faktAddress = AdressesORM::find($c->faktaddress_id);
                 $c->FaktAddr = $faktAddress->adressfull;
 
-                $query = $this->db->placehold("
-                SELECT * 
-                FROM __contracts 
-                WHERE user_id = ? 
-                AND create_date < ?
-                AND status = 3
-                ORDER BY id ASC
-                LIMIT 3", 
-                $c->user_id, $c->create_date);
-
-                $this->db->query($query);
-                $prev_contracts =  $this->db->results();
-
-                if(count($prev_contracts)>0){
-
-                    $prev_contract_type_pk = [0, 0, 0];
-                    $i = 0;
-                    $prolo = 0;
-
-                    $date1 = new DateTime(date('Y-m-d', strtotime($prev_contract->close_date)));
-                    $date2 = new DateTime(date('Y-m-d', strtotime($prev_contract->return_date)));
-                    $diff = $date2->diff($date1);
-
-                    foreach ($prev_contracts as $prev_contract) {
-                        if ($prev_contract->close_date < $prev_contract->return_date || $diff->days < 5) {
-                            $prev_contract_type_pk[$i] = 1;
-                        }
-
-                        // Если начислялись пени более 5 раз
-                        $contracts_peni = count($this->operations->get_operations((array('contract_id'=>$prev_contract->id, 'type'=>'PENI'))));
-                        if ($contracts_peni >= 5) {
-                            $prev_contract_type_pk[$i] = 0;
-                        }
-                        else{
-                            $contracts_payments = $this->operations->get_operations((array('contract_id'=>$prev_contract->id, 'type'=>'PAY')));
-                            
-                            foreach ($contracts_payments as $contracts_payment) {
-                                $transaction = $this->transactions->get_transaction($contracts_payment->transaction_id);
-                                $prolo += $transaction->prolongation;
-                            }
-                        }
-                        $i++;
-                    }
-    
-                    if ($prev_contract_type_pk[0] == 0) 
-                        $c->type_pk = 0;
-                    elseif($prev_contract_type_pk[1] == 0)
-                        $c->type_pk = 1;
-                    elseif($prev_contract_type_pk[2] == 0)
-                        $c->type_pk = 2;
-                    else
-                        $c->type_pk = 3;
-
-                    // $c->type_pk .= " - ".implode(",", $prev_contract_type_pk);
-                    // $c->type_pk .= ' --- '.$prolo;
-                    if ($prolo > 0 && $c->type_pk < 3) {
-                        $c->type_pk++;
-                    }
-                }
+                $c->type_pk = $this->contracts->type_pk_contract($c);
                 
             }
 
