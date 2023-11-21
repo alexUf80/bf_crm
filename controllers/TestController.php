@@ -4,13 +4,75 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 error_reporting(-1);
 ini_set('display_errors', 'On');
-error_reporting(0);
-ini_set('display_errors', 'Off');
+// error_reporting(0);
+// ini_set('display_errors', 'Off');
 
 class TestController extends Controller
 {
     public function fetch()
     {
+
+        // $query = $this->db->placehold("
+        // SELECT *
+        // FROM `s_nbki_extra_scorings` 
+        // WHERE order_id > 70000
+        // AND order_id <= 75000
+        // ");
+        // $this->db->query($query);
+        // $nbki_orders = $this->db->results();
+
+        // foreach ($nbki_orders as $nbki_order) {
+     
+        //     $order = $this->orders->get_order($nbki_order->order_id);
+
+        //     $order->scoreballs = $this->NbkiScoreballs->get($order->order_id);
+
+        //     if (empty($order->scoreballs)) {
+        //         $order->scoreballs['ball'] = null;
+        //     }
+        //     else{
+        //         $order->scoreballs->variables = json_decode($order->scoreballs->variables, true);
+        //         $order->scoreballs->variables['ball'] = $order->scoreballs->ball;
+        //         $order->scoreballs = $order->scoreballs->variables;
+        //     }
+  
+        //     $scoreball_mfo_2_nbki = null;
+        //     $nbkiScor = ScoringsORM::query()->where('order_id', '=', $order->order_id)->where('type', '=', 'nbki')->first();
+        //     if ($nbkiScor) {
+        //         $nbkiParams = unserialize($nbkiScor->body);
+        //         if (isset($nbkiParams['score'])){
+        //             $scoreball_mfo_2_nbki = $nbkiParams['score'];
+        //         }
+        //     }
+
+        //     $update = [
+        //         'scoreball' => $order->scoreballs['ball'],
+        //         'scoreball_mfo_2_nbki' => $scoreball_mfo_2_nbki,
+        //     ];
+        //     $nbki_extra_scoring_update = $this->NbkiExtraScorings->update($nbki_order->order_id, $update);
+        //     var_dump($nbki_order->order_id);
+        //     var_dump($update);
+        //     echo '<hr>';
+        // }
+
+
+        die;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
         
         $query = $this->db->placehold("
