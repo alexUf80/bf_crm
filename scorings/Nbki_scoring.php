@@ -468,8 +468,34 @@ class Nbki_scoring extends Core
                 if (is_null($add_nbki['closed_to_total_credits_count_share'])){
                     $add_nbki['closed_to_total_credits_count_share'] = 0;
                 }
+
+                $scoreball_mfo_2_nbki = null;
+                $nbkiScor = ScoringsORM::query()->where('order_id', '=', $nbkiScor->order_id)->where('type', '=', 'nbki')->first();
+                if ($nbkiScor) {
+                    $nbkiParams = unserialize($nbkiScor->body);
+                    if (isset($nbkiParams['score'])){
+                        $scoreball_mfo_2_nbki = $nbkiParams['score'];
+                    }
+                }
+
+                $add_nbki['scoreball_mfo_2_nbki'] = $scoreball_mfo_2_nbki;
             
             }
+
+            $order_scoreballs = $this->NbkiScoreballs->get($nbkiScor->order_id);
+
+            if (empty($order_scoreballs)) {
+                $order_scoreballs['ball'] = null;
+            }
+            else{
+                $order_scoreballs->variables = json_decode($order_scoreballs->variables, true);
+                $order_scoreballs->variables['ball'] = $order_scoreballs->ball;
+                $order_scoreballs = $order_scoreballs->variables;
+            }
+            $add_nbki['scoreball'] = $order_scoreballs['ball'];
+
+            var_dump($add_nbki['scoreball_mfo_2_nbki']);
+            var_dump($add_nbki['scoreball']);
 
 
             $contracts = $this->contracts->get_contracts(array('user_id' => $nbkiScor->user_id, 'status' => 3));
@@ -578,8 +604,6 @@ class Nbki_scoring extends Core
             $add_nbki['max_delay_days'] = $period_peni_biggest;
             $add_nbki['last_delay_days'] = $period_peni_last;
 
-
-            var_dump($order->id);
             echo '<hr>';
             $nbki_extra_scoring_add = $this->NbkiExtraScorings->add($add_nbki);
 
