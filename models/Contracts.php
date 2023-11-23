@@ -978,7 +978,7 @@ if ($this->is_developer)
         
         return $this->db->result();
     }
-    
+
     public function type_pk_contract($c)
     {
     	$query = $this->db->placehold("
@@ -993,6 +993,29 @@ if ($this->is_developer)
 
         $this->db->query($query);
         $prev_contracts =  $this->db->results();
+        return $this->type_pk($prev_contracts);
+    }
+
+    public function type_pk_order($c)
+    {
+    	$query = $this->db->placehold("
+        SELECT * 
+        FROM __contracts 
+        WHERE user_id = ? 
+        AND create_date < ?
+        AND status = 3
+        ORDER BY id ASC
+        LIMIT 3", 
+        $c->user_id, $c->date);
+
+        $this->db->query($query);
+        $prev_contracts =  $this->db->results();
+
+        return $this->type_pk($prev_contracts);
+    }
+    
+    public function type_pk($prev_contracts)
+    {
 
         $c_type_pk = NULL;
         if(count($prev_contracts)>0){
