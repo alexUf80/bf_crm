@@ -680,10 +680,12 @@ class StatisticsController1 extends Controller
                 $active_sheet->getColumnDimension('J')->setWidth(10);
                 $active_sheet->getColumnDimension('K')->setWidth(20);
                 $active_sheet->getColumnDimension('L')->setWidth(20);
-                $active_sheet->getColumnDimension('M')->setWidth(30);
-                $active_sheet->getColumnDimension('N')->setWidth(15);
-                $active_sheet->getColumnDimension('O')->setWidth(15);
+                $active_sheet->getColumnDimension('M')->setWidth(20);
+                $active_sheet->getColumnDimension('N')->setWidth(20);
+                $active_sheet->getColumnDimension('O')->setWidth(30);
                 $active_sheet->getColumnDimension('P')->setWidth(15);
+                $active_sheet->getColumnDimension('Q')->setWidth(15);
+                $active_sheet->getColumnDimension('R')->setWidth(15);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Заявка');
@@ -697,15 +699,28 @@ class StatisticsController1 extends Controller
                 $active_sheet->setCellValue('J1', 'Паспорт');
                 $active_sheet->setCellValue('K1', 'Регион выдачи');
                 $active_sheet->setCellValue('L1', 'Зона качества');
-                $active_sheet->setCellValue('M1', 'Менеджер');//---
-                $active_sheet->setCellValue('N1', 'Причина');
-                $active_sheet->setCellValue('O1', 'Скориста');//---
-                $active_sheet->setCellValue('P1', 'Источник');//---
-                $active_sheet->setCellValue('Q1', 'Операция');//---
-                $active_sheet->setCellValue('R1', 'Промокод');//---
+                $active_sheet->setCellValue('M1', 'ПК/НК');
+                $active_sheet->setCellValue('N1', 'Тип ПК');
+                $active_sheet->setCellValue('O1', 'Менеджер');//---
+                $active_sheet->setCellValue('P1', 'Причина');
+                $active_sheet->setCellValue('Q1', 'Скориста');//---
+                $active_sheet->setCellValue('R1', 'Источник');//---
+                $active_sheet->setCellValue('S1', 'Операция');//---
+                $active_sheet->setCellValue('T1', 'Промокод');//---
 
                 $i = 2;
                 foreach ($orders as $contract) {
+
+                    if ($contract->client_status == 'pk')
+                        $client_status = 'ПК';
+                    elseif ($contract->client_status == 'nk')
+                        $client_status = 'НК';
+                    elseif ($contract->client_status == 'crm')
+                        $client_status = 'ПК CRM';
+                    elseif ($contract->client_status == 'rep')
+                        $client_status = 'Повтор';
+                    else
+                        $client_status = '';
 
                     $successTransaction = empty($contract->checked) ? ' (провал)' : ' успех';
 
@@ -725,13 +740,15 @@ class StatisticsController1 extends Controller
                     $active_sheet->setCellValue('J' . $i, $contract->passport_serial);
                     $active_sheet->setCellValue('K' . $i, $contract->region);
                     $active_sheet->setCellValue('L' . $i, $contract->zone);
+                    $active_sheet->setCellValue('M' . $i, $client_status);
+                    $active_sheet->setCellValue('N' . $i, $contract->type_pk);
 
-                    $active_sheet->setCellValue('M' . $i, $managers[$contract->manager_id]->name);
-                    $active_sheet->setCellValue('N' . $i, ($contract->reason_id ? $reasons[$contract->reason_id]->admin_name : $contract->reject_reason));
-                    $active_sheet->setCellValue('O' . $i, empty($contract->scoring) ? '' : $contract->scoring->scorista_ball);
-                    $active_sheet->setCellValue('P' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('Q' . $i, $contract->operation . $successTransaction);
-                    $active_sheet->setCellValue('R' . $i, $contract->promocode);
+                    $active_sheet->setCellValue('O' . $i, $managers[$contract->manager_id]->name);
+                    $active_sheet->setCellValue('P' . $i, ($contract->reason_id ? $reasons[$contract->reason_id]->admin_name : $contract->reject_reason));
+                    $active_sheet->setCellValue('Q' . $i, empty($contract->scoring) ? '' : $contract->scoring->scorista_ball);
+                    $active_sheet->setCellValue('R' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('S' . $i, $contract->operation . $successTransaction);
+                    $active_sheet->setCellValue('T' . $i, $contract->promocode);
 
 
                     $i++;
