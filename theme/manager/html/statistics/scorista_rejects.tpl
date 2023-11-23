@@ -129,7 +129,8 @@
                                 <th>Паспорт</th>
                                 <th>Регион выдачи</th>
                                 <th>Зона качества</th>
-                                <th>Менеджер</th>
+                                <th>ПК/НК</th>
+                                <th>Тип ПК</th>
                                 <th>Причина</th>
                                 <th>Номер операции</th>
                                 <th>Скориста</th>
@@ -168,6 +169,17 @@
                                 <td>
                                    {$order->zone}
                                 </td>
+
+                                <td>
+                                    {if $order->client_status == 'pk'}ПК{/if}
+                                    {if $order->client_status == 'nk'}НК{/if}
+                                    {if $order->client_status == 'crm'}ПК CRM{/if}
+                                    {if $order->client_status == 'rep'}Повтор{/if}
+                                </td>
+                                <td>
+                                   {$order->type_pk}
+                                </td>
+
                                 <td>{$managers[$order->manager_id]->name|escape}</td>
                                 <td>
                                     {if $order->reason_id}
