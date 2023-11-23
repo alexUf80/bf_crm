@@ -595,7 +595,6 @@ class StatisticsController1 extends Controller
                 AND DATE(o.date) <= ?
                 AND `description` = 'Привязка карты'
                 AND reason_code = 1
-                AND (o.client_status != 'nk' AND o.client_status != 'rep')
                 GROUP BY order_id
             ", $date_from, $date_to);
             $this->db->query($query);
