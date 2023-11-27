@@ -44,12 +44,14 @@ class Orders extends Core
         SELECT os.id,
         cs.number,
         cs.amount as con_amount,
+        os.user_id,
         os.`status`,
         os.utm_source,
         os.click_hash,
         os.webmaster_id,
         os.`date`,
         os.`amount`,
+        os.`client_status`,
         case when os.`amount` < 9999 then 670 when os.`amount` >= 10000 and os.`amount` <= 15000 then 1250 when os.`amount` >= 15001 and os.`amount` <= 30000 then 2500 when os.`amount` >= 30001 then 3750 ELSE 0 END as bet
         FROM s_orders os
         left JOIN s_contracts as cs on os.id = cs.order_id
