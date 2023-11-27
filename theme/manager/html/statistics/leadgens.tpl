@@ -119,10 +119,21 @@
                             <tr>
                                 <th>Номер заявки</th>
                                 <th>Номер контракта</th>
+
+                                <th>ФИО</th>
+                                <th>Дата рождения</th>
+                                <th>ИНН</th>
+
                                 <th>Статус</th>
                                 <th>Лидогенератор</th>
                                 <th>ID клика</th>
                                 <th>ID вебмастера</th>
+
+                                <th>Регион выдачи</th>
+                                <th>Зона качества</th>
+                                <th>ПК/НК</th>
+                                <th>Тип ПК</th>
+
                                 <th>Дата создания</th>
                                 <th>Сумма заявки</th>
                                 <th>Сумма контракта</th>
@@ -134,10 +145,30 @@
                                 <tr>
                                     <td><a href="/order/{$order->id}">{$order->id}</a></td>
                                     <td><a href="/order/{$order->id}">{$order->number}</a></td>
+
+                                    <td>
+                                        <a href="client/{$order->user_id}" target="_blank">
+                                            {$order->user->lastname|escape} {$order->user->firstname|escape} {$order->user->patronymic|escape}
+                                        </a>
+                                    </td>
+                                    <td>{$order->user->birth|date}</td>
+                                    <td>{$order->user->inn}</td>
+                                    
                                     <td>{$order->status}</td>
                                     <td>{$order->utm_source}</td>
                                     <td>{$order->click_hash}</td>
                                     <td>{$order->webmaster_id}</td>
+
+                                    <td>{$order->region}</td>
+                                    <td>{$order->zone}</td>
+                                    <td>
+                                        {if $order->client_status == 'pk'}ПК{/if}
+                                        {if $order->client_status == 'nk'}НК{/if}
+                                        {if $order->client_status == 'crm'}ПК CRM{/if}
+                                        {if $order->client_status == 'rep'}Повтор{/if}
+                                    </td>
+                                    <td>{$order->type_pk}</td>
+
                                     <td>{$order->date|date}</td>
                                     <td>{$order->amount|number_format:2:',':' '}</td>
                                     <td>{$order->con_amount|number_format:2:',':' '}</td>

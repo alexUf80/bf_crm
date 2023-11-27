@@ -3464,8 +3464,16 @@ class StatisticsController1 extends Controller
             $orders_statuses = $this->orders->get_statuses();
 
             if (!empty($orders)) {
-                foreach ($orders as $order)
+                foreach ($orders as $order){
                     $order->status = $orders_statuses[$order->status];
+                    $user = $this->users->get_user($order->user_id);
+                    $order->user = $user;
+
+                    $faktaddress = $this->Addresses->get_address($user->faktaddress_id);
+                    $order->region = $faktaddress->region;
+                    $order->zone = $faktaddress->zone;
+                    $order->type_pk = $this->contracts->type_pk_order($order);
+                }
 
                 $this->design->assign('orders', $orders);
             }
