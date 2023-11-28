@@ -9,7 +9,7 @@
           type="text/css"/>
     <link href="theme/manager/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet">
 {/capture}
-
+ 
 {capture name='page_scripts'}
     <script src="theme/manager/assets/plugins/moment/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>

@@ -29,9 +29,10 @@ class ProloServicesCost extends Core
     public function gets($filter = array())
     {
         $region_filter = '';
+        $id_filter = '';
 
-        if (isset($filter['region']))
-            $region_filter = $this->db->placehold("AND region = ?", $this->db->escape(trim($filter['region'])));
+        if (isset($filter['id']))
+            $region_filter = $this->db->placehold("AND id = ?", $this->db->escape(trim($filter['id'])));
         
 
         $query = $this->db->placehold("
@@ -39,6 +40,7 @@ class ProloServicesCost extends Core
         FROM s_prolo_services_cost
         where 1
         $region_filter
+        $id_filter
         ORDER BY id
         ");
 
