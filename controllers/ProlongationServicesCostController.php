@@ -42,12 +42,10 @@ class ProlongationServicesCostController extends Controller
 
         $services_cost =
             [
-                // 'region' => $region,
-                'reject_reason_cost' => $reject_reason_cost,
                 'insurance_cost' => $insurance_cost,
             ];
 
-        $this->ServicesCost->add($services_cost);
+        $this->ProloServicesCost->add($services_cost);
         exit;
     }
 
@@ -60,12 +58,10 @@ class ProlongationServicesCostController extends Controller
 
         $services_cost =
             [
-                // 'region' => '$region',
-                'reject_reason_cost' => $reject_reason_cost,
                 'insurance_cost' => $insurance_cost,
             ];
 
-            ServicesCostORM::where('id', $id)->update($services_cost);
+            ProloServicesCostORM::where('id', $id)->update($services_cost);
         exit;
     }
 
@@ -73,7 +69,7 @@ class ProlongationServicesCostController extends Controller
     {
         $id = $this->request->post('id');
         
-        $services_cost = $this->ServicesCost->get($id);
+        $services_cost = $this->ProloServicesCost->get($id);
         
         echo json_encode($services_cost);
         exit;
