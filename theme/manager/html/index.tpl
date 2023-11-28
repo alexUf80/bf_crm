@@ -244,12 +244,10 @@
                                         <li {if in_array($module, ['ServicesCostController'])}class="active"{/if}><a
                                                     href="services_cost">Стоимость услуг</a></li>
                                     {/if}
-                                    {*}
                                     {if in_array('tags', $manager->permissions)}
                                         <li {if in_array($module, ['ProlongationServicesCostController'])}class="active"{/if}><a
                                                     href="prolo_services_cost">Страховки при пролонгации</a></li>
                                     {/if}
-
                                     {*if in_array('ticket_handbooks', $manager->permissions)}
                                     <li {if in_array($module, ['TicketStatusesController'])}class="active"{/if}><a href="ticket_statuses">Статусы тикетов</a></li>
                                     <li {if in_array($module, ['TicketReasonsController'])}class="active"{/if}><a href="ticket_reasons">Причины закрытия тикетов</a></li>
