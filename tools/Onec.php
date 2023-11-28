@@ -91,7 +91,7 @@ class Onec implements ToolsInterface
                     'Email' => trim($order->user->email),
                     'ДатаСоздания' => date('Y-m-d', strtotime($order->user->created)),
                     'Решение' => $order->status == 3 ? 2 : 1,
-                    'СпособОформленияЗаявки' => 8
+                    // 'СпособОформленияЗаявки' => 8
                 ];
 
             $i++;
@@ -211,7 +211,7 @@ class Onec implements ToolsInterface
                     'РабочийТелефон' => trim($contract->user->workphone),
                     'Email' => trim($contract->user->email),
                     'ДатаСоздания' => date('Y-m-d', strtotime($contract->user->created)),
-                    'СпособОформленияЗаявки' => 8
+                    // 'СпособОформленияЗаявки' => 8
                 ];
 
             $i++;
@@ -276,7 +276,7 @@ class Onec implements ToolsInterface
                     'ДатаПолнойОплаты' => $contract->close_date ? date('Y-m-d', strtotime($contract->close_date)) : '',
                     'ТипДокументаРасхода' => 2,
                     'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date)),
-                    'ЦельЗаймаДляНБКИ' => 99
+                    // 'ЦельЗаймаДляНБКИ' => 99
                 ];
 
             if (isset($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты']) && empty($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты'])) {

@@ -80,6 +80,7 @@ RewriteRule ^penalties/?$               index.php?module=PenaltiesController  [L
 
 RewriteRule ^promocodes/?$              index.php?module=PromocodesController  [L,QSA]
 RewriteRule ^services_cost/?$           index.php?module=ServicesCostController  [L,QSA]
+RewriteRule ^prolo_services_cost/?$     index.php?module=ProlongationServicesCostController  [L,QSA]
 
 RewriteRule ^statistics/?$              index.php?module=StatisticsController1&action=main  [L,QSA]
 RewriteRule ^statistics/([^/]*)/?$      index.php?module=StatisticsController1&action=$1  [L,QSA]
