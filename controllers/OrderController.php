@@ -951,6 +951,9 @@ class OrderController extends Controller
         //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
 
         $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
+        if(!$defaultCard){
+            $defaultCard = CardsORM::where('user_id', $order->user_id)->first();
+        }
 
         if ($status != 8) {
             $resp = $this->Best2pay->purchase_by_token($defaultCard->id, (int)$reject_cost * 100, 'Списание за услугу "Причина отказа"');
