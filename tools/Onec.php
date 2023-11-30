@@ -274,8 +274,6 @@ class Onec implements ToolsInterface
                     'ДатаПолнойОплаты' => $contract->close_date ? date('Y-m-d', strtotime($contract->close_date)) : '',
                     'ТипДокументаРасхода' => 2,
                     'ДатаРасхода' => date('Y-m-d', strtotime($contract->inssuance_date)),
-                    'ЦельЗаймаДляНБКИ' => 99,
-                    'СпособОформленияЗаявки' => 8,
                 ];
 
             if (isset($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты']) && empty($xml['Документы'][$i]['Сделка']['ДатаПолнойОплаты'])) {
@@ -285,6 +283,8 @@ class Onec implements ToolsInterface
 
             $xml['Документы'][$i]['Сделка']['НомерДокументаРасхода'] = $issuanceOperation->id;
             $xml['Документы'][$i]['Сделка']['РасчетВоВнешнейСистеме'] = 'false';
+            $xml['Документы'][$i]['Сделка']['ЦельЗаймаДляНБКИ'] = 99;
+            $xml['Документы'][$i]['Сделка']['СпособОформленияЗаявки'] = 8;
 
             $promocodes = PromocodesORM::get();
 
