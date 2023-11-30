@@ -163,6 +163,7 @@ class Orders extends Core
                 o.utm_campaign,
                 o.utm_content,
                 o.utm_term,
+                o.utm_sub_id,
                 o.webmaster_id,
                 o.click_hash,
                 o.juicescore_session_id,
