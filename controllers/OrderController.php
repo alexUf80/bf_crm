@@ -950,12 +950,12 @@ class OrderController extends Controller
         //if (!empty($order->utm_source) && $order->utm_source == 'leadstech')
         //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
         
-        // // !!!
-        // if (!empty($order->utm_source) && $order->utm_source == 'alians'){
-        //     $this->Leadgens->sendPendingPostbackToAlians($order->order_id, 3);
-        // }
+        // !!!
+        if (!empty($order->utm_source) && $order->utm_source == 'alians'){
+            $this->Leadgens->sendPendingPostbackToAlians($order->order_id, 3);
+        }
 
-        // $this->Leadgens->sendRejectToAlians($order->order_id);
+        $this->Leadgens->sendRejectToAlians($order->order_id);
 
         $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
         if(!$defaultCard){
