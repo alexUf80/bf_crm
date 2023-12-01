@@ -215,17 +215,13 @@ class Leadgens extends Core
         $amount = $order->amount;
 
         $link = "https://alianscpa.ru/postback/get/partners?token=64bc380cb551e14443513654fe3ad37b&from=barens&status=$status&click_id=$click_id&sub1=$sub1";
-        // !!!
-        $sas = file_get_contents($this->config->root_dir.'files/sas.txt');
-        file_put_contents($this->config->root_dir.'files/sas.txt',$sas . $link. '---!!!' .$order->utm_sub_id . '---' . $status . PHP_EOL);
-        // die;
 
-        // $ch = curl_init($link);
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        // curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-        // curl_exec($ch);
-        // curl_close($ch);
+        $ch = curl_init($link);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_exec($ch);
+        curl_close($ch);
 
 
         $this->logging_(__METHOD__, 'Leadstech', $link, 'ok', 'Leadstech.txt', 'logs/');
