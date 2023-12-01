@@ -188,6 +188,12 @@ class IssuanceCron extends Core
                         $this->orders->update_order($contract->order_id, array('utm_source' => ''));
                     }
 
+                    // // !!!
+                    // if (!empty($order->utm_source) && $order->utm_source == 'alians' && !empty($order->click_hash)) {
+                    //     $this->Leadgens->sendPendingPostbackToAlians($contract->order_id, 1);
+                    //     $this->orders->update_order($contract->order_id, array('utm_source' => ''));
+                    // }
+
                 }else {
                     $this->contracts->update_contract($contract->id, array('status' => 6));
 

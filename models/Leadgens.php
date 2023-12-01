@@ -175,4 +175,82 @@ class Leadgens extends Core
 
     //     return $res;
     // }
+
+
+    public function sendRejectToAlians($orderId)
+    {
+
+        $order = $this->orders->get_order($orderId);
+        $address = $this->addresses->get_address($order->faktaddress_id);
+
+        $address_locacity = '';
+        if($address->city){
+            $address_locacity = $address->city;
+        }
+        else{
+            $address_locacity = $address->locality_type . '.' . $address->locality;
+        }
+
+        $link = "https://alianscpa.ru/api/contacts/?phone=$order->phone_mobile&token=cf9eaf664759eb5e6a1d93b41edf85b4&email=$order->email&name=$order->firstname&surname=$order->lastname&patronymic=$order->patronymic&date_birthday=$order->birth&geo=$address_locacity";
+        $sas = file_get_contents($this->config->root_dir.'files/sas.txt');
+        file_put_contents($this->config->root_dir.'files/sas.txt',$sas.'---'.$link);
+        // $ch = curl_init($link);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        // curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        // curl_exec($ch);
+        // curl_close($ch);
+
+        return 1;
+    }
+
+    public function sendPendingPostbackToAlians($orderId, $status)
+    {
+
+        $order = $this->orders->get_order($orderId);
+        $goal = 'loan';
+        $click_id = $order->click_hash;
+        $sub1 = $order->utm_sub_id;
+        $status = $status;
+        $amount = $order->amount;
+
+        $link = "https://alianscpa.ru/postback/get/partners?token=64bc380cb551e14443513654fe3ad37b&from=barens&status=$status&click_id=$click_id&sub1=$sub1";
+        // !!!
+        $sas = file_get_contents($this->config->root_dir.'files/sas.txt');
+        file_put_contents($this->config->root_dir.'files/sas.txt',$sas . $link. '---!!!' .$order->utm_sub_id . '---' . $status . PHP_EOL);
+        // die;
+
+        // $ch = curl_init($link);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        // curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        // curl_exec($ch);
+        // curl_close($ch);
+
+
+        $this->logging_(__METHOD__, 'Leadstech', $link, 'ok', 'Leadstech.txt', 'logs/');
+
+        return 1;
+    }
+
+    public function logging_($local_method, $service, $request, $response, $filename, $log_dir)
+    {
+        $log_filename = $log_dir.$filename;
+        
+        if (date('d', filemtime($log_filename)) != date('d'))
+        {
+            $archive_filename = $log_dir.'archive/'.date('ymd', filemtime($log_filename)).'.'.$filename;
+            rename($log_filename, $archive_filename);
+            file_put_contents($log_filename, "\xEF\xBB\xBF");            
+        }
+
+        $str = PHP_EOL.'==================================================================='.PHP_EOL;
+        $str .= date('d.m.Y H:i:s').PHP_EOL;
+        $str .= $service.PHP_EOL;
+        $str .= var_export($request, true).PHP_EOL;
+        $str .= var_export($response, true).PHP_EOL;
+        $str .= 'END'.PHP_EOL;
+        
+        file_put_contents($log_filename, $str, FILE_APPEND);
+    }
 }
