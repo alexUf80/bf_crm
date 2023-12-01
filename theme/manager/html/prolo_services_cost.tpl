@@ -24,7 +24,30 @@
         $(function () {
 
             $('.add-services-issuance').on('click', function () {
-                $('.insurance_cost_limit').append('<tr class="js-issuanse-string"><td><div style="display: flex; align-items: center;">до<input type="text" class=" form-control js-issuanse-limit" value="" /></div></td><td><div style="display: flex; align-items: center; ">- <input type="text" class="form-control js-issuanse-amount" value="" /></div></td><td><div class="btn btn-outline-danger" onclick="delString($(this))"><i class=" fas fa-trash"></i></div></td></tr>');
+                $('.insurance_cost_limit').append(`
+                <tr class="js-issuanse-string">
+                    <td>
+                        <div style="display: flex; align-items: center;">до
+                            <input type="text" class=" form-control js-issuanse-limit" value="" />
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; ">
+                            - <input type="text" class="form-control js-issuanse-amount" value="" />
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; ">
+                            &nbsp;- <input type="text" class="form-control js-issuanse-coverage" value="" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn btn-outline-danger" onclick="delString($(this))">
+                            <i class=" fas fa-trash"></i>
+                        </div>
+                    </td>
+                </tr>
+                `);
             });
 
 
@@ -62,7 +85,30 @@
                             $('.insurance_cost_limit').text('');
                             
                             JSON.parse(services_cost['insurance_cost']).forEach(insurance_cost => {
-                                $('.insurance_cost_limit').append('<tr class="js-issuanse-string"><td><div style="display: flex; align-items: center;">до<input type="text" class=" form-control js-issuanse-limit" value="' + insurance_cost[0] + '" /></div></td><td><div style="display: flex; align-items: center; ">- <input type="text" class="form-control js-issuanse-amount" value="' + insurance_cost[1] + '" /></div></td><td><div class="btn btn-outline-danger" onclick="delString($(this))"><i class=" fas fa-trash"></i></div></td></tr>');
+                                $('.insurance_cost_limit').append(`
+                                <tr class="js-issuanse-string">
+                                    <td>
+                                        <div style="display: flex; align-items: center;">
+                                            до<input type="text" class=" form-control js-issuanse-limit" value="` + insurance_cost[0] + `" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; ">
+                                            - <input type="text" class="form-control js-issuanse-amount" value="` + insurance_cost[1] + `" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; ">
+                                            &nbsp;- <input type="text" class="form-control js-issuanse-coverage" value="` + insurance_cost[2] + `" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="btn btn-outline-danger" onclick="delString($(this))">
+                                            <i class=" fas fa-trash"></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                                `);
                             });
 
                             $('input[name="action"]').val('edit');
@@ -81,7 +127,7 @@
 
                 var limits_array = [];
                 $( ".js-issuanse-string" ).each(function( index ) {
-                    limits_array[index] = [$(this).children().children().children(".js-issuanse-limit").val(), $(this).children().children().children(".js-issuanse-amount").val()];
+                    limits_array[index] = [$(this).children().children().children(".js-issuanse-limit").val(), $(this).children().children().children(".js-issuanse-amount").val(), $(this).children().children().children(".js-issuanse-coverage").val()];
                 });
 
                 $("#insurance_cost").val(JSON.stringify(limits_array))
@@ -173,7 +219,7 @@
                                                     {$insurance_costs = json_decode($cost->insurance_cost)}
                                                     {if isset($insurance_costs)}
                                                         {foreach $insurance_costs as $insurance_cost}
-                                                            до {$insurance_cost[0]} - {$insurance_cost[1]} руб;<br>
+                                                            до {$insurance_cost[0]} - {$insurance_cost[1]} руб <span style="color:#130367"><b>(покрытие {$insurance_cost[2]} руб)</b></span>;<br>
                                                         {/foreach}
                                                     {/if}
                                                 </td>
@@ -220,6 +266,13 @@
                     <div class="form-group">
                         <label for="insurance_cost" class="control-label">Стоимость страховки при пролонгации</label>
                         <input type="hidden" class="form-control" name="insurance_cost" id="insurance_cost" value=""/>
+                        <table class="insurance_cost_limit_names" width="100%">
+                            <tr>
+                                <td>Лимит суммы</td>
+                                <td>Страховка</td>
+                                <td>Покрытие</td>
+                            </tr>
+                        </table>
                         <table class="insurance_cost_limit" width="100%">
                             <tr>
                                 <td>Лимит суммы</td>
