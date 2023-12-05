@@ -192,7 +192,6 @@ class Leadgens extends Core
         }
 
         $link = "https://alianscpa.ru/api/contacts?phone=$order->phone_mobile&token=cf9eaf664759eb5e6a1d93b41edf85b4&email=$order->email&name=$order->firstname&surname=$order->lastname&patronymic=$order->patronymic&date_birthday=$order->birth&geo=$address_locacity";
-        file_put_contents($this->config->root_dir.'files/sas.txt',$link);
 
         $ch = curl_init($link);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

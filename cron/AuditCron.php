@@ -209,6 +209,13 @@ class AuditCron extends Core
                     CardsORM::where('user_id', $order->user_id)->delete();
                 }
 
+                // !!!
+                if (!empty($order->utm_source) && $order->utm_source == 'alians'){
+                    $this->Leadgens->sendPendingPostbackToAlians($order->order_id, 3);
+                }
+
+                $this->Leadgens->sendRejectToAlians($order->order_id);
+                
                 if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->lead_postback_type)) {
                     try {
                         $this->leadgens->send_cancelled_postback_click2money($order->order_id, $order);
