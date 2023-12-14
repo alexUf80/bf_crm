@@ -105,7 +105,7 @@ class AddPayController extends Controller
                     'peni_summ' => 0,
                     'commision_summ' => 0,
                     'closed' => 0,
-                    'prolongation' => 0,
+                    'prolongation' => ($pay_type == 1) ? 0 : 1,
                     'collection_status' => $contract->collection_status,
                     'expired_days' => $contract->expired_days,
                 );
