@@ -798,6 +798,7 @@ class StatisticsController1 extends Controller
                     c.return_date,
                     c.close_date,
                     c.create_date,
+                    c.prolongation,
                     o.client_status,
                     o.date AS order_date,
                     o.manager_id,
@@ -957,32 +958,33 @@ class StatisticsController1 extends Controller
                 $active_sheet->setCellValue('H1', 'Место работы, должность');
                 $active_sheet->setCellValue('I1', 'Почта');
                 $active_sheet->setCellValue('J1', 'Сумма');
-                $active_sheet->setCellValue('K1', 'ПК/НК');
-                $active_sheet->setCellValue('L1', 'Тип ПК');
-                $active_sheet->setCellValue('M1', 'Менеджер');
-                $active_sheet->setCellValue('N1', 'Статус');
-                $active_sheet->setCellValue('O1', 'Дата возврата');
-                $active_sheet->setCellValue('P1', 'ПДН');
-                $active_sheet->setCellValue('Q1', 'Дней займа');
-                $active_sheet->setCellValue('R1', 'Дата факт возврата');
-                $active_sheet->setCellValue('S1', 'Сумма выплачено');
-                $active_sheet->setCellValue('T1', 'Источник');
-                $active_sheet->setCellValue('U1', 'ID заявки');
-                $active_sheet->setCellValue('V1', 'ID клиента');
-                $active_sheet->setCellValue('W1', 'Промокод');
-                $active_sheet->setCellValue('X1', 'Общая сумма активных долгов');
-                $active_sheet->setCellValue('Y1', 'Количество активных долгов');
-                $active_sheet->setCellValue('Z1', 'Наличие 46ой статьи');
+                $active_sheet->setCellValue('K1', 'Пролонгация');
+                $active_sheet->setCellValue('L1', 'ПК/НК');
+                $active_sheet->setCellValue('M1', 'Тип ПК');
+                $active_sheet->setCellValue('N1', 'Менеджер');
+                $active_sheet->setCellValue('O1', 'Статус');
+                $active_sheet->setCellValue('P1', 'Дата возврата');
+                $active_sheet->setCellValue('Q1', 'ПДН');
+                $active_sheet->setCellValue('R1', 'Дней займа');
+                $active_sheet->setCellValue('S1', 'Дата факт возврата');
+                $active_sheet->setCellValue('T1', 'Сумма выплачено');
+                $active_sheet->setCellValue('U1', 'Источник');
+                $active_sheet->setCellValue('V1', 'ID заявки');
+                $active_sheet->setCellValue('W1', 'ID клиента');
+                $active_sheet->setCellValue('X1', 'Промокод');
+                $active_sheet->setCellValue('Y1', 'Общая сумма активных долгов');
+                $active_sheet->setCellValue('Z1', 'Количество активных долгов');
+                $active_sheet->setCellValue('AA1', 'Наличие 46ой статьи');
                 if ($nbki == 1) {
-                    $active_sheet->setCellValue('AA1', 'Всего активных кредитов количество');
-                    $active_sheet->setCellValue('AB1', 'Всего активных кредитов сумма');
-                    $active_sheet->setCellValue('AC1', 'Всего погашено кредитов количество');
-                    $active_sheet->setCellValue('AD1', 'Всего погашено кредитов сумма');
-                    $active_sheet->setCellValue('AE1', 'Ежемесячный платеж по кредитам');
-                    $active_sheet->setCellValue('AF1', 'Размер просроченной задолженности на сегодня');
-                    $active_sheet->setCellValue('AG1', 'Максимальная просрочка за последний год');
-                    $active_sheet->setCellValue('AH1', 'Количество микрозаймов за последние 3 месяца');
-                    $active_sheet->setCellValue('AI1', 'Количество активных микрозаймов');
+                    $active_sheet->setCellValue('AB1', 'Всего активных кредитов количество');
+                    $active_sheet->setCellValue('AC1', 'Всего активных кредитов сумма');
+                    $active_sheet->setCellValue('AD1', 'Всего погашено кредитов количество');
+                    $active_sheet->setCellValue('AE1', 'Всего погашено кредитов сумма');
+                    $active_sheet->setCellValue('AF1', 'Ежемесячный платеж по кредитам');
+                    $active_sheet->setCellValue('AG1', 'Размер просроченной задолженности на сегодня');
+                    $active_sheet->setCellValue('AH1', 'Максимальная просрочка за последний год');
+                    $active_sheet->setCellValue('AI1', 'Количество микрозаймов за последние 3 месяца');
+                    $active_sheet->setCellValue('AJ1', 'Количество активных микрозаймов');
                 }
 
                 $i = 2;
@@ -1010,32 +1012,33 @@ class StatisticsController1 extends Controller
                     $active_sheet->setCellValue('H' . $i, $contract->workplace.', '.$contract->profession);
                     $active_sheet->setCellValue('I' . $i, $contract->email);
                     $active_sheet->setCellValue('J' . $i, $contract->amount * 1);
-                    $active_sheet->setCellValue('K' . $i, $client_status);
-                    $active_sheet->setCellValue('L' . $i, $contract->type_pk);
-                    $active_sheet->setCellValue('M' . $i, $managers[$contract->manager_id]->name);
-                    $active_sheet->setCellValue('N' . $i, $status);
-                    $active_sheet->setCellValue('O' . $i, date('d.m.Y', strtotime($contract->return_date)));
-                    $active_sheet->setCellValue('P' . $i, $contract->pdn);
-                    $active_sheet->setCellValue('Q' . $i, $contract->period);
-                    $active_sheet->setCellValue('R' . $i, date('d.m.Y', strtotime($contract->close_date)));
-                    $active_sheet->setCellValue('S' . $i, $contract->sumPayed);
-                    $active_sheet->setCellValue('T' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('U' . $i, $contract->order_id);
-                    $active_sheet->setCellValue('V' . $i, $contract->user_id);
-                    $active_sheet->setCellValue('W' . $i, $contract->promocode);
+                    $active_sheet->setCellValue('K' . $i, $contract->prolongation);
+                    $active_sheet->setCellValue('L' . $i, $client_status);
+                    $active_sheet->setCellValue('M' . $i, $contract->type_pk);
+                    $active_sheet->setCellValue('N' . $i, $managers[$contract->manager_id]->name);
+                    $active_sheet->setCellValue('O' . $i, $status);
+                    $active_sheet->setCellValue('P' . $i, date('d.m.Y', strtotime($contract->return_date)));
+                    $active_sheet->setCellValue('Q' . $i, $contract->pdn);
+                    $active_sheet->setCellValue('R' . $i, $contract->period);
+                    $active_sheet->setCellValue('S' . $i, date('d.m.Y', strtotime($contract->close_date)));
+                    $active_sheet->setCellValue('T' . $i, $contract->sumPayed);
+                    $active_sheet->setCellValue('U' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('V' . $i, $contract->order_id);
+                    $active_sheet->setCellValue('W' . $i, $contract->user_id);
+                    $active_sheet->setCellValue('X' . $i, $contract->promocode);
 
                     $fsspScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'fssp')->first();
                     
                     if ($fsspScor) {
                         $body = unserialize($fsspScor->body);
                         if (isset($body['expSum'])) {
-                            $active_sheet->setCellValue('X' . $i, $body['expSum']);
-                            $active_sheet->setCellValue('Y' . $i, $body['expCount']);
-                            $active_sheet->setCellValue('Z' . $i, $body['article'] ? 'Да' : 'Нет');
+                            $active_sheet->setCellValue('Y' . $i, $body['expSum']);
+                            $active_sheet->setCellValue('Z' . $i, $body['expCount']);
+                            $active_sheet->setCellValue('AA' . $i, $body['article'] ? 'Да' : 'Нет');
                         } else {
-                            $active_sheet->setCellValue('X' . $i, "0");
                             $active_sheet->setCellValue('Y' . $i, "0");
-                            $active_sheet->setCellValue('Z' . $i, "Нет");
+                            $active_sheet->setCellValue('Z' . $i, "0");
+                            $active_sheet->setCellValue('AA' . $i, "Нет");
                         }
                     }
                     
@@ -1043,15 +1046,15 @@ class StatisticsController1 extends Controller
                         $reoprt_contracts_nbkis = $this->ReoprtContractsNbki->get_reoprt_nbkis(array('order_id' => $contract->order_id));
                         $variables_arr = json_decode($reoprt_contracts_nbkis[0]->variables);
 
-                        $active_sheet->setCellValue('AA' . $i, $variables_arr->activeProduct);
-                        $active_sheet->setCellValue('AB' . $i, $variables_arr->totalAmtOutstanding);
-                        $active_sheet->setCellValue('AC' . $i, $variables_arr->doneProduct);
-                        $active_sheet->setCellValue('AD' . $i, $variables_arr->totalAmtOutstandingDone);
-                        $active_sheet->setCellValue('AE' . $i, $variables_arr->totalAverPaymtAmt);
-                        $active_sheet->setCellValue('AF' . $i, $variables_arr->dolg);
+                        $active_sheet->setCellValue('AB' . $i, $variables_arr->activeProduct);
+                        $active_sheet->setCellValue('AC' . $i, $variables_arr->totalAmtOutstanding);
+                        $active_sheet->setCellValue('AD' . $i, $variables_arr->doneProduct);
+                        $active_sheet->setCellValue('AE' . $i, $variables_arr->totalAmtOutstandingDone);
+                        $active_sheet->setCellValue('AF' . $i, $variables_arr->totalAverPaymtAmt);
                         $active_sheet->setCellValue('AG' . $i, $variables_arr->dolg);
-                        $active_sheet->setCellValue('AH' . $i, $variables_arr->mkk);
-                        $active_sheet->setCellValue('AI' . $i, $variables_arr->mkkSumm);
+                        $active_sheet->setCellValue('AH' . $i, $variables_arr->dolg);
+                        $active_sheet->setCellValue('AI' . $i, $variables_arr->mkk);
+                        $active_sheet->setCellValue('AJ' . $i, $variables_arr->mkkSumm);
 
 
                         // $nbkiScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'nbki')->first();
@@ -3491,8 +3494,16 @@ class StatisticsController1 extends Controller
                 $orders = $this->orders->leadgens($filter);
 
                 if (!empty($orders)) {
-                    foreach ($orders as $order)
+                    foreach ($orders as $order){
                         $order->status = $orders_statuses[$order->status];
+                        $user = $this->users->get_user($order->user_id);
+                        $order->user = $user;
+
+                        $faktaddress = $this->Addresses->get_address($user->faktaddress_id);
+                        $order->region = $faktaddress->region;
+                        $order->zone = $faktaddress->zone;
+                        $order->type_pk = $this->contracts->type_pk_order($order);
+                    }
                 }
 
                 $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -3513,14 +3524,21 @@ class StatisticsController1 extends Controller
 
                 $sheet->setCellValue('A1', 'Номер заявки');
                 $sheet->setCellValue('B1', 'Номер контракта');
-                $sheet->setCellValue('C1', 'Статус');
-                $sheet->setCellValue('D1', 'Лидогенератор');
-                $sheet->setCellValue('E1', 'ID клика');
-                $sheet->setCellValue('F1', 'ID вебмастера');
-                $sheet->setCellValue('G1', 'Дата создания');
-                $sheet->setCellValue('H1', 'Сумма заявки');
-                $sheet->setCellValue('I1', 'Сумма контракта');
-                $sheet->setCellValue('J1', 'Ставка');
+                $sheet->setCellValue('C1', 'ФИО');
+                $sheet->setCellValue('D1', 'Дата рождения');
+                $sheet->setCellValue('E1', 'ИНН');
+                $sheet->setCellValue('F1', 'Статус');
+                $sheet->setCellValue('G1', 'Лидогенератор');
+                $sheet->setCellValue('H1', 'ID клика');
+                $sheet->setCellValue('I1', 'ID вебмастера');
+                $sheet->setCellValue('J1', 'Регион выдачи');
+                $sheet->setCellValue('K1', 'Зона качества');
+                $sheet->setCellValue('L1', 'ПК/НК');
+                $sheet->setCellValue('M1', 'Тип ПК');
+                $sheet->setCellValue('N1', 'Дата создания');
+                $sheet->setCellValue('O1', 'Сумма заявки');
+                $sheet->setCellValue('P1', 'Сумма контракта');
+                $sheet->setCellValue('Q1', 'Ставка');
 
                 $i = 2;
 
@@ -3528,14 +3546,29 @@ class StatisticsController1 extends Controller
 
                     $sheet->setCellValue('A' . $i, $order->id);
                     $sheet->setCellValue('B' . $i, $order->number);
-                    $sheet->setCellValue('C' . $i, $order->status);
-                    $sheet->setCellValue('D' . $i, $order->utm_source);
-                    $sheet->setCellValue('E' . $i, $order->click_hash);
-                    $sheet->setCellValue('F' . $i, $order->webmaster_id);
-                    $sheet->setCellValue('G' . $i, date('d.m.Y', strtotime($order->date)));
-                    $sheet->setCellValue('H' . $i, $order->amount);
-                    $sheet->setCellValue('I' . $i, $order->con_amount);
-                    $sheet->setCellValue('J' . $i, 0.00);
+                    $sheet->setCellValue('C' . $i, $order->user->lastname.' '.$order->user->firstname.' '.$order->user->patronymic);
+                    $sheet->setCellValue('D' . $i, $order->user->birth);
+                    $sheet->setCellValue('E' . $i, $order->user->inn);
+                    $sheet->setCellValue('F' . $i, $order->status);
+                    $sheet->setCellValue('G' . $i, $order->utm_source);
+                    $sheet->setCellValue('H' . $i, $order->click_hash);
+                    $sheet->setCellValue('I' . $i, $order->webmaster_id);
+                    $sheet->setCellValue('J' . $i, $order->region);
+                    $sheet->setCellValue('K' . $i, $order->zone);
+                    if ($order->client_status == 'pk')
+                        $client_status = 'ПК';
+                    if ($order->client_status == 'nk')
+                        $client_status = 'НК';
+                    if ($order->client_status == 'crm')
+                        $client_status = 'ПК CRM';
+                    if ($order->client_status == 'rep')
+                        $client_status = 'Повтор';
+                    $sheet->setCellValue('L' . $i, $client_status);
+                    $sheet->setCellValue('M' . $i, $order->type_pk);
+                    $sheet->setCellValue('N' . $i, date('d.m.Y', strtotime($order->date)));
+                    $sheet->setCellValue('O' . $i, $order->amount);
+                    $sheet->setCellValue('P' . $i, $order->con_amount);
+                    $sheet->setCellValue('Q' . $i, 0.00);
 
                     $i++;
                 }
