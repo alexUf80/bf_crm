@@ -192,7 +192,7 @@ class Nbki_scoring extends Core
         if ($result['number_of_active'] >= $max_number_of_active) {
             $add_scoring = array(
                 'status' => 'completed',
-                'body' => serialize($result['data'] + ['report_url' => $result['report_url']]),
+                'body' => serialize($result),
                 'success' => 0,
                 'string_result' => 'превышен допустимый порог активных займов'
             );
@@ -209,7 +209,7 @@ class Nbki_scoring extends Core
         if ($result['share_of_overdue_by_active'] >= $max_share_of_overdue_by_active) {
             $add_scoring = array(
                 'status' => 'completed',
-                'body' => serialize($result['data'] + ['report_url' => $result['report_url']]),
+                'body' => serialize($result),
                 'success' => 0,
                 'string_result' => 'превышен допустимый порог доли просроченных к активным'
             );
@@ -225,7 +225,7 @@ class Nbki_scoring extends Core
         if ($result['share_of_overdue_by_closed'] >= $max_share_of_overdue_by_closed) {
             $add_scoring = array(
                 'status' => 'completed',
-                'body' => serialize($result['data'] + ['report_url' => $result['report_url']]),
+                'body' => serialize($result),
                 'success' => 0,
                 'string_result' => 'превышен допустимый порог доли просроченных к закрытым'
             );
