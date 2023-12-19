@@ -2,8 +2,10 @@
 
 class Juicescore extends Core
 {
-    private $key = '4Tcp0xYulqt78ErhX7jhCllPoHAqL0';
-    private $url = 'https://api.juicyscore.com/getscore/';
+    // private $key = '4Tcp0xYulqt78ErhX7jhCllPoHAqL0';
+    // private $url = 'https://api.juicyscore.com/getscore/';
+    private $key = '';
+    private $url = '';
     
     public function __construct()
     {
