@@ -214,7 +214,7 @@ class AuditCron extends Core
                     $this->Leadgens->sendPendingPostbackToAlians($order->order_id, 3);
                 }
 
-                $this->Leadgens->sendRejectToAlians($order->order_id);
+                // $this->Leadgens->sendRejectToAlians($order->order_id);
                 
                 if (!empty($order->utm_source) && $order->utm_source == 'click2money' && !empty($order->lead_postback_type)) {
                     try {

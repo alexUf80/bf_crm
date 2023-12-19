@@ -955,7 +955,7 @@ class OrderController extends Controller
             $this->Leadgens->sendPendingPostbackToAlians($order->order_id, 3);
         }
 
-        $this->Leadgens->sendRejectToAlians($order->order_id);
+        // $this->Leadgens->sendRejectToAlians($order->order_id);
 
         $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
         if(!$defaultCard){
