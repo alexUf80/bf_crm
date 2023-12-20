@@ -33,14 +33,28 @@ class NbkiExtraScorings extends Core
         return $result;
     }
 
+    public function get_all()
+    {
+        $query = $this->db->placehold("
+            SELECT * 
+            FROM s_nbki_extra_scorings 
+        ");
+
+        $this->db->query($query);
+
+        $results = $this->db->results();
+
+        return $results;
+    }
+
     public function update($order_id, $data)
     {
         $query = $this->db->placehold("
             UPDATE s_nbki_extra_scorings  SET ?% WHERE order_id = ?
         ", (array)$data, (int)$order_id);
-        $this->db->query($query);
+        $nbki_extra_scoring_id = $this->db->query($query);
 
-        return $order_id;
+        return $nbki_extra_scoring_id;
     }
 
 }
