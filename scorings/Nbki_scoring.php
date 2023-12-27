@@ -41,7 +41,8 @@ class Nbki_scoring extends Core
                     $user->gender,
                     $user->client_status,
                     $user->inn,
-                    $user->subdivision_code
+                    $user->subdivision_code,
+                    $scoring_id
                 );
             } else {
                 $update = array(
@@ -72,7 +73,8 @@ class Nbki_scoring extends Core
         $gender,
         $client_status,
         $inn,
-        $subdivision_code
+        $subdivision_code,
+        $scoring_id
     )
     {
         $genderArr = [
@@ -185,10 +187,16 @@ class Nbki_scoring extends Core
         }
 
         $scoring_type = $this->scorings->get_type('nbki');
-        $max_number_of_active = $scoring_type->params['nk']['nbki_number_of_active'];
-        $max_share_of_overdue_by_closed = $scoring_type->params['nk']['open_to_close_ratio'];
-        $max_share_of_overdue_by_active = $scoring_type->params['nk']['open_to_active_ratio'];
+        // $max_number_of_active = $scoring_type->params['nk']['nbki_number_of_active'];
+        // $max_share_of_overdue_by_closed = $scoring_type->params['nk']['open_to_close_ratio'];
+        // $max_share_of_overdue_by_active = $scoring_type->params['nk']['open_to_active_ratio'];
+        $nbki_green = $scoring_type->params['nk']['nbki_green'];
+        $nbki_yellow = $scoring_type->params['nk']['nbki_yellow'];
+        $nbki_red = $scoring_type->params['nk']['nbki_red'];
 
+        $scoring_type_location = $this->scorings->get_type('location');
+
+        /*
         if ($result['number_of_active'] >= $max_number_of_active) {
             $add_scoring = array(
                 'status' => 'completed',
@@ -237,6 +245,145 @@ class Nbki_scoring extends Core
 
             return $add_scoring;
         }
+        */
+
+        $scoring = $this->scorings->get_scoring($scoring_id);
+        if ($order = $this->orders->get_order($scoring->order_id)){
+            $faktaddress = $this->Addresses->get_address($order->faktaddress_id);
+            $order->Regregion = $faktaddress->region;
+
+            if (empty($order->Regregion))
+            {
+                $add_scoring = array(
+                    'status' => 'error',
+                    'body' => serialize($result),
+                    'success' => 0,
+                    'string_result' => 'в заявке не указан регион регистрации'
+                );
+                $this->scorings->update_scoring($this->scoring_id, $add_scoring);
+
+                sleep(1);
+                $this->nbki_extra_scorings();
+
+                return $add_scoring;
+            }
+            else
+            {
+                $order->Regregion = trim($order->Regregion);
+                $order_Regregion = $order->Regregion;
+                if(mb_substr($order->Regregion, -2) == " г" ||
+                mb_substr($order->Regregion, 0, 2) == "г " ||
+                mb_substr($order->Regregion, -4) == " обл" ||
+                mb_substr($order->Regregion, -5) == " обл." ||
+                mb_substr($order->Regregion, -8) == " область" ||
+                mb_substr($order->Regregion, -8) == " ОБЛАСТЬ" ||
+                mb_substr($order->Regregion, -5) == " край" ||
+                mb_substr($order->Regregion, -5) == " Край" ||
+                mb_substr($order->Regregion, -11) == " республика" ||
+                mb_substr($order->Regregion, -11) == " Республика" ||
+                mb_substr($order->Regregion, -5) == " Респ" ||
+                mb_substr($order->Regregion, 0, 5) == "Респ " ||
+                mb_substr($order->Regregion, 0, 11) == "Республика " ){
+                    $order_Regregion = str_replace(["г ", " г", " область", " ОБЛАСТЬ", " обл.", " обл", " край", " Край", " республика", " Республика", " Респ", "Респ ", "Республика "], "", $order->Regregion);
+                }
+                $exception_regions = array_map('trim', explode(',', $scoring_type_location->params['regions']));
+                $order->Regregion = $order_Regregion;
+                // if(isset(explode(' ', $order->Regregion)[1]) && mb_strtolower(explode(' ', $order->Regregion)[1]) == 'обл'){
+                //     $order->Regregion = explode(' ', $order->Regregion)[0];
+                // }
+            
+                $score = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $exception_regions);
+                
+                $red_regions = array_map('trim', explode(',', $scoring_type_location->params['red-regions']));
+                $red = in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $red_regions);
+
+                $yellow_regions = array_map('trim', explode(',', $scoring_type_location->params['yellow-regions']));
+                $yellow = in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $yellow_regions);
+                
+                $gray_regions = array_map('trim', explode(',', $scoring_type_location->params['gray-regions']));
+                $gray = in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $gray_regions);
+
+                $mm_scoring = 
+                $zone_result = '';
+                if ($score){
+                    $update['string_result'] = 'Допустимый регион: '.$order->Regregion;
+                    if($yellow){
+                        if ($result['score'] < $nbki_yellow){
+                            $string_result = "Дно. ЖЕЛТАЯ ЗОНА";
+                            $success = 0;
+                        }
+                        else{
+                            $string_result = "Проверки пройдены. ЖЕЛТАЯ ЗОНА";
+                            $success = 1;
+                        }
+                    }
+                    elseif ($red) {
+                        if ($result['score'] < $nbki_red) {
+                            $string_result = "Дно. КРАСНАЯ ЗОНА";
+                            $success = 0;
+                        }
+                        else{
+                            $string_result = "Проверки пройдены. КРАСНАЯ ЗОНА";
+                            $success = 1;
+                        }
+                    }
+                    elseif ($gray) {
+                        if ($result['score'] < $nbki_green) {
+                            $string_result = "Дно. СЕРАЯ ЗОНА";   
+                            $success = 0;
+                        }
+                        else{
+                            $string_result = "Проверки пройдены. СЕРАЯ ЗОНА";
+                            $success = 1;
+                        }
+                    }
+                    else {
+                        if ($result['score'] < $nbki_green) {
+                            $string_result = "Дно. ЗЕЛЕНАЯ ЗОНА";
+                            $success = 0;
+                        }
+                        else{
+                            $string_result = "Проверки пройдены. ЗЕЛЕНАЯ ЗОНА";
+                            $success = 1;
+                        }
+                    }
+
+                }
+                else{
+                    $string_result = "Проверки пройдены. ОЧЕНЬ КРАСНАЯ ЗОНА ".$score;
+                }
+                
+                $add_scoring = array(
+                    'status' => 'completed',
+                    'body' => serialize($result),
+                    'success' => $success,
+                    'string_result' => $string_result
+                );
+                $this->scorings->update_scoring($this->scoring_id, $add_scoring);
+
+                sleep(1);
+                
+                return $add_scoring;
+
+            }
+            
+        }
+        else
+        {
+            $add_scoring = array(
+                'status' => 'error',
+                'body' => serialize($result),
+                'success' => 0,
+                'string_result' => 'не найдена заявка'
+            );
+            $this->scorings->update_scoring($this->scoring_id, $add_scoring);
+            
+            sleep(1);
+            $this->nbki_extra_scorings();
+
+            return $add_scoring;
+        }
+            
 
         $add_scoring = array(
             'status' => 'completed',

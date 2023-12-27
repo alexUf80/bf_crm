@@ -62,15 +62,63 @@ class AuditCron extends Core
         $i = 30;
         while ($i > 0) {
             if ($scoring = $this->scorings->get_new_scoring()) {
-                $this->scorings->update_scoring($scoring->id, array(
-                    'status' => 'process',
-                    'start_date' => date('Y-m-d H:i:s')
-                ));
+                $orders = $this->orders->get_orders(array('user_id' => $scoring->user_id));
+                
+                //сколько отказных заявок 
+                $reject_count = 0;
+                foreach ($orders as $order) {
+                    if ($order->order_id == $scoring->order_id) {
+                        continue;
+                    }
+                    if ($order->status == 3) {
+                        $reject_count++;
+                        if ($reject_count == 1) {
+                            $reject_order = $order;
+                        }
+                    }
+                    else if($order->status != 3 && $order->status != 0){
+                        break;
+                    }
+                }
 
-                $classname = $scoring->type . "_scoring";
-                $scoring_result = $this->{$classname}->run_scoring($scoring->id);
+                if (($reject_count % 3) != 0 && isset($reject_order) && $reject_order->reason_id != 45) {
 
-                $this->handling_result($scoring, $scoring_result);
+                    $update = array(
+                        'autoretry' => 0,
+                        'autoretry_result' => 'Отказ повторной заявки '.($reject_count % 3),
+                        'status' => 3,
+                        'reason_id' => $reject_order->reason_id,
+                        'reject_reason' => $reject_order->reject_reason,
+                        'reject_date' => date('Y-m-d H:i:s'),
+                        'manager_id' => 1, // System
+                    );
+
+                    // ставим отказ по заявке 
+                    $this->orders->update_order($scoring->order_id, $update);
+
+                    $old_scoring = $this->scorings->get_type_scoring($reject_order->order_id, $scoring->type);
+
+                    $scoring_result = array(
+                        'status' => $old_scoring->status,
+                        'body' => $old_scoring->body,
+                        'string_result' => '.'.$old_scoring->string_result,
+                        'success' => $old_scoring->success,
+                        'start_date' => date('Y-m-d H:i:s')
+                    );
+                    $this->scorings->update_scoring($scoring->id, $scoring_result);
+                    $this->handling_result($scoring, $scoring_result);
+                }
+                else{
+                    $this->scorings->update_scoring($scoring->id, array(
+                        'status' => 'process',
+                        'start_date' => date('Y-m-d H:i:s')
+                    ));
+    
+                    $classname = $scoring->type . "_scoring";
+                    $scoring_result = $this->{$classname}->run_scoring($scoring->id);
+    
+                    $this->handling_result($scoring, $scoring_result);
+                }
             }
             $i--;
         }
@@ -150,8 +198,6 @@ class AuditCron extends Core
                         'user_id' => $order->user_id,
                     ));
                 }
-
-                var_dump('sas');
 
                 //отказной трафик
                 //LeadFinances::sendRequest($order->user_id);
