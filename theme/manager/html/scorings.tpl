@@ -270,10 +270,12 @@
                                         <label class="control-label col-6">Порог активных займов макс</label>
                                         <input type="text" name="settings[{$type->id}][params][nk][nbki_number_of_active_max]" value="{$type->params['nk']['nbki_number_of_active_max']}" class="form-control col-6" placeholder="" />
                                     </div>
+                                    {*}
                                     <div class="form-group row">
                                         <label class="control-label col-6">Порог активных займов</label>
                                         <input type="text" name="settings[{$type->id}][params][nk][nbki_number_of_active]" value="{$type->params['nk']['nbki_number_of_active']}" class="form-control col-6" placeholder="" />
                                     </div>
+                                    {*}
                                     <div class="form-group row">
                                         <label class="control-label col-6">Порог неизвестных займов</label>
                                         <input type="text" name="settings[{$type->id}][params][nk][nbki_share_of_unknown]" value="{$type->params['nk']['nbki_share_of_unknown']}" class="form-control col-6" placeholder="" />
@@ -282,6 +284,7 @@
                                         <label class="control-label col-6">Порог просроченных займов</label>
                                         <input type="text" name="settings[{$type->id}][params][nk][nbki_share_of_overdue]" value="{$type->params['nk']['nbki_share_of_overdue']}" class="form-control col-6" placeholder="" />
                                     </div>
+                                    {*}
                                     <div class="form-group row">
                                         <label class="control-label col-6">Порог просроченных к закрытым</label>
                                         <input type="text" name="settings[{$type->id}][params][nk][open_to_close_ratio]" value="{$type->params['nk']['open_to_close_ratio']}" class="form-control col-6" placeholder="" />
@@ -290,7 +293,6 @@
                                         <label class="control-label col-6">Порог просроченных к активным</label>
                                         <input type="text" name="settings[{$type->id}][params][nk][open_to_active_ratio]" value="{$type->params['nk']['open_to_active_ratio']}" class="form-control col-6" placeholder="" />
                                     </div>
-                                    {*}
                                     <div class="form-group row">
                                         <label class="control-label col-6">Порог зеленой зоны</label>
                                         <input type="text" name="settings[{$type->id}][params][nk][nbki_green]" value="{$type->params['nk']['nbki_green']}" class="form-control col-6" placeholder="" />
