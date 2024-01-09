@@ -7,149 +7,57 @@ ini_set('display_errors', 'On');
 // error_reporting(0);
 // ini_set('display_errors', 'Off');
 
-class TestController extends Controller
+class TestController1 extends Controller
 {
     public function fetch()
     {
 
-        // $query = $this->db->placehold("
-        // SELECT *
-        // FROM `s_nbki_extra_scorings` 
-        // WHERE order_id > 70000
-        // AND order_id <= 75000
-        // ");
-        // $this->db->query($query);
-        // $nbki_orders = $this->db->results();
-
-        // foreach ($nbki_orders as $nbki_order) {
-     
-        //     $order = $this->orders->get_order($nbki_order->order_id);
-
-        //     $order->scoreballs = $this->NbkiScoreballs->get($order->order_id);
-
-        //     if (empty($order->scoreballs)) {
-        //         $order->scoreballs['ball'] = null;
-        //     }
-        //     else{
-        //         $order->scoreballs->variables = json_decode($order->scoreballs->variables, true);
-        //         $order->scoreballs->variables['ball'] = $order->scoreballs->ball;
-        //         $order->scoreballs = $order->scoreballs->variables;
-        //     }
-  
-        //     $scoreball_mfo_2_nbki = null;
-        //     $nbkiScor = ScoringsORM::query()->where('order_id', '=', $order->order_id)->where('type', '=', 'nbki')->first();
-        //     if ($nbkiScor) {
-        //         $nbkiParams = unserialize($nbkiScor->body);
-        //         if (isset($nbkiParams['score'])){
-        //             $scoreball_mfo_2_nbki = $nbkiParams['score'];
-        //         }
-        //     }
-
-        //     $update = [
-        //         'scoreball' => $order->scoreballs['ball'],
-        //         'scoreball_mfo_2_nbki' => $scoreball_mfo_2_nbki,
-        //     ];
-        //     $nbki_extra_scoring_update = $this->NbkiExtraScorings->update($nbki_order->order_id, $update);
-        //     var_dump($nbki_order->order_id);
-        //     var_dump($update);
-        //     echo '<hr>';
-        // }
-
-
-        die;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-        
         $query = $this->db->placehold("
-        SELECT max(`order_id`) as max
-        FROM `s_nbki_extra_scorings` 
-        WHERE `type_pk` 
-        IS NOT null
+            SELECT 
+                *
+            FROM __scorings 
+            WHERE order_id in (
+            #'78293', '78292', '78266', '78043', '78026', '78012', '77964', '77948', '77886', '77879', '77817', '77781', '77766', '77763', '77710', '77709', '77696', '77685', '77655', '77642', '77629', '77521', '77485', '77468', '77462', '77457', '77455', '77444', '77443', '77404', '77398', '77387', '77347', '77324', '77291', '77289', '77131', '77109', '77091', '77089', '77085', '77081', '77075', '77059', '76982', '76947', '76942', '76926', '76925', '76917', '76885', '76804', '76794', '76786', '76783', '76727', '76726', '76717', '76713', '76700', '76696', '76694', '76678', '76668', '76662', '76661', '76655', '76634', '76626', '76625', '76563', '76557', '76496', '76472', '76455', '76403', '76391', '76373', '76366', '76343', '76257', '76255', '75856', '75810', '75755', '75736', '75660', '75636', '75613', '75576', '75571', '75521', '75520', '75497', '75474', '75454', '75427', '75410', '75395', '75380', '75346', '75215', '75208', '75205', '75203', '75202', '75192', '75191', '75188', '75187', '75174', '75169', '75166', '75142', '75140', '75131', '75130', '75121', '75080', '75057', '75028', '75018', '74965', '74895', '74835', '74834', '74774', '74612', '74448', '74440', '74393', '74382', '74302', '74201', '74026', '73859', '73848', '73781', '73753', '73721', '73689', '73640', '73638', '73368', '73267', '73242', '73231', '72987', '72938', '72850', '72750', '72679', '72627', '72573', '72521', '72512', '72504', '72447', '72423', '72400', '72369', '72293', '72161', '72147', '72136', '72104', '72098', '72083', '72080', '72012', '72006', '71926', '71880', '71807', '71791', '71766', '71759', '71753', '71740', '71739', '71727', '71714', '71681', '71658', '71612', '71555', '71542', '71529', '71275', '71274', '71238', '71185', '71145', '71125', '71114', '71103', '71036', '70997', '70983', '70979', '70978', '70954', '70949', '70941', '70929', '70927', '70913', '70905', '70896', '70893', '70888', '70866', '70845', '70808', '70760', '70751', '70697', '70695', '70589', '70559', '70502', '70494', '70443', '70432', '70431', '70414', '70371', '70200', '70193', '70061', '70033', '70008', '69988', '69970', '69896', '69839', '69805', '69631', '69627', '69467', '69411', '69408', '69371', '69357', '69342', '69318', '69312', '69308', '69274', '69271', '69265', '69233', '69193', '69179', '69127', '69111', '69011', '69005', '68944', '68933', '68910', '68895', '68889', '68882', '68779', '68742', '68676', '68639', '68613', '68582', '68541', '68354', '68343', '68295', '68278', '68256', '68203', '68102'
+            '68099'
+            #'68041', '68012', '67893', '67885', '67877', '67876', '67873', '67861', '67823', '67734', '67732', '67642', '67598', '67594', '67538', '67422', '67402', '67400', '67370', '67350', '67325', '67305', '67298', '67183', '67182', '67177', '67132', '67108', '67056', '67036', '67032', '67007', '66992', '66966', '66951', '66918', '66912', '66897', '66888', '66826', '66811', '66810', '66803', '66742', '66705', '66695', '66694', '66688', '66664', '66618', '66593', '66548', '66536', '66533', '66519', '66201', '66183', '66154', '66146', '66138', '66002', '65992', '65893', '65873', '65831', '65760', '65747', '65730', '65721', '65630', '65616', '65582', '65509', '65486', '65469', '65456', '65431', '65399', '65381', '65374', '65368', '65313', '65229', '65160', '65140', '65130', '65102', '65034', '65024', '64971', '64947', '64886', '64859', '64848', '64844', '64841', '64826'
+            )
+            AND type='nbki'
         ");
         $this->db->query($query);
-        $max_order_id = $this->db->result()->max;
+        $scorings = $this->db->results();
 
-        $query = $this->db->placehold("
-        SELECT *
-        FROM __orders
-        WHERE id >= ?
-        ORDER BY id
-        ",$max_order_id);
-        echo $query;
-        die;
-        $this->db->query($query);
-        $orders = $this->db->results();
+        foreach ($scorings as $scoring) {
+            $this->nbki_extra_scorings($scoring->order_id, $scoring->id);
+            echo $scoring->order_id.' - '.$scoring->id.'<br>';
+        }
+        
 
-        foreach ($orders as $order) {
+        
 
-            $c = $this->contracts->get_contract($order->contract_id);
-            $type_pk = [];
-            if (!is_null($c) && !is_null($c->id)) {
-                $type_pk = $this->contracts->type_pk_contract($c);
-                $add_nbki['type_pk'] = $type_pk;
-                $nbki_extra_scoring = $this->NbkiExtraScorings->get($order->id);
-                if (is_null($nbki_extra_scoring) || !isset($nbki_extra_scoring)) {
-                    echo 'add';
-                    $add_nbki['order_id'] = $order->id;
-                    $add_nbki['score_id'] = 0;
-                    $nbki_extra_scoring_add = $this->NbkiExtraScorings->add($add_nbki);
-                }
-                else{
-                    echo 'upd';
-                    $nbki_extra_scoring_update = $this->NbkiExtraScorings->update($order->id, $add_nbki);
-                }
-            }
+        exit;
+    }
 
-            var_dump($order->id);
-            // var_dump($type_pk);
-            echo '<hr>';
+
+
+
+
+
+    private function nbki_extra_scorings($order_id, $scoring_id)
+    {
+        $nbkiScor = $this->scorings->get_scoring($scoring_id);
+
+        if (!isset($nbkiScor)){
+            echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!<br>';
+            exit;
         }
 
-        
-
-        die;
-        
-        $i = 0;
-        foreach ($orders as $order) {
-
-            $query = $this->db->placehold("
-                SELECT *
-                FROM __scorings
-                WHERE order_id = ?
-                AND type = 'nbki'
-            ", $order->id);
-            $this->db->query($query);
-            $nbkiScor = $this->db->results()[0];
-
-            $nbki_extra_scoring = $this->NbkiExtraScorings->get($order->id);
+        $nbki_extra_scoring = $this->NbkiExtraScorings->get($nbkiScor->order_id);
             
-            //  var_dump($nbki_extra_scoring);
-            if ($nbki_extra_scoring != 0) 
-                continue;
-                
-            $i++;
-            if ($i > 1) {
-                break;
-            }
+        // if ($nbki_extra_scoring == 0){
 
             $add_nbki = [];
 
-            $add_nbki['order_id'] = $order->id;
+            $add_nbki['order_id'] = $nbkiScor->order_id;
 
             $add_nbki['score_id'] = 0;
             if (!is_null($nbkiScor->id)) {
@@ -264,101 +172,127 @@ class TestController extends Controller
                     $add_nbki['closed_to_total_credits_count_share'] = $nbkiParams['barents_scoring']['client_scoring_data']['closed_to_total_credits_count_share'];
 
                 // ------
-                if (is_null($add_nbki['active_loans_credit_limit_sum'])){
+                if (!isset($add_nbki['active_loans_credit_limit_sum']) || is_null($add_nbki['active_loans_credit_limit_sum'])){
                     $add_nbki['active_loans_credit_limit_sum'] = 0;
                 }
-                if (is_null($add_nbki['closed_loans_credit_limit_sum'])){
+                if (!isset($add_nbki['closed_loans_credit_limit_sum']) || is_null($add_nbki['closed_loans_credit_limit_sum'])){
                     $add_nbki['closed_loans_credit_limit_sum'] = 0;
                 }
-                if (is_null($add_nbki['monthly_active_loans_payment_sum'])){
+                if (!isset($add_nbki['monthly_active_loans_payment_sum']) || is_null($add_nbki['monthly_active_loans_payment_sum'])){
                     $add_nbki['monthly_active_loans_payment_sum'] = 0;
                 }
-                if (is_null($add_nbki['overdue_amount_sum'])){
+                if (!isset($add_nbki['monthly_active_loans_payment_sum']) || is_null($add_nbki['monthly_active_loans_payment_sum'])){
                     $add_nbki['overdue_amount_sum'] = 0;
                 }
-                if (is_null($add_nbki['current_year_max_overdue_amount'])){
+                if (!isset($add_nbki['current_year_max_overdue_amount']) || is_null($add_nbki['current_year_max_overdue_amount'])){
                     $add_nbki['current_year_max_overdue_amount'] = 0;
                 }
-                if (is_null($add_nbki['microloans_over_last_90_days_count'])){
+                if (!isset($add_nbki['microloans_over_last_90_days_count']) || is_null($add_nbki['microloans_over_last_90_days_count'])){
                     $add_nbki['microloans_over_last_90_days_count'] = 0;
                 }
-                if (is_null($add_nbki['active_microloan_count'])){
+                if (!isset($add_nbki['active_microloan_count']) || is_null($add_nbki['active_microloan_count'])){
                     $add_nbki['active_microloan_count'] = 0;
                 }
-                if (is_null($add_nbki['active_pay_day_loans_count'])){
+                if (!isset($add_nbki['active_pay_day_loans_count']) || is_null($add_nbki['active_pay_day_loans_count'])){
                     $add_nbki['active_pay_day_loans_count'] = 0;
                 }
-                if (is_null($add_nbki['active_loans_credit_limit_sum'])){
+                if (!isset($add_nbki['active_loans_credit_limit_sum']) || is_null($add_nbki['active_loans_credit_limit_sum'])){
                     $add_nbki['active_loans_credit_limit_sum'] = 0;
                 }
-                if (is_null($add_nbki['active_credit_lines_count'])){
+                if (!isset($add_nbki['active_credit_lines_count']) || is_null($add_nbki['active_credit_lines_count'])){
                     $add_nbki['active_credit_lines_count'] = 0;
                 }
-                if (is_null($add_nbki['active_microloans_with_wrong_term_days_count'])){
+                if (!isset($add_nbki['active_microloans_with_wrong_term_days_count']) || is_null($add_nbki['active_microloans_with_wrong_term_days_count'])){
                     $add_nbki['active_microloans_with_wrong_term_days_count'] = 0;
                 }
-                if (is_null($add_nbki['active_credit_cards_count'])){
+                if (!isset($add_nbki['active_credit_cards_count']) || is_null($add_nbki['active_credit_cards_count'])){
                     $add_nbki['active_credit_cards_count'] = 0;
                 }
-                if (is_null($add_nbki['active_other_loans_count'])){
+                if (!isset($add_nbki['active_other_loans_count']) || is_null($add_nbki['active_other_loans_count'])){
                     $add_nbki['active_other_loans_count'] = 0;
                 }
-                if (is_null($add_nbki['pdl_overdue_count'])){
+                if (!isset($add_nbki['pdl_overdue_count']) || is_null($add_nbki['pdl_overdue_count'])){
                     $add_nbki['pdl_overdue_count'] = 0;
                 }
-                if (is_null($add_nbki['pdl_npl_limit_share'])){
+                if (!isset($add_nbki['pdl_npl_limit_share']) || is_null($add_nbki['pdl_npl_limit_share'])){
                     $add_nbki['pdl_npl_limit_share'] = 0;
                 }
-                if (is_null($add_nbki['pdl_npl_90_limit_share'])){
+                if (!isset($add_nbki['pdl_npl_90_limit_share']) || is_null($add_nbki['pdl_npl_90_limit_share'])){
                     $add_nbki['pdl_npl_90_limit_share'] = 0;
                 }
-                if (is_null($add_nbki['pdl_current_limit_max'])){
+                if (!isset($add_nbki['pdl_current_limit_max']) || is_null($add_nbki['pdl_current_limit_max'])){
                     $add_nbki['pdl_current_limit_max'] = 0;
                 }
-                if (is_null($add_nbki['pdl_last_3m_limit'])){
+                if (!isset($add_nbki['pdl_last_3m_limit']) || is_null($add_nbki['pdl_last_3m_limit'])){
                     $add_nbki['pdl_last_3m_limit'] = 0;
                 }
-                if (is_null($add_nbki['pdl_last_good_max_limit'])){
+                if (!isset($add_nbki['pdl_last_good_max_limit']) || is_null($add_nbki['pdl_last_good_max_limit'])){
                     $add_nbki['pdl_last_good_max_limit'] = 0;
                 }
-                if (is_null($add_nbki['pdl_good_limit'])){
+                if (!isset($add_nbki['pdl_good_limit']) || is_null($add_nbki['pdl_good_limit'])){
                     $add_nbki['pdl_good_limit'] = 0;
                 }
-                if (is_null($add_nbki['pdl_prolong_3m_limit'])){
+                if (!isset($add_nbki['pdl_prolong_3m_limit']) || is_null($add_nbki['pdl_prolong_3m_limit'])){
                     $add_nbki['pdl_prolong_3m_limit'] = 0;
                 }
-                if (is_null($add_nbki['consum_current_limit_max'])){
+                if (!isset($add_nbki['consum_current_limit_max']) || is_null($add_nbki['consum_current_limit_max'])){
                     $add_nbki['consum_current_limit_max'] = 0;
                 }
-                if (is_null($add_nbki['consum_good_limit'])){
+                if (!isset($add_nbki['consum_good_limit']) || is_null($add_nbki['consum_good_limit'])){
                     $add_nbki['consum_good_limit'] = 0;
                 }
-                if (is_null($add_nbki['days_from_last_closed'])){
+                if (!isset($add_nbki['days_from_last_closed']) || is_null($add_nbki['days_from_last_closed'])){
                     $add_nbki['days_from_last_closed'] = 0;
                 }
-                if (is_null($add_nbki['prev_3000_500_paid_count_wo_del'])){
+                if (!isset($add_nbki['prev_3000_500_paid_count_wo_del']) || is_null($add_nbki['prev_3000_500_paid_count_wo_del'])){
                     $add_nbki['prev_3000_500_paid_count_wo_del'] = 0;
                 }
-                if (is_null($add_nbki['prev_paid_percent_sum'])){
+                if (!isset($add_nbki['prev_paid_percent_sum']) || is_null($add_nbki['prev_paid_percent_sum'])){
                     $add_nbki['prev_paid_percent_sum'] = 0;
                 }
-                if (is_null($add_nbki['prev_max_delay'])){
+                if (!isset($add_nbki['prev_max_delay']) || is_null($add_nbki['prev_max_delay'])){
                     $add_nbki['prev_max_delay'] = 0;
                 }
-                if (is_null($add_nbki['last_credit_delay'])){
+                if (!isset($add_nbki['last_credit_delay']) || is_null($add_nbki['last_credit_delay'])){
                     $add_nbki['last_credit_delay'] = 0;
                 }
-                if (is_null($add_nbki['current_overdue_sum'])){
+                if (!isset($add_nbki['current_overdue_sum']) || is_null($add_nbki['current_overdue_sum'])){
                     $add_nbki['current_overdue_sum'] = 0;
                 }
-                if (is_null($add_nbki['closed_to_total_credits_count_share'])){
+                if (!isset($add_nbki['closed_to_total_credits_count_share']) || is_null($add_nbki['closed_to_total_credits_count_share'])){
                     $add_nbki['closed_to_total_credits_count_share'] = 0;
                 }
+
+                $scoreball_mfo_2_nbki = null;
+                $nbkiScor = ScoringsORM::query()->where('order_id', '=', $nbkiScor->order_id)->where('type', '=', 'nbki')->first();
+                if ($nbkiScor) {
+                    $nbkiParams = unserialize($nbkiScor->body);
+                    if (isset($nbkiParams['score'])){
+                        $scoreball_mfo_2_nbki = $nbkiParams['score'];
+                    }
+                }
+
+                $add_nbki['scoreball_mfo_2_nbki'] = $scoreball_mfo_2_nbki;
             
             }
 
+            $order_scoreballs = $this->NbkiScoreballs->get($nbkiScor->order_id);
 
-            $contracts = $this->contracts->get_contracts(array('user_id' => $order->user_id, 'status' => 3));
+            if (empty($order_scoreballs)) {
+                $order_scoreballs['ball'] = null;
+            }
+            else{
+                $order_scoreballs->variables = json_decode($order_scoreballs->variables, true);
+                $order_scoreballs->variables['ball'] = $order_scoreballs->ball;
+                $order_scoreballs = $order_scoreballs->variables;
+            }
+            $add_nbki['scoreball'] = $order_scoreballs['ball'];
+
+            var_dump($add_nbki['scoreball_mfo_2_nbki']);
+            var_dump($add_nbki['scoreball']);
+
+
+            $contracts = $this->contracts->get_contracts(array('user_id' => $nbkiScor->user_id, 'status' => 3));
                 
             $contract_close_date = '';
             $count_contracts_3000_500_0 = 0;
@@ -369,8 +303,6 @@ class TestController extends Controller
 
 
             foreach ($contracts as $contract) {
-                // if (date('Y-m-d', strtotime($contract->inssuance_date)) > date('Y-m-d', strtotime($from)))
-                //     continue;
                 // Кол-во дней с даты погашения последнего займа 
                 // во внутренней кредитной истории для данного клиента
                 if (!is_null($contract->close_date)) {
@@ -460,619 +392,16 @@ class TestController extends Controller
                 $delay_last_contract = 0;
             }
 
-
-            // var_dump($all_percents_summ);
-            // echo '<hr>';
-
             $add_nbki['days_last_loan'] = $delay_last_contract;
             $add_nbki['loans_3000_500_0'] = $count_contracts_3000_500_0;
             $add_nbki['loans_percents_payd'] = $all_percents_summ;
             $add_nbki['max_delay_days'] = $period_peni_biggest;
             $add_nbki['last_delay_days'] = $period_peni_last;
 
-
-            // var_dump($add_nbki);
-            // echo '<br>';
-            var_dump($order->id);
             echo '<hr>';
-            $nbki_extra_scoring_add = $this->NbkiExtraScorings->add($add_nbki);
-            // var_dump($nbki_extra_scoring_add);
-            // die;
+            $nbki_extra_scoring_add = $this->NbkiExtraScorings->update($order_id, $add_nbki);
 
-        }
-
-        
-
-        
-
-        exit;
-    }
-
-
-
-
-
-
-    private function newClient($nbki, $scoring)
-    {
-        $nbki_score = 193;
-        $pdl_overdue_count = 0;
-        $pdlCreditLimit = 0;
-        $npl90CreditLimit = 0;
-        $nplCreditLimit = 0;
-        $pdl_npl_limit_share = 0;
-        $pdl_npl_90_limit_share = 0;
-        $pdl_current_limit_max = 0;
-        $pdl_last_3m_limit = 0;
-        $pdl_last_good_max_limit = 0;
-        $Last_npl_opened = null;
-        $pdl_good_limit = 0;
-        $pdl_prolong_3m_limit = 0;
-        $consum_current_limit_max = 0;
-        $consum_good_limit = 0;
-
-        $loanIndicator = false;
-        $countPayments = 0;
-
-
-        $now = new DateTime(date('Y-m-d'));
-
-        
-        $data = file_get_contents(str_replace('log_report','log_xml', $nbki['report_url']));
-        $xml = simplexml_load_string($data);
-        if (isset(json_decode(json_encode($xml), true)['product'])) {
-            $nbki['json'] = json_decode(json_encode($xml), true)['product']['preply']['report'];
-        }
-        else{
-            $nbki['json'] = json_decode(json_encode($xml), true)['preply']['report'];
-        }
-
-        foreach ($nbki['json']['AccountReplyRUTDF'] as $reply) {
-
-            $loanKindCode = 3;
-            $pasDue = 0;
-
-            if (isset($reply['loanIndicator'])) {
-                $loanIndicator = $reply['loanIndicator'];
-            }
-
-            if (isset($reply['payment'])) {
-                $keys = array_keys($reply['trade']);
-                if ($keys !== array_keys($keys)) {
-                    $countPayments = 1;
-                } else {
-                    $countPayments = count($reply['payment']);
-                }
-            }
-
-            if (isset($reply['trade'])) {
-                $keys = array_keys($reply['trade']);
-                if ($keys !== array_keys($keys)) {
-                    $loanKindCode = $reply['trade']['loanKindCode'];
-
-                    if (isset($openedDt) && $openedDt < new DateTime(date('Y-m-d', strtotime($reply['trade']['openedDt']))))
-                        $Last_npl_opened = $reply['trade']['openedDt'];
-
-                    $openedDt = new DateTime(date('Y-m-d', strtotime($reply['trade']['openedDt'])));
-
-                    if (date_diff($now, $openedDt)->days <= 90)
-                        $pdl_last_3m_limit += floatval($reply['accountAmt']['creditLimit']);
-
-                } else {
-                    $loanKindCode = $reply['trade'][0]['loanKindCode'];
-
-                    if (isset($openedDt) && $openedDt < new DateTime(date('Y-m-d', strtotime($reply['trade'][0]['openedDt']))))
-                        $Last_npl_opened = $reply['trade'][0]['openedDt'];
-
-                    $openedDt = new DateTime(date('Y-m-d', strtotime($reply['trade'][0]['openedDt'])));
-
-                    if (date_diff($now, $openedDt)->days <= 90)
-                        $pdl_last_3m_limit += floatval($reply['accountAmt']['creditLimit']);
-                }
-            }
-
-            if (isset($reply['pastdueArrear'])) {
-                $keys = array_keys($reply['pastdueArrear']);
-                if ($keys !== array_keys($keys)) {
-                    $pastdueArrear = $reply['pastdueArrear'];
-                    $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-                    if ($past !== '0.00') {
-                        $pasDue = floatval($past);
-                    }
-                } else {
-                    foreach ($reply['pastdueArrear'] as $pastdueArrear) {
-                        $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-                        if ($past !== '0.00') {
-                            $pasDue = floatval($past);
-                        }
-                    }
-                }
-            }
-
-            if ($loanKindCode == 3) {
-                $pdlCreditLimit += floatval($reply['accountAmt']['creditLimit']);
-                if ($pasDue > 0) {
-
-                    if (isset($reply['trade'])) {
-                        $keys = array_keys($reply['trade']);
-                        if ($keys !== array_keys($keys)) {
-                            if (isset($openedDt) && $openedDt < new DateTime(date('Y-m-d', strtotime($reply['trade']['openedDt']))))
-                                $Last_npl_opened = $reply['trade']['openedDt'];
-                        } else {
-                            if (isset($openedDt) && $openedDt < new DateTime(date('Y-m-d', strtotime($reply['trade'][0]['openedDt']))))
-                                $Last_npl_opened = $reply['trade'][0]['openedDt'];
-                        }
-                    }
-                    $nplCreditLimit += floatval($reply['accountAmt']['creditLimit']);
-                    $pdl_last_good_max_limit += floatval($reply['accountAmt']['creditLimit']);
-
-                    $npl90CreditLimit += floatval($reply['accountAmt']['creditLimit']); //TODO: уточнить эту информацию
-                    $pdl_overdue_count++;
-                }
-                if ($pasDue == 0) {
-                    $consum_good_limit += floatval($reply['accountAmt']['creditLimit']);
-                    $pdl_good_limit += floatval($reply['accountAmt']['creditLimit']);
-                }
-                if ($countPayments >= 3) {
-                    $pdl_prolong_3m_limit += floatval($reply['accountAmt']['creditLimit']);
-                }
-                if ($loanIndicator != 1) {
-                    $pdl_current_limit_max = floatval($reply['accountAmt']['creditLimit']);
-                }
-            }
-
-            if ($loanKindCode == 1 && $loanIndicator != 1 && $pasDue = 0) {
-                $consum_current_limit_max += floatval($reply['accountAmt']['creditLimit']);
-            }
-        }
-        if ($pdl_overdue_count < 1)
-            $nbki_score += 100;
-        elseif ($pdl_overdue_count == 1)
-            $nbki_score -= 19;
-        elseif ($pdl_overdue_count == 2)
-            $nbki_score -= 97;
-        elseif ($pdl_overdue_count == 3)
-            $nbki_score -= 203;
-        elseif ($pdl_overdue_count >= 4)
-            $nbki_score -= 497;
-
-        if ($pdlCreditLimit != 0) {
-            $pdl_npl_limit_share = $nplCreditLimit / $pdlCreditLimit;
-            $pdl_npl_90_limit_share = $npl90CreditLimit / $pdlCreditLimit;
-        }
-        if ($pdl_npl_limit_share < (10 / 100))
-            $nbki_score += 30;
-        elseif ($pdl_npl_limit_share >= (10 / 100) && $pdl_npl_limit_share < (20 / 100))
-            $nbki_score += 20;
-        elseif ($pdl_npl_limit_share >= (20 / 100) && $pdl_npl_limit_share < (30 / 100))
-            $nbki_score -= 9;
-        elseif ($pdl_npl_limit_share >= (30 / 100) && $pdl_npl_limit_share < (50 / 100))
-            $nbki_score -= 42;
-        elseif ($pdl_npl_limit_share >= (50 / 100))
-            $nbki_score -= 128;
-
-        if ($pdl_npl_90_limit_share < (10 / 100))
-            $nbki_score += 57;
-        elseif ($pdl_npl_90_limit_share >= (10 / 100) && $pdl_npl_90_limit_share < (20 / 100))
-            $nbki_score += 1;
-        elseif ($pdl_npl_90_limit_share >= (20 / 100) && $pdl_npl_90_limit_share < (30 / 100))
-            $nbki_score -= 66;
-        elseif ($pdl_npl_90_limit_share >= (30 / 100) && $pdl_npl_90_limit_share < (50 / 100))
-            $nbki_score -= 137;
-        elseif ($pdl_npl_90_limit_share >= (30 / 100))
-            $nbki_score -= 291;
-
-        if ($pdl_current_limit_max < 2500)
-            $nbki_score -= 170;
-        elseif ($pdl_current_limit_max >= 2500 && $pdl_current_limit_max < 5000)
-            $nbki_score -= 75;
-        elseif ($pdl_current_limit_max >= 5000 && $pdl_current_limit_max < 10000)
-            $nbki_score -= 36;
-        elseif ($pdl_current_limit_max >= 10000 && $pdl_current_limit_max < 20000)
-            $nbki_score += 38;
-        elseif ($pdl_current_limit_max >= 20000)
-            $nbki_score += 72;
-
-        if ($pdl_last_3m_limit < 10000)
-            $nbki_score -= 355;
-        elseif ($pdl_last_3m_limit >= 10000 && $pdl_last_3m_limit < 20000)
-            $nbki_score -= 97;
-        elseif ($pdl_last_3m_limit >= 20000 && $pdl_last_3m_limit < 50000)
-            $nbki_score += 25;
-        elseif ($pdl_last_3m_limit >= 50000 && $pdl_last_3m_limit < 100000)
-            $nbki_score += 132;
-        elseif ($pdl_last_3m_limit >= 100000)
-            $nbki_score += 183;
-
-        if ($pdl_last_good_max_limit < 3000)
-            $nbki_score -= 86;
-        elseif ($pdl_last_good_max_limit >= 3000 && $pdl_last_good_max_limit < 6000)
-            $nbki_score -= 35;
-        elseif ($pdl_last_good_max_limit >= 6000 && $pdl_last_good_max_limit < 10000)
-            $nbki_score -= 12;
-        elseif ($pdl_last_good_max_limit >= 10000 && $pdl_last_good_max_limit < 20000)
-            $nbki_score += 3;
-        elseif ($pdl_last_good_max_limit >= 20000)
-            $nbki_score += 15;
-
-        if ($pdl_good_limit < 20000)
-            $nbki_score -= 143;
-        elseif ($pdl_good_limit >= 20000 && $pdl_good_limit < 40000)
-            $nbki_score -= 45;
-        elseif ($pdl_good_limit >= 40000 && $pdl_good_limit < 80000)
-            $nbki_score -= 7;
-        elseif ($pdl_good_limit >= 80000 && $pdl_good_limit < 150000)
-            $nbki_score += 21;
-        elseif ($pdl_good_limit >= 150000 && $pdl_good_limit < 300000)
-            $nbki_score += 38;
-        elseif ($pdl_good_limit >= 300000)
-            $nbki_score += 51;
-
-        if ($pdl_prolong_3m_limit < 5000)
-            $nbki_score -= 89;
-        elseif ($pdl_prolong_3m_limit >= 5000 && $pdl_prolong_3m_limit < 10000)
-            $nbki_score -= 24;
-        elseif ($pdl_prolong_3m_limit >= 10000 && $pdl_prolong_3m_limit < 20000)
-            $nbki_score += 23;
-        elseif ($pdl_prolong_3m_limit >= 20000 && $pdl_prolong_3m_limit < 40000)
-            $nbki_score += 51;
-        elseif ($pdl_prolong_3m_limit >= 40000 && $pdl_prolong_3m_limit < 80000)
-            $nbki_score += 72;
-        elseif ($pdl_prolong_3m_limit >= 80000)
-            $nbki_score += 99;
-
-        if ($consum_current_limit_max < 10000)
-            $nbki_score -= 66;
-        elseif ($consum_current_limit_max >= 10000 && $consum_current_limit_max < 100000)
-            $nbki_score += 38;
-        elseif ($consum_current_limit_max >= 100000 && $consum_current_limit_max < 300000)
-            $nbki_score += 56;
-        elseif ($consum_current_limit_max >= 300000)
-            $nbki_score += 77;
-
-        if ($consum_good_limit < 1)
-            $nbki_score -= 28;
-        elseif ($consum_good_limit >= 1 && $consum_good_limit < 100000)
-            $nbki_score += 45;
-        elseif ($consum_good_limit >= 100000 && $consum_good_limit < 400000)
-            $nbki_score += 61;
-        elseif ($consum_good_limit >= 400000)
-            $nbki_score += 88;
-
-
-        if (isset($nbki['barents_scoring'])) {
-            $nbki_score = $nbki['barents_scoring']['new_client_result'];
-        }
-
-        if ($nbki_score < 300)
-            $limit = 0;
-        elseif ($nbki_score >= 300 && $nbki_score < 799)
-            $limit = 3000;
-        elseif ($nbki_score >= 800 && $nbki_score < 899)
-            $limit = 5000;
-        elseif ($nbki_score >= 900)
-            $limit = 7000;
-
-
-        if ($nbki_score < 300)
-            $update = [
-                'status' => 'completed',
-                'body' => 'Проверка не пройдена',
-                'success' => 0,
-                'string_result' => 'Отказ',
-                'scorista_ball' => $nbki_score
-            ];
-        else
-            $update = [
-                'status' => 'completed',
-                'body' => 'Проверка пройдена',
-                'success' => 1,
-                'string_result' => 'Лимит: ' . $limit,
-                'scorista_ball' => $nbki_score
-            ];
-
-        $variables =
-            [
-                'pdl_overdue_count' => $pdl_overdue_count,
-                'pdl_npl_limit_share' => $pdl_npl_limit_share,
-                'pdl_npl_90_limit_share' => $pdl_npl_90_limit_share,
-                'pdl_current_limit_max' => $pdl_current_limit_max,
-                'pdl_last_3m_limit' => $pdl_last_3m_limit,
-                'pdl_last_good_max_limit' => $pdl_last_good_max_limit,
-                'pdl_good_limit' => $pdl_good_limit,
-                'pdl_prolong_3m_limit' => $pdl_prolong_3m_limit,
-                'consum_current_limit_max' => $consum_current_limit_max,
-                'consum_good_limit' => $consum_good_limit,
-                'limit' => (isset($limit)) ? $limit : 0
-            ];
-
-            if ($nbki_score == -557) {
-                $nbki_score = -558;
-            }
-        $nbkiScoreBalls =
-            [
-                'order_id' => $scoring->order_id,
-                'score_id' => $scoring->id,
-                'ball' => $nbki_score,
-                'variables' => json_encode($variables)
-            ];
-
-           
-        $this->NbkiScoreballs->update_by_scoring($scoring->id, $nbkiScoreBalls);
-        // $this->NbkiScoreballs->add($nbkiScoreBalls);
-
-        // $this->scorings->update_scoring($scoring->id, $update);
-        // die;
-        return $update;
-    }
-
-    private function oldClient($nbki, $scoring)
-    {
-        $nbki_score = 456;
-        $prev_3000_500_paid_count_wo_del = 0;
-        $sumPayedPercents = 0;
-        $sumPayedPercents3000 = 0;
-        $prev_max_delay = 0;
-        $current_overdue_sum = 0;
-        $closed_to_total_credits_count_share = 0;
-        $sumAccountRate13 = 0;
-        $sumAccountRate = 0;
-        $pdl_overdue_count = 0;
-        $pdl_npl_90_limit_share = 0;
-        $sumAllPdl = 0;
-        $sumPdl90 = 0;
-
-        $lastContract = ContractsORM::where('user_id', $scoring->user_id)->orderBy('id', 'desc')->first();
-        $allContracts = ContractsORM::where('user_id', $scoring->user_id)->get();
-
-        $now = new DateTime(date('Y-m-d'));
-        $returnDateLastContract = new DateTime(date('Y-m-d', strtotime($lastContract->return_date)));
-        $days_from_last_closed = date_diff($now, $returnDateLastContract)->days;
-        $last_credit_delay = $lastContract->count_expired_days;
-
-        foreach ($allContracts as $contract) {
-            $operations = OperationsORM::where('order_id', $contract->order_id)->where('type', 'PAY')->get();
-
-            foreach ($operations as $operation) {
-                $transaction = TransactionsORM::find($operation->transaction_id);
-
-                $sumPayedPercents += $transaction->loan_percents_summ;
-
-                if ($contract->amount >= 3000)
-                    $sumPayedPercents3000 += $transaction->loan_percents_summ;
-            }
-
-            if ($sumPayedPercents3000 >= 500 && $contract->count_expired_days == 0)
-                $prev_3000_500_paid_count_wo_del++;
-
-            if ($contract->count_expired_days > $prev_max_delay)
-                $prev_max_delay = $contract->count_expired_days;
-        }
-
-        $data = file_get_contents(str_replace('log_report','log_xml', $nbki['report_url']));
-        $xml = simplexml_load_string($data);
-        if (isset(json_decode(json_encode($xml), true)['product'])) {
-            $nbki['json'] = json_decode(json_encode($xml), true)['product']['preply']['report'];
-        }
-        else{
-            $nbki['json'] = json_decode(json_encode($xml), true)['preply']['report'];
-        }
-
-        foreach ($nbki['json']['AccountReply'] as $scor) {
-            $current_overdue_sum += $scor['amtPastDue'];
-            $sumAccountRate += $scor['creditLimit'];
-
-            if (!empty($scor['accountRating'])) {
-                if ($scor['accountRating'] == 13)
-                    $sumAccountRate13 += $scor['creditLimit'];
-            }
-
-            if (in_array($scor['acctType'], [16, 9, 7]) && $scor['creditLimit'] <= 30000) {
-
-                $sumAllPdl += $scor['creditLimit'];
-
-                if($scor['amtPastDue'] > 0)
-                    $pdl_overdue_count ++;
-
-                $scor['paymtPat'] = preg_replace('/[^0-9]/', '', $scor['paymtPat']);
-
-                if (!empty($scor['paymtPat'])) {
-                    $scor['paymtPat'] = str_split($scor['paymtPat']);
-
-                    foreach ($scor['paymtPat'] as $value) {
-                        if ($value >= 4) {
-                            $sumPdl90 += $scor['creditLimit'];
-                        }
-                    }
-                }
-            }
-        }
-
-        if($sumAllPdl != 0)
-            $pdl_npl_90_limit_share = $sumAllPdl / $sumPdl90;
-
-        if($sumAccountRate != 0)
-            $closed_to_total_credits_count_share =  $sumAccountRate13 / $sumAccountRate;
-
-
-        if ($days_from_last_closed < 1)
-            $nbki_score += 7;
-        elseif ($days_from_last_closed >= 1 && $days_from_last_closed < 2)
-            $nbki_score += 31;
-        elseif ($days_from_last_closed >= 2 && $days_from_last_closed < 15)
-            $nbki_score += 44;
-        elseif ($days_from_last_closed >= 15 && $days_from_last_closed < 30)
-            $nbki_score += 33;
-        elseif ($days_from_last_closed >= 30 && $days_from_last_closed < 60)
-            $nbki_score += 2;
-        elseif ($days_from_last_closed >= 60 && $days_from_last_closed < 90)
-            $nbki_score -= 20;
-        elseif ($days_from_last_closed >= 90)
-            $nbki_score -= 51;
-
-        if ($prev_3000_500_paid_count_wo_del < 2)
-            $nbki_score -= 21;
-        elseif ($prev_3000_500_paid_count_wo_del >= 2 && $prev_3000_500_paid_count_wo_del < 4)
-            $nbki_score += 31;
-        elseif ($prev_3000_500_paid_count_wo_del >= 4 && $prev_3000_500_paid_count_wo_del < 6)
-            $nbki_score += 69;
-        elseif ($prev_3000_500_paid_count_wo_del >= 6 && $prev_3000_500_paid_count_wo_del < 8)
-            $nbki_score += 101;
-        elseif ($prev_3000_500_paid_count_wo_del >= 8)
-            $nbki_score += 154;
-
-        if ($sumPayedPercents < 2000)
-            $nbki_score -= 14;
-        elseif ($sumPayedPercents >= 2000 && $sumPayedPercents < 4000)
-            $nbki_score += 11;
-        elseif ($sumPayedPercents >= 4000 && $sumPayedPercents < 8000)
-            $nbki_score += 38;
-        elseif ($sumPayedPercents >= 8000 && $sumPayedPercents < 20000)
-            $nbki_score += 73;
-        elseif ($sumPayedPercents >= 20000 && $sumPayedPercents < 40000)
-            $nbki_score += 107;
-        elseif ($sumPayedPercents >= 40000)
-            $nbki_score += 141;
-
-        if ($prev_max_delay < 30)
-            $nbki_score -= 7;
-        elseif ($prev_max_delay >= 30 && $prev_max_delay < 60)
-            $nbki_score -= 36;
-        elseif ($prev_max_delay >= 60)
-            $nbki_score -= 98;
-
-        if ($last_credit_delay < 10)
-            $nbki_score += 45;
-        elseif ($last_credit_delay >= 10 && $last_credit_delay < 20)
-            $nbki_score += 25;
-        elseif ($last_credit_delay >= 20 && $last_credit_delay < 30)
-            $nbki_score -= 12;
-        elseif ($last_credit_delay >= 30 && $last_credit_delay < 60)
-            $nbki_score -= 93;
-        elseif ($last_credit_delay >= 60)
-            $nbki_score -= 264;
-
-        if ($current_overdue_sum < 10000)
-            $nbki_score += 26;
-        elseif ($current_overdue_sum >= 10000 && $current_overdue_sum < 50000)
-            $nbki_score += 17;
-        elseif ($current_overdue_sum >= 50000 && $current_overdue_sum < 100000)
-            $nbki_score -= 2;
-        elseif ($current_overdue_sum >= 100000 && $current_overdue_sum < 200000)
-            $nbki_score -= 25;
-        elseif ($current_overdue_sum >= 200000)
-            $nbki_score -= 55;
-
-        if ($closed_to_total_credits_count_share < 0.7)
-            $nbki_score -= 58;
-        elseif ($closed_to_total_credits_count_share >= 0.7 && $closed_to_total_credits_count_share < 0.8)
-            $nbki_score -= 28;
-        elseif ($closed_to_total_credits_count_share >= 0.8 && $closed_to_total_credits_count_share < 0.85)
-            $nbki_score -= 4;
-        elseif ($closed_to_total_credits_count_share >= 0.85 && $closed_to_total_credits_count_share < 0.9)
-            $nbki_score += 32;
-        elseif ($closed_to_total_credits_count_share >= 0.9 && $closed_to_total_credits_count_share < 0.95)
-            $nbki_score += 74;
-        elseif ($closed_to_total_credits_count_share >= 0.95 && $closed_to_total_credits_count_share <= 1)
-            $nbki_score += 133;
-
-        if ($pdl_overdue_count < 3)
-            $nbki_score += 15;
-        elseif ($pdl_overdue_count >= 3 && $pdl_overdue_count < 5)
-            $nbki_score -= 15;
-        elseif ($pdl_overdue_count >= 5 && $pdl_overdue_count < 7)
-            $nbki_score -= 37;
-        elseif ($pdl_overdue_count >= 7 && $pdl_overdue_count < 10)
-            $nbki_score -= 73;
-        elseif ($pdl_overdue_count >= 10)
-            $nbki_score -= 122;
-
-        if ($pdl_npl_90_limit_share < 1)
-            $nbki_score += 22;
-        elseif ($pdl_npl_90_limit_share >= 1 && $pdl_npl_90_limit_share < 5)
-            $nbki_score += 13;
-        elseif ($pdl_npl_90_limit_share >= 5 && $pdl_npl_90_limit_share < 10)
-            $nbki_score -= 4;
-        elseif ($pdl_npl_90_limit_share >= 10 && $pdl_npl_90_limit_share < 15)
-            $nbki_score -= 19;
-        elseif ($pdl_npl_90_limit_share >= 15 && $pdl_npl_90_limit_share < 20)
-            $nbki_score -= 31;
-        elseif ($pdl_npl_90_limit_share >= 20)
-            $nbki_score -= 47;
-
-        if (isset($nbki['barents_scoring'])) {
-            $nbki_score = $nbki['barents_scoring']['old_client_result'];
-        }
-
-        $limit = 0;
-
-        if ($nbki_score >= 0 && $nbki_score <= 299)
-            $limit = 3000;
-        elseif ($nbki_score >= 300 && $nbki_score <= 499)
-            $limit = 5000;
-        elseif ($nbki_score >= 500 && $nbki_score <= 549)
-            $limit = 7000;
-        elseif ($nbki_score >= 550 && $nbki_score <= 599)
-            $limit = 10000;
-        elseif ($nbki_score >= 600 && $nbki_score <= 699)
-            $limit = 15000;
-        elseif ($nbki_score >= 700)
-            $limit = 20000;
-
-
-        if ($nbki_score < 0)
-            $update = [
-                'status' => 'completed',
-                'body' => 'Проверка не пройдена',
-                'success' => 0,
-                'string_result' => 'Отказ',
-                'scorista_ball' => $nbki_score
-            ];
-        else
-            $update = [
-                'status' => 'completed',
-                'body' => 'Проверка пройдена',
-                'success' => 1,
-                'string_result' => 'Лимит: ' . $limit,
-                'scorista_ball' => $nbki_score
-            ];
-
-        $variables =
-            [
-                'days_from_last_closed' => $days_from_last_closed,
-                'prev_3000_500_paid_count_wo_del' => $prev_3000_500_paid_count_wo_del,
-                'sumPayedPercents' => $sumPayedPercents,
-                'prev_max_delay' => $prev_max_delay,
-                'last_credit_delay' => $last_credit_delay,
-                'current_overdue_sum' => $current_overdue_sum,
-                'closed_to_total_credits_count_share' => $closed_to_total_credits_count_share,
-                'pdl_overdue_count' => $pdl_overdue_count,
-                'pdl_npl_90_limit_share' => $pdl_npl_90_limit_share,
-                'limit' => $limit
-            ];
-
-            if ($nbki_score == -557) {
-                $nbki_score = -558;
-            }
-        $nbkiScoreBalls =
-            [
-                'order_id' => $scoring->order_id,
-                'score_id' => $scoring->id,
-                'ball' => $nbki_score,
-                'variables' => json_encode($variables)
-            ];
-            var_dump($scoring->id);
-            echo '<br>';
-            echo '<br>';
-            var_dump($update);
-            echo '<hr>';
-
-        $this->NbkiScoreballs->update_by_scoring($scoring->id, $nbkiScoreBalls);
-        // $this->NbkiScoreballs->add($nbkiScoreBalls);
-
-        // $this->scorings->update_scoring($scoring->id, $update);
-        // die;
-        return $update;
+        // }
     }
 
 
