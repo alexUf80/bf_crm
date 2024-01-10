@@ -150,6 +150,7 @@ class IssuanceCron extends Core
                     }
 
                     $this->create_document('IND_USLOVIYA_NL', $contract);
+                    $this->create_document('INF_MESSAGE_PDN', $contract);
 
                     $this->contracts->update_contract($contract->id, array(
                         'status' => 2,
