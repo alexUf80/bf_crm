@@ -362,6 +362,7 @@ class Nbki_scoring extends Core
                 $this->scorings->update_scoring($this->scoring_id, $add_scoring);
 
                 sleep(1);
+                $this->nbki_extra_scorings();
                 
                 return $add_scoring;
 
