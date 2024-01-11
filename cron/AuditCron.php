@@ -62,6 +62,10 @@ class AuditCron extends Core
         $i = 30;
         while ($i > 0) {
             if ($scoring = $this->scorings->get_new_scoring()) {
+                
+                $scoring_repeat_count = $scoring->scoring_repeat_count;
+                $scoring_repeat_count++;
+
                 $orders = $this->orders->get_orders(array('user_id' => $scoring->user_id));
                 
                 //сколько отказных заявок 
@@ -103,7 +107,8 @@ class AuditCron extends Core
                         'body' => $old_scoring->body,
                         'string_result' => '.'.$old_scoring->string_result,
                         'success' => $old_scoring->success,
-                        'start_date' => date('Y-m-d H:i:s')
+                        'start_date' => date('Y-m-d H:i:s'),
+                        'scoring_repeat_count' => $scoring_repeat_count
                     );
                     $this->scorings->update_scoring($scoring->id, $scoring_result);
                     $this->handling_result($scoring, $scoring_result);
@@ -111,7 +116,8 @@ class AuditCron extends Core
                 else{
                     $this->scorings->update_scoring($scoring->id, array(
                         'status' => 'process',
-                        'start_date' => date('Y-m-d H:i:s')
+                        'start_date' => date('Y-m-d H:i:s'),
+                        'scoring_repeat_count' => $scoring_repeat_count
                     ));
     
                     $classname = $scoring->type . "_scoring";

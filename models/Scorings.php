@@ -39,6 +39,7 @@ class Scorings extends Core
             SELECT * 
             FROM __scorings
             WHERE status = 'new'
+            AND scoring_repeat_count < 5
             ORDER BY id ASC
             LIMIT 1
         ");
@@ -245,6 +246,8 @@ class Scorings extends Core
             UPDATE __scorings SET ?% WHERE id = ?
         ", (array)$scoring, (int)$id);
         $this->db->query($query);
+
+        echo $query.'<hr>';
         
         return $id;
     }
