@@ -2279,6 +2279,11 @@
                                                                     {/if}
                                                                 </div>
                                                                 <div class="col-8 col-sm-8 pb-2">
+                                                                    {if $scorings[$scoring_type->name]->scoring_repeat_count >= 5}
+                                                                        <b style="color: red">Превышен лимит запросов скоринга</b>
+                                                                    {/if}
+                                                                </div>
+                                                                <div class="col-8 col-sm-8 pb-2">
                                                                         <span class="mail-desc"
                                                                               title="{$scorings[$scoring_type->name]->string_result}">
                                                                             {$scorings[$scoring_type->name]->string_result}
