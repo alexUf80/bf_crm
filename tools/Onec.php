@@ -320,7 +320,7 @@ class Onec implements ToolsInterface
             foreach ($operations as $operation) {
                 $transaction = TransactionsORM::find($operation->transaction_id);
 
-                if (in_array($transaction->id, [211976, 206587, 219692, 219685, 225954, 230708, 242605, 244169, 247731, 245536])) 
+                if (in_array($transaction->id, [211976, 206587, 219692, 219685, 225954, 230708, 242605, 244169, 247731, 245536, 257126])) 
                     continue;
 
                 if (!empty($transaction)) {
