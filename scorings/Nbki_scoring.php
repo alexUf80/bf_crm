@@ -160,10 +160,10 @@ class Nbki_scoring extends Core
             return $add_scoring;
         }
 
-        if (empty($result['data'])) {
-            if (json_encode($result['data']) == "No subject found for this inquiry") {
+        if (empty($result['data']) || isset($result['status'])) {
+            if (str_contains(json_encode($result['data']), "No subject found for this inquiry")) {
                 $add_scoring = array(
-                    'body' => '',
+                    'body' => serialize($result),
                     'status' => 'error',
                     'success' => (int)true,
                     'string_result' => 'Неуспешный ответ: ' . 'субъект не найден',
