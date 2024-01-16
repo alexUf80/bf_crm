@@ -752,6 +752,20 @@ class Nbki_scoring extends Core
             $add_nbki['max_delay_days'] = $period_peni_biggest;
             $add_nbki['last_delay_days'] = $period_peni_last;
 
+
+            
+            
+            $order = $this->orders->get_order($nbkiScor->order_id);
+
+
+            $c = $this->contracts->get_contract($order->contract_id);
+            $type_pk = [];
+            $add_nbki['type_pk'] = null;
+            if (!is_null($c) && !is_null($c->id)) {
+                $type_pk = $this->contracts->type_pk_contract($c);
+                $add_nbki['type_pk'] = $type_pk;
+            }
+
             echo '<hr>';
             $nbki_extra_scoring_add = $this->NbkiExtraScorings->add($add_nbki);
 
