@@ -559,7 +559,7 @@
                                                       title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
                                             {elseif $order->client_status == 'rep'}
                                                 <span class="label label-warning"
-                                                      title="Новый клиент, подавал ранее заявки">Повтор</span>
+                                                      title="Новый клиент, подавал ранее заявки">НК</span>
                                             {elseif $order->client_status == 'nk'}
                                                 <span class="label label-info" title="Новый клиент">Новая</span>
                                             {/if}
