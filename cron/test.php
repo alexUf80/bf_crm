@@ -173,7 +173,7 @@ class test extends Core
                     } elseif($order->client_status == 'crm') {
                         $pk = 'ПК CRM';
                     } elseif($order->client_status == 'rep') {
-                        $pk = 'Повтор';
+                        $pk = 'Новая';
                     } elseif($order->client_status == 'nk') {
                         $pk = 'Новая';
                     }
@@ -556,7 +556,7 @@ class test extends Core
             elseif ($contract->client_status == 'crm')
                 $client_status = 'ПК CRM';
             elseif ($contract->client_status == 'rep')
-                $client_status = 'Повтор';
+                $client_status = 'НК';
             else
                 $client_status = '';
 

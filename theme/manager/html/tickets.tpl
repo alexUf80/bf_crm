@@ -234,7 +234,7 @@
                                                 {if $order->client_status}
                                                     {if $order->client_status == 'pk'}<span class="label label-success" title="Клиент уже имеет погашенные займы">ПК</span>
                                                     {elseif $order->client_status == 'crm'}<span class="label label-primary" title="Клиент уже имеет погашенные займы в CRM">ПК CRM</span>
-                                                    {elseif $order->client_status == 'rep'}<span class="label label-warning" title="Клиент уже подавал ранее заявки">Повтор</span>
+                                                    {elseif $order->client_status == 'rep'}<span class="label label-warning" title="Новый клиент, подавал ранее заявки">Повтор</span>
                                                     {elseif $order->client_status == 'nk'}<span class="label label-info" title="Новый клиент">Новая</span>
                                                     {/if}
                                                 {else}

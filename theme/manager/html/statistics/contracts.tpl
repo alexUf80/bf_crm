@@ -167,7 +167,7 @@
                                     {if $contract->client_status == 'pk'}ПК{/if}
                                     {if $contract->client_status == 'nk'}НК{/if}
                                     {if $contract->client_status == 'crm'}ПК CRM{/if}
-                                    {if $contract->client_status == 'rep'}Повтор{/if}
+                                    {if $contract->client_status == 'rep'}НК{/if}
                                 </td>
                                 <td>
                                     {$contract->type_pk}

@@ -119,7 +119,7 @@
                                             {elseif $order->client_status == 'crm'}
                                                 ПК CRM
                                             {elseif $order->client_status == 'rep'}
-                                                Повтор
+                                                НК
                                             {elseif $order->client_status == 'nk'}
                                                 Новая
                                             {/if}
