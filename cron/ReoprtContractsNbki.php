@@ -279,48 +279,48 @@ class ReoprtContractsNbki extends Core
             }
         }
 
-        // добавление type_pk в таблицу s_nbki_extra_scorings для power_bi
-        $query = $this->db->placehold("
-        SELECT max(`order_id`) as max
-        FROM `s_nbki_extra_scorings` 
-        WHERE `type_pk` 
-        IS NOT null
-        ");
-        $this->db->query($query);
-        $max_order_id = $this->db->result()->max;
+        // // добавление type_pk в таблицу s_nbki_extra_scorings для power_bi
+        // $query = $this->db->placehold("
+        // SELECT max(`order_id`) as max
+        // FROM `s_nbki_extra_scorings` 
+        // WHERE `type_pk` 
+        // IS NOT null
+        // ");
+        // $this->db->query($query);
+        // $max_order_id = $this->db->result()->max;
 
-        $query = $this->db->placehold("
-        SELECT *
-        FROM __orders
-        WHERE id >= ?
-        ORDER BY id
-        ",$max_order_id);
-        $this->db->query($query);
-        $orders = $this->db->results();
+        // $query = $this->db->placehold("
+        // SELECT *
+        // FROM __orders
+        // WHERE id >= ?
+        // ORDER BY id
+        // ",$max_order_id);
+        // $this->db->query($query);
+        // $orders = $this->db->results();
 
-        foreach ($orders as $order) {
+        // foreach ($orders as $order) {
 
-            $c = $this->contracts->get_contract($order->contract_id);
-            $type_pk = [];
-            if (!is_null($c) && !is_null($c->id)) {
-                $type_pk = $this->contracts->type_pk_contract($c);
-                $add_nbki['type_pk'] = $type_pk;
-                $nbki_extra_scoring = $this->NbkiExtraScorings->get($order->id);
-                if (is_null($nbki_extra_scoring) || !isset($nbki_extra_scoring)) {
-                    echo 'add';
-                    $add_nbki['order_id'] = $order->id;
-                    $add_nbki['score_id'] = 0;
-                    $nbki_extra_scoring_add = $this->NbkiExtraScorings->add($add_nbki);
-                }
-                else{
-                    echo 'upd';
-                    $nbki_extra_scoring_update = $this->NbkiExtraScorings->update($order->id, $add_nbki);
-                }
-            }
+        //     $c = $this->contracts->get_contract($order->contract_id);
+        //     $type_pk = [];
+        //     if (!is_null($c) && !is_null($c->id)) {
+        //         $type_pk = $this->contracts->type_pk_contract($c);
+        //         $add_nbki['type_pk'] = $type_pk;
+        //         $nbki_extra_scoring = $this->NbkiExtraScorings->get($order->id);
+        //         if (is_null($nbki_extra_scoring) || !isset($nbki_extra_scoring)) {
+        //             echo 'add';
+        //             $add_nbki['order_id'] = $order->id;
+        //             $add_nbki['score_id'] = 0;
+        //             $nbki_extra_scoring_add = $this->NbkiExtraScorings->add($add_nbki);
+        //         }
+        //         else{
+        //             echo 'upd';
+        //             $nbki_extra_scoring_update = $this->NbkiExtraScorings->update($order->id, $add_nbki);
+        //         }
+        //     }
 
-            var_dump($order->id);
-            echo '<hr>';
-        }
+        //     var_dump($order->id);
+        //     echo '<hr>';
+        // }
     }
 
 
