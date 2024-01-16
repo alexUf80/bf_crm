@@ -174,7 +174,7 @@
                                     {if $order->client_status == 'pk'}ПК{/if}
                                     {if $order->client_status == 'nk'}НК{/if}
                                     {if $order->client_status == 'crm'}ПК CRM{/if}
-                                    {if $order->client_status == 'rep'}Повтор{/if}
+                                    {if $order->client_status == 'rep'}НК{/if}
                                 </td>
                                 <td>
                                    {$order->type_pk}

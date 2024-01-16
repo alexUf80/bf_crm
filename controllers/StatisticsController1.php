@@ -718,7 +718,7 @@ class StatisticsController1 extends Controller
                     elseif ($contract->client_status == 'crm')
                         $client_status = 'ПК CRM';
                     elseif ($contract->client_status == 'rep')
-                        $client_status = 'Повтор';
+                        $client_status = 'НК';
                     else
                         $client_status = '';
 
@@ -996,7 +996,7 @@ class StatisticsController1 extends Controller
                     elseif ($contract->client_status == 'crm')
                         $client_status = 'ПК CRM';
                     elseif ($contract->client_status == 'rep')
-                        $client_status = 'Повтор';
+                        $client_status = 'НК';
                     else
                         $client_status = '';
 
@@ -3562,7 +3562,7 @@ class StatisticsController1 extends Controller
                     if ($order->client_status == 'crm')
                         $client_status = 'ПК CRM';
                     if ($order->client_status == 'rep')
-                        $client_status = 'Повтор';
+                        $client_status = 'НК';
                     $sheet->setCellValue('L' . $i, $client_status);
                     $sheet->setCellValue('M' . $i, $order->type_pk);
                     $sheet->setCellValue('N' . $i, date('d.m.Y', strtotime($order->date)));
@@ -3900,7 +3900,7 @@ class StatisticsController1 extends Controller
                             } elseif($order->client_status == 'crm') {
                                 $pk = 'ПК CRM';
                             } elseif($order->client_status == 'rep') {
-                                $pk = 'Повтор';
+                                $pk = 'Новая';
                             } elseif($order->client_status == 'nk') {
                                 $pk = 'Новая';
                             }
