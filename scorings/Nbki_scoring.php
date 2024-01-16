@@ -765,6 +765,10 @@ class Nbki_scoring extends Core
                 $type_pk = $this->contracts->type_pk_contract($c);
                 $add_nbki['type_pk'] = $type_pk;
             }
+            else{
+                $type_pk = $this->contracts->type_pk_order($order);
+                $add_nbki['type_pk'] = $type_pk;
+            }
 
             echo '<hr>';
             $nbki_extra_scoring_add = $this->NbkiExtraScorings->add($add_nbki);
