@@ -116,8 +116,14 @@ class IssuanceCron extends Core
                                 ));
 
                                 //создаем документы для страховки
-                                $this->create_document('POLIS', $contract);
-                                $this->create_document('KID', $contract);
+                                if ( date('Y-m-d H:i:s') < '2024-01-21' ) {
+                                    $this->create_document('POLIS', $contract);
+                                    $this->create_document('KID', $contract);
+                                }
+                                else{
+                                    $this->create_document('POLIS_24-01-21', $contract);
+                                    $this->create_document('KID_24-01-21', $contract);
+                                }
     
     
                                 //Отправляем чек по страховке
