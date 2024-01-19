@@ -171,6 +171,23 @@
                             </li>
                         {/if}
                     {/if}
+                    {if in_array('settings_risk', $manager->permissions)}
+                        <li class="nav-small-cap">Управление</li>
+
+                        <li {if in_array($module, ['SettingsController', 'OfflinePointsController', 'ScoringsController', 'ApikeysController', 'WhitelistController', 'BlacklistController', 'PenaltyTypesController', 'RfmlistController'])}class="active"{/if}>
+                            <a class="has-arrow" href="settings" aria-expanded="false"><i
+                                        class="mdi mdi-settings"></i><span class="hide-menu">Настройки</span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li {if in_array($module, ['SettingsController'])}class="active"{/if}><a
+                                            href="settings/">Общие</a></li>
+                                {if $manager->role != 'chief_collector'}
+                                    <li {if in_array($module, ['ScoringsController'])}class="active"{/if}><a
+                                                href="scorings/">Скоринги</a></li>
+                                {/if}
+                            </ul>
+                        </li>
+                    {/if}
+
                     {if  in_array('managers', $manager->permissions) ||  in_array('changelogs', $manager->permissions) ||  in_array('settings', $manager->permissions) ||  in_array('handbooks', $manager->permissions) ||  in_array('pages', $manager->permissions)}
                         <li class="nav-small-cap">Управление</li>
                         {if in_array('managers', $manager->permissions)}

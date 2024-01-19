@@ -194,6 +194,7 @@ class Managers extends Core
             'orders' => array('developer', 'admin', 'cessia', 'contact_center', 'quality_control', 'senior collector', 'team_collector', 'risk'),
             'clients' => array('developer', 'admin', 'cessia', 'manager', 'contact_center', 'cs_pc', 'risk'),
             'settings' => array('developer', 'admin'),
+            'settings_risk' => array('risk'),
             'changelogs' => array('developer', 'admin'),
             'handbooks' => array('developer', 'admin'),
             'pages' => array('developer', 'admin'),
