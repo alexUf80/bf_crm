@@ -258,6 +258,26 @@ class AuditCron extends Core
                         }
                     }
 
+                    $params = array(
+                        'lastname' => $order->lastname,
+                        'firstname' => $order->firstname,
+                        'patronymic' => $order->patronymic,
+                        'birth' => $order->birth,
+                        'passport_issued' => $order->passport_issued,
+                        'passport_series' => substr(str_replace(array(' ', '-'), '', $order->passport_serial), 0, 4),
+                        'passport_number' => substr(str_replace(array(' ', '-'), '', $order->passport_serial), 4, 6),
+                        'address' => $address->adressfull,
+                        'date' => date('Y-m-d H:i:s'),
+                    );
+
+                    $this->documents->create_document(array(
+                        'user_id' => $order->user_id,
+                        'order_id' => $order->order_id,
+                        'contract_id' => $order->contract_id,
+                        'type' => 'DOGOVOR_REJECT_REASON',
+                        'params' => json_encode($params),
+                    ));
+
                     CardsORM::where('user_id', $order->user_id)->delete();
                 }
 
