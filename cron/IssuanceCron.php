@@ -123,6 +123,7 @@ class IssuanceCron extends Core
                                 else{
                                     $this->create_document('POLIS_24-01-21', $contract);
                                     $this->create_document('KID_24-01-21', $contract);
+                                    $this->create_document('UVEDOMLENIE_OTKAZ_OT_USLUG', $contract);
                                 }
     
     
@@ -155,7 +156,12 @@ class IssuanceCron extends Core
                         $contract->amount += $insurance_cost;
                     }
 
-                    $this->create_document('IND_USLOVIYA_NL', $contract);
+                    if ( date('Y-m-d H:i:s') < '2024-01-21' ) {
+                        $this->create_document('IND_USLOVIYA_NL', $contract);
+                    }
+                    else{
+                        $this->create_document('IND_USLOVIYA_NL_24-01-21', $contract);
+                    }
                     $this->create_document('INF_MESSAGE_PDN', $contract);
 
                     $this->contracts->update_contract($contract->id, array(

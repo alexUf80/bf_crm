@@ -5,7 +5,9 @@ class Documents extends Core
 
     private $templates = array(
         'IND_USLOVIYA_NL' => 'dogovor.tpl',
+        'IND_USLOVIYA_NL_24-01-21' => 'dogovor_24-01-21.tpl',
         'ANKETA_PEP' => 'zayavlenie_na_poluchenie.tpl',
+        'ANKETA_PEP_24-01-21' => 'zayavlenie_na_poluchenie_24-01-21.tpl',
         'SOGLASIE_OPD' => 'soglasie_opd.tpl',
         'POLIS' => 'polis.tpl',
         'KID' => 'kid.tpl',
@@ -21,12 +23,15 @@ class Documents extends Core
         'DOP_RESTRUCT' => 'restruct.tpl',
         'GRAPH_RESTRUCT' => 'restruct-ps.tpl',
         'INF_MESSAGE_PDN' => 'message_pdn.tpl',
+        'UVEDOMLENIE_OTKAZ_OT_USLUG' => 'uvedomlenie_otkaz_ot_uslug.tpl',
     );
 
 
     private $names = array(
         'IND_USLOVIYA_NL' => 'Индивидуальные условия',
+        'IND_USLOVIYA_NL_24-01-21' => 'Индивидуальные условия',
         'ANKETA_PEP' => 'Заявление-анкета на получение займа',
+        'ANKETA_PEP_24-01-21' => 'Заявление-анкета на получение займа',
         'SOGLASIE_OPD' => 'Согласие на обработку персональных данных заемщика',
         'POLIS' => 'Полис страхования',
         'KID' => 'Ключевой информационный документ об условиях добровольного страхования',
@@ -41,12 +46,15 @@ class Documents extends Core
         'KID_PROLONGATION_POROG_24-01-21' => 'Ключевой информационный документ (пролонгация).',
         'DOP_RESTRUCT' => 'Дополнительное соглашение о реструктуризации',
         'GRAPH_RESTRUCT' => 'График платежей погашения задолженности',
-        'INF_MESSAGE_PDN' => 'Информационное сообщение о превышении ПДН'
+        'INF_MESSAGE_PDN' => 'Информационное сообщение о превышении ПДН',
+        'UVEDOMLENIE_OTKAZ_OT_USLUG' => 'Уведомление о праве отказаться от дополнительных услуг'
     );
 
     private $client_visible = array(
         'IND_USLOVIYA_NL' => 1,
+        'IND_USLOVIYA_NL_24-01-21' => 1,
         'ANKETA_PEP' => 1,
+        'ANKETA_PEP_24-01-21' => 1,
         'SOGLASIE_OPD' => 1,
         'POLIS' => 1,
         'KID' => 1,
@@ -61,7 +69,8 @@ class Documents extends Core
         'KID_PROLONGATION_POROG_24-01-21' => 1,
         'DOP_RESTRUCT' => 1,
         'GRAPH_RESTRUCT' => 1,
-        'INF_MESSAGE_PDN' => 1
+        'INF_MESSAGE_PDN' => 1,
+        'UVEDOMLENIE_OTKAZ_OT_USLUG' => 1
     );
 
     public function get_sudblock_create_documents($block)
