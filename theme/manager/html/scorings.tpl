@@ -157,14 +157,36 @@
                                         <span>
                                             {$type->title}
                                         </span>
-                                        {if $type->negative_action=='reject'}
-                                        <span class="label label-danger">Отказ</span>
-                                        {/if}
-                                        {if $type->negative_action=='stop'}
-                                        <span class="label label-warning">Остановить</span>
-                                        {/if}
-                                        {if $type->negative_action=='next'}
-                                        <span class="label label-primary">Продолжить</span>
+                                        {if $type->name != 'nbki'}
+                                            {if $type->negative_action=='reject'}
+                                                <span class="label label-danger">Отказ</span>
+                                            {/if}
+                                            {if $type->negative_action=='stop'}
+                                                <span class="label label-warning">Остановить</span>
+                                            {/if}
+                                            {if $type->negative_action=='next'}
+                                                <span class="label label-primary">Продолжить</span>
+                                            {/if}
+                                        {else}
+                                            {if $type->negative_action=='reject'}
+                                                <span class="label label-danger">Отказ НК</span>
+                                            {/if}
+                                            {if $type->negative_action=='stop'}
+                                                <span class="label label-warning">Остановить НК</span>
+                                            {/if}
+                                            {if $type->negative_action=='next'}
+                                                <span class="label label-primary">Продолжить НК</span>
+                                            {/if}
+                                            
+                                            {if $type->params['negative_action_pk']=='reject'}
+                                                <span class="label label-danger">Отказ ПК</span>
+                                            {/if}
+                                            {if $type->params['negative_action_pk']=='stop'}
+                                                <span class="label label-warning">Остановить ПК</span>
+                                            {/if}
+                                            {if $type->params['negative_action_pk']=='next'}
+                                                <span class="label label-primary">Продолжить ПК</span>
+                                            {/if}
                                         {/if}
                                     </a>                                    
                                 </div>
@@ -184,23 +206,63 @@
                             <div class="row">
                                 
                                 <div class="col-md-6">
-                                    <div class="form-group ">
-                                        <label class="control-label">Если получен негативный тест</label>
-                                        <select name="settings[{$type->id}][negative_action]" class="form-control">
-                                            <option value="next" {if $type->negative_action=='next'}selected="true"{/if}>Продолжить проверку</option>
-                                            <option value="stop" {if $type->negative_action=='stop'}selected="true"{/if}>Остановить проверку</option>
-                                            <option value="reject" {if $type->negative_action=='reject'}selected="true"{/if}>Остановить и отказать по заявке</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group ">
-                                        <label class="control-label">Если получен негативный тест</label>
-                                        <select name="settings[{$type->id}][reason_id]" class="form-control">
-                                            <option value="" {if !$type->reason_id}selected="true"{/if}></option>
-                                            {foreach $reasons as $reason}
-                                            <option value="{$reason->id}" {if $type->reason_id==$reason->id}selected="true"{/if}>{$reason->admin_name}</option>
-                                            {/foreach}
-                                        </select>
-                                    </div>
+                                    {if $type->name != 'nbki'}
+                                        <div class="form-group ">
+                                            <label class="control-label">Если получен негативный тест</label>
+                                            <select name="settings[{$type->id}][negative_action]" class="form-control">
+                                                <option value="next" {if $type->negative_action=='next'}selected="true"{/if}>Продолжить проверку</option>
+                                                <option value="stop" {if $type->negative_action=='stop'}selected="true"{/if}>Остановить проверку</option>
+                                                <option value="reject" {if $type->negative_action=='reject'}selected="true"{/if}>Остановить и отказать по заявке</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label class="control-label">Если получен негативный тест</label>
+                                            <select name="settings[{$type->id}][reason_id]" class="form-control">
+                                                <option value="" {if !$type->reason_id}selected="true"{/if}></option>
+                                                {foreach $reasons as $reason}
+                                                    <option value="{$reason->id}" {if $type->reason_id==$reason->id}selected="true"{/if}>{$reason->admin_name}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                    {else}
+                                        <div class="form-group ">
+                                            <label class="control-label">Если получен негативный тест для НК</label>
+                                            <select name="settings[{$type->id}][negative_action]" class="form-control">
+                                                <option value="next" {if $type->negative_action=='next'}selected="true"{/if}>Продолжить проверку</option>
+                                                <option value="stop" {if $type->negative_action=='stop'}selected="true"{/if}>Остановить проверку</option>
+                                                <option value="reject" {if $type->negative_action=='reject'}selected="true"{/if}>Остановить и отказать по заявке</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label class="control-label">Если получен негативный тест для НК</label>
+                                            <select name="settings[{$type->id}][reason_id]" class="form-control">
+                                                <option value="" {if !$type->reason_id}selected="true"{/if}></option>
+                                                {foreach $reasons as $reason}
+                                                    <option value="{$reason->id}" {if $type->reason_id==$reason->id}selected="true"{/if}>{$reason->admin_name}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+
+                                        <hr>
+                                        <div class="form-group ">
+                                            <label class="control-label">Если получен негативный тест для ПК</label>
+                                            <select name="settings[{$type->id}][params][negative_action_pk]" class="form-control">
+                                                <option value="next" {if $type->params['negative_action_pk']=='next'}selected="true"{/if}>Продолжить проверку</option>
+                                                <option value="stop" {if $type->params['negative_action_pk']=='stop'}selected="true"{/if}>Остановить проверку</option>
+                                                <option value="reject" {if $type->params['negative_action_pk']=='reject'}selected="true"{/if}>Остановить и отказать по заявке</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label class="control-label">Если получен негативный тест для ПК</label>
+                                            <select name="settings[{$type->id}][params][reason_id_pk]" class="form-control">
+                                                <option value="" {if !$type->reason_id_pk}selected="true"{/if}></option>
+                                                {foreach $reasons as $reason}
+                                                    <option value="{$reason->id}" {if $type->params['reason_id_pk']==$reason->id}selected="true"{/if}>{$reason->admin_name}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                    {/if}
+                                    
                                 </div>
                                 
                                 {if $type->name == 'local_time'}

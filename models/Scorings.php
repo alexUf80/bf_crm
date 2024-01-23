@@ -246,8 +246,6 @@ class Scorings extends Core
             UPDATE __scorings SET ?% WHERE id = ?
         ", (array)$scoring, (int)$id);
         $this->db->query($query);
-
-        echo $query.'<hr>';
         
         return $id;
     }
