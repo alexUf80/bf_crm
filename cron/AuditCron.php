@@ -165,6 +165,16 @@ class AuditCron extends Core
     {
         $scoring_type = $this->scorings->get_type($scoring->type);
         if ($result['status'] == 'completed' && $result['success'] == 0) {
+
+            if ($scoring->type == 'nbki') {
+                $order = $this->orders->get_order($scoring->order_id);
+                if ($order->client_status == 'pk' || $order->client_status == 'crm') {
+                    $scoring_type->negative_action = $scoring_type->params['negative_action_pk'];
+                    $scoring_type->reason_id = $scoring_type->params['reason_id_pk'];
+                }
+            }
+
+
             if ($scoring_type->negative_action == 'stop' || $scoring_type->negative_action == 'reject') {
                 // останавливаем незаконченные скоринги
                 if ($order_scorings = $this->scorings->get_scorings(array('order_id' => $scoring->order_id))) {
