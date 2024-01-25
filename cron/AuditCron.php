@@ -86,7 +86,7 @@ class AuditCron extends Core
                 }
 
                 $user = UsersORM::query()->where('id', '=', $order->user_id)->first();
-                if (($reject_count % 3) != 0 && isset($reject_order) && $reject_order->reason_id != 45 && $user->utm_source != 'kpk') {
+                if (($reject_count % 3) != 0 && isset($reject_order) && $reject_order->reason_id != 45 && $user->utm_source != 'kpk' && $user->utm_source != 'part1') {
 
                     $update = array(
                         'autoretry' => 0,
