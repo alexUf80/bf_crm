@@ -962,7 +962,7 @@ class OrderController extends Controller
             $defaultCard = CardsORM::where('user_id', $order->user_id)->first();
         }
 
-        if ($status != 8) {
+        if ($status != 8 && $user->utm_source != 'kpk') {
             $resp = $this->Best2pay->purchase_by_token($defaultCard->id, (int)$reject_cost * 100, 'Списание за услугу "Причина отказа"');
             $status = (string)$resp->state;
 
