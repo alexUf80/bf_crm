@@ -1017,7 +1017,7 @@ if ($this->is_developer)
     public function type_pk($prev_contracts)
     {
 
-        $c_type_pk = 0;
+        $c_type_pk = null;
         if(count($prev_contracts)>0){
 
             $prev_contract_type_pk = [0, 0, 0];
