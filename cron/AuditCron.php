@@ -165,7 +165,8 @@ class AuditCron extends Core
     private function handling_result($scoring, $result)
     {
         $scoring_type = $this->scorings->get_type($scoring->type);
-        if ($result['status'] == 'completed' && $result['success'] == 0) {
+        $user = UsersORM::query()->where('id', '=', $scoring->user_id)->first();
+        if ($result['status'] == 'completed' && $result['success'] == 0 && $user->utm_source != 'kpk' && $user->utm_source != 'part1') {
 
             if ($scoring->type == 'nbki') {
                 $order = $this->orders->get_order($scoring->order_id);
