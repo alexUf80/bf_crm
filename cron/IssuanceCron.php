@@ -163,6 +163,10 @@ class IssuanceCron extends Core
                         $this->create_document('IND_USLOVIYA_NL_24-01-21', $contract);
                     }
                     $this->create_document('INF_MESSAGE_PDN', $contract);
+                    
+                    if ( date('Y-m-d H:i:s') > '2024-02-01' ) {
+                        $this->create_document('SOGLASIE_NA_VOZVRAT', $contract);
+                    }
 
                     $this->contracts->update_contract($contract->id, array(
                         'status' => 2,
