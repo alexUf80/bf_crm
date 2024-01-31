@@ -770,6 +770,10 @@ class Nbki_scoring extends Core
                 $add_nbki['type_pk'] = $type_pk;
             }
 
+            if ($order->utm_source == 'kpk' || $order->utm_source == 'part1') {
+                $add_nbki['utm_source'] = $order->utm_source;
+            }
+
             echo '<hr>';
             $nbki_extra_scoring_add = $this->NbkiExtraScorings->add($add_nbki);
 
