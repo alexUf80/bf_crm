@@ -115,7 +115,8 @@
                         </form>     
                         
                         {if $from}                   
-                        <table class="table table-hover">
+                        <table class="table table-hover" style="display: inline-block;vertical-align: top;max-width: 100%;
+                            overflow-x: auto;white-space: nowrap;-webkit-overflow-scrolling: touch;">
                             
                             <tr>
                                 <th>#</th>
@@ -131,15 +132,19 @@
                                 <th>Зона качества</th>
                                 <th>ПК/НК</th>
                                 <th>Тип ПК</th>
+                                <th>Менедженр</th>
                                 <th>Причина</th>
-                                <th>Номер операции</th>
-                                <th>Скориста</th>
                                 <th>Источник</th>
                                 <th>Промокод</th>
+                                <th>Скорбалл</th>
+                                <th>Количество аткивных</th>
+                                <th>Просроченная задолженность</th>
+                                <th>Общая задолженность</th>
+                                <th>Ежемесячный платеж</th>
                             </tr>
                             
                             {foreach $orders as $order}
-                            <tr>
+                            <tr {($order->utm_source == 'kpk' || $order->utm_source == 'part1')? 'style="background: #f1f1f1"' : ''}>
                                 <td>{$order@iteration}</td>
                                 <td>{$order->date|date}</td>
                                 <td><a target="_blank" href="order/{$order->order_id}">{$order->order_id}</a></td>
@@ -196,9 +201,23 @@
                                     {/if}
                                 </td>
                                 <td>{$order->operation} {if $order->checked == 1}(успех){else}(провал){/if}</td>
-                                <td>{$order->scoring->scorista_ball}</td>
                                 <td>{$order->utm_source}</td>
                                 <td>{$order->promocode}</td>
+                                
+                                {if strripos($order->reject_reason, 'НБКИ')}
+                                    <td>{$order->score}</td>
+                                    <td>{$order->number_of_active}</td>
+                                    <td>{$order->overdue_amount_sum}</td>
+                                    <td>{$order->active_loans_credit_limit_sum}</td>
+                                    <td>{$order->monthly_active_loans_payment_sum}</td>
+                                {else}
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                {/if}
+
                             </tr>
                             {/foreach}
                             

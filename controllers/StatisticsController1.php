@@ -618,6 +618,16 @@ class StatisticsController1 extends Controller
 
                 // $order->type_pk = $this->contracts->type_pk_contract($order->contract_id);
                 $order->type_pk = $this->contracts->type_pk_order($order);
+
+                $order_scorings = $this->scorings->get_scorings(array('order_id' => $order->order_id, 'type' => 'nbki'));
+                foreach ($order_scorings as $order_scoring) {
+                    $order_scoring_body = unserialize($order_scoring->body);
+                    $order->score = $order_scoring_body['score'];
+                    $order->number_of_active = $order_scoring_body['number_of_active'];
+                    $order->overdue_amount_sum = $order_scoring_body['extra_scoring']['overdue_amount_sum'];
+                    $order->active_loans_credit_limit_sum = $order_scoring_body['extra_scoring']['active_loans_credit_limit_sum'];
+                    $order->monthly_active_loans_payment_sum = $order_scoring_body['extra_scoring']['monthly_active_loans_payment_sum'];
+                }
             }
 
             if (!empty($orders))
@@ -686,6 +696,7 @@ class StatisticsController1 extends Controller
                 $active_sheet->getColumnDimension('P')->setWidth(15);
                 $active_sheet->getColumnDimension('Q')->setWidth(15);
                 $active_sheet->getColumnDimension('R')->setWidth(15);
+                $active_sheet->getColumnDimension('S')->setWidth(15);
 
                 $active_sheet->setCellValue('A1', 'Дата');
                 $active_sheet->setCellValue('B1', 'Заявка');
@@ -703,10 +714,9 @@ class StatisticsController1 extends Controller
                 $active_sheet->setCellValue('N1', 'Тип ПК');
                 $active_sheet->setCellValue('O1', 'Менеджер');//---
                 $active_sheet->setCellValue('P1', 'Причина');
-                $active_sheet->setCellValue('Q1', 'Скориста');//---
-                $active_sheet->setCellValue('R1', 'Источник');//---
-                $active_sheet->setCellValue('S1', 'Операция');//---
-                $active_sheet->setCellValue('T1', 'Промокод');//---
+                $active_sheet->setCellValue('Q1', 'Источник');//---
+                $active_sheet->setCellValue('R1', 'Операция');//---
+                $active_sheet->setCellValue('S1', 'Промокод');//---
 
                 $i = 2;
                 foreach ($orders as $contract) {
@@ -745,11 +755,21 @@ class StatisticsController1 extends Controller
 
                     $active_sheet->setCellValue('O' . $i, $managers[$contract->manager_id]->name);
                     $active_sheet->setCellValue('P' . $i, ($contract->reason_id ? $reasons[$contract->reason_id]->admin_name : $contract->reject_reason));
-                    $active_sheet->setCellValue('Q' . $i, empty($contract->scoring) ? '' : $contract->scoring->scorista_ball);
-                    $active_sheet->setCellValue('R' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('S' . $i, $contract->operation . $successTransaction);
-                    $active_sheet->setCellValue('T' . $i, $contract->promocode);
+                    $active_sheet->setCellValue('Q' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('R' . $i, $contract->operation . $successTransaction);
+                    $active_sheet->setCellValue('S' . $i, $contract->promocode);
 
+                    if ($contract->utm_source == 'kpk' || $contract->utm_source == 'part1') {
+                        $active_sheet->getStyle('A'.$i.':S'.$i)
+                        ->applyFromArray(
+                            array(
+                                'fill' => array(
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'color' => array('rgb' => 'e1e1e1')
+                                    )
+                                )
+                            );
+                    }
 
                     $i++;
                 }
@@ -853,7 +873,37 @@ class StatisticsController1 extends Controller
                 $c->FaktAddr = $faktAddress->adressfull;
 
                 $c->type_pk = $this->contracts->type_pk_contract($c);
-                
+
+                // сумма пролонгаций
+                $prolongations_amount = 0;
+                $contract_operations = $this->operations->get_operations(array('contract_id' => $c->contract_id, 'type' => 'PAY'));
+                foreach ($contract_operations as $contract_operation) {
+                    $contract_operation_transaction = $this->transactions->get_transaction($contract_operation->transaction_id);
+                    if ($contract_operation_transaction->prolongation == 1) {
+                        $prolongations_amount += $contract_operation->amount;
+                    }
+                }
+                $c->prolongations_amount = $prolongations_amount;
+
+                // скорбалл МФО2НБКИ и скорбалл МАНИМАЭН
+                $order_scorings = $this->scorings->get_scorings(array('order_id' => $c->order_id, 'type' => 'nbki'));
+                foreach ($order_scorings as $order_scoring) {
+                    $order_scoring_body = unserialize($order_scoring->body);
+
+                    if($c->client_status == 'nk'){
+                        $c->maniman = $order_scoring_body['barents_scoring']['new_client_result'];
+                    }
+                    else{
+                        $c->maniman = $order_scoring_body['barents_scoring']['old_client_result'];
+                        
+                    }
+                    $c->score_mf0_2_nbki = $order_scoring_body['score'];
+                }
+
+                // Зона качества
+                $faktaddress = $this->Addresses->get_address($c->faktaddress_id);
+                $c->region = $faktaddress->region;
+                $c->zone = $faktaddress->zone;
             }
 
             foreach ($contracts as $c) {
@@ -936,59 +986,86 @@ class StatisticsController1 extends Controller
                 $active_sheet->getColumnDimension('W')->setWidth(10);
                 $active_sheet->getColumnDimension('X')->setWidth(10);
                 $active_sheet->getColumnDimension('Y')->setWidth(10);
+                $active_sheet->getColumnDimension('Z')->setWidth(10);
+                $active_sheet->getColumnDimension('AA')->setWidth(10);
+                $active_sheet->getColumnDimension('AB')->setWidth(10);
+                $active_sheet->getColumnDimension('AC')->setWidth(10);
+                $active_sheet->getColumnDimension('AD')->setWidth(10);
                 if ($nbki == 1) {
-                    $active_sheet->getColumnDimension('Z')->setWidth(10);
-                    $active_sheet->getColumnDimension('AA')->setWidth(10);
-                    $active_sheet->getColumnDimension('AB')->setWidth(10);
-                    $active_sheet->getColumnDimension('AC')->setWidth(10);
-                    $active_sheet->getColumnDimension('AD')->setWidth(10);
                     $active_sheet->getColumnDimension('AE')->setWidth(10);
                     $active_sheet->getColumnDimension('AF')->setWidth(10);
                     $active_sheet->getColumnDimension('AG')->setWidth(10);
                     $active_sheet->getColumnDimension('AH')->setWidth(10);
+                    $active_sheet->getColumnDimension('AI')->setWidth(10);
+                    $active_sheet->getColumnDimension('AJ')->setWidth(10);
+                    $active_sheet->getColumnDimension('AK')->setWidth(10);
+                    $active_sheet->getColumnDimension('AL')->setWidth(10);
+                    $active_sheet->getColumnDimension('AM')->setWidth(10);
                 }
+                $active_sheet->getColumnDimension('AN')->setWidth(10);
+                $active_sheet->getColumnDimension('AO')->setWidth(10);
+                $active_sheet->getColumnDimension('AP')->setWidth(10);
 
-                $active_sheet->setCellValue('A1', 'Дата');
-                $active_sheet->setCellValue('B1', 'Договор');
-                $active_sheet->setCellValue('C1', 'ФИО');
-                $active_sheet->setCellValue('D1', 'Дата рождения');
-                $active_sheet->setCellValue('E1', 'Телефон');
-                $active_sheet->setCellValue('F1', 'Адрес регистрации');
-                $active_sheet->setCellValue('G1', 'Адрес проживания');
-                $active_sheet->setCellValue('H1', 'Место работы, должность');
-                $active_sheet->setCellValue('I1', 'Почта');
-                $active_sheet->setCellValue('J1', 'Сумма');
-                $active_sheet->setCellValue('K1', 'Пролонгация');
-                $active_sheet->setCellValue('L1', 'ПК/НК');
-                $active_sheet->setCellValue('M1', 'Тип ПК');
-                $active_sheet->setCellValue('N1', 'Менеджер');
-                $active_sheet->setCellValue('O1', 'Статус');
-                $active_sheet->setCellValue('P1', 'Дата возврата');
-                $active_sheet->setCellValue('Q1', 'ПДН');
-                $active_sheet->setCellValue('R1', 'Дней займа');
-                $active_sheet->setCellValue('S1', 'Дата факт возврата');
-                $active_sheet->setCellValue('T1', 'Сумма выплачено');
-                $active_sheet->setCellValue('U1', 'Источник');
-                $active_sheet->setCellValue('V1', 'ID заявки');
-                $active_sheet->setCellValue('W1', 'ID клиента');
-                $active_sheet->setCellValue('X1', 'Промокод');
-                $active_sheet->setCellValue('Y1', 'Общая сумма активных долгов');
-                $active_sheet->setCellValue('Z1', 'Количество активных долгов');
-                $active_sheet->setCellValue('AA1', 'Наличие 46ой статьи');
+                $active_sheet->setCellValue('A1', 'ID заявки');
+                $active_sheet->setCellValue('B1', 'ID клиента');
+                $active_sheet->setCellValue('C1', 'Дата');
+                $active_sheet->setCellValue('D1', 'Договор');
+                $active_sheet->setCellValue('E1', 'ФИО');
+                $active_sheet->setCellValue('F1', 'Дата рождения');
+                $active_sheet->setCellValue('G1', 'Телефон');
+                $active_sheet->setCellValue('H1', 'Адрес регистрации');
+                $active_sheet->setCellValue('I1', 'Адрес проживания');
+                $active_sheet->setCellValue('J1', 'Место работы, должность');
+                $active_sheet->setCellValue('K1', 'Почта');
+                $active_sheet->setCellValue('L1', 'Сумма');
+                $active_sheet->setCellValue('M1', 'Пролонгация');
+                $active_sheet->setCellValue('N1', 'Сумма пролонгаций');
+                $active_sheet->setCellValue('O1', 'ПК/НК');
+                $active_sheet->setCellValue('P1', 'Тип ПК');
+                $active_sheet->setCellValue('Q1', 'Менеджер');
+                $active_sheet->setCellValue('R1', 'Статус');
+                $active_sheet->setCellValue('S1', 'Дата возврата');
+                $active_sheet->setCellValue('T1', 'ПДН');
+                $active_sheet->setCellValue('U1', 'Дней займа');
+                $active_sheet->setCellValue('V1', 'Дата факт возврата');
+                $active_sheet->setCellValue('W1', 'Сумма выплачено');
+                $active_sheet->setCellValue('X1', 'Источник');
+                $active_sheet->setCellValue('Y1', 'ID заявки');
+                $active_sheet->setCellValue('Z1', 'ID клиента');
+                $active_sheet->setCellValue('AA1', 'Промокод');
+                $active_sheet->setCellValue('AB1', 'Общая сумма активных долгов');
+                $active_sheet->setCellValue('AC1', 'Количество активных долгов');
+                $active_sheet->setCellValue('AD1', 'Наличие 46ой статьи');
                 if ($nbki == 1) {
-                    $active_sheet->setCellValue('AB1', 'Всего активных кредитов количество');
-                    $active_sheet->setCellValue('AC1', 'Всего активных кредитов сумма');
-                    $active_sheet->setCellValue('AD1', 'Всего погашено кредитов количество');
-                    $active_sheet->setCellValue('AE1', 'Всего погашено кредитов сумма');
-                    $active_sheet->setCellValue('AF1', 'Ежемесячный платеж по кредитам');
-                    $active_sheet->setCellValue('AG1', 'Размер просроченной задолженности на сегодня');
-                    $active_sheet->setCellValue('AH1', 'Максимальная просрочка за последний год');
-                    $active_sheet->setCellValue('AI1', 'Количество микрозаймов за последние 3 месяца');
-                    $active_sheet->setCellValue('AJ1', 'Количество активных микрозаймов');
+                    $active_sheet->setCellValue('AE1', 'Всего активных кредитов количество');
+                    $active_sheet->setCellValue('AF1', 'Всего активных кредитов сумма');
+                    $active_sheet->setCellValue('AG1', 'Всего погашено кредитов количество');
+                    $active_sheet->setCellValue('AH1', 'Всего погашено кредитов сумма');
+                    $active_sheet->setCellValue('AI1', 'Ежемесячный платеж по кредитам');
+                    $active_sheet->setCellValue('AJ1', 'Размер просроченной задолженности на сегодня');
+                    $active_sheet->setCellValue('AK1', 'Максимальная просрочка за последний год');
+                    $active_sheet->setCellValue('AL1', 'Количество микрозаймов за последние 3 месяца');
+                    $active_sheet->setCellValue('AM1', 'Количество активных микрозаймов');
                 }
+                $active_sheet->setCellValue('AN1', 'МФО2НБКИ');
+                $active_sheet->setCellValue('AO1', 'МАНИМАЭН');
+                $active_sheet->setCellValue('AP1', 'Зона качества');
 
                 $i = 2;
                 foreach ($contracts as $contract) {
+
+                    if ($contract->utm_source == 'kpk' || $contract->utm_source == 'part1') {
+                        $active_sheet->getStyle('A'.$i.':AM'.$i)
+                        ->applyFromArray(
+                            array(
+                                'fill' => array(
+                                    'type' => PHPExcel_Style_Fill::FILL_SOLID,
+                                    'color' => array('rgb' => 'e1e1e1')
+                                    )
+                                )
+                            );
+                    }
+
                     if ($contract->client_status == 'pk')
                         $client_status = 'ПК';
                     elseif ($contract->client_status == 'nk')
@@ -1002,43 +1079,46 @@ class StatisticsController1 extends Controller
 
                     $status = $statuses[$contract->status] ?? "Не определён";
 
-                    $active_sheet->setCellValue('A' . $i, date('d.m.Y', strtotime($contract->date)));
-                    $active_sheet->setCellValue('B' . $i, $contract->number); 
-                    $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
-                    $active_sheet->setCellValue('D' . $i, $contract->birth);
-                    $active_sheet->setCellValue('E' . $i, $contract->phone_mobile);
-                    $active_sheet->setCellValue('F' . $i, $contract->RegAddr);
-                    $active_sheet->setCellValue('G' . $i, $contract->FaktAddr);
-                    $active_sheet->setCellValue('H' . $i, $contract->workplace.', '.$contract->profession);
-                    $active_sheet->setCellValue('I' . $i, $contract->email);
-                    $active_sheet->setCellValue('J' . $i, $contract->amount * 1);
-                    $active_sheet->setCellValue('K' . $i, $contract->prolongation);
-                    $active_sheet->setCellValue('L' . $i, $client_status);
-                    $active_sheet->setCellValue('M' . $i, $contract->type_pk);
-                    $active_sheet->setCellValue('N' . $i, $managers[$contract->manager_id]->name);
-                    $active_sheet->setCellValue('O' . $i, $status);
-                    $active_sheet->setCellValue('P' . $i, date('d.m.Y', strtotime($contract->return_date)));
-                    $active_sheet->setCellValue('Q' . $i, $contract->pdn);
-                    $active_sheet->setCellValue('R' . $i, $contract->period);
-                    $active_sheet->setCellValue('S' . $i, date('d.m.Y', strtotime($contract->close_date)));
-                    $active_sheet->setCellValue('T' . $i, $contract->sumPayed);
-                    $active_sheet->setCellValue('U' . $i, $contract->utm_source);
-                    $active_sheet->setCellValue('V' . $i, $contract->order_id);
-                    $active_sheet->setCellValue('W' . $i, $contract->user_id);
-                    $active_sheet->setCellValue('X' . $i, $contract->promocode);
+                    $active_sheet->setCellValue('A' . $i, $contract->order_id); 
+                    $active_sheet->setCellValue('B' . $i, $contract->user_id); 
+                    $active_sheet->setCellValue('C' . $i, date('d.m.Y', strtotime($contract->date)));
+                    $active_sheet->setCellValue('D' . $i, $contract->number); 
+                    $active_sheet->setCellValue('E' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
+                    $active_sheet->setCellValue('F' . $i, $contract->birth);
+                    $active_sheet->setCellValue('G' . $i, $contract->phone_mobile);
+                    $active_sheet->setCellValue('H' . $i, $contract->RegAddr);
+                    $active_sheet->setCellValue('I' . $i, $contract->FaktAddr);
+                    $active_sheet->setCellValue('J' . $i, $contract->workplace.', '.$contract->profession);
+                    $active_sheet->setCellValue('K' . $i, $contract->email);
+                    $active_sheet->setCellValue('L' . $i, $contract->amount * 1);
+                    $active_sheet->setCellValue('M' . $i, $contract->prolongation);
+                    $active_sheet->setCellValue('N' . $i, $contract->prolongations_amount);
+                    $active_sheet->setCellValue('O' . $i, $client_status);
+                    $active_sheet->setCellValue('P' . $i, $contract->type_pk);
+                    $active_sheet->setCellValue('Q' . $i, $managers[$contract->manager_id]->name);
+                    $active_sheet->setCellValue('R' . $i, $status);
+                    $active_sheet->setCellValue('S' . $i, date('d.m.Y', strtotime($contract->return_date)));
+                    $active_sheet->setCellValue('T' . $i, $contract->pdn);
+                    $active_sheet->setCellValue('U' . $i, $contract->period);
+                    $active_sheet->setCellValue('V' . $i, date('d.m.Y', strtotime($contract->close_date)));
+                    $active_sheet->setCellValue('W' . $i, $contract->sumPayed);
+                    $active_sheet->setCellValue('X' . $i, $contract->utm_source);
+                    $active_sheet->setCellValue('Y' . $i, $contract->order_id);
+                    $active_sheet->setCellValue('Z' . $i, $contract->user_id);
+                    $active_sheet->setCellValue('AA' . $i, $contract->promocode);
 
                     $fsspScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'fssp')->first();
                     
                     if ($fsspScor) {
                         $body = unserialize($fsspScor->body);
                         if (isset($body['expSum'])) {
-                            $active_sheet->setCellValue('Y' . $i, $body['expSum']);
-                            $active_sheet->setCellValue('Z' . $i, $body['expCount']);
-                            $active_sheet->setCellValue('AA' . $i, $body['article'] ? 'Да' : 'Нет');
+                            $active_sheet->setCellValue('AB' . $i, $body['expSum']);
+                            $active_sheet->setCellValue('AC' . $i, $body['expCount']);
+                            $active_sheet->setCellValue('AD' . $i, $body['article'] ? 'Да' : 'Нет');
                         } else {
-                            $active_sheet->setCellValue('Y' . $i, "0");
-                            $active_sheet->setCellValue('Z' . $i, "0");
-                            $active_sheet->setCellValue('AA' . $i, "Нет");
+                            $active_sheet->setCellValue('AB' . $i, "0");
+                            $active_sheet->setCellValue('AC' . $i, "0");
+                            $active_sheet->setCellValue('AD' . $i, "Нет");
                         }
                     }
                     
@@ -1046,199 +1126,19 @@ class StatisticsController1 extends Controller
                         $reoprt_contracts_nbkis = $this->ReoprtContractsNbki->get_reoprt_nbkis(array('order_id' => $contract->order_id));
                         $variables_arr = json_decode($reoprt_contracts_nbkis[0]->variables);
 
-                        $active_sheet->setCellValue('AB' . $i, $variables_arr->activeProduct);
-                        $active_sheet->setCellValue('AC' . $i, $variables_arr->totalAmtOutstanding);
-                        $active_sheet->setCellValue('AD' . $i, $variables_arr->doneProduct);
-                        $active_sheet->setCellValue('AE' . $i, $variables_arr->totalAmtOutstandingDone);
-                        $active_sheet->setCellValue('AF' . $i, $variables_arr->totalAverPaymtAmt);
-                        $active_sheet->setCellValue('AG' . $i, $variables_arr->dolg);
-                        $active_sheet->setCellValue('AH' . $i, $variables_arr->dolg);
-                        $active_sheet->setCellValue('AI' . $i, $variables_arr->mkk);
-                        $active_sheet->setCellValue('AJ' . $i, $variables_arr->mkkSumm);
-
-
-                        // $nbkiScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'nbki')->first();
-                        
-                        // if ($nbkiScor) {
-                        //     $nbkiParams = unserialize($nbkiScor->body);
-    
-                        //     if (isset($nbkiParams['report_url'])) {
-                        //         $data = file_get_contents(str_replace('log_report','log_xml', $nbkiParams['report_url']));
-                        //         $xml = simplexml_load_string($data);
-                        //         $nbkiParams['json'] = json_decode(json_encode($xml), true)['preply']['report'];
-                        //     }
-    
-                        //     if (!empty($nbkiParams)) {
-                        //         $activeProduct = 0;
-                        //         $doneProduct = 0;
-                        //         $summ = 0;
-                        //         $totalAmtOutstanding = 0;
-                        //         $totalAmtOutstandingDone = 0;
-                        //         $totalAverPaymtAmt = 0;
-                        //         $dolg = 0;
-                        //         $mkk = 0;
-                        //         $mkkSumm = 0;
-                        //         foreach ($nbkiParams['json']['AccountReplyRUTDF'] as $reply) {
-    
-                        //             $keys = array_keys($reply['pastdueArrear']);
-                        //             // Если массив ассциативный
-                        //             if ($keys !== array_keys($keys)) {
-                        //                 $pastdueArrear = $reply['pastdueArrear'];
-                        //                 $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-                        //                 if ($past !== '0.00') {
-                        //                     $summ = floatval($past);
-                        //                 }
-                        //             } else {
-                        //                 foreach ($reply['pastdueArrear'] as $pastdueArrear) {
-                        //                     $past = str_replace(',', '.', $pastdueArrear['amtPastDue'] ?? '');
-                        //                     if ($past !== '0.00') {
-                        //                         $summ = floatval($past);
-                        //                     }
-                        //                 }
-                        //             }
-    
-    
-                        //             if (isset($reply['reportingDt'])) {
-                        //                 $curentDateDiff = date_diff(new DateTime(), new DateTime($reply['reportingDt']));
-                        //             }
-                        //             $status = [
-                        //                 'name' => 'Активный',
-                        //                 'color' => 'black',
-                        //             ];
-                        //             if (
-                        //                 (isset($reply['holdCode']) && $reply['holdCode'] == 1) ||
-                        //                 $curentDateDiff->days > 33 ||
-                        //                 (isset($reply['loanIndicator']) && $reply['loanIndicator'] != 1)
-                        //             ) {
-                        //                 $status = [
-                        //                     'name' => 'Не определен',
-                        //                     'color' => 'silver',
-                        //                 ];
-                        //             }
-                        //             if($curentDateDiff->days > 180) {
-                        //                 $status = [
-                        //                     'name' => 'Архив',
-                        //                     'color' => 'silver',
-                        //                 ];
-                        //             }
-    
-                        //             if($summ > 0) {
-                        //                 $status = [
-                        //                     'name' => 'Просрочен',
-                        //                     'color' => 'red',
-                        //                 ];
-                        //             }
-    
-                        //             if(isset($reply['loanIndicator']) && in_array($reply['loanIndicator'], [3,11])) {
-                        //                 $status = [
-                        //                     'name' => 'Прощение долга',
-                        //                     'color' => 'red',
-                        //                 ];
-                        //             }
-    
-                        //             if(isset($reply['submitHold']['holdCode']) && $reply['submitHold']['holdCode'] == 3) {
-                        //                 $status = [
-                        //                     'name' => 'Списан',
-                        //                     'color' => 'red',
-                        //                 ];
-                        //             }
-    
-                        //             if(
-                        //                 (isset($reply['loanIndicator']) && ($reply['loanIndicator'] == 2 || $reply['loanIndicator'] == 1)) ||
-                        //                 (isset($reply['sbLoanIndicator']) && $reply['sbLoanIndicator'] == 1) ||
-                        //                 (isset($reply['collatRepay']) && $reply['collatRepay'] == 1)
-                        //             ) {
-                        //                 $status = [
-                        //                     'name' => 'Счет закрыт',
-                        //                     'color' => 'green',
-                        //                 ];
-                        //             }
-                        //             if (isset($reply['businessCategory']) && $reply['businessCategory'] == 'MKK') {
-                        //                 $openDt = false;
-                        //                 if (isset($reply['trade'])) {
-                        //                     $keys = array_keys($reply['trade']);
-                        //                     // Если массив ассциативный
-                        //                     if ($keys !== array_keys($keys)) {
-                        //                         $openDt = self::date_format($reply['trade']['openedDt']);
-                        //                     } else {
-                        //                         $openDt = self::date_format($reply['trade'][0]['openedDt']);
-                        //                     }
-                        //                 }
-                        //                 $time = time() - (86400 * 92);
-                        //                 $dateMonth = date('d.m.Y', $time);
-                        //                 if ($openDt > $dateMonth) {
-                        //                     $mkk++;
-                        //                 }
-                        //                 if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
-                        //                     $mkkSumm++;
-                        //                 }
-                        //             }
-                        //             if ($status['name'] == 'Активный' || $status['name'] == 'Просрочен' || $status['name'] == 'Не определен') {
-                        //                 $activeProduct++;
-    
-                        //                 if (isset($reply['paymtCondition'])) {
-                        //                     $keys = array_keys($reply['paymtCondition']);
-                        //                     if ($keys !== array_keys($reply['paymtCondition'])) {
-                        //                         if (isset($reply['paymtCondition']['principalTermsAmt']) && isset($reply['paymtCondition']['interestTermsAmt'])) {
-                        //                             $totalAverPaymtAmt += floatval($reply['paymtCondition']['principalTermsAmt']) + floatval($reply['paymtCondition']['interestTermsAmt']);;
-                        //                         }
-                        //                     } else {
-                        //                         $condition = end($reply['paymtCondition']);
-                        //                         if (isset($condition['principalTermsAmt']) && isset($condition['interestTermsAmt'])) {
-                        //                             $totalAverPaymtAmt += floatval($condition['principalTermsAmt']) + floatval($condition['interestTermsAmt']);
-                        //                         }
-                        //                     }
-                        //                 } else {
-                        //                     if (isset($reply['monthAverPaymt'])) {
-                        //                         $totalAverPaymtAmt += floatval($reply['monthAverPaymt']['averPaymtAmt'] ?? 0);
-                        //                     }
-                        //                 }
-    
-                        //                 if (isset($reply['accountAmt'])) {
-                        //                     $keys = array_keys($reply['accountAmt']);
-                        //                     // Если массив ассциативный
-                        //                     if ($keys !== array_keys($keys)) {
-                        //                         if ($status['name'] != 'Активный') {
-                        //                             $dolg += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-                        //                         }
-                        //                         $totalAmtOutstanding += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-                        //                     } else {
-                        //                         foreach ($reply['accountAmt'] as $arrear) {
-                        //                             if ($status['name'] != 'Активный') {
-                        //                                 $dolg += floatval($arrear['creditLimit'] ?? 0);
-                        //                             }
-                        //                             $totalAmtOutstanding += floatval($arrear['creditLimit'] ?? 0);
-                        //                         }
-                        //                     }
-                        //                 }
-                        //             } else {
-                        //                 $doneProduct++;
-                        //                 if (isset($reply['accountAmt'])) {
-                        //                     $keys = array_keys($reply['accountAmt']);
-                        //                     // Если массив ассциативный
-                        //                     if ($keys !== array_keys($keys)) {
-                        //                         $totalAmtOutstandingDone += floatval($reply['accountAmt']['creditLimit'] ?? 0);
-                        //                     } else {
-                        //                         foreach ($reply['accountAmt'] as $arrear) {
-                        //                             $totalAmtOutstandingDone += floatval($arrear['creditLimit'] ?? 0);
-                        //                         }
-                        //                     }
-                        //                 }
-                        //             }
-                        //         }
-    
-                        //         $active_sheet->setCellValue('Z' . $i, $activeProduct);
-                        //         $active_sheet->setCellValue('AA' . $i, $totalAmtOutstanding);
-                        //         $active_sheet->setCellValue('AB' . $i, $doneProduct);
-                        //         $active_sheet->setCellValue('AC' . $i, $totalAmtOutstandingDone);
-                        //         $active_sheet->setCellValue('AD' . $i, $totalAverPaymtAmt);
-                        //         $active_sheet->setCellValue('AE' . $i, $dolg);
-                        //         $active_sheet->setCellValue('AF' . $i, $dolg);
-                        //         $active_sheet->setCellValue('AG' . $i, $mkk);
-                        //         $active_sheet->setCellValue('AH' . $i, $mkkSumm);
-                        //     }
-                        // }
+                        $active_sheet->setCellValue('AE' . $i, $variables_arr->activeProduct);
+                        $active_sheet->setCellValue('AF' . $i, $variables_arr->totalAmtOutstanding);
+                        $active_sheet->setCellValue('AG' . $i, $variables_arr->doneProduct);
+                        $active_sheet->setCellValue('AH' . $i, $variables_arr->totalAmtOutstandingDone);
+                        $active_sheet->setCellValue('AI' . $i, $variables_arr->totalAverPaymtAmt);
+                        $active_sheet->setCellValue('AJ' . $i, $variables_arr->dolg);
+                        $active_sheet->setCellValue('AK' . $i, $variables_arr->dolg);
+                        $active_sheet->setCellValue('AL' . $i, $variables_arr->mkk);
+                        $active_sheet->setCellValue('AM' . $i, $variables_arr->mkkSumm);
                     }
+                    $active_sheet->setCellValue('AN' . $i, $contract->score_mf0_2_nbki);
+                    $active_sheet->setCellValue('AO' . $i, $contract->maniman);
+                    $active_sheet->setCellValue('AP' . $i, $contract->zone);
 
                     $i++;
                 }
