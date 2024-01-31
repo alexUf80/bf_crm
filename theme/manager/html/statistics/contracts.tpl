@@ -114,10 +114,10 @@
                         <table class="table table-hover" style="display: inline-block;vertical-align: top;max-width: 100%;
                             overflow-x: auto;white-space: nowrap;-webkit-overflow-scrolling: touch;">
                             <tr>
-                                <th>Дата</th>
-                                <th>Договор</th>
                                 <th>ID клиента</th>
                                 <th>ID договора</th>
+                                <th>Дата</th>
+                                <th>Договор</th>
                                 <th>Дата возврата</th>
                                 <th>ФИО</th>
                                 <th>Дата рождения</th>
@@ -125,6 +125,7 @@
                                 <th>Email</th>
                                 <th>Сумма</th>
                                 <th>Пролонгация</th>
+                                <th>Сумма пролонгаций</th>
                                 <th>Источник</th>
                                 <th>Сумма оплачено</th>
                                 <th>ПК/НК</th>
@@ -135,16 +136,19 @@
                                 <th>ПДН</th>
                                 <th>Дней займа</th>
                                 <th>Промокод</th>
+                                <th>МФО2НБКИ</th>
+                                <th>МАНИМАЭН</th>
+                                <th>Зона качества</th>
                             </tr>
 
                             {foreach $contracts as $contract}
-                            <tr>
+                            <tr {($contract->utm_source == 'kpk' || $contract->utm_source == 'part1')? 'style="background: #f1f1f1"' : ''}>
+                                <td>{$contract->user_id}</td>
+                                <td>{$contract->order_id}</td>
                                 <td>{$contract->date|date}</td>
                                 <td>
                                     <a target="_blank" href="order/{$contract->order_id}">{$contract->number}</a>
                                 </td>
-                                <td>{$contract->user_id}</td>
-                                <td>{$contract->order_id}</td>
                                 <td>
                                     {$contract->return_date|date}
                                 </td>
@@ -161,6 +165,7 @@
                                 <td><small>{$contract->email}</small></td>
                                 <td>{$contract->amount*1}</td>
                                 <td>{$contract->prolongation}</td>
+                                <td>{$contract->prolongations_amount}</td>
                                 <td>{$contract->utm_source}</td>
                                 <td>{$contract->sumPayed|number_format:2:',':''}</td>
                                 <td>
@@ -199,6 +204,15 @@
                                 </td>
                                 <td>
                                     {$contract->promocode}
+                                </td>
+                                <td>
+                                    {$contract->score_mf0_2_nbki}
+                                </td>
+                                <td>
+                                    {$contract->maniman}
+                                </td>
+                                <td>
+                                    {$contract->zone}
                                 </td>
                             </tr>
                             {/foreach}
