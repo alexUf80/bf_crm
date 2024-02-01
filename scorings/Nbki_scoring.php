@@ -618,7 +618,7 @@ class Nbki_scoring extends Core
                 }
 
                 $scoreball_mfo_2_nbki = null;
-                $nbkiScor = ScoringsORM::query()->where('order_id', '=', $nbkiScor->order_id)->where('type', '=', 'nbki')->first();
+                $nbkiScor = ScoringsORM::query()->where('order_id', '=', $nbkiScor->order_id)->where('type', '=', 'nbki')->orderBy('id', 'DESC')->first();
                 if ($nbkiScor) {
                     $nbkiParams = unserialize($nbkiScor->body);
                     if (isset($nbkiParams['score'])){
