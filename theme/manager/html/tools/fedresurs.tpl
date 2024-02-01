@@ -60,8 +60,8 @@
                 type = $(this).attr('data-type'),
                 daterange = $('.daterange').val(),
                 names = {
-                    InclusionDebtorsToDebtCollectorList: 'Список на включение за период с ' + daterange.replace('-', 'по'),
-                    ExclusionDebtorsFromDebtCollectorList: 'Список на исключение запериод с ' + daterange.replace('-', 'по'),
+                    InclusionDebtorsToDebtCollectorList2: 'Список на включение за период с ' + daterange.replace('-', 'по'),
+                    ExclusionDebtorsFromDebtCollectorList2: 'Список на исключение запериод с ' + daterange.replace('-', 'по'),
                 };
             $('#contracts input.contract_id:checked').each(function(key, contract_input) {
                 contractsIds.push(contract_input.value)
@@ -170,8 +170,8 @@
                                     <button type="submit" class="btn btn-info">Применить</button>
                                 </div>
                                 <div class="col-1 col-md-6">
-                                    <button style="margin-left: 20px;" type="button" data-type="InclusionDebtorsToDebtCollectorList" class="btn btn-success download_xml_btn">Скачать отчёт на включение</button>
-                                    <button style="margin-left: 20px;" data-type="ExclusionDebtorsFromDebtCollectorList" type="button" class="btn btn-success download_xml_btn">Скачать отчёт на исключение</button>
+                                    <button style="margin-left: 20px;" type="button" data-type="InclusionDebtorsToDebtCollectorList2" class="btn btn-success download_xml_btn">Скачать отчёт на включение</button>
+                                    <button style="margin-left: 20px;" data-type="ExclusionDebtorsFromDebtCollectorList2" type="button" class="btn btn-success download_xml_btn">Скачать отчёт на исключение</button>
                                 </div>
                             </div>
                             <br/>
