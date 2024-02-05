@@ -47,21 +47,21 @@ class Location_scoring extends Core
                     mb_substr($order->Regregion, 0, 11) == "Республика " ){
                         $order_Regregion = str_replace(["г ", " г", " область", " ОБЛАСТЬ", " обл.", " обл", " край", " Край", " республика", " Республика", " Респ", "Респ ", "Республика "], "", $order->Regregion);
                     }
-                    $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+                    $exception_regions = array_map('trim', explode(',', mb_strtolower($scoring_type->params['regions'])));
                     $order->Regregion = $order_Regregion;
-                    // if(isset(explode(' ', $order->Regregion)[1]) && mb_strtolower(explode(' ', $order->Regregion)[1]) == 'обл'){
-                    //     $order->Regregion = explode(' ', $order->Regregion)[0];
-                    // }
+                    if (stripos($order->Regregion, 'кути')) {
+                        $order->Regregion = 'Саха/Якутия';
+                    }
                 
                     $score = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $exception_regions);
                     
-                    $red_regions = array_map('trim', explode(',', $scoring_type->params['red-regions']));
+                    $red_regions = array_map('trim', explode(',', mb_strtolower($scoring_type->params['red-regions'])));
                     $red = in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $red_regions);
 
-                    $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
+                    $yellow_regions = array_map('trim', explode(',', mb_strtolower($scoring_type->params['yellow-regions'])));
                     $yellow = in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $yellow_regions);
                     
-                    $gray_regions = array_map('trim', explode(',', $scoring_type->params['gray-regions']));
+                    $gray_regions = array_map('trim', explode(',', mb_strtolower($scoring_type->params['gray-regions'])));
                     $gray = in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $gray_regions);
                     
                     $update = array(
