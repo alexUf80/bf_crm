@@ -39,17 +39,21 @@ class Insurances extends Core
         $address = $this->Addresses->get_address($address_id);
         
         $scoring_type = $this->scorings->get_type('location');
+
+        if (stripos($address->region, 'кути')) {
+            $address->region = 'Саха/Якутия';
+        }
         
         $reg='green-regions';
-        $yellow_regions = array_map('trim', explode(',', $scoring_type->params['yellow-regions']));
+        $yellow_regions = array_map('trim', explode(',', mb_strtolower($scoring_type->params['yellow-regions'])));
         if(in_array(mb_strtolower(trim($address->region), 'utf8'), $yellow_regions)){
             $reg = 'yellow-regions';
         }
-        $red_regions = array_map('trim', explode(',', $scoring_type->params['red-regions']));
+        $red_regions = array_map('trim', explode(',', mb_strtolower($scoring_type->params['red-regions'])));
         if(in_array(mb_strtolower(trim($address->region), 'utf8'), $red_regions)){
             $reg = 'red-regions';
         }
-        $exception_regions = array_map('trim', explode(',', $scoring_type->params['regions']));
+        $exception_regions = array_map('trim', explode(',', mb_strtolower($scoring_type->params['regions'])));
         if(in_array(mb_strtolower(trim($address->region), 'utf8'), $exception_regions)){
             $reg = 'regions';
         }
