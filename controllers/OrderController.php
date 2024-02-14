@@ -672,6 +672,9 @@ class OrderController extends Controller
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error' => 'Неизвестный ордер');
 
+        if ($order->status == 3)
+            return array('error' => 'Ордер получил отказ по скорингам');
+
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Ордер уже принят другим пользователем', 'manager_id' => $order->manager_id);
 
@@ -707,6 +710,9 @@ class OrderController extends Controller
 
         if (!($order = $this->orders->get_order((int)$order_id)))
             return array('error' => 'Неизвестный ордер');
+        
+        if ($order->status == 3)
+            return array('error' => 'Ордер получил отказ по скорингам');
 
         if (!empty($order->manager_id) && $order->manager_id != $this->manager->id && !in_array($this->manager->role, array('admin', 'developer')))
             return array('error' => 'Не хватает прав для выполнения операции');
