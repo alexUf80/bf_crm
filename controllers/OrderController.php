@@ -403,6 +403,120 @@ class OrderController extends Controller
                                         $this->design->assign('score', $score);
                                     }
                                 }
+
+                                // Дата получения первого микрозайма
+                                $xml_nbki = simplexml_load_file($scoring->body['xml_url']);
+    
+                                $dates = [];
+                                if (isset($xml_nbki->product->preply)) {
+                                    $preply = $xml_nbki->product->preply;
+                                }
+                                else{
+                                    $preply = $xml_nbki->preply;
+                                }
+
+                                if (isset($preply->report->AccountReply)) {
+                                    foreach ($preply->report->AccountReply as $key => $value) {
+                                        $in_loans = false;
+                                        if ($value->creditTotalAmt > 50) {
+                                            $in_loans = true;
+                                        }
+                                        if (in_array($value->lendertypeCode, [2, 3, 5])) {
+                                            $in_loans = true;
+                                        }
+                                        if ($value->creditLimit<30000 && in_array($value->loanKindCode, [1,3,13,14,99])) {
+                                            $in_loans = true;
+                                        }
+                                        if (in_array($value->memberTypeCode, [2, 3, 6])) {
+                                            $in_loans = true;
+                                        }
+                                        if ($in_loans == true) {
+                                            $dates[] = $value->openedDt;
+                                        }
+                                    }
+                                }
+                
+                                if (isset($preply->report->AccountReplyR2T)) {
+                                    foreach ($preply->report->AccountReplyR2T as $key => $value) {
+                                        $in_loans = false;
+                                        if ($value->creditTotalAmt > 50) {
+                                            $in_loans = true;
+                                        }
+                                        if (in_array($value->lendertypeCode, [2, 3, 5])) {
+                                            $in_loans = true;
+                                        }
+                                        if ($value->creditLimit<30000 && in_array($value->loanKindCode, [1,3,13,14,99])) {
+                                            $in_loans = true;
+                                        }
+                                        if (in_array($value->memberTypeCode, [2, 3, 6])) {
+                                            $in_loans = true;
+                                        }
+                                        if ($in_loans == true) {
+                                            $dates[] = $value->openedDt;
+                    
+                                        }
+                                    }
+                                }
+                
+                                if (isset($preply->report->AccountReplyT2R)) {
+                                    foreach ($preply->report->AccountReplyT2R as $key => $value) {
+                                        $in_loans = false;
+                                        if ($value->creditTotalAmt > 50) {
+                                            $in_loans = true;
+                                        }
+                                        if (in_array($value->lendertypeCode, [2, 3, 5])) {
+                                            $in_loans = true;
+                                        }
+                                        if ($value->creditLimit<30000 && in_array($value->loanKindCode, [1,3,13,14,99])) {
+                                            $in_loans = true;
+                                        }
+                                        if (in_array($value->memberTypeCode, [2, 3, 6])) {
+                                            $in_loans = true;
+                                        }
+                                        if ($in_loans == true) {
+                                            $dates[] = $value->openedDt;
+                    
+                                        }
+                                    }
+                                }
+                
+                                if (isset($preply->report->AccountReplyRUTDF)) {
+                                    foreach ($preply->report->AccountReplyRUTDF as $key => $value) {
+                                        $in_loans = false;
+                                        if ($value->creditTotalAmt > 50) {
+                                            $in_loans = true;
+                                        }
+                                        if (in_array($value->lendertypeCode, [2, 3, 5])) {
+                                            $in_loans = true;
+                                        }
+                                        if ($value->creditLimit<30000 && in_array($value->loanKindCode, [1,3,13,14,99])) {
+                                            $in_loans = true;
+                                        }
+                                        if (in_array($value->memberTypeCode, [2, 3, 6])) {
+                                            $in_loans = true;
+                                        }
+                                        if ($in_loans == true) {
+                                            $dates[] = $value->openedDt;
+                    
+                                        }
+                                    }
+                                }
+
+                                natsort($dates);
+                                $is_first = false;
+
+                                foreach ($dates as $key => $value) {
+                                    if (isset(get_mangled_object_vars($value)[0])) {
+                                        $first_loan_date = date('d.m.Y', strtotime(get_mangled_object_vars($value)[0]));
+                                        $is_first = true;
+                                        break;
+                                    }
+                                    else{
+                                        $first_loan_date = date('d.m.Y', strtotime($order->date));
+                                    }
+                                }
+
+                                $this->design->assign('first_loan_date', $first_loan_date);
                             }
 
 
