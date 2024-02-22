@@ -2312,6 +2312,18 @@
                                                                                        Cоотношение открытых к закрытым за 30 дней: <b>{$open_to_close_ratio}</b>
                                                                                 </span>
                                                                         {/if}
+                                                                        {if isset($open_to_close_ratio)}
+                                                                            <span class="mail-desc"
+                                                                                  title="{$open_to_close_ratio}">
+                                                                                       Cоотношение открытых к закрытым за 30 дней: <b>{$open_to_close_ratio}</b>
+                                                                                </span>
+                                                                        {/if}
+                                                                        {if isset($first_loan_date)}
+                                                                            <span class="mail-desc"
+                                                                                  title="{$first_loan_date}">
+                                                                                       Дата первого микрозайма: <b>{$first_loan_date}</b>
+                                                                                </span>
+                                                                        {/if}
                                                                     {/if}
 
                                                                     {if $scoring_type->name == 'nbkiscore' && $scorings[$scoring_type->name]->status == 'completed'}
