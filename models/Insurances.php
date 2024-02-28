@@ -34,11 +34,17 @@ class Insurances extends Core
     //         return 2190;
     // }
 
-    public function get_insurance_cost($amount, $address_id)
+    public function get_insurance_cost($amount, $address_id, $order_id)
     {
         $address = $this->Addresses->get_address($address_id);
         
         $scoring_type = $this->scorings->get_type('location');
+        
+        $order = $this->orders->get_order($order_id);
+        if ($order->insurance_params) {
+            $insurance_params = unserialize($order->insurance_params);
+            return $insurance_params['i_p'];
+        }
 
         if (stripos($address->region, 'кути')) {
             $address->region = 'Саха/Якутия';

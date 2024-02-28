@@ -12,7 +12,7 @@
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/orders.js?v=1.06"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.01"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.17"></script>
     
 
 {/capture}

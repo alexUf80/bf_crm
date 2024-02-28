@@ -332,7 +332,7 @@ class NeworderController extends Controller
             'passport_issued' => $contract_order->passport_issued,
             'passport_series' => substr(str_replace(array(' ', '-'), '', $contract_order->passport_serial), 0, 4),
             'passport_number' => substr(str_replace(array(' ', '-'), '', $contract_order->passport_serial), 4, 6),
-            'insurance_summ' => $this->insurances->get_insurance_cost($contract->amount, $regaddress->id),
+            'insurance_summ' => $this->insurances->get_insurance_cost($contract->amount, $regaddress->id, $contract->order_id),
             'passport_code' => $contract_user->subdivision_code,
             'profession' => $contract_user->profession,
             'workplace' => $contract_user->workplace,
