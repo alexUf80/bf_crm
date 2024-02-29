@@ -706,6 +706,70 @@ console.log(resp);
         });
     };
 
+    var _init_insurance_order = function(){
+        $(document).on('click', '.js-insurance-1', function(e){
+            e.preventDefault();
+            var $btn = $(this);
+            _init_insurance_order_func($btn);
+
+            if ($btn.hasClass('loading'))
+                return false;
+
+        });
+
+        $(document).on('click', '.js-insurance-2', function(e){
+            e.preventDefault();
+            var $btn = $(this);
+            _init_insurance_order_func($btn);
+
+            if ($btn.hasClass('loading'))
+                return false;
+
+        });
+    };
+
+    var _init_insurance_order_func = function($btn){
+
+        var order_id = $btn.data('order');
+        var insurance_premium = $btn.data('insurance-premium');
+        var insurance_amount = $btn.data('insurance-amount');
+
+
+
+        $.ajax({
+            type: 'POST',
+            data: {
+                action: 'insurance_order',
+                order_id: order_id,
+                insurance_premium: insurance_premium,
+                insurance_amount: insurance_amount,
+            },
+            beforeSend: function(){
+                $btn.addClass('loading')
+            },
+            success: function(resp){
+                $btn.removeClass('loading');
+
+                if (!!resp.error)
+                {
+                    Swal.fire({
+                        timer: 5000,
+                        title: 'Ошибка!',
+                        text: resp.error,
+                        type: 'error',
+                    });
+                    setTimeout(function(){
+                        location.href = 'orders';
+                    }, 5000);
+                }
+                else
+                {
+                    app.update_page();
+
+                }
+            },
+        })
+    };
 
 
     var _init_change_status = function(){
@@ -1540,6 +1604,7 @@ console.log(resp);
         _init_accept_order();
         _init_approve_order();
         _init_reject_order();
+        _init_insurance_order();
 
         _init_confirm_contract();
 

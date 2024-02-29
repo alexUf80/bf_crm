@@ -8,7 +8,7 @@
     <script src="theme/manager/assets/plugins/timepicker/bootstrap-timepicker.min.js"></script>
     <script src="theme/manager/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/orders.js?v=1.02"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.17"></script>
     <script>
         $(function () {
             $('.js-open-show').hide();

@@ -868,7 +868,7 @@ class Best2pay extends Core
         if (!empty($insurance)) {
             $user = $this->users->get_user($contract->user_id);
             $address = $this->Addresses->get_address($user->regaddress_id);
-            $insurance_cost = $this->insurances->get_insurance_cost($contract->amount,$address->id);
+            $insurance_cost = $this->insurances->get_insurance_cost($contract->amount,$address->id, $contract->order_id);
             // $insurance_cost = $this->insurances->get_insurance_cost($contract->amount);
             $contract->amount += $insurance_cost;
         }

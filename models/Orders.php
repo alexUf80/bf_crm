@@ -188,6 +188,7 @@ class Orders extends Core
                 o.promocode_id,
                 o.lead_postback_date,
                 o.lead_postback_type,
+                o.insurance_params,
                 u.UID AS user_uid,
                 u.service_sms,
                 u.service_insurance,
@@ -1050,7 +1051,7 @@ class Orders extends Core
         ", (array)$order, (int)$id);
         $this->db->query($query);
         
-        return $id;
+        return $query;
     }
     
     public function delete_order($id)

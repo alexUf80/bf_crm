@@ -220,6 +220,52 @@
                             
                         </div>
                     </div>
+
+                    <hr class="mb-3 mt-3" />
+
+                    <div class="row">
+                        <div class="col-12">
+                            <h3 class="box-title">
+                                Фиксированный размер страховки
+                            </h3>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class=" col-form-label">Страховая премия 1</label>
+                                <div class="">
+                                    <input type="text" class="form-control" name="insurance_premium_1" value="{$settings->insurance_premium_1}" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class=" col-form-label">Страховая сумма 1</label>
+                                <div class="">
+                                    <input type="text" class="form-control" name="insurance_amount_1" value="{$settings->insurance_amount_1}" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class=" col-form-label">Страховая премия 2</label>
+                                <div class="">
+                                    <input type="text" class="form-control" name="insurance_premium_2" value="{$settings->insurance_premium_2}" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label class=" col-form-label">Страховая сумма 2</label>
+                                <div class="">
+                                    <input type="text" class="form-control" name="insurance_amount_2" value="{$settings->insurance_amount_2}" placeholder="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         

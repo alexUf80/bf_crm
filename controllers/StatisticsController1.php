@@ -1123,18 +1123,74 @@ class StatisticsController1 extends Controller
                     }
                     
                     if ($nbki == 1) {
+                        $nbkiScor = ScoringsORM::query()->where('order_id', '=', $contract->order_id)->where('type', '=', 'nbki')->orderBy('id', 'desc')->first();
+                        $nbkiScorBody = unserialize($nbkiScor->body);
+
                         $reoprt_contracts_nbkis = $this->ReoprtContractsNbki->get_reoprt_nbkis(array('order_id' => $contract->order_id));
                         $variables_arr = json_decode($reoprt_contracts_nbkis[0]->variables);
 
-                        $active_sheet->setCellValue('AE' . $i, $variables_arr->activeProduct);
-                        $active_sheet->setCellValue('AF' . $i, $variables_arr->totalAmtOutstanding);
-                        $active_sheet->setCellValue('AG' . $i, $variables_arr->doneProduct);
-                        $active_sheet->setCellValue('AH' . $i, $variables_arr->totalAmtOutstandingDone);
-                        $active_sheet->setCellValue('AI' . $i, $variables_arr->totalAverPaymtAmt);
-                        $active_sheet->setCellValue('AJ' . $i, $variables_arr->dolg);
-                        $active_sheet->setCellValue('AK' . $i, $variables_arr->dolg);
-                        $active_sheet->setCellValue('AL' . $i, $variables_arr->mkk);
-                        $active_sheet->setCellValue('AM' . $i, $variables_arr->mkkSumm);
+                        if ($nbkiScorBody && !is_null($nbkiScorBody['number_of_active'])) {
+                            $active_sheet->setCellValue('AE' . $i, $nbkiScorBody['number_of_active']);
+                        }
+                        else{
+                            $active_sheet->setCellValue('AE' . $i, $variables_arr->activeProduct);
+                        }
+
+                        if ($nbkiScorBody && !is_null($nbkiScorBody['extra_scoring']['active_loans_credit_limit_sum'])) {
+                            $active_sheet->setCellValue('AF' . $i, $nbkiScorBody['extra_scoring']['active_loans_credit_limit_sum']);
+                        }
+                        else{
+                            $active_sheet->setCellValue('AF' . $i, $variables_arr->totalAmtOutstanding);
+                        }
+
+                        if ($nbkiScorBody && !is_null(nbkiScorBody['count_of_closed'])) {
+                            $active_sheet->setCellValue('AG' . $i, $nbkiScorBody['count_of_closed']);
+                        }
+                        else{
+                            $active_sheet->setCellValue('AG' . $i, $variables_arr->doneProduct);
+                        }
+
+                        if ($nbkiScorBody && !is_null($nbkiScorBody['extra_scoring']['closed_loans_credit_limit_sum'])) {
+                            $active_sheet->setCellValue('AH' . $i, $nbkiScorBody['extra_scoring']['closed_loans_credit_limit_sum']);
+                        }
+                        else{
+                            $active_sheet->setCellValue('AH' . $i, $variables_arr->totalAmtOutstandingDone);
+                        }
+
+                        if ($nbkiScorBody && !is_null($nbkiScorBody['extra_scoring']['monthly_active_loans_payment_sum'])) {
+                            $active_sheet->setCellValue('AI' . $i, $nbkiScorBody['extra_scoring']['monthly_active_loans_payment_sum']);
+                        }
+                        else{
+                            $active_sheet->setCellValue('AI' . $i, $variables_arr->totalAverPaymtAmt);
+                        }
+
+                        if ($nbkiScorBody && !is_null($nbkiScorBody['extra_scoring']['overdue_amount_sum'])) {
+                            $active_sheet->setCellValue('AJ' . $i, $nbkiScorBody['extra_scoring']['overdue_amount_sum']);
+                        }
+                        else{
+                            $active_sheet->setCellValue('AJ' . $i, $variables_arr->dolg);
+                        }
+
+                        if ($nbkiScorBody && !is_null($nbkiScorBody['extra_scoring']['current_year_max_overdue_amount'])) {
+                            $active_sheet->setCellValue('AK' . $i, $nbkiScorBody['extra_scoring']['current_year_max_overdue_amount']);
+                        }
+                        else{
+                            $active_sheet->setCellValue('AK' . $i, $variables_arr->dolg);
+                        }
+
+                        if ($nbkiScorBody && !is_null($nbkiScorBody['extra_scoring']['microloans_over_last_90_days_count'])) {
+                            $active_sheet->setCellValue('AL' . $i, $nbkiScorBody['extra_scoring']['microloans_over_last_90_days_count']);
+                        }
+                        else{
+                            $active_sheet->setCellValue('AL' . $i, $variables_arr->mkk);
+                        }
+
+                        if ($nbkiScorBody && !is_null($nbkiScorBody['extra_scoring']['active_microloan_count'])) {
+                            $active_sheet->setCellValue('AM' . $i, $nbkiScorBody['extra_scoring']['active_microloan_count']);
+                        }
+                        else{
+                            $active_sheet->setCellValue('AM' . $i, $variables_arr->mkkSumm);
+                        }
                     }
                     $active_sheet->setCellValue('AN' . $i, $contract->score_mf0_2_nbki);
                     $active_sheet->setCellValue('AO' . $i, $contract->maniman);

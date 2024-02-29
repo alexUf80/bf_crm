@@ -3,7 +3,7 @@
 {capture name='page_scripts'}
     <script src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.20"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.21"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/penalty.app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
@@ -850,7 +850,35 @@
                                                 <i class="fas fa-times-circle"></i>
                                                 <span>Отказать</span>
                                             </button>
+                                            
+                                            {*}
+                                            {if !$order->insurance_params}
+                                                <br>
+                                                
+                                                <button class="btn btn-warning btn-block js-insurance-1 js-event-add-click"
+                                                        data-user="{$order->user_id}"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}"
+                                                        data-insurance-premium="{$insurance_premium_1}" data-insurance-amount="{$insurance_amount_1}">
+                                                    <span>Страховка {$insurance_premium_1} руб.</span>
+                                                </button>
+                                                <button class="btn btn-warning btn-block js-insurance-2 js-event-add-click"
+                                                        data-user="{$order->user_id}"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}"
+                                                        data-insurance-premium="{$insurance_premium_2}" data-insurance-amount="{$insurance_amount_2}">
+                                                    <span>Страховка {$insurance_premium_2} руб.</span>
+                                                </button>
+
+                                                <br>
+                                            {else}
+                                                <br>
+                                                {$insurance_params = unserialize($order->insurance_params)}
+                                                <div style="text-align: center; background: #f4cd85; padding: 15px 5px; color: red; font-weight: bold">Сумма страховки установлена: <b>{$insurance_params['i_p']}</b> руб.</div>
+                                                <br>
+                                            {/if}
+                                            {*}
+
                                         </div>
+                                        
                                     {/if}
                                     {if $order->status == 1 && in_array('approve_contract', $manager->permissions)}
                                         <div class="js-approve-reject-block">
@@ -866,6 +894,34 @@
                                                 <i class="fas fa-times-circle"></i>
                                                 <span>Отказать</span>
                                             </button>
+
+                                            {if !$order->insurance_params}
+                                                {*}
+                                                <br>
+                                                
+                                                <button class="btn btn-warning btn-block js-insurance-1 js-event-add-click"
+                                                        data-user="{$order->user_id}"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}"
+                                                        data-insurance-premium="{$insurance_premium_1}" data-insurance-amount="{$insurance_amount_1}">
+                                                    <span>Страховка {$insurance_premium_1} руб.</span>
+                                                </button>
+                                                <button class="btn btn-warning btn-block js-insurance-2 js-event-add-click"
+                                                        data-user="{$order->user_id}"
+                                                        data-order="{$order->order_id}" data-manager="{$manager->id}"
+                                                        data-insurance-premium="{$insurance_premium_2}" data-insurance-amount="{$insurance_amount_2}">
+                                                    <span>Страховка {$insurance_premium_2} руб.</span>
+                                                </button>
+
+                                                <br>
+                                                {*}
+                                            {else}
+                                                {*}
+                                                <br>
+                                                {$insurance_params = unserialize($order->insurance_params)}
+                                                <div style="text-align: center; background: #f4cd85; padding: 15px 5px; color: red; font-weight: bold">Сумма страховки установлена: <b>{$insurance_params['i_p']}</b> руб.</div>
+                                                <br>
+                                                {*}
+                                            {/if}
                                         </div>
                                     {elseif $order->status == 1 && !in_array('approve_contract', $manager->permissions)}
                                         <div class="card card-info mb-1">

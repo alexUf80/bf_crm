@@ -5,7 +5,7 @@
     <script src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/orders.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.17"></script>
     
     <script>
         $(function(){

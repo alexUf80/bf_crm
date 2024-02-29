@@ -30,6 +30,11 @@ class SettingsController extends Controller
 
             $this->settings->min_age = $this->request->post('min_age');
             $this->settings->max_age = $this->request->post('max_age');
+
+            $this->settings->insurance_premium_1 = $this->request->post('insurance_premium_1');
+            $this->settings->insurance_amount_1 = $this->request->post('insurance_amount_1');
+            $this->settings->insurance_premium_2 = $this->request->post('insurance_premium_2');
+            $this->settings->insurance_amount_2 = $this->request->post('insurance_amount_2');
         }
         else
         {

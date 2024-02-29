@@ -76,6 +76,11 @@ class OrderController extends Controller
                     $this->json_output($response);
                     break;
 
+                case 'insurance_order':
+                    $response = $this->insurance_order_action();
+                    $this->json_output($response);
+                    break;
+                    
                 // принять заявку
                 case 'accept_order':
                     $response = $this->accept_order_action();
@@ -646,6 +651,11 @@ class OrderController extends Controller
 
         $sms_templates = $this->sms->get_templates();
         $this->design->assign('sms_templates', $sms_templates);
+        
+        $this->design->assign('insurance_premium_1', $this->settings->insurance_premium_1);
+        $this->design->assign('insurance_amount_1', $this->settings->insurance_amount_1);
+        $this->design->assign('insurance_premium_2', $this->settings->insurance_premium_2);
+        $this->design->assign('insurance_amount_2', $this->settings->insurance_amount_2);
 
         $body = $this->design->fetch('order.tpl');
 
@@ -771,6 +781,38 @@ class OrderController extends Controller
 
         return array('success' => 1, 'status' => 1, 'manager' => $this->manager->name);
 
+    }
+
+    /**
+     * OrderController::insurance_order_action()
+     * Принятие ордера в работу менеджером
+     *
+     * @return array
+     */
+    private function insurance_order_action()
+    {
+        $order_id = $this->request->post('order_id', 'integer');
+        $insurance_premium = $this->request->post('insurance_premium', 'integer');
+        $insurance_amount = $this->request->post('insurance_amount', 'integer');
+        
+        $inaurance_params = array(
+            'i_p' => $insurance_premium,
+            'i_a' => $insurance_amount,
+        );
+
+        if (!($order = $this->orders->get_order((int)$order_id)))
+            return array('error' => 'Неизвестный ордер');
+
+        if ($order->status != 0)
+            return array('error' => 'Ордер уже принят');
+
+
+        $update = array(
+            'insurance_params' => serialize($inaurance_params),
+        );
+        $this->orders->update_order($order_id, $update);
+
+        return array('success' => 1, 'status' => 1, 'manager' => $this->manager->name);
     }
 
     /**
@@ -1155,6 +1197,8 @@ class OrderController extends Controller
                 //throw $th;
             }
         }
+
+        $this->Gurulead->sendApiVitkol($order_id);
 
         return array('success' => 1, 'status' => $status);
     }
