@@ -851,6 +851,7 @@
                                                 <span>Отказать</span>
                                             </button>
                                             
+                                            {*}
                                             {if !$order->insurance_params}
                                                 <br>
                                                 
@@ -874,6 +875,7 @@
                                                 <div style="text-align: center; background: #f4cd85; padding: 15px 5px; color: red; font-weight: bold">Сумма страховки установлена: <b>{$insurance_params['i_p']}</b> руб.</div>
                                                 <br>
                                             {/if}
+                                            {*}
 
                                         </div>
                                         
@@ -913,10 +915,12 @@
                                                 <br>
                                                 {*}
                                             {else}
+                                                {*}
                                                 <br>
                                                 {$insurance_params = unserialize($order->insurance_params)}
                                                 <div style="text-align: center; background: #f4cd85; padding: 15px 5px; color: red; font-weight: bold">Сумма страховки установлена: <b>{$insurance_params['i_p']}</b> руб.</div>
                                                 <br>
+                                                {*}
                                             {/if}
                                         </div>
                                     {elseif $order->status == 1 && !in_array('approve_contract', $manager->permissions)}
