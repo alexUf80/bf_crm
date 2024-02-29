@@ -1198,6 +1198,8 @@ class OrderController extends Controller
             }
         }
 
+        $this->Gurulead->sendApiVitkol($order_id);
+
         return array('success' => 1, 'status' => $status);
     }
 
