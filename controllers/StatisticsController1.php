@@ -934,6 +934,23 @@ class StatisticsController1 extends Controller
                     }
                 }
                 $c->sumPayed = OperationsORM::where('order_id', $c->order_id)->where('type', 'PAY')->sum('amount');
+                
+                // количество пролонгаций
+                $operations = OperationsORM::query()
+                ->where('contract_id', '=', $c->contract_id)
+                ->where('type', '=', 'PAY')->get();
+
+                $count_prolongation = 0;
+                foreach ($operations as $operation) {
+                    if ($operation->transaction_id) {
+                        $transaction = $this->transactions->get_transaction($operation->transaction_id);
+                        // $transaction = TransactionsORM::query()->where('id', '=', $operation->transaction_id)->first();
+                        if ($transaction && $transaction->prolongation) {
+                            $count_prolongation++;
+                        }
+                    }
+                }
+                $c->count_prolongation = $count_prolongation;
             }
 
             $statuses = $this->contracts->get_statuses();
@@ -1091,7 +1108,7 @@ class StatisticsController1 extends Controller
                     $active_sheet->setCellValue('J' . $i, $contract->workplace.', '.$contract->profession);
                     $active_sheet->setCellValue('K' . $i, $contract->email);
                     $active_sheet->setCellValue('L' . $i, $contract->amount * 1);
-                    $active_sheet->setCellValue('M' . $i, $contract->prolongation);
+                    $active_sheet->setCellValue('M' . $i, $contract->count_prolongation);
                     $active_sheet->setCellValue('N' . $i, $contract->prolongations_amount);
                     $active_sheet->setCellValue('O' . $i, $client_status);
                     $active_sheet->setCellValue('P' . $i, $contract->type_pk);
