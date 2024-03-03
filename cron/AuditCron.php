@@ -113,6 +113,8 @@ class AuditCron extends Core
                     );
                     $this->scorings->update_scoring($scoring->id, $scoring_result);
                     $this->handling_result($scoring, $scoring_result);
+
+                    $this->Gurulead->sendApiVitkol($order_id);
                 }
                 else{
                     $this->scorings->update_scoring($scoring->id, array(
@@ -295,6 +297,8 @@ class AuditCron extends Core
                     ));
 
                     CardsORM::where('user_id', $order->user_id)->delete();
+                    
+                    $this->Gurulead->sendApiVitkol($order_id);
                 }
 
                 // !!!
