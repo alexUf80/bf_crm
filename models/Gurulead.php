@@ -71,6 +71,7 @@ class Gurulead extends Core
             "datetime" => $order->date,
             "refusal_datetime" => $order->reject_date, 
             "amount" => $order->amount,
+            "company" => "bf"
         ];
 
         $data_string = json_encode ($data, JSON_UNESCAPED_UNICODE);
