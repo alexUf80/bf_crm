@@ -3002,7 +3002,7 @@ class StatisticsController1 extends Controller
                 $order->scoreballs = $this->NbkiScoreballs->get($order->order_id);
 
                 if (empty($order->scoreballs)) {
-                    continue;
+                    // continue;
                 } else {
                     $order->scoreballs->variables = json_decode($order->scoreballs->variables, true);
                     $order->scoreballs->variables['ball'] = $order->scoreballs->ball;
@@ -3012,7 +3012,7 @@ class StatisticsController1 extends Controller
                 $order->idx = $this->scorings->get_idx_scoring($order->order_id);
 
                 if (empty($order->idx)) {
-                    continue;
+                    // continue;
                 } else
                     $order->idx = $order->idx->body;
 
@@ -3020,11 +3020,11 @@ class StatisticsController1 extends Controller
 
                 $nbki = $this->scorings->get_type_scoring($order->order_id, 'nbki');
                 if (empty($nbki)) {
-                    continue;
+                    // continue;
                 }
                 $nbki = unserialize($nbki->body);
                 if (empty($nbki)) {
-                    continue;
+                    // continue;
                 }
 
                 $user = $this->users->get_user($order->user_id);
