@@ -43,7 +43,10 @@ class Location_scoring extends Core
                     mb_substr($order->Regregion, -11) == " республика" ||
                     mb_substr($order->Regregion, -11) == " Республика" ||
                     mb_substr($order->Regregion, -5) == " Респ" ||
+                    mb_substr($order->Regregion, -5) == " респ" ||
                     mb_substr($order->Regregion, 0, 5) == "Респ " ||
+                    mb_substr($order->Regregion, 0, 5) == "респ " ||
+                    mb_substr($order->Regregion, 0, 5) == "Республика" ||
                     mb_substr($order->Regregion, 0, 11) == "Республика " ){
                         $order_Regregion = str_replace(["г ", " г", " область", " ОБЛАСТЬ", " обл.", " обл", " край", " Край", " республика", " Республика", " Респ", "Респ ", "Республика "], "", $order->Regregion);
                     }
@@ -51,6 +54,9 @@ class Location_scoring extends Core
                     $order->Regregion = $order_Regregion;
                     if (stripos($order->Regregion, 'кути')) {
                         $order->Regregion = 'Саха/Якутия';
+                    }
+                    if (stripos($order->Regregion, 'анси')) {
+                        $order->Regregion = 'Ханты-Мансийский';
                     }
                 
                     $score = !in_array(mb_strtolower(trim($order->Regregion), 'utf8'), $exception_regions);
