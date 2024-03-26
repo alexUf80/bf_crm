@@ -852,6 +852,7 @@
                                             </button>
                                             
                                             {*}
+                                            {*}
                                             {if !$order->insurance_params}
                                                 <br>
                                                 
@@ -875,6 +876,7 @@
                                                 <div style="text-align: center; background: #f4cd85; padding: 15px 5px; color: red; font-weight: bold">Сумма страховки установлена: <b>{$insurance_params['i_p']}</b> руб.</div>
                                                 <br>
                                             {/if}
+                                            {*}
                                             {*}
 
                                         </div>
