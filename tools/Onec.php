@@ -139,6 +139,9 @@ class Onec implements ToolsInterface
         $i = 0;
 
         foreach ($contracts as $contract) {
+            if ($contract->user_id == 90236) {
+                continue;
+            }
             list($passportSerial, $passportNumber) = explode('-', $contract->user->passport_serial);
 
             if (empty($contract->user->regAddress)) {
@@ -257,7 +260,9 @@ class Onec implements ToolsInterface
         }
 
         foreach ($contracts as $contract) {
-
+            if ($contract->user_id == 90236) {
+                continue;
+            }
             $issuanceOperation = OperationsORM::where('contract_id', $contract->id)->where('type', 'P2P')->first();
 
             $xml['Документы'][$i]['Сделка'] =
