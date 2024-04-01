@@ -187,9 +187,9 @@ class Nbki_scoring extends Core
         }
 
         $scoring_type = $this->scorings->get_type('nbki');
-        // $max_number_of_active = $scoring_type->params['nk']['nbki_number_of_active'];
-        // $max_share_of_overdue_by_closed = $scoring_type->params['nk']['open_to_close_ratio'];
-        // $max_share_of_overdue_by_active = $scoring_type->params['nk']['open_to_active_ratio'];
+        $max_number_of_active = $scoring_type->params['nk']['nbki_number_of_active'];
+        $max_share_of_overdue_by_closed = $scoring_type->params['nk']['open_to_close_ratio'];
+        $max_share_of_overdue_by_active = $scoring_type->params['nk']['open_to_active_ratio'];
         $nbki_green = $scoring_type->params['nk']['nbki_green'];
         $nbki_yellow = $scoring_type->params['nk']['nbki_yellow'];
         $nbki_red = $scoring_type->params['nk']['nbki_red'];
@@ -197,6 +197,7 @@ class Nbki_scoring extends Core
         $scoring_type_location = $this->scorings->get_type('location');
 
         /*
+        */
         if ($result['number_of_active'] >= $max_number_of_active) {
             $add_scoring = array(
                 'status' => 'completed',
@@ -245,6 +246,7 @@ class Nbki_scoring extends Core
 
             return $add_scoring;
         }
+        /*
         */
 
         $scoring = $this->scorings->get_scoring($scoring_id);
