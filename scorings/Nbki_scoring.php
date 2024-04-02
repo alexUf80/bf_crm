@@ -114,7 +114,11 @@ class Nbki_scoring extends Core
         "member_code": "9R01SS000000",
         "user_id": "9R01SS000002",
         "password": "Gpj896RP"
-    }
+    },
+    "retail_score_details": {
+        "product_addon_code": "MS92"
+    },
+    "extra_parameters": {}
 }';
 
 //var_dump($json);
