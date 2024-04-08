@@ -206,7 +206,7 @@
                                                     {/if}
                                                 </td>
                                                 <td class="jsgrid-header-cell" style="width: 10%">
-                                                    <div data-id="{$cost->id}"
+                                                    <div style="display: none;" data-id="{$cost->id}"
                                                          class="btn btn-outline-warning edit-services_cost-modal"><i
                                                                 class=" fas fa-edit"></i>
                                                     </div>
