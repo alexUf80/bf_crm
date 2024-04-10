@@ -138,8 +138,10 @@ class Onec implements ToolsInterface
     {
         $i = 0;
 
+        $exceptions_array = [90236, 49346];
+
         foreach ($contracts as $contract) {
-            if ($contract->user_id == 90236) {
+            if (in_array($contract->user_id, $exceptions_array)) {
                 continue;
             }
             list($passportSerial, $passportNumber) = explode('-', $contract->user->passport_serial);
@@ -260,7 +262,8 @@ class Onec implements ToolsInterface
         }
 
         foreach ($contracts as $contract) {
-            if ($contract->user_id == 90236) {
+            // в двух местах
+            if (in_array($contract->user_id, $exceptions_array)) {
                 continue;
             }
             $issuanceOperation = OperationsORM::where('contract_id', $contract->id)->where('type', 'P2P')->first();
