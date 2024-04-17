@@ -874,6 +874,14 @@ class StatisticsController1 extends Controller
 
                 $c->type_pk = $this->contracts->type_pk_contract($c);
 
+                // сумма выдачи
+                $p2p_amount = 0;
+                $contract_operations = $this->operations->get_operations(array('contract_id' => $c->contract_id, 'type' => 'P2P'));
+                foreach ($contract_operations as $contract_operation) {
+                    $p2p_amount += $contract_operation->amount;
+                }
+                $c->p2p_amount = $p2p_amount;
+                
                 // сумма пролонгаций
                 $prolongations_amount = 0;
                 $contract_operations = $this->operations->get_operations(array('contract_id' => $c->contract_id, 'type' => 'PAY'));
@@ -1107,7 +1115,7 @@ class StatisticsController1 extends Controller
                     $active_sheet->setCellValue('I' . $i, $contract->FaktAddr);
                     $active_sheet->setCellValue('J' . $i, $contract->workplace.', '.$contract->profession);
                     $active_sheet->setCellValue('K' . $i, $contract->email);
-                    $active_sheet->setCellValue('L' . $i, $contract->amount * 1);
+                    $active_sheet->setCellValue('L' . $i, $contract->p2p_amount * 1);
                     $active_sheet->setCellValue('M' . $i, $contract->count_prolongation);
                     $active_sheet->setCellValue('N' . $i, $contract->prolongations_amount);
                     $active_sheet->setCellValue('O' . $i, $client_status);
@@ -2152,6 +2160,17 @@ class StatisticsController1 extends Controller
             foreach ($ad_services as $service) {
                 $service->regAddr = AdressesORM::find($service->regaddress_id);
                 $service->regAddr = $service->regAddr->adressfull;
+
+                $contract = $this->contracts->get_contract($service->contract_id);
+                $service->contract = $contract;
+
+                // сумма выдачи
+                $p2p_amount = 0;
+                $contract_operations = $this->operations->get_operations(array('contract_id' => $service->contract->id, 'type' => 'P2P'));
+                foreach ($contract_operations as $contract_operation) {
+                    $p2p_amount += $contract_operation->amount;
+                }
+                $service->p2p_amount = $p2p_amount;
             }
 
             $op_type = ['INSURANCE' => 'Страхование от НС', 'BUD_V_KURSE' => 'Будь в курсе', 'REJECT_REASON' => 'Узнай причину отказа', 'INSURANCE_BC' => 'Страхование БК'];
@@ -2195,22 +2214,24 @@ class StatisticsController1 extends Controller
                 $active_sheet->getColumnDimension('M')->setWidth(15);
                 $active_sheet->getColumnDimension('N')->setWidth(15);
                 $active_sheet->getColumnDimension('O')->setWidth(15);
+                $active_sheet->getColumnDimension('P')->setWidth(15);
 
                 $active_sheet->setCellValue('A1', 'Дата продажи');
                 $active_sheet->setCellValue('B1', 'Договор займа');
-                $active_sheet->setCellValue('C1', 'ID клиента');
-                $active_sheet->setCellValue('D1', 'Номер полиса');
-                $active_sheet->setCellValue('E1', 'Продукт');
-                $active_sheet->setCellValue('F1', 'ID операции');
-                $active_sheet->setCellValue('G1', 'УИД договора');
-                $active_sheet->setCellValue('H1', 'ФИО, дата рождения');
-                $active_sheet->setCellValue('I1', 'Номер телефона');
-                $active_sheet->setCellValue('J1', 'Пол');
-                $active_sheet->setCellValue('K1', 'Паспорт');
-                $active_sheet->setCellValue('L1', 'Адрес');
-                $active_sheet->setCellValue('M1', 'Дата начала / завершения ответственности');
-                $active_sheet->setCellValue('N1', 'Страховая сумма');
-                $active_sheet->setCellValue('O1', 'Сумма оплаты/Страховая премия');
+                $active_sheet->setCellValue('C1', 'Сумма займа');
+                $active_sheet->setCellValue('D1', 'ID клиента');
+                $active_sheet->setCellValue('E1', 'Номер полиса');
+                $active_sheet->setCellValue('F1', 'Продукт');
+                $active_sheet->setCellValue('G1', 'ID операции');
+                $active_sheet->setCellValue('H1', 'УИД договора');
+                $active_sheet->setCellValue('I1', 'ФИО, дата рождения');
+                $active_sheet->setCellValue('J1', 'Номер телефона');
+                $active_sheet->setCellValue('K1', 'Пол');
+                $active_sheet->setCellValue('L1', 'Паспорт');
+                $active_sheet->setCellValue('M1', 'Адрес');
+                $active_sheet->setCellValue('N1', 'Дата начала / завершения ответственности');
+                $active_sheet->setCellValue('O1', 'Страховая сумма');
+                $active_sheet->setCellValue('P1', 'Сумма оплаты/Страховая премия');
 
                 $i = 2;
                 foreach ($ad_services as $ad_service) {
@@ -2220,31 +2241,32 @@ class StatisticsController1 extends Controller
 
                     $active_sheet->setCellValue('A' . $i, $ad_service->created);
                     $active_sheet->setCellValue('B' . $i, $ad_service->contract_id);
-                    $active_sheet->setCellValue('C' . $i, $ad_service->user_id);
-                    $active_sheet->setCellValue('D' . $i, $ad_service->number);
+                    $active_sheet->setCellValue('C' . $i, $ad_service->p2p_amount);
+                    $active_sheet->setCellValue('D' . $i, $ad_service->user_id);
+                    $active_sheet->setCellValue('E' . $i, $ad_service->number);
 
                     if ($ad_service->type == 'INSURANCE' && in_array($ad_service->amount_insurance, [200, 400]))
-                        $active_sheet->setCellValue('E' . $i, 'Страхование БК');
+                        $active_sheet->setCellValue('F' . $i, 'Страхование БК');
                     else
-                        $active_sheet->setCellValue('E' . $i, $op_type[$ad_service->type]);
+                        $active_sheet->setCellValue('F' . $i, $op_type[$ad_service->type]);
 
-                    $active_sheet->setCellValue('F' . $i, $ad_service->id);
-                    $active_sheet->setCellValue('G' . $i, $ad_service->uid);
-                    $active_sheet->setCellValue('H' . $i, $fio_birth);
-                    $active_sheet->setCellValue('I' . $i, $ad_service->phone_mobile);
-                    $active_sheet->setCellValue('J' . $i, $gender[$ad_service->gender]);
-                    $active_sheet->setCellValue('K' . $i, $ad_service->passport_serial . ' выдан ' . $ad_service->passport_issued . ' ' . date('Y-m-d', strtotime($ad_service->passport_date)) . ' г ' . 'код подразделения ' . $ad_service->subdivision_code);
-                    $active_sheet->setCellValue('L' . $i, $ad_service->regAddr);
+                    $active_sheet->setCellValue('G' . $i, $ad_service->id);
+                    $active_sheet->setCellValue('H' . $i, $ad_service->uid);
+                    $active_sheet->setCellValue('I' . $i, $fio_birth);
+                    $active_sheet->setCellValue('J' . $i, $ad_service->phone_mobile);
+                    $active_sheet->setCellValue('K' . $i, $gender[$ad_service->gender]);
+                    $active_sheet->setCellValue('L' . $i, $ad_service->passport_serial . ' выдан ' . $ad_service->passport_issued . ' ' . date('Y-m-d', strtotime($ad_service->passport_date)) . ' г ' . 'код подразделения ' . $ad_service->subdivision_code);
+                    $active_sheet->setCellValue('M' . $i, $ad_service->regAddr);
 
                     if ($ad_service->start_date) {
-                        $active_sheet->setCellValue('M' . $i, $ad_service->start_date . '/' . $ad_service->end_date);
+                        $active_sheet->setCellValue('N' . $i, $ad_service->start_date . '/' . $ad_service->end_date);
                     } else {
-                        $active_sheet->setCellValue('M' . $i, '-');
+                        $active_sheet->setCellValue('N' . $i, '-');
                     }
                     if ($ad_service->number) {
-                        $active_sheet->setCellValue('N' . $i, ($ad_service->amount_contract * 3) . ' руб');
+                        $active_sheet->setCellValue('O' . $i, ($ad_service->amount_contract * 3) . ' руб');
                     }
-                    $active_sheet->setCellValueExplicit('O' . $i, $ad_service->amount_insurance, PHPExcel_Cell_DataType::TYPE_NUMERIC);
+                    $active_sheet->setCellValueExplicit('P' . $i, $ad_service->amount_insurance, PHPExcel_Cell_DataType::TYPE_NUMERIC);
 
                     $i++;
                 }

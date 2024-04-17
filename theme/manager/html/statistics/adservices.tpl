@@ -101,6 +101,7 @@
                                 <tr>
                                     <th>Дата продажи/Договор займа</th>
                                     <th>ID клиента</th>
+                                    <th>Сумма займа</th>
                                     <th>Номер полиса</th>
                                     <th>Продукт</th>
                                     <th>ID операции</th>
@@ -119,8 +120,9 @@
                                 <tbody id="table_content">
                                 {foreach $ad_services as $ad_service}
                                     <tr>
-                                        <td>{$ad_service->created} <p>{$ad_service->contract_id}</p></td>
-                                        <td>{$ad_service->user_id}</td>
+                                        <td>{$ad_service->created} <p><a target="_blank" href="order/{$ad_service->contract->order_id}">{$ad_service->contract->number}</a></p></td>
+                                        <td><a target="_blank" href="client/{$ad_service->user_id}">{$ad_service->user_id}</a></td>
+                                        <td>{$ad_service->p2p_amount}</td>
                                         <td>{$ad_service->number}</td>
                                         {if $ad_service->type == 'INSURANCE'}
                                             <td>Страхование от НС</td>

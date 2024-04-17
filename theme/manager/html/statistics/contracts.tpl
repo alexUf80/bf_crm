@@ -163,7 +163,7 @@
                                 <td>{$contract->birth}</td>
                                 <td>{$contract->phone_mobile}</td>
                                 <td><small>{$contract->email}</small></td>
-                                <td>{$contract->amount*1}</td>
+                                <td>{$contract->p2p_amount*1}</td>
                                 <td>{$contract->count_prolongation}</td>
                                 <td>{$contract->prolongations_amount}</td>
                                 <td>{$contract->utm_source}</td>
