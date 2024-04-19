@@ -128,11 +128,13 @@ class AuditCron extends Core
 
                     $completed_not_success = false;
                     foreach ($completed_not_success_scorings as $completed_not_success_scoring) {
-                        $scoring_type = $this->scorings->get_type($completed_not_success_scoring->type);
-                        if ($scoring_type->negative_action == 'stop' || $scoring_type->negative_action == 'reject') {
-                            $this->scorings->update_scoring($scoring->id, array('status' => 'stopped'));
-                            $completed_not_success = true;
-                            break;
+                        if (date('Y-m-d H:i', strtotime($scoring->created)) == date('Y-m-d H:i', strtotime($completed_not_success_scoring->created))) {
+                            $scoring_type = $this->scorings->get_type($completed_not_success_scoring->type);
+                            if ($scoring_type->negative_action == 'stop' || $scoring_type->negative_action == 'reject') {
+                                $this->scorings->update_scoring($scoring->id, array('status' => 'stopped'));
+                                $completed_not_success = true;
+                                break;
+                            }
                         }
                     }
                     if ($completed_not_success) {
