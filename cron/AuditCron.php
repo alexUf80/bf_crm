@@ -117,6 +117,28 @@ class AuditCron extends Core
                     $this->Gurulead->sendApiVitkol($order_id);
                 }
                 else{
+                    $query = $this->db->placehold("
+                        SELECT * 
+                        FROM s_scorings 
+                        WHERE 
+                        order_id=? AND status='completed' AND success=0
+                    ", $scoring->order_id);
+                    $this->db->query($query);
+                    $completed_not_success_scorings = $this->db->results();
+
+                    $completed_not_success = false;
+                    foreach ($completed_not_success_scorings as $completed_not_success_scoring) {
+                        $scoring_type = $this->scorings->get_type($completed_not_success_scoring->type);
+                        if ($scoring_type->negative_action == 'stop' || $scoring_type->negative_action == 'reject') {
+                            $this->scorings->update_scoring($scoring->id, array('status' => 'stopped'));
+                            $completed_not_success = true;
+                            break;
+                        }
+                    }
+                    if ($completed_not_success) {
+                        continue;
+                    }
+
                     $this->scorings->update_scoring($scoring->id, array(
                         'status' => 'process',
                         'start_date' => date('Y-m-d H:i:s'),
