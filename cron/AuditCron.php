@@ -1,6 +1,6 @@
 <?php
 error_reporting(-1);
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 
 
 chdir(dirname(__FILE__) . '/../');
@@ -117,6 +117,22 @@ class AuditCron extends Core
                     $this->Gurulead->sendApiVitkol($order_id);
                 }
                 else{
+                    // Если застопорилось на каком-то скоринге
+                    $query = $this->db->placehold("
+                        SELECT * 
+                        FROM s_scorings 
+                        WHERE 
+                        order_id=? AND (status='repeat' or status='process') 
+                        AND (success=0 OR success IS null)
+                    ", $scoring->order_id);
+                    $this->db->query($query);
+                    $repeat_not_success_scorings = $this->db->results();
+                    
+                    if (count($repeat_not_success_scorings) > 0) {
+                        break;
+                    }
+
+
                     $query = $this->db->placehold("
                         SELECT * 
                         FROM s_scorings 
