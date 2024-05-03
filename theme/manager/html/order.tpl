@@ -3112,7 +3112,7 @@
                                                 <td>
                                                     {$operation->amount} руб
                                                 </td>
-                                                {if $manager->id==1}
+                                                {if $manager->id==1 || $manager->id==25}
                                                     <td>
                                                         {$operation->loan_body_summ|number_format:2:".":""} руб
                                                     </td>
