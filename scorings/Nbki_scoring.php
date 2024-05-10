@@ -118,6 +118,9 @@ class Nbki_scoring extends Core
     "retail_score_details": {
         "product_addon_code": "MS92"
     },
+    "loan_details": {
+        "purpose_code": "2"
+    },
     "extra_parameters": {}
 }';
 
