@@ -1116,6 +1116,10 @@ class OrderController extends Controller
         //if (!empty($order->utm_source) && $order->utm_source == 'leadstech')
         //PostbacksCronORM::insert(['order_id' => $order->order_id, 'status' => 2, 'goal_id' => 3]);
         
+        if (!empty($order->utm_source) && $order->utm_source == 'leadstech'){
+            $this->Leadgens->sendPendingPostbackLeadstech($order->order_id, $order->user_id, 3, 2);
+        }
+
         // !!!
         if (!empty($order->utm_source) && $order->utm_source == 'alians'){
             $this->Leadgens->sendPendingPostbackToAlians($order->order_id, 3);
