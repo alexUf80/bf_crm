@@ -223,7 +223,7 @@ class Leadgens extends Core
         curl_close($ch);
 
 
-        $this->logging_(__METHOD__, 'Leadstech', $link, 'ok', 'Leadstech.txt', 'logs/');
+        $this->logging_(__METHOD__, 'Leadstech', $link, 'ok', 'alianscpa.txt', 'logs/');
 
         return 1;
     }
@@ -247,5 +247,38 @@ class Leadgens extends Core
         $str .= 'END'.PHP_EOL;
         
         file_put_contents($log_filename, $str, FILE_APPEND);
+    }
+
+    public function sendPendingPostbackLeadstech($orderId, $user_id, $goal, $status)
+    {
+
+        $order = $this->orders->get_order($orderId);
+        $click_id = $order->click_hash;
+        $status = $status;
+
+
+        $link = "https://offers.leads.tech/add-conversion/?click_id=$click_id&goal_id=$goal&status=$status&transaction_id=$orderId&sumConfirm=$order->amount";
+
+        $ch = curl_init($link);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_exec($ch);
+        curl_close($ch);
+
+        $insert =
+            [
+                'order_id' => $orderId,
+                'status'   => $status,
+                'click_id' => $click_id,
+                'goal'     => $goal,
+                'link'     => $link
+            ];
+
+        $this->postbacks->add($insert);
+
+        $this->logging_(__METHOD__, 'leadstech', $link, 'ok', 'leadstech.txt', 'logs/');
+
+        return 1;
     }
 }

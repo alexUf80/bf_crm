@@ -341,6 +341,10 @@ class AuditCron extends Core
                     $this->Gurulead->sendApiVitkol($order_id);
                 }
 
+                if (!empty($order->utm_source) && $order->utm_source == 'leadstech'){
+                    $this->Leadgens->sendPendingPostbackLeadstech($order->order_id, $order->user_id, 3, 2);
+                }
+
                 // !!!
                 if (!empty($order->utm_source) && $order->utm_source == 'alians'){
                     $this->Leadgens->sendPendingPostbackToAlians($order->order_id, 3);
