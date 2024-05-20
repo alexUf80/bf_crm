@@ -101,7 +101,12 @@ class Fssp_scoring extends Core
                     $update['string_result'] .= '<br>Обнаружены статьи: ' . $articles;
                 }
 
-                $update['success'] = 0;
+                if ($expSum > $maxExp) {
+                    $update['success'] = 0;
+                }
+                else{
+                    $update['success'] = 1;
+                }
             } else {
                 $update['success'] = 1;
             }
