@@ -3,7 +3,7 @@
 {capture name='page_scripts'}
     <script src="theme/{$settings->theme|escape}/assets/plugins/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
     <script src="theme/{$settings->theme|escape}/assets/plugins/fancybox3/dist/jquery.fancybox.js"></script>
-    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.21"></script>
+    <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/order.js?v=1.22"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/movements.app.js"></script>
     <script type="text/javascript" src="theme/{$settings->theme|escape}/js/apps/penalty.app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment-with-locales.min.js"></script>
@@ -194,6 +194,7 @@
                 });
             });
 
+            {*}
             $('.activate_cessia').on('click', function(e) {
                 e.preventDefault();
                 let id = $(this).attr('data-id');
@@ -214,6 +215,7 @@
                     }
                 });
             });
+            {*}
 
             $('.edit_contact').on('click', function (e) {
                 e.preventDefault();
@@ -1241,9 +1243,16 @@
                                             </ul>
                                         </div>
                                         *}
+                                        <button class="btn btn-danger btn-block js-open-cessia-form js-event-add-click"
+                                                data-event="15" data-user="{$order->user_id}"
+                                                data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                        Передать по цессии
+                                        </button>
+                                        {*}
                                         <div data-id="{$order->contract_id}" class="btn btn-block btn-danger activate_cessia">
-                                            Продан по цессии
+                                            Передать по цессии
                                         </div>
+                                        {*}
                                     </div>
                                 </div>
                             </div>
@@ -3457,6 +3466,37 @@
                     <div class="form-action">
                         <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Отмена</button>
                         <button type="submit" class="btn btn-success waves-effect waves-light">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal_cessia_contract" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+     aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Передать по цессии</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="form_cessia_contract" action="order/{$order->order_id}">
+
+                    <input type="hidden" name="order_id" value="{$order->order_id}"/>
+                    <input type="hidden" name="user_id" value="{$order->user_id}"/>
+                    <input type="hidden" name="action" value="cessia_contract"/>
+
+                    <div class="alert" style="display:none"></div>
+
+                    <div class="form-group">
+                        Передать договор по цессии?
+                    </div>
+                    <div class="form-action">
+                        <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Нет</button>
+                        <button type="submit" class="btn btn-success waves-effect waves-light">Да</button>
                     </div>
                 </form>
             </div>
