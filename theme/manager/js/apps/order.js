@@ -1216,6 +1216,13 @@ console.log(resp);
     }
 
     var _init_close_contract = function(){
+
+        $(document).on('click', '.js-open-cessia-form', function(e){
+            e.preventDefault();
+
+            $('#modal_cessia_contract').modal();
+        });
+
         $(document).on('click', '.js-open-close-form', function(e){
             e.preventDefault();
 
@@ -1243,6 +1250,41 @@ console.log(resp);
                         Swal.fire({
                             timer: 5000,
                             title: 'Договор успешно закрыт.',
+                            type: 'success',
+                        });
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            text: resp.error,
+                            type: 'error',
+                        });
+
+                    }
+                }
+            })
+        })
+
+        $(document).on('submit', '#form_cessia_contract', function(e){
+            e.preventDefault();
+
+            var $form = $(this);
+
+            $.ajax({
+                url: $form.attr('action'),
+                data: $form.serialize(),
+                type: 'POST',
+                success: function(resp){
+                    if (resp.success)
+                    {
+                        $('#modal_cessia_contract').modal('hide');
+                        // $form.find('[name=comment]').val('')
+
+                        app.update_page();
+
+                        Swal.fire({
+                            timer: 5000,
+                            title: 'Договор передан по цессии.',
                             type: 'success',
                         });
                     }

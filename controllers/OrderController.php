@@ -224,8 +224,12 @@ class OrderController extends Controller
                     return $this->actionAddPay();
                     break;
 
-                case 'activate_cessia':
-                    return $this->action_activate_cessia();
+                // case 'activate_cessia':
+                //     return $this->action_activate_cessia();
+                //     break;
+                    
+                case 'cessia_contract':
+                    $this->action_cessia_contract();
                     break;
 
 
@@ -2641,6 +2645,44 @@ class OrderController extends Controller
             }
 
         }
+    }
+
+    private function action_cessia_contract()
+    {
+        $user_id = $this->request->post('user_id', 'integer');
+        $order_id = $this->request->post('order_id', 'integer');
+        $close_date = $this->request->post('close_date');
+
+
+        if ($order = $this->orders->get_order($order_id)) {
+            if ($contract = $this->contracts->get_contract($order->contract_id)) {
+
+                $this->orders->update_order($order_id, array('status' => 7));
+
+                $this->contracts->update_contract($contract->id, array(
+                    'status' => 3,
+                    'close_date' => date('Y-m-d H:i:s'),
+                    // 'loan_body_summ' => 0,
+                    // 'loan_percents_summ' => 0,
+                    // 'loan_charge_summ' => 0,
+                    // 'loan_peni_summ' => 0,
+                    'collection_status' => 0,
+                    'collection_manager_id' => 0,
+                    'active_cessia' => 1,
+                ));
+
+                $this->json_output(array(
+                    'success' => 1,
+                    'created' => date('d.m.Y H:i:s'),
+                    'manager_name' => $this->manager->name,
+                ));
+            } else {
+                $this->json_output(array('error' => 'Договор не найден!'));
+            }
+        } else {
+            $this->json_output(array('error' => 'Заявка не найдена!'));
+        }
+
     }
 
     public function action_repay()
