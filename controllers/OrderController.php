@@ -2666,8 +2666,8 @@ class OrderController extends Controller
                     // 'loan_percents_summ' => 0,
                     // 'loan_charge_summ' => 0,
                     // 'loan_peni_summ' => 0,
-                    'collection_status' => 0,
-                    'collection_manager_id' => 0,
+                    // 'collection_status' => 0,
+                    // 'collection_manager_id' => 0,
                     'active_cessia' => 1,
                 ));
 
