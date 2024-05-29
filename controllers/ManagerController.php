@@ -105,6 +105,45 @@ class ManagerController extends Controller
                         $this->contracts->update_contract($c->id, array('collection_manager_id' => 0));
                 }
 
+                $collectorsMove = CollectorsMoveGroupORM::get();
+
+                foreach ($collectorsMove as $move) {
+
+                    if ($block) {
+                        $collectorsMoveId = json_decode($move->collectors_id, true);
+
+                        foreach ($collectorsMoveId as $key => $id) {
+                            CollectorsMoveGroupORM::where('id', $move->id)->update(['collectors_id' => json_encode((object)$collectorsMoveId).'2']);
+                            if ($id == $manager_id)
+                                unset($collectorsMoveId[$key]);
+                        }
+
+                        if (empty($collectorsMoveId))
+                            CollectorsMoveGroupORM::where('id', $move->id)->update(['collectors_id' => null]);
+                        else
+                            CollectorsMoveGroupORM::where('id', $move->id)->update(['collectors_id' => json_encode((object)$collectorsMoveId)]);
+                    }
+                    else{
+
+                        if (!empty($move->collectors_id)) {
+                            $collectorsMoveId = json_decode($move->collectors_id, true);
+
+                            foreach ($collectorsMoveId as $key => $id) {
+                                CollectorsMoveGroupORM::where('id', $move->id)->update(['collectors_id' => json_encode((object)$collectorsMoveId).'2']);
+                                if ($id == $manager_id)
+                                    unset($collectorsMoveId[$key]);
+                            }
+                            
+                            $collectorsMoveId[] = $manager_id;
+
+                            if (empty($collectorsMoveId))
+                                CollectorsMoveGroupORM::where('id', $move->id)->update(['collectors_id' => null]);
+                            else
+                                CollectorsMoveGroupORM::where('id', $move->id)->update(['collectors_id' => json_encode((object)$collectorsMoveId)]);
+                        }
+                    }
+                }
+
                 exit;
             }
 
