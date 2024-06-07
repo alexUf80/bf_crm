@@ -15,6 +15,21 @@ class Scorings extends Core
 	
         return $result;    	
     }
+
+    public function get_type_scoring_last($order_id, $type)
+    {
+		$query = $this->db->placehold("
+            SELECT * 
+            FROM __scorings
+            WHERE type = ?
+            AND order_id = ?
+            order by id desc
+        ", $type, $order_id);
+        $this->db->query($query);
+        $result = $this->db->result();
+	
+        return $result;    	
+    }
     
 
 	public function get_overtime_scorings($datetime)

@@ -3040,7 +3040,8 @@ class StatisticsController1 extends Controller
 
                 $order->status = $orders_statuses[$order->status];
 
-                $nbki = $this->scorings->get_type_scoring($order->order_id, 'nbki');
+                // $nbki = $this->scorings->get_type_scoring($order->order_id, 'nbki');
+                $nbki = $this->scorings->get_type_scoring_last($order->order_id, 'nbki');
                 if (empty($nbki)) {
                     // continue;
                 }
@@ -3189,7 +3190,8 @@ class StatisticsController1 extends Controller
                         $sheet->setCellValue('R' . $i, $fsspParams['expCount']);
                 }
 
-                $nbkiScor = ScoringsORM::query()->where('order_id', '=', $order->order_id)->where('type', '=', 'nbki')->first();
+                // $nbkiScor = ScoringsORM::query()->where('order_id', '=', $order->order_id)->where('type', '=', 'nbki')->first();
+                $nbkiScor = $this->scorings->get_type_scoring_last($order->order_id, 'nbki');
                 
                 if ($nbkiScor) {
                     $nbkiParams = unserialize($nbkiScor->body);
