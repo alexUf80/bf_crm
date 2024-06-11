@@ -29,22 +29,22 @@ class SendPostbackCron extends Core
 
     private function run()
     {
-        $crons = PostbacksCronORM::where('is_complited', 0)->get();
+        // $crons = PostbacksCronORM::where('is_complited', 0)->get();
 
-        foreach ($crons as $cron)
-        {
-            $order = OrdersORM::find($cron->order_id);
+        // foreach ($crons as $cron)
+        // {
+        //     $order = OrdersORM::find($cron->order_id);
 
-            $postback = new stdClass();
-            $postback->status = $cron->status;
-            $postback->click_hash = $order->click_hash;
-            $postback->goalId = $cron->goal_id;
-            $postback->transactionId = rand(0, 999999);
+        //     $postback = new stdClass();
+        //     $postback->status = $cron->status;
+        //     $postback->click_hash = $order->click_hash;
+        //     $postback->goalId = $cron->goal_id;
+        //     $postback->transactionId = rand(0, 999999);
 
-            LeadFinancesPostbacks::sendRequest($postback);
+        //     LeadFinancesPostbacks::sendRequest($postback);
 
-            PostbacksCronORM::find($cron->id)->update(['is_complited' => 1, 'transaction_id' => $postback->transactionId]);
-        }
+        //     PostbacksCronORM::find($cron->id)->update(['is_complited' => 1, 'transaction_id' => $postback->transactionId]);
+        // }
     }
 }
 $cron = new SendPostbackCron();
