@@ -3180,7 +3180,8 @@ class StatisticsController1 extends Controller
                 //     $sheet->setCellValue('AG' . $i, $order->scoreballs['pdl_npl_90_limit_share']);
                 // }
 
-                $fsspScor = ScoringsORM::query()->where('order_id', '=', $order->order_id)->where('type', '=', 'fssp')->first();
+                // $fsspScor = ScoringsORM::query()->where('order_id', '=', $order->order_id)->where('type', '=', 'fssp')->first();
+                $fsspScor = $this->scorings->get_type_scoring_last($order->order_id, 'fssp');
                 if ($fsspScor) {
                     $fsspParams = unserialize($fsspScor->body);
 
