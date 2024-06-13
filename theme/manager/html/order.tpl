@@ -1142,7 +1142,10 @@
                                         {if $order->status == 7}
                                             <div class="card card-primary">
                                                 <div class="box text-center">
-                                                    <h3 class="text-white">Погашен</h3>
+                                                    <h3 class="text-white">
+                                                        Погашен
+                                                         {if $contract->active_cessia} (ЦЕССИЯ){/if}
+                                                    </h3>
                                                     <h6>Договор #{$contract->number}</h6>
                                                 </div>
                                             </div>
@@ -1243,11 +1246,13 @@
                                             </ul>
                                         </div>
                                         *}
-                                        <button class="btn btn-danger btn-block js-open-cessia-form js-event-add-click"
-                                                data-event="15" data-user="{$order->user_id}"
-                                                data-order="{$order->order_id}" data-manager="{$manager->id}">
-                                        Передать по цессии
-                                        </button>
+                                        {if !$contract->active_cessia}
+                                            <button class="btn btn-danger btn-block js-open-cessia-form js-event-add-click"
+                                                    data-event="15" data-user="{$order->user_id}"
+                                                    data-order="{$order->order_id}" data-manager="{$manager->id}">
+                                            Передать по цессии
+                                            </button>
+                                        {/if}
                                         {*}
                                         <div data-id="{$order->contract_id}" class="btn btn-block btn-danger activate_cessia">
                                             Передать по цессии
