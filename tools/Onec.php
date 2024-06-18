@@ -268,6 +268,11 @@ class Onec implements ToolsInterface
             }
             $issuanceOperation = OperationsORM::where('contract_id', $contract->id)->where('type', 'P2P')->first();
 
+
+            if ($contract->active_cessia) {
+                $contract->close_date = '';
+            }
+
             $xml['Документы'][$i]['Сделка'] =
                 [
                     'ДатаЗайма' => date('Y-m-d', strtotime($contract->inssuance_date)),
