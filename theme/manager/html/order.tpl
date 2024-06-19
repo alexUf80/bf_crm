@@ -13,6 +13,10 @@
 
             init();
 
+            $(document).on('submit', '#fio_form', function (e) {
+                location.reload();
+            });
+
             $(document).on('click', '.js-open-sms-modal', function (e) {
                 e.preventDefault();
 
@@ -671,7 +675,7 @@
                                                     {/foreach}
                                                 {/foreach}
                                             {/if}
-                                            {if in_array($manager->role, ['developer', 'admin', 'user', 'controller'])}
+                                            {if in_array($manager->role, ['developer', 'admin', 'user', 'controller', 'manager'])}
                                                 <a href="javascript:void(0);"
                                                    class="text-info js-edit-form edit-amount js-event-add-click"
                                                    data-event="30" data-manager="{$manager->id}"
