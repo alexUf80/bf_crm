@@ -126,7 +126,14 @@ class CollectionReportController extends Controller
 
                     $manager = ManagerORM::find($col->manager_id);
 
-                    $contracts = ContractsORM::where('collection_manager_id', $col->manager_id)->where('collection_status', $manager->collection_status_id)->get();
+                    $manager_collection_status_id = 1;
+                    if (is_null($manager)) {
+                        $manager_collection_status_id = 1;
+                    }
+                    else{
+                        $manager_collection_status_id = $manager->collection_status_id;
+                    }
+                    $contracts = ContractsORM::where('collection_manager_id', $col->manager_id)->where('collection_status', $manager_collection_status_id)->get();
 
                     $collectors[intval($col->manager_id)]->od_debt = 0;
                     $collectors[intval($col->manager_id)]->prc_debt = 0;
