@@ -1332,6 +1332,7 @@ class StatisticsController1 extends Controller
                     `c`.return_date,
                     `c`.inssuance_date,
                     `c`.amount as contractAmount,
+                    `c`.collection_manager_id,
                     `u`.lastname,
                     `u`.firstname,
                     `u`.patronymic,
@@ -1418,6 +1419,7 @@ class StatisticsController1 extends Controller
                 $active_sheet->setCellValue('K1', 'Страховка');
                 $active_sheet->setCellValue('L1', 'Дата возврата');
                 $active_sheet->setCellValue('M1', 'Срок просрочки (дни)');
+                $active_sheet->setCellValue('N1', 'Был у коллекшина');
 
                 $i = 2;
                 foreach ($operations as $contract) {
@@ -1435,6 +1437,7 @@ class StatisticsController1 extends Controller
                     $active_sheet->setCellValue('K' . $i, $contract->insurance_number . ' ' . ($contract->insurance_amount ? $contract->insurance_amount . ' руб' : ''));
                     $active_sheet->setCellValue('L' . $i, $contract->return_date);
                     $active_sheet->setCellValue('M' . $i, $contract->expired_period);
+                    $active_sheet->setCellValue('N' . $i, $contract->collection_manager_id == 0 ? 'не был': 'БЫЛ');
 
                     $i++;
                 }
