@@ -16,8 +16,8 @@
             $(document).on('submit', '#personal_data_form', function (e) {
                 location.reload();
             });
-            $(document).on('click', '#personal_data_form_button', function (e) {
-                location.reload();
+            $(document).on('click', '.personal_data_form_button', function (e) {
+                setTimeout(() => location.reload(), 1000);
             });
 
             $(document).on('submit', '#fio_form', function (e) {
