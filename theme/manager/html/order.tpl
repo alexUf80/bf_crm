@@ -13,6 +13,10 @@
 
             init();
 
+            $(document).on('submit', '#personal_data_form', function (e) {
+                location.reload();
+            });
+
             $(document).on('submit', '#fio_form', function (e) {
                 location.reload();
             });
@@ -1426,6 +1430,14 @@
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-group row m-0">
+                                                            <label class="control-label col-md-4">ИНН:</label>
+                                                            <div class="col-md-8">
+                                                                <p class="form-control-static">{$order->inn}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-group row m-0">
                                                             <label class="control-label col-md-4">Соцсети:</label>
                                                             <div class="col-md-8">
                                                                 <ul class="list-unstyled form-control-static pl-0">
@@ -1567,6 +1579,14 @@
                                                                     паспорт!
                                                                 </small>
                                                             {/if}
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <div class="form-group mb-2">
+                                                            <label class="control-label">ИНН</label>
+                                                            <input type="text" class="form-control" name="inn"
+                                                                   value="{$order->inn}" placeholder=""/>
                                                         </div>
                                                     </div>
 
