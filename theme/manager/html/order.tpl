@@ -16,6 +16,9 @@
             $(document).on('submit', '#personal_data_form', function (e) {
                 location.reload();
             });
+            $(document).on('click', '#personal_data_form_button', function (e) {
+                location.reload();
+            });
 
             $(document).on('submit', '#fio_form', function (e) {
                 location.reload();
@@ -1594,7 +1597,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-actions">
                                                             <button type="submit"
-                                                                    class="btn btn-success js-event-add-click"
+                                                                    class="btn btn-success js-event-add-click personal_data_form_button"
                                                                     data-event="42" data-manager="{$manager->id}"
                                                                     data-order="{$order->order_id}"
                                                                     data-user="{$order->user_id}"><i
