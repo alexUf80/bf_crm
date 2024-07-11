@@ -1403,6 +1403,7 @@ class OrderController extends Controller
         $order->passport_issued = trim($this->request->post('passport_issued'));
 
         $order->social = trim($this->request->post('social'));
+        $order->inn = trim($this->request->post('inn'));
 
         $contactdata_error = array();
 
@@ -1434,6 +1435,7 @@ class OrderController extends Controller
                 'subdivision_code' => $order->subdivision_code,
                 'passport_issued' => $order->passport_issued,
                 'social' => $order->social,
+                'inn' => $order->inn,
             );
 
             $old_user = $this->users->get_user($user_id);
