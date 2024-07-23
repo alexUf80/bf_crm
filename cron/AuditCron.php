@@ -278,63 +278,63 @@ class AuditCron extends Core
                 // $reject_cost = 19;
 
                 if ($user && $user->service_reason == 1) {
-                    $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
-                    if(!$defaultCard){
-                        $defaultCard = CardsORM::where('user_id', $order->user_id)->first();
-                    }
+                    // $defaultCard = CardsORM::where('user_id', $order->user_id)->where('base_card', 1)->first();
+                    // if(!$defaultCard){
+                    //     $defaultCard = CardsORM::where('user_id', $order->user_id)->first();
+                    // }
 
-                    $resp = $this->Best2pay->purchase_by_token($defaultCard->id, (int)$reject_cost * 100, 'Списание за услугу "Причина отказа"');
-                    $status = (string)$resp->state;
+                    // $resp = $this->Best2pay->purchase_by_token($defaultCard->id, (int)$reject_cost * 100, 'Списание за услугу "Причина отказа"');
+                    // $status = (string)$resp->state;
 
-                    if ($status == 'APPROVED') {
-                        $this->operations->add_operation(array(
-                            'contract_id' => 0,
-                            'user_id' => $order->user_id,
-                            'order_id' => $order->order_id,
-                            'type' => 'REJECT_REASON',
-                            'amount' => $reject_cost,
-                            'created' => date('Y-m-d H:i:s'),
-                            'transaction_id' => 0,
-                        ));
+                    // if ($status == 'APPROVED') {
+                    //     $this->operations->add_operation(array(
+                    //         'contract_id' => 0,
+                    //         'user_id' => $order->user_id,
+                    //         'order_id' => $order->order_id,
+                    //         'type' => 'REJECT_REASON',
+                    //         'amount' => $reject_cost,
+                    //         'created' => date('Y-m-d H:i:s'),
+                    //         'transaction_id' => 0,
+                    //     ));
 
-                        //Отправляем чек по страховке
-                        $resp = $this->Cloudkassir->send_reject_reason($order->order_id, $reject_cost);
+                    //     //Отправляем чек по страховке
+                    //     $resp = $this->Cloudkassir->send_reject_reason($order->order_id, $reject_cost);
 
-                        if (!empty($resp)) {
-                            $resp = json_decode($resp);
+                    //     if (!empty($resp)) {
+                    //         $resp = json_decode($resp);
 
-                            $this->receipts->add_receipt(array(
-                                'user_id' => $order->user_id,
-                                'Информирование о причине отказа',
-                                'order_id' => $order->order_id,
-                                'contract_id' => 0,
-                                'insurance_id' => 0,
-                                'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
-                                'response' => serialize($resp),
-                                'created' => date('Y-m-d H:i:s')
-                            ));
-                        }
-                    }
+                    //         $this->receipts->add_receipt(array(
+                    //             'user_id' => $order->user_id,
+                    //             'Информирование о причине отказа',
+                    //             'order_id' => $order->order_id,
+                    //             'contract_id' => 0,
+                    //             'insurance_id' => 0,
+                    //             'receipt_url' => (string)$resp->Model->ReceiptLocalUrl,
+                    //             'response' => serialize($resp),
+                    //             'created' => date('Y-m-d H:i:s')
+                    //         ));
+                    //     }
+                    // }
 
-                    $params = array(
-                        'lastname' => $order->lastname,
-                        'firstname' => $order->firstname,
-                        'patronymic' => $order->patronymic,
-                        'birth' => $order->birth,
-                        'passport_issued' => $order->passport_issued,
-                        'passport_series' => substr(str_replace(array(' ', '-'), '', $order->passport_serial), 0, 4),
-                        'passport_number' => substr(str_replace(array(' ', '-'), '', $order->passport_serial), 4, 6),
-                        'address' => $address->adressfull,
-                        'date' => date('Y-m-d H:i:s'),
-                    );
+                    // $params = array(
+                    //     'lastname' => $order->lastname,
+                    //     'firstname' => $order->firstname,
+                    //     'patronymic' => $order->patronymic,
+                    //     'birth' => $order->birth,
+                    //     'passport_issued' => $order->passport_issued,
+                    //     'passport_series' => substr(str_replace(array(' ', '-'), '', $order->passport_serial), 0, 4),
+                    //     'passport_number' => substr(str_replace(array(' ', '-'), '', $order->passport_serial), 4, 6),
+                    //     'address' => $address->adressfull,
+                    //     'date' => date('Y-m-d H:i:s'),
+                    // );
 
-                    $this->documents->create_document(array(
-                        'user_id' => $order->user_id,
-                        'order_id' => $order->order_id,
-                        'contract_id' => $order->contract_id,
-                        'type' => 'DOGOVOR_REJECT_REASON',
-                        'params' => json_encode($params),
-                    ));
+                    // $this->documents->create_document(array(
+                    //     'user_id' => $order->user_id,
+                    //     'order_id' => $order->order_id,
+                    //     'contract_id' => $order->contract_id,
+                    //     'type' => 'DOGOVOR_REJECT_REASON',
+                    //     'params' => json_encode($params),
+                    // ));
 
                     CardsORM::where('user_id', $order->user_id)->delete();
                     
