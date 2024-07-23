@@ -2560,6 +2560,7 @@
                                                             </div>
                                                         </div>
 
+                                                        {*}
                                                         <div style="display: flex; justify-content: space-between">
                                                             <label class="control-label">
                                                                 Причина отказа:
@@ -2581,6 +2582,7 @@
                                                                 </p>
                                                             </div>
                                                         </div>
+                                                        {*}
 
                                                         {foreach $polises as $polise}
                                                             <div style="display: flex; justify-content: space-between">
@@ -2973,6 +2975,9 @@
                                 {if $documents}
                                     <table class="table">
                                         {foreach $documents as $document}
+                                            {if $document->name|escape == 'Договор на оказание услуги Причина отказа'}
+                                                {continue}
+                                            {/if}
                                             <tr>
                                                 <td class="text-info">
                                                     <a target="_blank"
@@ -3113,6 +3118,9 @@
                                             <td>Пени</td>
                                         </tr>
                                         {foreach $contract_operations as $operation}
+                                            {if $operation->type == 'REJECT_REASON'}
+                                                {continue}
+                                            {/if}
                                             <tr class="
                                                     {if in_array($operation->type, ['PAY'])}table-success{/if}
                                                     {if in_array($operation->type, ['PERCENTS', 'CHARGE', 'PENI'])}table-danger{/if}
@@ -3144,7 +3152,7 @@
                                                     {if $operation->type == 'PERCENTS'}Начисление процентов{/if}
                                                     {if $operation->type == 'INSURANCE'}Страховка{/if}
                                                     {if $operation->type == 'BUD_V_KURSE'}Будь в курсе{/if}
-                                                    {if $operation->type == 'REJECT_REASON'}Причина отказа{/if}
+                                                    {if $operation->type == 'REJECT_REASON'}Причина отказа1{/if}
                                                     {if $operation->type == 'CHARGE'}Ответственность{/if}
                                                     {if $operation->type == 'PENI'}Пени{/if}
                                                     {if $operation->type == 'IMPORT'}Импорт{/if}
