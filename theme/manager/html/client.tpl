@@ -1127,6 +1127,7 @@
                                                             </div>
                                                         </div>
                                                         {*}
+                                                        {*}
                                                         <div class="form-group mb-0 row">
                                                             <label class="control-label col-md-8 col-7">Причина
                                                                 отказа:</label>
@@ -1140,6 +1141,7 @@
                                                                 </p>
                                                             </div>
                                                         </div>
+                                                        {*}
                                                         <div class="form-group mb-0 row">
                                                             <label class="control-label col-md-8 col-7">Страхование:</label>
                                                             <div class="col-md-4 col-5">
