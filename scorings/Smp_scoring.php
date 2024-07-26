@@ -114,20 +114,28 @@ class Smp_scoring extends Core
 
         $response = curl_exec($curl);
         $result = json_decode($response, true);
-        var_dump($response);
-        echo '<hr>';
-        var_dump($result);
+
         curl_close($curl);
         $body = [];
         $body['result'] = $result;
         $body['response'] = $response;
 
-        $add_scoring = array(
-            'status' => 'completed',
-            'body' => serialize($body),
-            'success' => 1,
-            'string_result' => 'Получены данные'
-        );
+        if ($result == null) {
+            $add_scoring = array(
+                'status' => 'completed',
+                'body' => serialize($body),
+                'success' => 0,
+                'string_result' => 'Данные получены с ошибкой'
+            );
+        }
+        else{
+            $add_scoring = array(
+                'status' => 'completed',
+                'body' => serialize($body),
+                'success' => 1,
+                'string_result' => 'Получены данные'
+            );
+        }
 
         $this->scorings->update_scoring($this->scoring_id, $add_scoring);
 

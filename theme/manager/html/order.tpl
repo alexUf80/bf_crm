@@ -2451,7 +2451,7 @@
                                                                             <a href="{$scorings[$scoring_type->name]->body['report_url']}"
                                                                                target="_blank">Подробнее</a>
                                                                         {/if}
-                                                                        {if $scoring_type->name == 'smp'}
+                                                                        {if $scoring_type->name == 'smp' && $scorings[$scoring_type->name]->string_result == 'Получены данные'}
                                                                             <a href="/ajax/show_nbki_smp.php?id={$scorings[$scoring_type->name]->id}&password=Hjkdf8d"
                                                                                target="_blank">Подробнее</a>
                                                                         {/if}
