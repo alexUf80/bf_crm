@@ -120,7 +120,7 @@ class Smp_scoring extends Core
         $body['result'] = $result;
         $body['response'] = $response;
 
-        if ($result == null) {
+        if ($response == null) {
             $add_scoring = array(
                 'status' => 'completed',
                 'body' => serialize($body),
