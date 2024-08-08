@@ -113,7 +113,7 @@ class Nbki_scoring extends Core
     "requisites": {
         "member_code": "9R01SS000000",
         "user_id": "9R01SS000002",
-        "password": "Gpj896RP"
+        "password": "Gpj796RP"
     },
     "retail_score_details": {
         "product_addon_code": "MS92"
