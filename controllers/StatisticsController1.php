@@ -1429,7 +1429,39 @@ class StatisticsController1 extends Controller
                     $active_sheet->setCellValue('C' . $i, $contract->lastname . ' ' . $contract->firstname . ' ' . $contract->patronymic . ' ' . $contract->birth);
                     $active_sheet->setCellValue('D' . $i, $contract->inssuance_date);
                     $active_sheet->setCellValue('E' . $i, $contract->contractAmount);
+
+                    $query = $this->db->placehold("
+                        SELECT created,
+                        body_summ,
+                        percents_summ,
+                        peni_summ
+                        FROM __collections
+                        WHERE contract_id = ?
+                        AND DATE(created) >= ?
+                        AND DATE(created) <= ?
+                        ORDER BY id DESC 
+                    ",$contract->contract_id, $date_from, $date_to);
+                    $this->db->query($query);
+                    $results = $this->db->results();
+                    
+                    $was_collection = false;
+
+                    foreach ($results as $result) {
+                        if (date('Y-m-d', strtotime($contract->created)) == date('Y-m-d', strtotime($result->created))) {
+
+                            $summ_all = $result->body_summ + $result->percents_summ + $result->peni_summ;
+                            // $summ_all = $result->body_summ + $result->percents_summ;
+        
+                            $was_collection = true;
+                            if ($summ_all == 0 || date('Y-m-d', strtotime($contract->created)) != date('Y-m-d', strtotime($result->created))) {
+                                $was_collection = false;
+                            }
+
+                        }
+                    }
+
                     $active_sheet->setCellValue('F' . $i, $contract->amount);
+                    // $active_sheet->setCellValue('F' . $i, $summ_all);
                     $active_sheet->setCellValue('G' . $i, $contract->pan);
                     $active_sheet->setCellValue('H' . $i, $contract->description . ' ' . ($contract->prolongation ? '(пролонгация)' : ''));
                     $active_sheet->setCellValue('I' . $i, $contract->register_id);
@@ -1437,7 +1469,8 @@ class StatisticsController1 extends Controller
                     $active_sheet->setCellValue('K' . $i, $contract->insurance_number . ' ' . ($contract->insurance_amount ? $contract->insurance_amount . ' руб' : ''));
                     $active_sheet->setCellValue('L' . $i, $contract->return_date);
                     $active_sheet->setCellValue('M' . $i, $contract->expired_period);
-                    $active_sheet->setCellValue('N' . $i, $contract->collection_manager_id == 0 ? 'не был': 'БЫЛ');
+                    // $active_sheet->setCellValue('N' . $i, $contract->collection_manager_id == 0 ? 'не был': 'БЫЛ');
+                    $active_sheet->setCellValue('N' . $i, $was_collection == false ? 'не был': 'БЫЛ');
 
                     $i++;
                 }
