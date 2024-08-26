@@ -22,7 +22,7 @@
                     window.location.href = 'https://crm.barents-finans.ru/orders/#status=5';
                     //location.reload();
                 }
-                if(window.location.href.indexOf('https://crm.barents-finans.ru/orders/') >= 0 && window.location.href != 'https://crm.barents-finans.ru/orders/#status=5'){
+                if(window.location.href.indexOf('https://crm.barents-finans.ru/orders') >= 0 && window.location.href != 'https://crm.barents-finans.ru/orders/#status=5'){
                     window.location.href = 'https://crm.barents-finans.ru/orders/#status=5';
                     location.reload();
                 }
