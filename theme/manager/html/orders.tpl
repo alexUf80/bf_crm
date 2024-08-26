@@ -16,6 +16,18 @@
     <script>
         $(function () {
 
+            console.log(window.location.href.indexOf('https://crm.barents-finans.ru/orders/'));
+            if('{$manager->role}' == 'lawyer'){
+                if(window.location.href == 'https://crm.barents-finans.ru/'){
+                    window.location.href = 'https://crm.barents-finans.ru/orders/#status=5';
+                    //location.reload();
+                }
+                if(window.location.href.indexOf('https://crm.barents-finans.ru/orders/') >= 0 && window.location.href != 'https://crm.barents-finans.ru/orders/#status=5'){
+                    window.location.href = 'https://crm.barents-finans.ru/orders/#status=5';
+                    location.reload();
+                }
+            }
+
             $('#casual_sms').on('click', function (e) {
                 e.preventDefault();
 
@@ -216,44 +228,46 @@
                     <div class="card-body">
                         <h4 class="card-title">Список заявок </h4>
 
-                        <div class="clearfix">
-                            <div class="js-filter-status mb-2 float-left">
-                                <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
-                                <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принята</a>
-                                <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-success{/if}">Одобрена</a>
-                                <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==3}btn-danger{else}btn-outline-danger{/if}">Отказ</a>
-                                <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==4}btn-inverse{else}btn-outline-inverse{/if}">Подписан</a>
-                                <a href="{if $filter_status==5}{url status=null page=null}{else}{url status=5 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==5}btn-primary{else}btn-outline-primary{/if}">Выдан</a>
-                                <a href="{if $filter_status==6}{url status=null page=null}{else}{url status=6 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==6}btn-danger{else}btn-outline-danger{/if}">Не
-                                    удалось выдать</a>
-                                <a href="{if $filter_status==7}{url status=null page=null}{else}{url status=7 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==7}btn-inverse{else}btn-outline-inverse{/if}">Погашен</a>
-                                <a href="{if $filter_status==8}{url status=null page=null}{else}{url status=8 page=null}{/if}"
-                                   class="btn btn-xs {if $filter_status==8}btn-danger{else}btn-outline-danger{/if}">Отказ
-                                    клиента</a>
-                                {if $filter_status}
-                                    <input type="hidden" value="{$filter_status}" id="filter_status"/>
-                                {/if}
+                        {if $manager->role != 'lawyer'}
+                            <div class="clearfix">
+                                <div class="js-filter-status mb-2 float-left">
+                                    <a href="{if $filter_status=='new'}{url status=null page=null}{else}{url status='new' page=null}{/if}"
+                                    class="btn btn-xs {if $filter_status=='new'}btn-warning{else}btn-outline-warning{/if}">Новая</a>
+                                    <a href="{if $filter_status==1}{url status=null page=null}{else}{url status=1 page=null}{/if}"
+                                    class="btn btn-xs {if $filter_status==1}btn-info{else}btn-outline-info{/if}">Принята</a>
+                                    <a href="{if $filter_status==2}{url status=null page=null}{else}{url status=2 page=null}{/if}"
+                                    class="btn btn-xs {if $filter_status==2}btn-success{else}btn-outline-success{/if}">Одобрена</a>
+                                    <a href="{if $filter_status==3}{url status=null page=null}{else}{url status=3 page=null}{/if}"
+                                    class="btn btn-xs {if $filter_status==3}btn-danger{else}btn-outline-danger{/if}">Отказ</a>
+                                    <a href="{if $filter_status==4}{url status=null page=null}{else}{url status=4 page=null}{/if}"
+                                    class="btn btn-xs {if $filter_status==4}btn-inverse{else}btn-outline-inverse{/if}">Подписан</a>
+                                    <a href="{if $filter_status==5}{url status=null page=null}{else}{url status=5 page=null}{/if}"
+                                    class="btn btn-xs {if $filter_status==5}btn-primary{else}btn-outline-primary{/if}">Выдан</a>
+                                    <a href="{if $filter_status==6}{url status=null page=null}{else}{url status=6 page=null}{/if}"
+                                    class="btn btn-xs {if $filter_status==6}btn-danger{else}btn-outline-danger{/if}">Не
+                                        удалось выдать</a>
+                                    <a href="{if $filter_status==7}{url status=null page=null}{else}{url status=7 page=null}{/if}"
+                                    class="btn btn-xs {if $filter_status==7}btn-inverse{else}btn-outline-inverse{/if}">Погашен</a>
+                                    <a href="{if $filter_status==8}{url status=null page=null}{else}{url status=8 page=null}{/if}"
+                                    class="btn btn-xs {if $filter_status==8}btn-danger{else}btn-outline-danger{/if}">Отказ
+                                        клиента</a>
+                                    {if $filter_status}
+                                        <input type="hidden" value="{$filter_status}" id="filter_status"/>
+                                    {/if}
+                                </div>
+                                <div class="float-right js-filter-client">
+                                    <a href="{if $filter_client=='new'}{url client=null page=null}{else}{url client='new' page=null}{/if}"
+                                    class="btn btn-xs {if $filter_client=='new'}btn-info{else}btn-outline-info{/if}">Новая</a>
+                                    <a href="{if $filter_client=='repeat'}{url client=null page=null}{else}{url client='repeat' page=null}{/if}"
+                                    class="btn btn-xs {if $filter_client=='repeat'}btn-warning{else}btn-outline-warning{/if}">Повтор</a>
+                                    <a href="{if $filter_client=='pk'}{url client=null page=null}{else}{url client='pk' page=null}{/if}"
+                                    class="btn btn-xs {if $filter_client=='pk'}btn-success{else}btn-outline-success{/if}">ПК</a>
+                                    {if $filter_client}
+                                        <input type="hidden" value="{$filter_client}" id="filter_client"/>
+                                    {/if}
+                                </div>
                             </div>
-                            <div class="float-right js-filter-client">
-                                <a href="{if $filter_client=='new'}{url client=null page=null}{else}{url client='new' page=null}{/if}"
-                                   class="btn btn-xs {if $filter_client=='new'}btn-info{else}btn-outline-info{/if}">Новая</a>
-                                <a href="{if $filter_client=='repeat'}{url client=null page=null}{else}{url client='repeat' page=null}{/if}"
-                                   class="btn btn-xs {if $filter_client=='repeat'}btn-warning{else}btn-outline-warning{/if}">Повтор</a>
-                                <a href="{if $filter_client=='pk'}{url client=null page=null}{else}{url client='pk' page=null}{/if}"
-                                   class="btn btn-xs {if $filter_client=='pk'}btn-success{else}btn-outline-success{/if}">ПК</a>
-                                {if $filter_client}
-                                    <input type="hidden" value="{$filter_client}" id="filter_client"/>
-                                {/if}
-                            </div>
-                        </div>
+                        {/if}
 
                         <div id="basicgrid" class="jsgrid" style="position: relative; width: 100%;">
                             <div class="jsgrid-grid-header jsgrid-header-scrollbar">
