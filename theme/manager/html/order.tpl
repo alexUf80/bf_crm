@@ -544,7 +544,7 @@
                 <h3 class="text-themecolor mb-0 mt-0"><i class="mdi mdi-animation"></i> Заявка №{$order->order_id}</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="/">Главная</a></li>
-                    <li class="breadcrumb-item"><a href="orders">Заявки</a></li>
+                    <li class="breadcrumb-item"><a href="orders/">Заявки</a></li>
                     <li class="breadcrumb-item active">Заявка №{$order->order_id}</li>
                 </ol>
             </div>
