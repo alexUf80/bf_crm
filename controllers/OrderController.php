@@ -381,7 +381,7 @@ class OrderController extends Controller
                                 }
                             }
                             if ($scoring->type == 'nbki') {
-                                $number_of_active == null;
+                                $number_of_active = null;
                                 $open_to_close_ratio = null;
                                 $score = null;
                                 $scoring->body = unserialize($scoring->body);
@@ -391,9 +391,10 @@ class OrderController extends Controller
                                 }
                                 else{
                                     if (isset($scoring->body['number_of_active'])) {
-                                        // $number_of_active = $scoring->body['number_of_active'];
+                                        $number_of_active = $scoring->body['number_of_active'];
                                     }
                                 }
+
                                 $this->design->assign('number_of_active', $number_of_active);
 
                                 if (isset($scoring->body['open_to_close_ratio'][0])) {
