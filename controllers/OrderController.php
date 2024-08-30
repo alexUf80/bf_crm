@@ -381,37 +381,43 @@ class OrderController extends Controller
                                 }
                             }
                             if ($scoring->type == 'nbki') {
+                                $number_of_active == null;
+                                $open_to_close_ratio = null;
+                                $score = null;
                                 $scoring->body = unserialize($scoring->body);
                                 if (isset($scoring->body['number_of_active'][0])) {
                                     $number_of_active = $scoring->body['number_of_active'][0];
-                                    $this->design->assign('number_of_active', $number_of_active);
+                                    // $this->design->assign('number_of_active', $number_of_active);
                                 }
                                 else{
                                     if (isset($scoring->body['number_of_active'])) {
-                                        $number_of_active = $scoring->body['number_of_active'];
-                                        $this->design->assign('number_of_active', $number_of_active);
+                                        // $number_of_active = $scoring->body['number_of_active'];
                                     }
                                 }
+                                $this->design->assign('number_of_active', $number_of_active);
+
                                 if (isset($scoring->body['open_to_close_ratio'][0])) {
                                     $open_to_close_ratio = $scoring->body['open_to_close_ratio'][0];
-                                    $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
+                                    // $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
                                 }
                                 else{
                                     if (isset($scoring->body['open_to_close_ratio'])) {
                                         $open_to_close_ratio = $scoring->body['open_to_close_ratio'];
-                                        $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
+                                        // $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
                                     }
                                 }
+                                $this->design->assign('open_to_close_ratio', $open_to_close_ratio);
                                 if (isset($scoring->body['score'][0])) {
                                     $score = $scoring->body['score'][0];
-                                    $this->design->assign('score', $score);
+                                    // $this->design->assign('score', $score);
                                 }
                                 else{
                                     if (isset($scoring->body['score'])) {
                                         $score = $scoring->body['score'];
-                                        $this->design->assign('score', $score);
+                                        // $this->design->assign('score', $score);
                                     }
                                 }
+                                $this->design->assign('score', $score);
 
                                 // Дата получения первого микрозайма
                                 $xml_nbki = simplexml_load_file($scoring->body['xml_url']);
@@ -513,6 +519,8 @@ class OrderController extends Controller
 
                                 natsort($dates);
                                 $is_first = false;
+
+                                $first_loan_date = null;
 
                                 foreach ($dates as $key => $value) {
                                     if (isset(get_mangled_object_vars($value)[0])) {
