@@ -206,25 +206,7 @@
                             <div class="row">
                                 
                                 <div class="col-md-6">
-                                    {if $type->name != 'nbki'}
-                                        <div class="form-group ">
-                                            <label class="control-label">Если получен негативный тест</label>
-                                            <select name="settings[{$type->id}][negative_action]" class="form-control">
-                                                <option value="next" {if $type->negative_action=='next'}selected="true"{/if}>Продолжить проверку</option>
-                                                <option value="stop" {if $type->negative_action=='stop'}selected="true"{/if}>Остановить проверку</option>
-                                                <option value="reject" {if $type->negative_action=='reject'}selected="true"{/if}>Остановить и отказать по заявке</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group ">
-                                            <label class="control-label">Если получен негативный тест</label>
-                                            <select name="settings[{$type->id}][reason_id]" class="form-control">
-                                                <option value="" {if !$type->reason_id}selected="true"{/if}></option>
-                                                {foreach $reasons as $reason}
-                                                    <option value="{$reason->id}" {if $type->reason_id==$reason->id}selected="true"{/if}>{$reason->admin_name}</option>
-                                                {/foreach}
-                                            </select>
-                                        </div>
-                                    {else}
+                                    {if $type->name == 'nbki'}
                                         <div class="form-group ">
                                             <label class="control-label">Если получен негативный тест для НК</label>
                                             <select name="settings[{$type->id}][negative_action]" class="form-control">
@@ -258,6 +240,24 @@
                                                 <option value="" {if !$type->reason_id_pk}selected="true"{/if}></option>
                                                 {foreach $reasons as $reason}
                                                     <option value="{$reason->id}" {if $type->params['reason_id_pk']==$reason->id}selected="true"{/if}>{$reason->admin_name}</option>
+                                                {/foreach}
+                                            </select>
+                                        </div>
+                                    {else}
+                                        <div class="form-group ">
+                                            <label class="control-label">Если получен негативный тест</label>
+                                            <select name="settings[{$type->id}][negative_action]" class="form-control">
+                                                <option value="next" {if $type->negative_action=='next'}selected="true"{/if}>Продолжить проверку</option>
+                                                <option value="stop" {if $type->negative_action=='stop'}selected="true"{/if}>Остановить проверку</option>
+                                                <option value="reject" {if $type->negative_action=='reject'}selected="true"{/if}>Остановить и отказать по заявке</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label class="control-label">Если получен негативный тест</label>
+                                            <select name="settings[{$type->id}][reason_id]" class="form-control">
+                                                <option value="" {if !$type->reason_id}selected="true"{/if}></option>
+                                                {foreach $reasons as $reason}
+                                                    <option value="{$reason->id}" {if $type->reason_id==$reason->id}selected="true"{/if}>{$reason->admin_name}</option>
                                                 {/foreach}
                                             </select>
                                         </div>
@@ -405,6 +405,13 @@
                                     </div>
                                 </div>
                                 {*}
+                                {elseif $type->name == 'scoreball'}
+                                    <div class="col-md-6">
+                                        <div class="form-group ">
+                                            <label class="control-label">Порог скорбалла НБКИ для отказа</label>
+                                            <input type="text" name="settings[{$type->id}][params][scoreball]" value="{$type->params['scoreball']}" class="form-control" placeholder="" />
+                                        </div>
+                                    </div>
                                 {/if}
                                 
                             </div>
