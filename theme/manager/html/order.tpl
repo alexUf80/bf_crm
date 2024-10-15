@@ -2432,6 +2432,14 @@
                                                                         </span>
                                                                     {/if}
 
+                                                                    {if $scoring_type->name == 'scoreball' && $scorings[$scoring_type->name]->status == 'completed'}
+                                                                        <span class="mail-desc"
+                                                                              title="Скоринговый балл:">
+                                                                                {$score_res = unserialize($scorings[$scoring_type->name]->body)}
+                                                                                Скоринговый балл: <b>{$score_res['score']}</b>
+                                                                        </span>
+                                                                    {/if}
+
                                                                     <span class="time">
                                                                         {if $scorings[$scoring_type->name]->created}
                                                                             {$scorings[$scoring_type->name]->created|date} {$scorings[$scoring_type->name]->created|time}
